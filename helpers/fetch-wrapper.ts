@@ -3,7 +3,8 @@ import getConfig from 'next/config';
 import { userService } from 'services';
 
 const { publicRuntimeConfig } = getConfig();
-
+export {}
+/*
 export const fetchWrapper = {
     get,
     post,
@@ -39,6 +40,7 @@ function put(url:any, body:object) {
 }
 
 // prefixed with underscored because delete is a reserved word in javascript
+
 function _delete(url:any) {
     const requestOptions:any = {
         method: 'DELETE',
@@ -75,3 +77,4 @@ function handleResponse(response:any) {
         return data;
     });
 }
+*/

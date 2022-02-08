@@ -1,0 +1,16 @@
+export const colorScheme = {
+    white: '#ffffff',
+    loading: 'rgba(0, 0, 0, 0.5)',
+    theme: '#2D7CF3',
+    black200: '#282727',
+    red400: '#ef5350',
+    red500: '#FA0606',
+    blue300: '#08459A',
+    gray600: '#5E5656',
+    gray400: '#ABABAB',
+    bg: '#FCFBFC',
+    blue200: '#166CED',
+    blue400: '#4ba9c8',
+    purple600: '#D41789',
+    facebook: '#4267B2',
+}
