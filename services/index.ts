@@ -1,6 +1,7 @@
-import { alertService } from './alert.services';
-import { userService } from './user.services';
-import { httpService } from './http.services';
-import { storageService } from './storage.services';
+import { cryptoService } from './crypto-service';
+import { storageService } from './storage-service';
+import { alertService } from './alert-service';
+import { userService } from './user-service';
+import { httpService } from './http-service';
 
-export{userService,alertService,httpService,storageService};
+export {httpService, userService, storageService, alertService, cryptoService};

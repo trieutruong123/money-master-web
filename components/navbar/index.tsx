@@ -19,19 +19,21 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Link } from "components";
 import { colorScheme } from "utils/color-scheme";
 import AppIcon from "assets/images/app-icon.png";
+import { userService } from "services";
 
 export default function Navbar() {
   const [accountMenuAnchorEl, setAccountMenuAnchorEl] =
     useState<null | HTMLElement>(null);
   const isAccountMenuOpen = Boolean(accountMenuAnchorEl);
+  const router = useRouter();
+  const matchAuthPage: boolean = ["/login", "/register", "/"].includes(
+    router.pathname
+  );
+  const matchLoginPage: boolean = router.pathname === "/login";
 
   const handleAccountMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAccountMenuAnchorEl(event.currentTarget);
   };
-  
-  const router = useRouter();
-  console.log(router.route);
-  const matchAuthPage:boolean = router.route === '/login' ||router.route =='/register';
 
   const handleAccountMenuClose = () => {
     setAccountMenuAnchorEl(null);
@@ -43,6 +45,7 @@ export default function Navbar() {
 
   const handleLogoutClick = () => {
     setAccountMenuAnchorEl(null);
+    userService.logout();
   };
 
   const accountMenuId = "account-menu-anchor-el";
@@ -59,8 +62,8 @@ export default function Navbar() {
       >
         <Toolbar>
           <Link href="/">
-            <Box display="flex" justifyContent="center" alignItems="center" >
-              <Image 
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Image
                 id="app-icon"
                 src={AppIcon}
                 alt="app icon"
@@ -69,7 +72,11 @@ export default function Navbar() {
               ></Image>
               <Typography
                 id="brand-name"
-                sx={{ ml: 1, color: colorScheme.theme,display: { xs: "none", sm: "flex" } }}
+                sx={{
+                  ml: 1,
+                  color: colorScheme.theme,
+                  display: { xs: "none", sm: "flex" },
+                }}
                 fontWeight="bold"
                 style={{ cursor: "pointer" }}
                 variant="h6"
@@ -79,13 +86,19 @@ export default function Navbar() {
             </Box>
           </Link>
           <Box sx={{ flexGrow: 1 }} />
-          {!matchAuthPage &&(
-          <Button
-            id="login-button"
-            sx={{ bgcolor: colorScheme.theme, color: colorScheme.white, mr: 3}}
-          >
-            <Link href="/login">Sigin</Link>
-          </Button>)}
+          {matchAuthPage && (
+            <Button
+              id="login-button"
+              variant="contained"
+              sx={{ bg: colorScheme.theme, mr:3 }}
+            >
+              {matchLoginPage ? (
+                <Link href="/register">Register</Link>
+              ) : (
+                <Link href="/login">Login</Link>
+              )}
+            </Button>
+          )}
           <Box sx={{ display: { xs: "none", sm: "flex" } }}>
             <IconButton
               id="account-button"
@@ -109,7 +122,7 @@ export default function Navbar() {
               keepMounted
               transformOrigin={{
                 vertical: "top",
-                horizontal: "center",
+                horizontal: "right",
               }}
               open={isAccountMenuOpen}
               onClose={handleAccountMenuClose}

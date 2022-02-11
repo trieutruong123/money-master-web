@@ -7,3 +7,5 @@ import Navbar  from "./navbar";
 import FooterComponent from './footer';
 
 export { Layout, Link, Spinner, Alert, LoginForm, RegisterForm, Navbar,FooterComponent };
+
+export * from './auth';

@@ -35,7 +35,7 @@ export default function RegisterForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
+  const [loginError, setLoginError] = useState<string>("");
   const validationSchema = Yup.object().shape({
     email: Yup.string().required("Email is required").email("Email is invalid"),
     password: Yup.string()
@@ -46,7 +46,7 @@ export default function RegisterForm() {
       .required("Confirm password is required"),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
-  const { register, reset, handleSubmit, formState, getValues } =
+  const { register, reset, handleSubmit, formState, getValues, setError } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
@@ -60,17 +60,18 @@ export default function RegisterForm() {
     event.preventDefault();
   };
 
-  const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    userService.register({
-      email: formState.getValues("email"),
-      password: formState.getValues("password"),
+  const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+    const res = await userService.register({
+      email: getValues("email"),
+      password: getValues("password"),
     });
-
-    router.push("/login");
+    if (res.isError) {
+      setLoginError(res.data.data);
+    } else router.push("/");
   };
 
   return (
-    <Layout>
+    <Box>
       <Grid container spacing={1} alignItems="center" justifyContent="center">
         <Grid item xs={12} sm={8} md={5} xl={3}>
           <Card sx={{ my: 5, mx: 1 }}>
@@ -81,6 +82,14 @@ export default function RegisterForm() {
               align="center"
             >
               Sign up
+            </Typography>
+            <Typography
+              variant="body1"
+              align="center"
+              color={colorScheme.red500}
+              sx={{ display: "static", height: '1.2rem' }}
+            >
+              {loginError}
             </Typography>
             <CardContent
               sx={{
@@ -213,6 +222,6 @@ export default function RegisterForm() {
           </Card>
         </Grid>
       </Grid>
-    </Layout>
+    </Box>
   );
 }

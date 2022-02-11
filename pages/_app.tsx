@@ -1,9 +1,9 @@
 import Head from "next/head";
 import type { AppProps } from "next/app";
-import { FooterComponent, Navbar } from "components";
+import { Layout } from "components";
 import "../styles/globals.css";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps}: AppProps) {
   const FOOTER_HEIGHT_PX = "256px";
   return (
     <>
@@ -12,7 +12,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <link rel="icon" type="image/png" href="images/app-icon.png" />
       </Head>
-      <Component {...pageProps} />
+      <Layout>
+          <Component {...pageProps} />
+      </Layout>
     </>
   );
 }
