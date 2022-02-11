@@ -69,7 +69,7 @@ export default function LoginForm() {
     <Layout>
       <Grid container spacing={1} alignItems="center" justifyContent="center">
         <Grid item xs={12} sm={8} md={5} xl={3}>
-          <Card sx={{ my: 5 }}>
+          <Card sx={{ my: 5, mx:1 }}>
             <Typography
               sx={{
                 fontSize: "2rem",
