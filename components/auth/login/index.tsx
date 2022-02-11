@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -23,6 +24,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import { Layout } from "components";
 import { colorScheme } from "utils/color-scheme";
+import { userService } from "services";
 
 type FormValues = {
   email: string;
@@ -30,6 +32,7 @@ type FormValues = {
 };
 
 export default function LoginForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -55,8 +58,11 @@ export default function LoginForm() {
   };
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    console.log(getValues("email"));
-    console.log(getValues("password"));
+    userService.login({
+      email: formState.getValues("email"),
+      password: formState.getValues("password"),
+    });
+    router.push("/login");
   };
 
   return (
