@@ -26,6 +26,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { Layout } from "components";
 import { colorScheme } from "utils/color-scheme";
 import { userService } from "services";
+import { firebaseService } from "services/firebase-service";
 
 type FormValues = {
   email: string;
@@ -67,6 +68,16 @@ export default function LoginForm() {
       setLoginError(res.data.data);
     } else router.push("/");
   };
+
+  const googleSignIn = async ()=>{
+    const res:any = await userService.googleAuthentication();
+    console.log(res);
+  }
+
+  const facebookSignIn = async  ()=>{
+    const res :any = await userService.facebookAuthentication();
+    console.log(res)
+  }
 
   return (
     <Grid container spacing={1} alignItems="center" justifyContent="center">
@@ -178,13 +189,15 @@ export default function LoginForm() {
                   bgcolor: colorScheme.red500,
                 },
               }}
+              onClick = {googleSignIn}
               startIcon={<GoogleIcon />}
             >
-              Sign in with Google{" "}
+              Sign in with Google
             </Button>
             <Button
               variant="contained"
               sx={{ bg: colorScheme.facebook, my: 1 }}
+              onClick = {facebookSignIn}
               startIcon={<FacebookIcon />}
             >
               Sign in with Facebook{" "}

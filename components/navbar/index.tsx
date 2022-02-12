@@ -18,7 +18,6 @@ import {
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Link } from "components";
 import { colorScheme } from "utils/color-scheme";
-import AppIcon from "assets/images/app-icon.png";
 import { userService } from "services";
 
 export default function Navbar() {
@@ -63,13 +62,12 @@ export default function Navbar() {
         <Toolbar>
           <Link href="/">
             <Box display="flex" justifyContent="center" alignItems="center">
-              <Image
+              <img
                 id="app-icon"
-                src={AppIcon}
+                src={require("assets/images/app-icon.png")}
                 alt="app icon"
-                width={32}
-                height={32}
-              ></Image>
+                style={{ width: "32", height: "32" }}
+              />
               <Typography
                 id="brand-name"
                 sx={{
@@ -90,7 +88,7 @@ export default function Navbar() {
             <Button
               id="login-button"
               variant="contained"
-              sx={{ bg: colorScheme.theme, mr:3 }}
+              sx={{ bg: colorScheme.theme, mr: 3 }}
             >
               {matchLoginPage ? (
                 <Link href="/register">Register</Link>

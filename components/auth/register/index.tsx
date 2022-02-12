@@ -21,9 +21,8 @@ import {
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
-import { Layout } from "components";
 import { colorScheme } from "utils/color-scheme";
-import { userService } from "services";
+import { userService, firebaseService} from "services";
 
 type FormValues = {
   email: string;
@@ -69,6 +68,16 @@ export default function RegisterForm() {
       setLoginError(res.data.data);
     } else router.push("/");
   };
+
+  const googleSignUp = async()=>{
+    const res:any = await firebaseService.googleLogin();
+    console.log(res);
+  }
+
+  const facebokSignUp = async ()=>{
+    const res :any = await firebaseService.facebookLogin();
+    console.log(res)
+  }
 
   return (
     <Box>
@@ -208,6 +217,7 @@ export default function RegisterForm() {
                   },
                 }}
                 startIcon={<GoogleIcon />}
+                onClick = {googleSignUp}
               >
                 Sign up with Google{" "}
               </Button>
@@ -215,6 +225,7 @@ export default function RegisterForm() {
                 variant="contained"
                 sx={{ bg: colorScheme.facebook, mt: 1 }}
                 startIcon={<FacebookIcon />}
+                onClick = {facebookSignUp}
               >
                 Sign up with Facebook{" "}
               </Button>
