@@ -25,7 +25,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { Layout } from "components";
 import { colorScheme } from "utils/color-scheme";
 import { userService } from "services";
-import { firebaseService } from "services/firebase-service";
+import { firebaseService } from "services";
 
 type FormValues = {
   email: string;
@@ -64,7 +64,7 @@ export default function LoginForm() {
       password: getValues("password"),
     });
     if (res.isError) {
-      setLoginError(res.data.data);
+      setLoginError(res?.data?.data);
     } else router.push("/");
   };
 

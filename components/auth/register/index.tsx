@@ -65,7 +65,7 @@ export default function RegisterForm() {
       password: getValues("password"),
     });
     if (res.isError) {
-      setLoginError(res.data.data);
+      setLoginError(res?.data?.data);
     } else router.push("/");
   };
 
@@ -73,7 +73,7 @@ export default function RegisterForm() {
     const res:any = await firebaseService.googleLogin();
   }
 
-  const facebokSignUp = async ()=>{
+  const facebookSignUp = async ()=>{
     const res :any = await firebaseService.facebookLogin();
   }
 
