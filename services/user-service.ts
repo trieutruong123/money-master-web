@@ -51,7 +51,7 @@ async function googleAuthentication() {
       return data;
     })
     .catch((error) => {
-      throw error;
+      return  error;
     });
 }
 

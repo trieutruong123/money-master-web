@@ -64,9 +64,9 @@ export default function Navbar() {
             <Box display="flex" justifyContent="center" alignItems="center">
               <img
                 id="app-icon"
-                src={require("assets/images/app-icon.png")}
+                src='images/app-icon.png'
                 alt="app icon"
-                style={{ width: "32", height: "32" }}
+                style={{ width: "2rem", height: "2rem" }}
               />
               <Typography
                 id="brand-name"

@@ -31,11 +31,12 @@ async function googleLogin() {
       };
     })
     .catch((error: any) => {
+      console.log(error);
       const errorCode = error.code;
       const errorMessage = error.message;
       const email = error.email;
       const credential = GoogleAuthProvider.credentialFromError(error);
-      return { errorCode, errorMessage, email, credential };
+      throw{errorCode, errorMessage, email, credential }
     });
 }
 

@@ -71,12 +71,10 @@ export default function RegisterForm() {
 
   const googleSignUp = async()=>{
     const res:any = await firebaseService.googleLogin();
-    console.log(res);
   }
 
   const facebokSignUp = async ()=>{
     const res :any = await firebaseService.facebookLogin();
-    console.log(res)
   }
 
   return (

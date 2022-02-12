@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useSession, signIn, signOut } from "next-auth/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -71,12 +70,10 @@ export default function LoginForm() {
 
   const googleSignIn = async ()=>{
     const res:any = await userService.googleAuthentication();
-    console.log(res);
   }
 
   const facebookSignIn = async  ()=>{
     const res :any = await userService.facebookAuthentication();
-    console.log(res)
   }
 
   return (
