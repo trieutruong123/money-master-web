@@ -1,11 +1,9 @@
 import { Alert } from "./Alert";
 import { LoginForm, RegisterForm } from "./auth";
-import { Layout } from "./layout/index";
+import { Layout } from "./layout";
 import { Link } from "./Link";
 import { Spinner } from "./Spinner";
-import Navbar  from "./navbar";
-import FooterComponent from './footer';
+import {Header, Footer} from './landing-page';
 
-export { Layout, Link, Spinner, Alert, LoginForm, RegisterForm, Navbar,FooterComponent };
+export { Layout, Link, Spinner, Alert, LoginForm, RegisterForm, Header, Footer};
 
-export * from './auth';

@@ -1,6 +1,5 @@
+import Head from "next/head";
 import { ReactNode } from "react";
-import { Navbar, FooterComponent } from "components";
-
 interface IProps {
   children: ReactNode;
 }
@@ -9,11 +8,13 @@ export default function Layout({ children }: IProps) {
   const FOOTER_HEIGHT_PX = "256px";
   return (
     <>
-      <div style={{ position: "relative", minHeight: "100vh" }}>
-        <Navbar />
-        <div style={{ paddingBottom: FOOTER_HEIGHT_PX }}>{children}</div>
-        <FooterComponent />
-      </div>
+      <Head>
+        <title>Money Master</title>
+        <link rel='icon' href='images/app-icon.png' />
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
+        <div >{children}</div>
     </>
   );
 }
