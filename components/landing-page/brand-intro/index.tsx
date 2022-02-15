@@ -1,29 +1,32 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 import {
   Grid,
   Typography,
   Button,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
-import { colorScheme } from "utils/color-scheme";
-import { Link } from "components";
+} from '@mui/material';
+import { colorScheme } from 'utils/color-scheme';
+import { Link } from 'components';
 
 export default function BrandIntro() {
   const theme = useTheme();
-  const isLg = useMediaQuery(theme.breakpoints.down("lg"));
-  const isSm = useMediaQuery(theme.breakpoints.down("sm"));
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'));
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <section className="section" id = 'brand-intro' style={{ position: "relative" }}>
+    <section
+      className="section"
+      id="brand-intro"
+      style={{ position: 'relative' }}
+    >
       <Grid
         container
         spacing={2}
         display="flex"
         justifyContent="center"
         alignItems="center"
-        
       >
         <Grid
           item
@@ -32,8 +35,7 @@ export default function BrandIntro() {
           md={7}
           sm={8}
           xs={11}
-          pr={isLg ? "1.5rem" : "0"}
-          
+          pr={isLg ? '1.5rem' : '0'}
         >
           <div>
             <Typography
@@ -54,20 +56,20 @@ export default function BrandIntro() {
             </Typography>
             <Link href="/#">
               <Button variant="contained" color="primary">
-                Find Out How{" "}
-                <span style={{ alignItems: "center", marginLeft: "0.5rem" }}>
+                Find Out How{' '}
+                <span style={{ alignItems: 'center', marginLeft: '0.5rem' }}>
                   &#8594;
                 </span>
               </Button>
             </Link>
           </div>
         </Grid>
-        <Grid item lg={4} md={7} sm={8} xs={11} mt={isLg ? "1rem" : "0rem"}>
+        <Grid item lg={4} md={7} sm={8} xs={11} mt={isLg ? '1rem' : '0rem'}>
           <img
             id="landing-image-01"
             src="images/landing-image-01.png"
             alt="landing image 01"
-            style = {{width:'90%'}}
+            style={{ width: '90%' }}
           />
         </Grid>
       </Grid>

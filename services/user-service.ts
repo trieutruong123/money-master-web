@@ -1,7 +1,7 @@
-import { firebaseService } from "services/firebase-service";
-import Router from "next/router";
-import { mainConstant } from "helpers";
-import { httpService, storageService } from "services";
+import { firebaseService } from 'services/firebase-service';
+import Router from 'next/router';
+import { mainConstant } from 'helpers';
+import { httpService, storageService } from 'services';
 
 export const userService = {
   register,
@@ -13,7 +13,7 @@ export const userService = {
 
 async function register(params: { email: string; password: string }) {
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
-  const url = "/user";
+  const url = '/user';
   const res: any = await httpService.post(url, {
     email: params.email,
     password: params.password,
@@ -27,7 +27,7 @@ async function register(params: { email: string; password: string }) {
 
 async function login(params: { email: string; password: string }) {
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
-  const url = "/authentication";
+  const url = '/authentication';
   const res: any = await httpService.post(url, {
     email: params.email,
     password: params.password,
@@ -51,7 +51,7 @@ async function googleAuthentication() {
       return data;
     })
     .catch((error) => {
-      return  error;
+      return error;
     });
 }
 
@@ -59,5 +59,5 @@ async function facebookAuthentication() {}
 
 async function logout() {
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
-  Router.push("/login");
+  Router.push('/login');
 }

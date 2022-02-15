@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import React, { useState } from 'react';
+import { styled, useTheme } from '@mui/material/styles';
 import {
   Box,
   Divider,
@@ -10,23 +10,23 @@ import {
   ListItem,
   ListItemText,
   Typography,
-} from "@mui/material";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { Link } from "components";
+} from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { Link } from 'components';
 
 interface IProps {
   openDrawer: boolean;
   setOpenDrawer: any;
 }
 
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-  justifyContent: "flex-end",
+  justifyContent: 'flex-end',
 }));
 
 export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
@@ -36,16 +36,16 @@ export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
     (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
         event &&
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
       ) {
         return;
       }
       setOpenDrawer(open);
     };
 
-  const anchor = "left";
+  const anchor = 'left';
   return (
     <Box
       role="presentation"
@@ -59,10 +59,9 @@ export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
         onOpen={toggleDrawer(anchor, true)}
         sx={{ width: 200 }}
       >
-        
-        <DrawerHeader sx = {{mt: '4rem'}}>
+        <DrawerHeader sx={{ mt: '4rem' }}>
           <IconButton onClick={() => setOpenDrawer(false)}>
-            {theme.direction === "ltr" ? (
+            {theme.direction === 'ltr' ? (
               <ChevronLeftIcon />
             ) : (
               <ChevronRightIcon />
@@ -75,7 +74,7 @@ export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
             <ListItemButton>
               <ListItemText>
                 <Link href="/">
-                  <Typography sx={{ fontSize: "1.2rem" }} align="center">
+                  <Typography sx={{ fontSize: '1.2rem' }} align="center">
                     Home
                   </Typography>
                 </Link>
@@ -86,19 +85,19 @@ export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
             <ListItemButton>
               <ListItemText>
                 <Link href="/#feature">
-                  <Typography sx={{ fontSize: "1.2rem" }} align="center">
+                  <Typography sx={{ fontSize: '1.2rem' }} align="center">
                     Features
                   </Typography>
                 </Link>
               </ListItemText>
             </ListItemButton>
           </ListItem>
-          
+
           <ListItem>
             <ListItemButton>
               <ListItemText>
                 <Link href="/#about">
-                  <Typography sx={{ fontSize: "1.2rem" }} align="center">
+                  <Typography sx={{ fontSize: '1.2rem' }} align="center">
                     About
                   </Typography>
                 </Link>

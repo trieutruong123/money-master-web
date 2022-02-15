@@ -1,8 +1,5 @@
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
-import { auth } from "./config";
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from './config';
 
 export const firebaseService = {
   googleLogin,
@@ -36,7 +33,7 @@ async function googleLogin() {
       const errorMessage = error.message;
       const email = error.email;
       const credential = GoogleAuthProvider.credentialFromError(error);
-      throw{errorCode, errorMessage, email, credential }
+      throw { errorCode, errorMessage, email, credential };
     });
 }
 

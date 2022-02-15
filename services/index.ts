@@ -5,4 +5,11 @@ import { alertService } from './alert-service';
 import { userService } from './user-service';
 import { httpService } from './http-service';
 
-export {httpService, userService, storageService, alertService, cryptoService, firebaseService};
+export {
+  httpService,
+  userService,
+  storageService,
+  alertService,
+  cryptoService,
+  firebaseService,
+};

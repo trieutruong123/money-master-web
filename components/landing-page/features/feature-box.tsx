@@ -1,7 +1,7 @@
-import { Box, Grid, Typography, useTheme, useMediaQuery } from "@mui/material";
-import _ from "lodash";
-import Image from "next/image";
-import { colorScheme } from "utils/color-scheme";
+import { Box, Grid, Typography, useTheme, useMediaQuery } from '@mui/material';
+import _ from 'lodash';
+import Image from 'next/image';
+import { colorScheme } from 'utils/color-scheme';
 
 interface FeatureItem {
   id: number;
@@ -16,7 +16,7 @@ interface IProps {
 }
 export default function FeatureBox({ features }: IProps) {
   const theme = useTheme();
-  const isSm = useMediaQuery(theme.breakpoints.down("md"));
+  const isSm = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <>
@@ -27,16 +27,16 @@ export default function FeatureBox({ features }: IProps) {
             container
             item
             alignItems="center"
-            mt={feature.id === 1 ? "2rem" : 0}
+            mt={feature.id === 1 ? '2rem' : 0}
             md={7}
             sm={8}
             xs={11}
           >
-            <Grid item md={6} alignItems="center" >
-              <img src={feature.img} alt="alt" style={{ width: "90%" }} />
+            <Grid item md={6} alignItems="center">
+              <img src={feature.img} alt="alt" style={{ width: '90%' }} />
             </Grid>
             <Grid item md={6}>
-              <Box mt={isSm ? "3rem" : "0"} mb="1.5rem">
+              <Box mt={isSm ? '3rem' : '0'} mb="1.5rem">
                 <Typography variant="h4" mb="1rem" pt="1rem">
                   {feature.title}
                 </Typography>
@@ -62,8 +62,8 @@ export default function FeatureBox({ features }: IProps) {
             sm={8}
             xs={11}
           >
-            <Grid item md={6} >
-              <Box mt={isSm ? "3rem" : "0"} mb="1.5rem">
+            <Grid item md={6}>
+              <Box mt={isSm ? '3rem' : '0'} mb="1.5rem">
                 <Typography variant="h4" mb="1rem" pt="1rem">
                   {feature.title}
                 </Typography>
@@ -77,8 +77,8 @@ export default function FeatureBox({ features }: IProps) {
                 </Typography>
               </Box>
             </Grid>
-            <Grid item md={5} mt={isSm ? "3rem" : "0"}>
-              <img src={feature.img} alt="alt" style={{ width: "90%" }} />
+            <Grid item md={5} mt={isSm ? '3rem' : '0'}>
+              <img src={feature.img} alt="alt" style={{ width: '90%' }} />
             </Grid>
           </Grid>
         );

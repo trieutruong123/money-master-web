@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 import {
   Card,
   CardContent,
@@ -18,13 +18,13 @@ import {
   Typography,
   Grid,
   Box,
-} from "@mui/material";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
-import GoogleIcon from "@mui/icons-material/Google";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import { colorScheme } from "utils/color-scheme";
-import { userService } from "services";
-import { Layout, Header } from "components";
+} from '@mui/material';
+import { VisibilityOff, Visibility } from '@mui/icons-material';
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import { colorScheme } from 'utils/color-scheme';
+import { userService } from 'services';
+import { Layout, Header } from 'components';
 
 type FormValues = {
   email: string;
@@ -35,12 +35,12 @@ export default function LoginForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [loginError, setLoginError] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>('');
   const validationSchema = Yup.object().shape({
-    email: Yup.string().required("Email is required").email("Email is invalid"),
+    email: Yup.string().required('Email is required').email('Email is invalid'),
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .required("Password is required"),
+      .min(8, 'Password must be at least 8 characters')
+      .required('Password is required'),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, reset, handleSubmit, formState, getValues, setError } =
@@ -52,19 +52,19 @@ export default function LoginForm() {
   };
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault();
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
     const res = await userService.login({
-      email: getValues("email"),
-      password: getValues("password"),
+      email: getValues('email'),
+      password: getValues('password'),
     });
     if (res.isError) {
       setLoginError(res?.data?.data);
-    } else router.push("/");
+    } else router.push('/');
   };
 
   const googleSignIn = async () => {
@@ -83,7 +83,7 @@ export default function LoginForm() {
           <Card sx={{ my: 5, mx: 1 }}>
             <Typography
               sx={{
-                fontSize: "2rem",
+                fontSize: '2rem',
               }}
               align="center"
             >
@@ -92,16 +92,16 @@ export default function LoginForm() {
             <Typography
               variant="body1"
               align="center"
-              sx={{ display: "static", height: "1.2rem" }}
+              sx={{ display: 'static', height: '1.2rem' }}
               color={colorScheme.red500}
             >
               {loginError}
             </Typography>
             <CardContent
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
               }}
             >
               <Box
@@ -109,24 +109,24 @@ export default function LoginForm() {
                 autoComplete="off"
                 onSubmit={handleSubmit(onSubmit)}
                 style={{
-                  justifyContent: "center",
-                  display: "flex",
-                  flexDirection: "column",
+                  justifyContent: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
                 <TextField
                   fullWidth
-                  sx={{ my: 1, display: "block" }}
+                  sx={{ my: 1, display: 'block' }}
                   id="outlined-email-address"
                   label="Email address"
-                  {...register("email")}
+                  {...register('email')}
                   variant="outlined"
-                  error={typeof errors.email?.message !== "undefined"}
+                  error={typeof errors.email?.message !== 'undefined'}
                   helperText={errors.email?.message}
                 ></TextField>
                 <FormControl
-                  error={typeof errors.password?.message !== "undefined"}
-                  sx={{ mt: 1, display: "block" }}
+                  error={typeof errors.password?.message !== 'undefined'}
+                  sx={{ mt: 1, display: 'block' }}
                   variant="outlined"
                 >
                   <InputLabel htmlFor="outlined-adornment-password">
@@ -135,8 +135,8 @@ export default function LoginForm() {
                   <OutlinedInput
                     fullWidth
                     id="outlined-adornment-password"
-                    type={showPassword ? "text" : "password"}
-                    {...register("password")}
+                    type={showPassword ? 'text' : 'password'}
+                    {...register('password')}
                     endAdornment={
                       <InputAdornment position="end">
                         <IconButton
@@ -157,7 +157,7 @@ export default function LoginForm() {
                   </FormHelperText>
                 </FormControl>
                 <Link href="/reset-password">
-                  <a style={{ marginLeft: "1rem" }} color={colorScheme.theme}>
+                  <a style={{ marginLeft: '1rem' }} color={colorScheme.theme}>
                     Forgot password ?
                   </a>
                 </Link>
@@ -182,7 +182,7 @@ export default function LoginForm() {
                 sx={{
                   bgcolor: colorScheme.red400,
                   mt: 1,
-                  "&:hover": {
+                  '&:hover': {
                     bgcolor: colorScheme.red500,
                   },
                 }}
@@ -197,10 +197,10 @@ export default function LoginForm() {
                 onClick={facebookSignIn}
                 startIcon={<FacebookIcon />}
               >
-                Sign in with Facebook{" "}
+                Sign in with Facebook{' '}
               </Button>
-              <p style={{ marginLeft: "1rem" }}>
-                Don&apos;t have an account?{" "}
+              <p style={{ marginLeft: '1rem' }}>
+                Don&apos;t have an account?{' '}
                 <Link href="/register">
                   <a color={colorScheme.theme}>Register</a>
                 </Link>

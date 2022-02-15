@@ -1,7 +1,7 @@
-import { cryptoService } from "./crypto-service";
-import axios from "axios";
-import { mainConstant } from "helpers";
-import { storageService } from "services";
+import { cryptoService } from './crypto-service';
+import axios from 'axios';
+import { mainConstant } from 'helpers';
+import { storageService } from 'services';
 
 export const httpService = {
   get: sendGet,
@@ -35,7 +35,7 @@ async function sendPost(url: string, body: object) {
     const response = await axios.post(
       `${BASE_URL}${url}`,
       JSON.stringify(body),
-      { headers: getHeader() }
+      { headers: getHeader() },
     );
 
     return {
@@ -55,7 +55,7 @@ async function sendPut(url: string, body: object) {
     const response = await axios.put(
       `${BASE_URL}${url}`,
       JSON.stringify(body),
-      { headers: getHeader() }
+      { headers: getHeader() },
     );
 
     return {
@@ -101,7 +101,7 @@ function authHeader() {
 
 function getHeader() {
   const Headers: any = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   };
   return Headers;
 }

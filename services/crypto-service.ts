@@ -1,6 +1,6 @@
-import { AES, enc } from "crypto-js";
+import { AES, enc } from 'crypto-js';
 
-const HASH_KEY:string = process.env.NEXT_PUBLIC_HASH_KEY||'';
+const HASH_KEY: string = process.env.NEXT_PUBLIC_HASH_KEY || '';
 
 export const cryptoService = { encrypt, decrypt };
 

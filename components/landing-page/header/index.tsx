@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import {
   AppBar,
   Box,
@@ -11,36 +11,36 @@ import {
   useMediaQuery,
   IconButton,
   Tab,
-} from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "components";
-import { colorScheme } from "utils/color-scheme";
-import LinkTab from "./link-tab";
-import DrawerComponent from "./drawer-component";
-import styled from "./style/header.module.css";
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Link } from 'components';
+import { colorScheme } from 'utils/color-scheme';
+import LinkTab from './link-tab';
+import DrawerComponent from './drawer-component';
+import styled from './style/header.module.css';
 
 export default function Header() {
-  const [value, setValue] = useState<any>("home");
+  const [value, setValue] = useState<any>('home');
   const [openDrawer, setOpenDrawer] = useState(false);
   const router = useRouter();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const matchAuthPage: boolean = ["/login", "/register", "/"].includes(
-    router.pathname
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const matchAuthPage: boolean = ['/login', '/register', '/'].includes(
+    router.pathname,
   );
-  const matchLoginPage: boolean = router.pathname === "/login";
+  const matchLoginPage: boolean = router.pathname === '/login';
 
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
     setValue(newValue);
   };
 
   const scrollToTopOfPage = async () => {
-    if (router.pathname !== "/") router.push("/");
+    if (router.pathname !== '/') router.push('/');
     else {
       document
-        .getElementById("top-of-page")
-        ?.scrollIntoView({ behavior: "smooth" });
-      router.push("/", undefined, { shallow: true });
+        .getElementById('top-of-page')
+        ?.scrollIntoView({ behavior: 'smooth' });
+      router.push('/', undefined, { shallow: true });
     }
   };
 
@@ -80,7 +80,7 @@ export default function Header() {
                 id="app-icon"
                 src="images/app-icon.png"
                 alt="app icon"
-                style={{ width: "2rem", height: "2rem" }}
+                style={{ width: '2rem', height: '2rem' }}
               />
               <Typography
                 id="brand-name"
@@ -89,7 +89,7 @@ export default function Header() {
                   color: colorScheme.theme,
                 }}
                 fontWeight="bold"
-                style={{ cursor: "pointer" }}
+                style={{ cursor: 'pointer' }}
                 variant="h6"
               >
                 Money Master
@@ -98,7 +98,7 @@ export default function Header() {
           </Link>
           {!isMobile ? (
             <Box
-              sx={{ flexGrow: 1, display: { xs: "none", sm: "flex" } }}
+              sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}
               justifyContent="center"
               alignItems="center"
             >
@@ -126,7 +126,7 @@ export default function Header() {
               <Button
                 id="login-button"
                 variant="contained"
-                sx={{ bg: colorScheme.theme, mr: 1, ml: "auto" }}
+                sx={{ bg: colorScheme.theme, mr: 1, ml: 'auto' }}
               >
                 {matchLoginPage ? (
                   <Link href="/register">Register</Link>

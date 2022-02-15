@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 import {
   Card,
   CardContent,
@@ -17,13 +17,13 @@ import {
   Typography,
   Grid,
   Box,
-} from "@mui/material";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
-import GoogleIcon from "@mui/icons-material/Google";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import { colorScheme } from "utils/color-scheme";
-import { userService, firebaseService } from "services";
-import { Layout, Header } from "components";
+} from '@mui/material';
+import { VisibilityOff, Visibility } from '@mui/icons-material';
+import GoogleIcon from '@mui/icons-material/Google';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import { colorScheme } from 'utils/color-scheme';
+import { userService, firebaseService } from 'services';
+import { Layout, Header } from 'components';
 
 type FormValues = {
   email: string;
@@ -35,15 +35,15 @@ export default function RegisterForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [loginError, setLoginError] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>('');
   const validationSchema = Yup.object().shape({
-    email: Yup.string().required("Email is required").email("Email is invalid"),
+    email: Yup.string().required('Email is required').email('Email is invalid'),
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
-      .required("Password is required"),
+      .min(8, 'Password must be at least 8 characters')
+      .required('Password is required'),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Password must match")
-      .required("Confirm password is required"),
+      .oneOf([Yup.ref('password'), null], 'Password must match')
+      .required('Confirm password is required'),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, reset, handleSubmit, formState, getValues, setError } =
@@ -55,19 +55,19 @@ export default function RegisterForm() {
   };
 
   const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
+    event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     event.preventDefault();
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
     const res = await userService.register({
-      email: getValues("email"),
-      password: getValues("password"),
+      email: getValues('email'),
+      password: getValues('password'),
     });
     if (res.isError) {
       setLoginError(res?.data?.data);
-    } else router.push("/");
+    } else router.push('/');
   };
 
   const googleSignUp = async () => {
@@ -87,7 +87,7 @@ export default function RegisterForm() {
             <Card sx={{ my: 5, mx: 1 }}>
               <Typography
                 sx={{
-                  fontSize: "2rem",
+                  fontSize: '2rem',
                 }}
                 align="center"
               >
@@ -97,15 +97,15 @@ export default function RegisterForm() {
                 variant="body1"
                 align="center"
                 color={colorScheme.red500}
-                sx={{ display: "static", height: "1.2rem" }}
+                sx={{ display: 'static', height: '1.2rem' }}
               >
                 {loginError}
               </Typography>
               <CardContent
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
                 }}
               >
                 <Box
@@ -113,24 +113,24 @@ export default function RegisterForm() {
                   autoComplete="off"
                   onSubmit={handleSubmit(onSubmit)}
                   style={{
-                    justifyContent: "center",
-                    display: "flex",
-                    flexDirection: "column",
+                    justifyContent: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
                   }}
                 >
                   <TextField
                     fullWidth
-                    sx={{ my: 1, display: "block" }}
+                    sx={{ my: 1, display: 'block' }}
                     id="outlined-email-address"
                     label="Email address"
-                    {...register("email")}
+                    {...register('email')}
                     variant="outlined"
-                    error={typeof errors.email?.message !== "undefined"}
+                    error={typeof errors.email?.message !== 'undefined'}
                     helperText={errors.email?.message}
                   ></TextField>
                   <FormControl
-                    error={typeof errors.password?.message !== "undefined"}
-                    sx={{ my: 1, display: "block" }}
+                    error={typeof errors.password?.message !== 'undefined'}
+                    sx={{ my: 1, display: 'block' }}
                     variant="outlined"
                   >
                     <InputLabel htmlFor="outlined-adornment-password">
@@ -139,8 +139,8 @@ export default function RegisterForm() {
                     <OutlinedInput
                       fullWidth
                       id="outlined-adornment-password"
-                      type={showPassword ? "text" : "password"}
-                      {...register("password")}
+                      type={showPassword ? 'text' : 'password'}
+                      {...register('password')}
                       endAdornment={
                         <InputAdornment position="end">
                           <IconButton
@@ -162,9 +162,9 @@ export default function RegisterForm() {
                   </FormControl>
                   <FormControl
                     error={
-                      typeof errors.confirmPassword?.message !== "undefined"
+                      typeof errors.confirmPassword?.message !== 'undefined'
                     }
-                    sx={{ my: 1, display: "block" }}
+                    sx={{ my: 1, display: 'block' }}
                     variant="outlined"
                   >
                     <InputLabel htmlFor="outlined-adornment-confirm-password">
@@ -173,8 +173,8 @@ export default function RegisterForm() {
                     <OutlinedInput
                       fullWidth
                       id="outlined-adornment-confirm-password"
-                      {...register("confirmPassword")}
-                      type={showPassword ? "text" : "password"}
+                      {...register('confirmPassword')}
+                      type={showPassword ? 'text' : 'password'}
                       endAdornment={
                         <InputAdornment position="end">
                           <IconButton
@@ -215,14 +215,14 @@ export default function RegisterForm() {
                   sx={{
                     bgcolor: colorScheme.red400,
                     mt: 1,
-                    "&:hover": {
+                    '&:hover': {
                       bgcolor: colorScheme.red500,
                     },
                   }}
                   startIcon={<GoogleIcon />}
                   onClick={googleSignUp}
                 >
-                  Sign up with Google{" "}
+                  Sign up with Google{' '}
                 </Button>
                 <Button
                   variant="contained"
@@ -230,7 +230,7 @@ export default function RegisterForm() {
                   startIcon={<FacebookIcon />}
                   onClick={facebookSignUp}
                 >
-                  Sign up with Facebook{" "}
+                  Sign up with Facebook{' '}
                 </Button>
               </CardContent>
             </Card>
