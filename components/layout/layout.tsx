@@ -14,7 +14,7 @@ export default function Layout({ children }: IProps) {
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
-        <div >{children}</div>
+        <div>{children}</div>
     </>
   );
 }

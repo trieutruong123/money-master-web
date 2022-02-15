@@ -10,16 +10,17 @@ import {
   useTheme,
   useMediaQuery,
   IconButton,
+  Tab,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link } from "components";
 import { colorScheme } from "utils/color-scheme";
 import LinkTab from "./link-tab";
 import DrawerComponent from "./drawer-component";
+import styled from "./style/header.module.css";
 
 export default function Header() {
-  const [sticky, setSticky] = useState(false);
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState<any>('home');
   const [openDrawer, setOpenDrawer] = useState(false);
   const router = useRouter();
   const theme = useTheme();
@@ -29,24 +30,28 @@ export default function Header() {
   );
   const matchLoginPage: boolean = router.pathname === "/login";
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: React.SyntheticEvent, newValue: any) => {
     setValue(newValue);
+    console.log(newValue);
   };
 
-  const handleScroll = () => {
-    if (window.scrollY > 90) {
-      setSticky(true);
-    } else if (window.scrollY < 90) {
-      setSticky(false);
+  const scrollToTopOfPage = async () => {
+    if (router.pathname !== "/") router.push("/");
+    else
+    {
+      document
+        .getElementById("top-of-page")
+        ?.scrollIntoView({ behavior: "smooth" });
+      router.push ('/', undefined, {shallow:true});
     }
   };
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1 }} className="section">
       <AppBar
-        position={sticky ? "sticky" : "relative"}
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        style={{
+        className={styled.navbar}
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
           backgroundColor: colorScheme.white,
           color: colorScheme.black200,
         }}
@@ -67,7 +72,12 @@ export default function Header() {
             </>
           ) : null}
           <Link href="/">
-            <Box display="flex" justifyContent="end" alignItems="end">
+            <Box
+              display="flex"
+              mr="auto"
+              justifyContent="start"
+              alignItems="end"
+            >
               <img
                 id="app-icon"
                 src="images/app-icon.png"
@@ -88,8 +98,7 @@ export default function Header() {
               </Typography>
             </Box>
           </Link>
-          {
-          !isMobile ? (
+          {!isMobile ? (
             <Box
               sx={{ flexGrow: 1, display: { xs: "none", sm: "flex" } }}
               justifyContent="center"
@@ -99,11 +108,15 @@ export default function Header() {
                 value={value}
                 onChange={handleChange}
                 aria-label="nav tabs example"
+                centered
               >
-                <LinkTab label="Home" href="/" />
-                <LinkTab label="Features" href="/#feature" />
-                <LinkTab label="Services" href="/#service" />
-                <LinkTab label="About" href="/#about" />
+                <Tab
+                  value="home"
+                  label="HOME"
+                  onClick={scrollToTopOfPage}
+                ></Tab>
+                <Tab value="feature" label="FEATURE" href="/#feature"></Tab>
+                <Tab value="about" label="ABOUT" href="/#about"></Tab>
               </Tabs>
             </Box>
           ) : (

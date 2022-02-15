@@ -13,4 +13,6 @@ export const colorScheme = {
     blue400: '#4ba9c8',
     purple600: '#D41789',
     facebook: '#4267B2',
+    gray200: '#e0e0e0'
+
 }

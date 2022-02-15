@@ -1,14 +1,18 @@
-import { Footer, Header, Layout } from "components";
+import { Box } from "@mui/material";
+import { BrandIntro, Footer, Header, Layout, Feature } from "components";
 import type { NextPage } from "next";
 //import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
   return (
-    <Layout>
-      <Header />
-
-      <Footer />
-    </Layout>
+    <Box id="top-of-page">
+      <Layout>
+        <Header />
+        <BrandIntro />
+        <Feature />
+        <Footer />
+      </Layout>
+    </Box>
   );
 };
 

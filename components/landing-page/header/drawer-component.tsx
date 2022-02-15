@@ -93,17 +93,7 @@ export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
               </ListItemText>
             </ListItemButton>
           </ListItem>
-          <ListItem>
-            <ListItemButton>
-              <ListItemText>
-                <Link href="/#service">
-                  <Typography sx={{ fontSize: "1.2rem" }} align="center">
-                    Services
-                  </Typography>
-                </Link>
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
+          
           <ListItem>
             <ListItemButton>
               <ListItemText>
