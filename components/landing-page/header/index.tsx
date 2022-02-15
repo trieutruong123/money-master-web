@@ -20,7 +20,7 @@ import DrawerComponent from "./drawer-component";
 import styled from "./style/header.module.css";
 
 export default function Header() {
-  const [value, setValue] = useState<any>('home');
+  const [value, setValue] = useState<any>("home");
   const [openDrawer, setOpenDrawer] = useState(false);
   const router = useRouter();
   const theme = useTheme();
@@ -32,17 +32,15 @@ export default function Header() {
 
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
     setValue(newValue);
-    console.log(newValue);
   };
 
   const scrollToTopOfPage = async () => {
     if (router.pathname !== "/") router.push("/");
-    else
-    {
+    else {
       document
         .getElementById("top-of-page")
         ?.scrollIntoView({ behavior: "smooth" });
-      router.push ('/', undefined, {shallow:true});
+      router.push("/", undefined, { shallow: true });
     }
   };
 

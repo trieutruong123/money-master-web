@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { colorScheme } from "utils/color-scheme";
 import { Link } from "components";
-import landingImage from "assets/images/landing-image-01.png";
 
 export default function BrandIntro() {
   const theme = useTheme();
@@ -66,7 +65,7 @@ export default function BrandIntro() {
         <Grid item lg={4} md={7} sm={8} xs={11} mt={isLg ? "1rem" : "0rem"}>
           <img
             id="landing-image-01"
-            src={landingImage}
+            src="images/landing-image-01.png"
             alt="landing image 01"
             style = {{width:'90%'}}
           />
