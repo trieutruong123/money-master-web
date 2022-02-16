@@ -1,7 +1,12 @@
 import { useRouter } from 'next/router';
-import { LoginForm, Layout } from 'components';
+import { Header, Layout, LoginForm } from 'components';
 
 export default function Login() {
   const router = useRouter();
-  return <LoginForm></LoginForm>;
+  return (
+    <Layout>
+      <Header />
+      <LoginForm />
+    </Layout>
+  );
 }

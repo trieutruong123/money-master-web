@@ -2,13 +2,13 @@ import { Alert } from './Alert';
 import { LoginForm, RegisterForm } from './auth';
 import { Layout } from './layout';
 import { Link } from './Link';
-import { Spinner } from './Spinner';
 import { Header, Footer, BrandIntro, Feature } from './landing-page';
+import { CircularLoading } from './loading';
+import { AuthGuard } from './protected-route/auth-guard';
 
 export {
   Layout,
   Link,
-  Spinner,
   Alert,
   LoginForm,
   RegisterForm,
@@ -16,4 +16,6 @@ export {
   Footer,
   Feature,
   BrandIntro,
+  CircularLoading,
+  AuthGuard,
 };

@@ -13,7 +13,6 @@ const googleProvider = new GoogleAuthProvider();
 async function googleLogin() {
   const respnose: any = await signInWithPopup(auth, googleProvider)
     .then((result: any) => {
-      console.log(result);
       const credential = GoogleAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken;
       // The signed-in user info.
@@ -28,7 +27,6 @@ async function googleLogin() {
       };
     })
     .catch((error: any) => {
-      console.log(error);
       const errorCode = error.code;
       const errorMessage = error.message;
       const email = error.email;

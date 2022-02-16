@@ -1,7 +1,12 @@
-import { useRouter } from "next/router";
-import { RegisterForm, Layout } from "components";
+import { useRouter } from 'next/router';
+import { Header, Layout, RegisterForm } from 'components';
 
-export default function Login() {
+export default function Register() {
   const router = useRouter();
-  return <RegisterForm></RegisterForm>;
+  return (
+    <Layout>
+      <Header />
+      <RegisterForm />
+    </Layout>
+  );
 }

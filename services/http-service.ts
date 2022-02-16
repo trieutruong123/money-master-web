@@ -102,6 +102,7 @@ function authHeader() {
 function getHeader() {
   const Headers: any = {
     'Content-Type': 'application/json',
+    ...authHeader(),
   };
   return Headers;
 }

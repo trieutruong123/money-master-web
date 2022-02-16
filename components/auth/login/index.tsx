@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { observer } from 'mobx-react-lite';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import {
@@ -22,16 +23,18 @@ import {
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
-import { colorScheme } from 'utils/color-scheme';
 import { userService } from 'services';
 import { Layout, Header } from 'components';
+import { authStore, userStore } from 'store';
+import { previousPath } from 'helpers';
+import { colorScheme } from 'utils/color-scheme';
 
 type FormValues = {
   email: string;
   password: string;
 };
 
-export default function LoginForm() {
+export const LoginForm = observer(() => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -47,6 +50,16 @@ export default function LoginForm() {
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
+  useEffect(() => {
+    if (!authStore.isAuthenticating) {
+      if (userStore.user) {
+        const redirect = previousPath.getPreviousPath();
+        router.push(redirect);
+        previousPath.clearRedirect();
+      }
+    }
+  }, [router, previousPath, authStore.isAuthenticating, userStore.user]);
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -58,13 +71,14 @@ export default function LoginForm() {
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+    
     const res = await userService.login({
       email: getValues('email'),
       password: getValues('password'),
     });
     if (res.isError) {
       setLoginError(res?.data?.data);
-    } else router.push('/');
+    }
   };
 
   const googleSignIn = async () => {
@@ -76,8 +90,6 @@ export default function LoginForm() {
   };
 
   return (
-    <Layout>
-      <Header></Header>
       <Grid container spacing={1} alignItems="center" justifyContent="center">
         <Grid item xs={12} sm={8} md={5} xl={3}>
           <Card sx={{ my: 5, mx: 1 }}>
@@ -209,6 +221,5 @@ export default function LoginForm() {
           </Card>
         </Grid>
       </Grid>
-    </Layout>
   );
-}
+});

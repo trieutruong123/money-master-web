@@ -5,9 +5,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "export ": "next export",
+    "lint": "next lint",
+    "lint-fix": "next lint --fix"
   },
   "dependencies": {
+    "@babel/plugin-proposal-decorators": "^7.17.2",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@hookform/resolvers": "^2.8.8",
