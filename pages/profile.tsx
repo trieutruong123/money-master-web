@@ -1,13 +1,12 @@
-import { Header, Layout, Link } from "components";
-
+import { Header, Layout, Link } from 'components';
 
 export default function Profile() {
   return (
     <Layout>
-      <Header/>
-      <h1>Welcome to dashboard</h1>
-      <Link href = '/setting'>Settings</Link>
-      <Link href = '/dashboard'>Dashboard</Link>
+      <Header />
+      <h1>Welcome to Profile</h1>
+      <Link href="/setting">Settings</Link>
+      <Link href="/dashboard">Dashboard</Link>
     </Layout>
   );
 }

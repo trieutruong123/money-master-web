@@ -28,8 +28,8 @@ export default function Header() {
   const matchAuthPage: boolean = ['/login', '/register', '/'].includes(
     router.pathname,
   );
-  const matchLoginPage: boolean = router.pathname === '/login';
 
+  const matchSpecificPage: boolean =['/', 'docs'].includes(router.pathname);
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
     setValue(newValue);
   };
@@ -96,7 +96,7 @@ export default function Header() {
               </Typography>
             </Box>
           </Link>
-          {!isMobile ? (
+          {!isMobile && matchSpecificPage  ? (
             <Box
               sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}
               justifyContent="center"
@@ -115,6 +115,7 @@ export default function Header() {
                 ></Tab>
                 <Tab value="feature" label="FEATURE" href="/#feature"></Tab>
                 <Tab value="about" label="ABOUT" href="/#about"></Tab>
+                <Tab value="docs" label="DOCS" href="/docs"></Tab>
               </Tabs>
             </Box>
           ) : (
@@ -128,7 +129,7 @@ export default function Header() {
                 variant="contained"
                 sx={{ bg: colorScheme.theme, mr: 1, ml: 'auto' }}
               >
-                {matchLoginPage ? (
+                {router.pathname === '/login' ? (
                   <Link href="/register">Register</Link>
                 ) : (
                   <Link href="/login">Login</Link>

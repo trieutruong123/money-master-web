@@ -105,6 +105,19 @@ export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
             </ListItemButton>
           </ListItem>
         </List>
+        <List>
+          <ListItem>
+            <ListItemButton>
+              <ListItemText>
+                <Link href="/docs">
+                  <Typography sx={{ fontSize: '1.2rem' }} align="center">
+                    Docs
+                  </Typography>
+                </Link>
+              </ListItemText>
+            </ListItemButton>
+          </ListItem>
+        </List>
       </SwipeableDrawer>
     </Box>
   );

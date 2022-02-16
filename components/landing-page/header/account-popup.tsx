@@ -37,7 +37,7 @@ export default function AccountIconPopup() {
   };
   return (
     <>
-      <Box sx={{ display: { xs: 'none' } }}>
+      <Box sx={{ display: 'none' }}>
         <IconButton
           id="account-button"
           size="large"
