@@ -10,7 +10,6 @@
     "lint-fix": "next lint --fix"
   },
   "dependencies": {
-    "@babel/plugin-proposal-decorators": "^7.17.2",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@hookform/resolvers": "^2.8.8",
