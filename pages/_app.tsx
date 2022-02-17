@@ -1,7 +1,6 @@
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';

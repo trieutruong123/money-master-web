@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { DefaultNavbar, DefaultLayout, RegisterForm } from 'components';
-import { Head } from 'next/head';
+import  Head  from 'next/head';
 
 const Register = () => {
   const router = useRouter();

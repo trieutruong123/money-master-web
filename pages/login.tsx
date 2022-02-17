@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { DefaultNavbar, DefaultLayout, LoginForm } from 'components';
-import { Head } from 'next/head';
+import Head from 'next/head';
 
 const Login = () => {
   const router = useRouter();
