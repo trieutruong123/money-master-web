@@ -10,58 +10,39 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { ChartBar as ChartBarIcon } from 'assets/icons/chart-bar';
 import { Cog as CogIcon } from 'assets/icons/cog';
-import { Lock as LockIcon } from 'assets/icons/lock';
 import { Selector as SelectorIcon } from 'assets/icons/selector';
-import { ShoppingBag as ShoppingBagIcon } from 'assets/icons/shopping-bag';
 import { User as UserIcon } from 'assets/icons/user';
-import { UserAdd as UserAddIcon } from 'assets/icons/user-add';
-import { Users as UsersIcon } from 'assets/icons/users';
-import { XCircle as XCircleIcon } from 'assets/icons/x-circle';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import PieChartOutlineIcon from '@mui/icons-material/PieChartOutline';
 import { NavItem } from './nav-item';
 
 const items = [
   {
-    href: '/',
+    href: '/dashboard',
     icon: <ChartBarIcon fontSize="small" />,
     title: 'Dashboard',
   },
   {
-    href: '/customers',
-    icon: <UsersIcon fontSize="small" />,
-    title: 'Customers',
+    href: '/portfolio',
+    icon: <AttachMoneyIcon fontSize="small" />,
+    title: 'Portfolio',
   },
   {
-    href: '/products',
-    icon: <ShoppingBagIcon fontSize="small" />,
-    title: 'Products',
+    href: '/report',
+    icon: <PieChartOutlineIcon fontSize="small" />,
+    title: 'Report',
   },
   {
     href: '/account',
     icon: <UserIcon fontSize="small" />,
-    title: 'Account',
+    title: 'Profile',
   },
   {
-    href: '/settings',
+    href: '/setting',
     icon: <CogIcon fontSize="small" />,
     title: 'Settings',
-  },
-  {
-    href: '/login',
-    icon: <LockIcon fontSize="small" />,
-    title: 'Login',
-  },
-  {
-    href: '/register',
-    icon: <UserAddIcon fontSize="small" />,
-    title: 'Register',
-  },
-  {
-    href: '/404',
-    icon: <XCircleIcon fontSize="small" />,
-    title: 'Error',
   },
 ];
 
@@ -97,14 +78,14 @@ export const DashboardSidebar = (props: any) => {
         }}
       >
         <div>
-          <Box sx={{ p: 3 }}>
-            <NextLink href="/" passHref>
+          <Box sx={{ p: 3 }} justifyContent="center" alignItems="center">
+            <NextLink href="/dashboard" passHref>
               <a>
                 <img
                   id="app-icon"
                   src="images/app-icon.png"
                   alt="app icon"
-                  style={{ width: '2rem', height: '2rem' }}
+                  style={{ width: '3.5rem', height: '3.5rem' }}
                 />
               </a>
             </NextLink>
@@ -124,10 +105,7 @@ export const DashboardSidebar = (props: any) => {
             >
               <div>
                 <Typography color="inherit" variant="subtitle1">
-                  Acme Inc
-                </Typography>
-                <Typography color="neutral.400" variant="body2">
-                  Your tier : Premium
+                  Money Master
                 </Typography>
               </div>
               <SelectorIcon
@@ -157,44 +135,6 @@ export const DashboardSidebar = (props: any) => {
           ))}
         </Box>
         <Divider sx={{ borderColor: '#2D3748' }} />
-        <Box
-          sx={{
-            px: 2,
-            py: 3,
-          }}
-        >
-          <Typography color="neutral.100" variant="subtitle2">
-            Need more features?
-          </Typography>
-          <Typography color="neutral.500" variant="body2">
-            Check out our Pro solution template.
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              mt: 2,
-              mx: 'auto',
-              width: '160px',
-              '& img': {
-                width: '100%',
-              },
-            }}
-          >
-            <img alt="Go to pro" src="/static/images/sidebar_pro.png" />
-          </Box>
-          <NextLink href="https://material-kit-pro-react.devias.io/" passHref>
-            <Button
-              color="secondary"
-              component="a"
-              endIcon={<OpenInNewIcon />}
-              fullWidth
-              sx={{ mt: 2 }}
-              variant="contained"
-            >
-              Pro Live Preview
-            </Button>
-          </NextLink>
-        </Box>
       </Box>
     </>
   );

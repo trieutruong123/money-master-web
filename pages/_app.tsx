@@ -1,13 +1,15 @@
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
-import { AuthGuard } from 'components';
+import Head from 'next/head';
+
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { createEmotionCache } from '../utils/create-emotion-cache';
-import { theme } from '../theme';
+import { theme } from 'theme';
+import { AuthGuard } from 'components';
 import '../styles/globals.css';
 
 type NextApplicationPage<P = any, IP = P> = NextPage<P, IP> & {
@@ -30,17 +32,25 @@ export default function MyApp(props: AppProps) {
   const getLayout = Component.getLayout ?? ((page: any) => page);
 
   return (
-    <CacheProvider value={emotionCache}>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {Component.requireAuth ? (
-            <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
-          ) : (
-            getLayout(<Component {...pageProps} />)
-          )}{' '}
-        </ThemeProvider>
-      </LocalizationProvider>
-    </CacheProvider>
+    <>
+      <Head>
+        <title>Money Master</title>
+        <link rel="icon" href="images/app-icon.png" />
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
+      <CacheProvider value={emotionCache}>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {Component.requireAuth ? (
+              <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
+            ) : (
+              getLayout(<Component {...pageProps} />)
+            )}{' '}
+          </ThemeProvider>
+        </LocalizationProvider>
+      </CacheProvider>
+    </>
   );
 }

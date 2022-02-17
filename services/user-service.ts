@@ -90,9 +90,7 @@ async function fetchUserInfo() {
     authStore.setAuthenticating(false);
     return true;
   } else {
-    const {
-      data: { status },
-    } = res;
+    const status = res.data?.status;
     authStore.setAuthenticating(false);
     if (status in [401, 500]) {
       return false;

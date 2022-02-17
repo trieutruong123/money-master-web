@@ -1,12 +1,17 @@
 import { useRouter } from 'next/router';
-import { Header, Layout, LoginForm } from 'components';
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import { DefaultNavbar, DefaultLayout, LoginForm } from 'components';
 
-export default function Login() {
+const Login = () => {
   const router = useRouter();
   return (
-    <Layout>
-      <Header />
+    <>
+      <DefaultNavbar />
       <LoginForm />
-    </Layout>
+    </>
   );
-}
+};
+Login.getLayout = (page: ReactJSXElement) => (
+  <DefaultLayout>{page}</DefaultLayout>
+);
+export default Login;

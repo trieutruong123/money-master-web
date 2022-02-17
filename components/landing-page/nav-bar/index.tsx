@@ -19,7 +19,7 @@ import LinkTab from './link-tab';
 import DrawerComponent from './drawer-component';
 import styled from './style/header.module.css';
 
-export default function Header() {
+export default function DefaultNavbar() {
   const [value, setValue] = useState<any>('home');
   const [openDrawer, setOpenDrawer] = useState(false);
   const router = useRouter();

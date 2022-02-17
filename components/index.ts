@@ -1,21 +1,18 @@
-import { Alert } from './Alert';
+import { Alert } from './alert';
 import { LoginForm, RegisterForm } from './auth';
-import { Layout } from './layout';
-import { Link } from './Link';
-import { Header, Footer, BrandIntro, Feature } from './landing-page';
+import DefaultLayout from './default-layout';
+import { DefaultNavbar } from './landing-page';
+import { Link } from './link';
 import { CircularLoading } from './loading';
 import { AuthGuard } from './protected-route/auth-guard';
 
 export {
-  Layout,
+  DefaultLayout,
+  DefaultNavbar,
+  AuthGuard,
+  CircularLoading,
   Link,
-  Alert,
   LoginForm,
   RegisterForm,
-  Header,
-  Footer,
-  Feature,
-  BrandIntro,
-  CircularLoading,
-  AuthGuard,
+  Alert,
 };

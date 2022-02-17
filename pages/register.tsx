@@ -1,12 +1,19 @@
 import { useRouter } from 'next/router';
-import { Header, Layout, RegisterForm } from 'components';
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import { DefaultNavbar, DefaultLayout, RegisterForm } from 'components';
 
-export default function Register() {
+const  Register = () => {
   const router = useRouter();
   return (
-    <Layout>
-      <Header />
+    <>
+      <DefaultNavbar />
       <RegisterForm />
-    </Layout>
+    </>
   );
 }
+
+Register.getLayout = (page: ReactJSXElement) => (
+  <DefaultLayout>{page}</DefaultLayout>
+);
+
+export default Register;

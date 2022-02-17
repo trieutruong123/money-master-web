@@ -29,7 +29,7 @@ const NotFound = () => (
             404: The page you are looking for isn’t here
           </Typography>
           <Typography align="center" color="textPrimary" variant="subtitle2">
-            Oops, it seem your page is unavailable now, come back later.
+            Oops, it seems like your page  unavailable now, come back later.
           </Typography>
           <Box sx={{ textAlign: 'center' }}>
             <img

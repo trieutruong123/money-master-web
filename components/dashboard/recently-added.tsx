@@ -80,9 +80,9 @@ const orders = [
   },
 ];
 
-export const LatestOrders = (props: any) => (
+export const RecentlyAdded = (props: any) => (
   <Card {...props}>
-    <CardHeader title="Latest Orders" />
+    <CardHeader title="Recently Added" />
     <PerfectScrollbar>
       <Box sx={{ minWidth: 800 }}>
         <Table>
