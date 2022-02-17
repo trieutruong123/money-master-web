@@ -3,10 +3,11 @@ import { Box, Container, Typography } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { DashboardLayout } from 'components/dashboard-layout';
 
-const Portfolio = () => (
+
+const RealEstate = () => (
   <>
     <Head>
-      <title>Portfolio | Money Master</title>
+      <title>Real Estate | Money Master</title>
     </Head>
     <Box
       component="main"
@@ -17,16 +18,17 @@ const Portfolio = () => (
     >
       <Container maxWidth="lg">
         <Typography sx={{ mb: 3 }} variant="h4">
-        Portfolio
+        Real Estate
         </Typography>
       </Container>
+      
     </Box>
   </>
 );
 
-//Portfolio.requireAuth = true;
-Portfolio.getLayout = (page: ReactJSXElement) => (
+//RealEstate.requireAuth = true;
+RealEstate.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
 
-export default Portfolio;
+export default RealEstate;

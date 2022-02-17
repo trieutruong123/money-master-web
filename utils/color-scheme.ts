@@ -15,3 +15,21 @@ export const colorScheme = {
   facebook: '#4267B2',
   gray200: '#e0e0e0',
 };
+
+export const getRandomPallete = () => {
+  const categories = [
+    'primary',
+    'secondary',
+    'success',
+    'error',
+    'info',
+    'warning',
+  ];
+
+  const types = ['main', 'light', 'dark'];
+  const cateLen = categories.length;
+  const typesLen = types.length;
+  return `${categories[Math.floor(Math.random() * cateLen)]}.${
+    types[Math.floor(Math.random() * typesLen)]
+  }`;
+};

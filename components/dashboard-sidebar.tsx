@@ -16,6 +16,7 @@ import { Selector as SelectorIcon } from 'assets/icons/selector';
 import { User as UserIcon } from 'assets/icons/user';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PieChartOutlineIcon from '@mui/icons-material/PieChartOutline';
+import { RiTodoFill } from 'react-icons/ri';
 import { NavItem } from './nav-item';
 
 const items = [
@@ -33,6 +34,11 @@ const items = [
     href: '/report',
     icon: <PieChartOutlineIcon fontSize="small" />,
     title: 'Report',
+  },
+  {
+    href: '/plan',
+    icon: <RiTodoFill fontSize="small" />,
+    title: 'Plan',
   },
   {
     href: '/account',
