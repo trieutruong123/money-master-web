@@ -24,7 +24,7 @@ const categories = [
     content: 'USA Dollar',
     link: '/portfolio/cash',
     component: <AiOutlineDollarCircle style={{ height: '2rem', width: '2rem' }}  />,
-    total: '€ 23 K',
+    total: '€ 23 thsnd',
     color: getRandomPallete(),
   },
   {
@@ -32,7 +32,7 @@ const categories = [
     content: 'VietNam Dong',
     link: '/portfolio/cash',
     component: <Typography variant = 'body1' >VND</Typography>,
-    total: 'VND 100 il ',
+    total: 'VND 100 mil ',
     color: getRandomPallete(),
   },
   {

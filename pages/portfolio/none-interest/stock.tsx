@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { Box, Container, Typography } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { DashboardLayout } from 'components/dashboard-layout';
-
+import { StockToolbar, YourStock } from 'components/portfolio';
 
 const Stock = () => (
   <>
@@ -18,10 +18,15 @@ const Stock = () => (
     >
       <Container maxWidth="lg">
         <Typography sx={{ mb: 3 }} variant="h4">
-        Stock
+          Stock
         </Typography>
       </Container>
-      
+      <Container maxWidth={false}>
+        <StockToolbar />
+        <Box sx={{ mt: 3 }}>
+          <YourStock />
+        </Box>
+      </Container>
     </Box>
   </>
 );

@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { Box, Container, Typography } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { DashboardLayout } from 'components/dashboard-layout';
-
+import { RealEstateToolbar, YourRealEstate } from 'components/portfolio';
 
 const RealEstate = () => (
   <>
@@ -18,10 +18,15 @@ const RealEstate = () => (
     >
       <Container maxWidth="lg">
         <Typography sx={{ mb: 3 }} variant="h4">
-        Real Estate
+          Real Estate
         </Typography>
       </Container>
-      
+      <Container maxWidth={false}>
+        <RealEstateToolbar />
+        <Box sx={{ mt: 3 }}>
+          <YourRealEstate />
+        </Box>
+      </Container>
     </Box>
   </>
 );

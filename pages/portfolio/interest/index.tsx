@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { Box, Container, Typography } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { DashboardLayout } from 'components/dashboard-layout';
-
+import { BankDepositToolbar, YourBankDeposit } from 'components/portfolio';
 
 const InterestBearingAssets = () => (
   <>
@@ -18,10 +18,15 @@ const InterestBearingAssets = () => (
     >
       <Container maxWidth="lg">
         <Typography sx={{ mb: 3 }} variant="h4">
-        Interest-bearing Assets
+          Bank Deposit
         </Typography>
       </Container>
-      
+      <Container maxWidth={false}>
+        <BankDepositToolbar />
+        <Box sx={{ mt: 3 }}>
+          <YourBankDeposit />
+        </Box>
+      </Container>
     </Box>
   </>
 );

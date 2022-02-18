@@ -89,7 +89,7 @@ export const DashboardSidebar = (props: any) => {
               <a>
                 <img
                   id="app-icon"
-                  src="images/app-icon.png"
+                  src="/images/app-icon.png"
                   alt="app icon"
                   style={{ width: '3.5rem', height: '3.5rem' }}
                 />

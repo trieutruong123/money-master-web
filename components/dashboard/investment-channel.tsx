@@ -18,32 +18,32 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 const products = [
   {
     id: uuid(),
-    name: 'Dropbox',
-    imageUrl: 'products/product_1.png',
+    name: 'Bitcoin',
+    imageUrl: '/crypto-currencies/Bitcoin.png',
     updatedAt: subHours(Date.now(), 2),
   },
   {
     id: uuid(),
-    name: 'Medium Corporation',
-    imageUrl: 'products/product_2.png',
+    name: 'BNB',
+    imageUrl: '/crypto-currencies/BNB.png',
     updatedAt: subHours(Date.now(), 2),
   },
   {
     id: uuid(),
-    name: 'Slack',
-    imageUrl: 'products/product_3.png',
+    name: 'Ethereum',
+    imageUrl: '/crypto-currencies/Ethereum.png',
     updatedAt: subHours(Date.now(), 3),
   },
   {
     id: uuid(),
-    name: 'Lyft',
-    imageUrl: 'products/product_4.png',
+    name: 'Tesla',
+    imageUrl: '/stocks/tesla.png',
     updatedAt: subHours(Date.now(), 5),
   },
   {
     id: uuid(),
-    name: 'GitHub',
-    imageUrl: 'products/product_5.png',
+    name: 'Apple',
+    imageUrl: '/stocks/Apple.png',
     updatedAt: subHours(Date.now(), 9),
   },
 ];

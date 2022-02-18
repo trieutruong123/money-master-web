@@ -26,7 +26,7 @@ const categories = [
     content: 'Cryto Currency',
     link: '/portfolio/none-interest/crypto-currency',
     component: <IoLogoBitcoin style={{ height: '2rem', width: '2rem' }} />,
-    total: '$23.42 thsnc',
+    total: '$23.42 thsnd',
     color: 'warning.main',
     profitRate: '5.2%',
     termRange: 'day',

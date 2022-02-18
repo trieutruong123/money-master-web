@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -9,6 +9,8 @@ import {
   Grid,
   TextField,
 } from '@mui/material';
+import { authStore, userStore } from 'store';
+import { observer } from 'mobx-react-lite';
 
 const states = [
   {
@@ -25,16 +27,19 @@ const states = [
   },
 ];
 
-export const AccountProfileDetails = (props: any) => {
+export const AccountProfileDetails = observer((props: any) => {
   const [values, setValues] = useState({
-    firstName: 'Katarina',
-    lastName: 'Smith',
-    email: 'demo@devias.io',
+    firstName: '',
+    lastName: '',
+    email: '',
     phone: '',
-    state: 'Alabama',
-    country: 'USA',
+    state: '',
+    country: '',
   });
-
+  useEffect(()=>{
+    const email = userStore.user?.email||'';
+    setValues({...values, email:email });
+  },[])
   const handleChange = (event: any) => {
     setValues({
       ...values,
@@ -105,25 +110,6 @@ export const AccountProfileDetails = (props: any) => {
                 variant="outlined"
               />
             </Grid>
-            <Grid item md={6} xs={12}>
-              <TextField
-                fullWidth
-                label="Select State"
-                name="state"
-                onChange={handleChange}
-                required
-                select
-                SelectProps={{ native: true }}
-                value={values.state}
-                variant="outlined"
-              >
-                {states.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
           </Grid>
         </CardContent>
         <Divider />
@@ -141,4 +127,4 @@ export const AccountProfileDetails = (props: any) => {
       </Card>
     </form>
   );
-};
+});

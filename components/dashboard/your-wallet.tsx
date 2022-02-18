@@ -15,10 +15,10 @@ export const YourWallet = (props: any) => (
       <Grid container spacing={3} sx={{ justifyContent: 'space-between' }}>
         <Grid item>
           <Typography color="textSecondary" gutterBottom variant="overline">
-            Your Wallet
+            Your Coins
           </Typography>
           <Typography color="textPrimary" variant="h4">
-            $24k
+            $ 23.42 thsnd
           </Typography>
         </Grid>
         <Grid item>
@@ -48,10 +48,10 @@ export const YourWallet = (props: any) => (
           }}
           variant="body2"
         >
-          12%
+          5.2%
         </Typography>
         <Typography color="textSecondary" variant="caption">
-          Since last month
+          Since last day
         </Typography>
       </Box>
     </CardContent>
