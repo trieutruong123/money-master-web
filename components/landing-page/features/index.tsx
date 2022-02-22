@@ -46,7 +46,7 @@ const features = [
     id: 1,
     img: 'images/crypto-portfolio.png',
     title: 'Observe investment channels',
-    desc: 'Easiy manage personal investment channels, such as crypto currenies, stocks, gold.',
+    desc: 'Easiy manage personal investment channels, such as crypto currenies, stocks, and gold.',
     link: '/',
   },
   {
@@ -60,7 +60,7 @@ const features = [
     id: 3,
     img: 'images/personal-finance.png',
     title: 'Plan your finances',
-    desc: 'Conviniently plan personal investment, progress to achieve goal, and future accumluation money.',
+    desc: 'Conviniently plan personal investment, progress to achieve goal, and future accumulation money.',
     link: '/',
   },
 ];
