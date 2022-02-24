@@ -1,10 +1,35 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { colorScheme } from 'utils/color-scheme';
 import FeatureBox from './feature-box';
+interface IProps {
+  content: any;
+}
 
-export default function Feature() {
+export default function Service({ content }: IProps) {
+  const featureList = content.feature;
+  const features = [
+    {
+      id: 1,
+      img: '/images/crypto-portfolio.png',
+      title: featureList[0].title,
+      desc: featureList[0].desc,
+    },
+    {
+      id: 2,
+      img: '/images/investing.png',
+      title: featureList[1].title,
+      desc: featureList[1].desc,
+    },
+    {
+      id: 3,
+      img: '/images/personal-finance.png',
+      title: featureList[2].title,
+      desc: featureList[2].desc,
+    },
+  ];
+
   return (
-    <section className="section" id="feature">
+    <section className="section" id="service">
       <Grid
         container
         display="flex"
@@ -21,7 +46,7 @@ export default function Feature() {
               align="center"
               color={colorScheme.theme}
             >
-              Features
+              {content?.title}
             </Typography>
             <Typography
               variant="body1"
@@ -29,9 +54,7 @@ export default function Feature() {
               color={colorScheme.gray600}
               textAlign="center"
             >
-              Money Master provides service help you observe investment
-              channels, monitor the market for specific assets, and plan for own
-              finances.
+              {content?.desc}
             </Typography>
           </Box>
         </Grid>
@@ -40,27 +63,3 @@ export default function Feature() {
     </section>
   );
 }
-
-const features = [
-  {
-    id: 1,
-    img: 'images/crypto-portfolio.png',
-    title: 'Observe investment channels',
-    desc: 'Easiy manage personal investment channels, such as crypto currenies, stocks, and gold.',
-    link: '/',
-  },
-  {
-    id: 2,
-    img: 'images/investing.png',
-    title: 'Track market price ',
-    desc: 'Quickly track the market value of many properties, update information.',
-    link: '/',
-  },
-  {
-    id: 3,
-    img: 'images/personal-finance.png',
-    title: 'Plan your finances',
-    desc: 'Conviniently plan personal investment, progress to achieve goal, and future accumulation money.',
-    link: '/',
-  },
-];

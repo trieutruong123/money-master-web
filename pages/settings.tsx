@@ -1,19 +1,20 @@
 import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import { DashboardLayout } from 'components';
 import { content } from 'i18n';
 import { Box, Container, Typography } from '@mui/material';
+import { DashboardLayout } from 'components';
+import { SettingsNotifications, SettingsPassword } from 'components/settings';
 
-const Report = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+const Settings = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;
 
   const detail = locale === 'vi' ? content['vi'] : content['en'];
-  const { reportPage } = detail;
+  const { settingsPage } = detail;
   return (
     <>
       <Head>
-        <title>{reportPage.title} | Money Master</title>
+        <title>{settingsPage.title} | Money Master</title>
       </Head>
       <Box
         component="main"
@@ -24,16 +25,21 @@ const Report = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       >
         <Container maxWidth="lg">
           <Typography sx={{ mb: 3 }} variant="h4">
-            {reportPage.title}
+            {settingsPage.title}
           </Typography>
+          <SettingsNotifications />
+          <Box sx={{ pt: 3 }}>
+            <SettingsPassword />
+          </Box>
         </Container>
       </Box>
     </>
   );
 };
 
-//Report.requireAuth = true;
-Report.getLayout = (page: ReactJSXElement) => (
+//Setting.requireAuth = true;
+
+Settings.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
 
@@ -45,4 +51,4 @@ export const getStaticProps: GetStaticProps = async (context) => {
   };
 };
 
-export default Report;
+export default Settings;

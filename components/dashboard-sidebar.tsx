@@ -41,12 +41,12 @@ const items = [
     title: 'Plan',
   },
   {
-    href: '/account',
+    href: '/profile',
     icon: <UserIcon fontSize="small" />,
     title: 'Profile',
   },
   {
-    href: '/setting',
+    href: '/settings',
     icon: <CogIcon fontSize="small" />,
     title: 'Settings',
   },

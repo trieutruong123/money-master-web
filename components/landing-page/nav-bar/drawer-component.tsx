@@ -11,6 +11,7 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
+import { useRouter } from 'next/router';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Link } from 'components';
@@ -18,6 +19,7 @@ import { Link } from 'components';
 interface IProps {
   openDrawer: boolean;
   setOpenDrawer: any;
+  content: any;
 }
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -29,7 +31,12 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
+export default function DrawerComponent({
+  content,
+  openDrawer,
+  setOpenDrawer,
+}: IProps) {
+  const { locale } = useRouter();
   const theme = useTheme();
   const toggleDrawer =
     (anchor: string, open: boolean) =>
@@ -73,9 +80,9 @@ export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
           <ListItem sx={{ p: 0 }}>
             <ListItemButton>
               <ListItemText>
-                <Link href="/">
+                <Link href="/" locale={locale}>
                   <Typography sx={{ fontSize: '1.2rem' }} align="center">
-                    Home
+                    {content.home}
                   </Typography>
                 </Link>
               </ListItemText>
@@ -84,21 +91,20 @@ export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
           <ListItem>
             <ListItemButton>
               <ListItemText>
-                <Link href="/#feature">
+                <Link href="/#service" locale={locale}>
                   <Typography sx={{ fontSize: '1.2rem' }} align="center">
-                    Features
+                    {content.service}
                   </Typography>
                 </Link>
               </ListItemText>
             </ListItemButton>
           </ListItem>
-
           <ListItem>
             <ListItemButton>
               <ListItemText>
-                <Link href="/#about">
+                <Link href="/#about" locale={locale}>
                   <Typography sx={{ fontSize: '1.2rem' }} align="center">
-                    About
+                    {content.about}
                   </Typography>
                 </Link>
               </ListItemText>
@@ -109,9 +115,9 @@ export default function DrawerComponent({ openDrawer, setOpenDrawer }: IProps) {
           <ListItem>
             <ListItemButton>
               <ListItemText>
-                <Link href="/docs">
+                <Link href="/docs" locale={locale}>
                   <Typography sx={{ fontSize: '1.2rem' }} align="center">
-                    Docs
+                    {content.docs}
                   </Typography>
                 </Link>
               </ListItemText>

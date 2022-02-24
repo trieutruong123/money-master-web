@@ -7,10 +7,17 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
+import { v4 as uuid } from 'uuid';
 import { Link } from 'components';
 import { colorScheme } from 'utils/color-scheme';
 
-export default function Footer() {
+interface IProps {
+  content: any;
+}
+
+
+export default function Footer({ content }: IProps) {
+  const {service, ourAddress} = content;
   return (
     <section className="section" id="footer" style={{ paddingBottom: '0' }}>
       <Grid
@@ -20,22 +27,33 @@ export default function Footer() {
         bgcolor={colorScheme.gray200}
       >
         <Grid container item md={8} xs={11} mt="2rem" justifyContent="start">
-          {links.map((link, key) => (
-            <Grid item key={key} md={6} sm={6} xs={10}>
+            <Grid item key={uuid()} md={6} sm={6} xs={10}>
               <Typography variant="h6" mb="1rem">
-                {link.title}
+                {service.title}
               </Typography>
               <List>
-                {link.child.map((fLink, key) => (
-                  <ListItem key={key}>
+                  <ListItem key={uuid()}>
                     <ListItemText>
-                      <Link href={fLink.link}>{fLink.title}</Link>
+                      <Link href='/'>{service.home}</Link>
                     </ListItemText>
                   </ListItem>
-                ))}
+                  <ListItem key={uuid()}>
+                    <ListItemText>
+                      <Link href='/#service'>{service.service}</Link>
+                    </ListItemText>
+                  </ListItem>
+                  <ListItem key={uuid()}>
+                    <ListItemText>
+                      <Link href='/#about'>{service.about}</Link>
+                    </ListItemText>
+                  </ListItem>
+                  <ListItem key={uuid()}>
+                    <ListItemText>
+                      <Link href='/docs'>{service.docs}</Link>
+                    </ListItemText>
+                  </ListItem>
               </List>
             </Grid>
-          ))}
         </Grid>
         <Grid
           container
@@ -47,17 +65,17 @@ export default function Footer() {
           justifyContent="start"
         >
           <Typography variant="h6" mb="1rem">
-            OUR ADDRESS
+          {ourAddress.title}
           </Typography>
           <br />
           <Typography variant="h6" color={colorScheme.gray600}>
-            235, Nguyen Van Cu, Quan 5, TP. Ho Chi Minh&#10;
+          {ourAddress.address}&#10;
           </Typography>
           <Typography variant="h6" color={colorScheme.gray600}>
-            Email: portfolio_management@gmail.com&#10;
+            {ourAddress.email}: portfolio_management@gmail.com&#10;
           </Typography>
           <Typography variant="h6" color={colorScheme.gray600}>
-            Phone: +84 376 255 317
+            {ourAddress.phone}: +84 376 255 317
           </Typography>
         </Grid>
       </Grid>
@@ -65,23 +83,4 @@ export default function Footer() {
   );
 }
 
-const links = [
-  {
-    id: 1,
-    title: 'FEATURE',
-    child: [
-      { title: 'HOME', link: '/' },
-      { title: 'FEATURE', link: '/#feature' },
-      { title: 'ABOUT', link: '/#about' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'ABOUT US',
-    child: [
-      { title: 'CONTACT US', link: '/' },
-      { title: 'FAQs', link: '/' },
-      { title: 'PRIVACY POLICY', link: '/' },
-    ],
-  },
-];
+

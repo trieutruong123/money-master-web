@@ -10,7 +10,11 @@ import {
 import { colorScheme } from 'utils/color-scheme';
 import { Link } from 'components';
 
-export default function BrandIntro() {
+interface IProps   {
+  content:any,
+}
+
+export default function BrandIntro({content}:IProps) {
   const theme = useTheme();
   const isLg = useMediaQuery(theme.breakpoints.down('lg'));
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
@@ -45,18 +49,17 @@ export default function BrandIntro() {
               fontSize="1.4rem"
               mb="1.5rem"
             >
-              Money Master
+              {content?.brand}
             </Typography>
             <Typography variant="h3" mb="1.5rem">
-              Manager your spending and investments
+              {content?.title}
             </Typography>
             <Typography variant="h5" mb="1.5rem" color={colorScheme.gray600}>
-              With Money Master, you can manage your finances, track your
-              investments and plan for future.
+              {content?.desc}
             </Typography>
             <Link href="/#">
               <Button variant="contained" color="primary">
-                Find Out How{' '}
+                {content?.findOutMore}{' '}
                 <span style={{ alignItems: 'center', marginLeft: '0.5rem' }}>
                   &#8594;
                 </span>

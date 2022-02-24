@@ -25,7 +25,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { userService } from 'services';
 import { authStore, userStore } from 'store';
-import { previousPath } from 'helpers';
+import { httpError, previousPath } from 'helpers';
 import { colorScheme } from 'utils/color-scheme';
 
 type FormValues = {
@@ -33,16 +33,23 @@ type FormValues = {
   password: string;
 };
 
-export const LoginForm = observer(() => {
+interface IProps {
+  content: any;
+}
+
+export const LoginForm = observer(({ content }: IProps) => {
+  const { locale } = useRouter();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loginError, setLoginError] = useState<string>('');
   const validationSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email is invalid'),
+    email: Yup.string()
+      .required(String(content.error.emailRequired))
+      .email(String(content.error.invalidEmail)),
     password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
-      .required('Password is required'),
+      .required(String(content.error.passwordRequired))
+      .min(8, String(content.error.passwordMin)),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, reset, handleSubmit, formState, getValues, setError } =
@@ -62,7 +69,7 @@ export const LoginForm = observer(() => {
     if (!authStore.isAuthenticating) {
       if (userStore.user) {
         const redirect = previousPath.getPreviousPath();
-        router.push(redirect);
+        router.push(redirect, redirect, { locale: locale });
         previousPath.clearRedirect();
       }
     }
@@ -84,7 +91,9 @@ export const LoginForm = observer(() => {
       password: getValues('password'),
     });
     if (res.isError) {
-      setLoginError(res?.data?.data);
+      const content = httpError.getSignInError(res);
+      const message = locale ==='vi'? content.vi: content.en; 
+      setLoginError(message);
     }
   };
 
@@ -106,7 +115,7 @@ export const LoginForm = observer(() => {
             }}
             align="center"
           >
-            Sign in
+            {content.signIn}
           </Typography>
           <Typography
             variant="body1"
@@ -137,7 +146,7 @@ export const LoginForm = observer(() => {
                 fullWidth
                 sx={{ my: 1, display: 'block' }}
                 id="outlined-email-address"
-                label="Email address"
+                label={content.email}
                 {...register('email')}
                 variant="outlined"
                 error={typeof errors.email?.message !== 'undefined'}
@@ -168,16 +177,16 @@ export const LoginForm = observer(() => {
                       </IconButton>
                     </InputAdornment>
                   }
-                  label="Password"
+                  label={content.password}
                   aria-describedby="password-error-text"
                 />
                 <FormHelperText id="password-error-text">
                   {errors.password?.message}
                 </FormHelperText>
               </FormControl>
-              <Link href="/reset-password">
+              <Link href="/reset-password" locale={locale}>
                 <a style={{ marginLeft: '1rem' }} color={colorScheme.theme}>
-                  Forgot password ?
+                  {content.forgotPassword}
                 </a>
               </Link>
               <br />
@@ -186,7 +195,7 @@ export const LoginForm = observer(() => {
                 variant="contained"
                 sx={{ bg: colorScheme.theme }}
               >
-                Sign in
+                {content.signIn}
               </Button>
             </Box>
             <Typography
@@ -194,7 +203,7 @@ export const LoginForm = observer(() => {
               align="center"
               color={colorScheme.red500}
             >
-              or
+              {content.or}
             </Typography>
             <Button
               variant="contained"
@@ -208,7 +217,7 @@ export const LoginForm = observer(() => {
               onClick={googleSignIn}
               startIcon={<GoogleIcon />}
             >
-              Sign in with Google
+              {content.googleSignIn}
             </Button>
             <Button
               variant="contained"
@@ -216,12 +225,12 @@ export const LoginForm = observer(() => {
               onClick={facebookSignIn}
               startIcon={<FacebookIcon />}
             >
-              Sign in with Facebook{' '}
+              {content.facebookSignIn}{' '}
             </Button>
             <p style={{ marginLeft: '1rem' }}>
-              Don&apos;t have an account?{' '}
-              <Link href="/register">
-                <a color={colorScheme.theme}>Register</a>
+              {content.noAccount}{' '}
+              <Link href="/register" locale={locale}>
+                <a color={colorScheme.theme}>{content.register}</a>
               </Link>
             </p>
           </CardContent>

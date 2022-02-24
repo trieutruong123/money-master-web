@@ -1,14 +1,11 @@
 import { Box, Grid, Typography, useTheme, useMediaQuery } from '@mui/material';
-import _ from 'lodash';
-import Image from 'next/image';
 import { colorScheme } from 'utils/color-scheme';
 
 interface FeatureItem {
   id: number;
   img: string;
-  title: string;
-  desc: string;
-  link: string;
+  title: any;
+  desc: any;
 }
 
 interface IProps {

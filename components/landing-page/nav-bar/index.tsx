@@ -15,21 +15,25 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'components';
 import { colorScheme } from 'utils/color-scheme';
-import LinkTab from './link-tab';
 import DrawerComponent from './drawer-component';
 import styled from './style/header.module.css';
 
-export default function DefaultNavbar() {
+interface IProps {
+  content: any;
+}
+
+export default function DefaultNavbar({ content }: IProps) {
+  const { locale } = useRouter();
   const [value, setValue] = useState<any>('home');
   const [openDrawer, setOpenDrawer] = useState(false);
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const matchAuthPage: boolean = ['/login', '/register', '/'].includes(
+  const matchAuthPage: boolean = ['/sign-in', '/sign-up', '/'].includes(
     router.pathname,
   );
 
-  const matchSpecificPage: boolean =['/', 'docs'].includes(router.pathname);
+  const matchSpecificPage: boolean = ['/', 'docs'].includes(router.pathname);
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
     setValue(newValue);
   };
@@ -64,12 +68,13 @@ export default function DefaultNavbar() {
                 <MenuIcon />
               </IconButton>
               <DrawerComponent
+                content={content}
                 openDrawer={openDrawer}
                 setOpenDrawer={setOpenDrawer}
               />
             </>
           ) : null}
-          <Link href="/">
+          <Link href="/" locale={locale}>
             <Box
               display="flex"
               mr="auto"
@@ -78,7 +83,7 @@ export default function DefaultNavbar() {
             >
               <img
                 id="app-icon"
-                src="images/app-icon.png"
+                src="/images/app-icon.png"
                 alt="app icon"
                 style={{ width: '2rem', height: '2rem' }}
               />
@@ -96,7 +101,7 @@ export default function DefaultNavbar() {
               </Typography>
             </Box>
           </Link>
-          {!isMobile && matchSpecificPage  ? (
+          {!isMobile && matchSpecificPage ? (
             <Box
               sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}
               justifyContent="center"
@@ -110,12 +115,16 @@ export default function DefaultNavbar() {
               >
                 <Tab
                   value="home"
-                  label="HOME"
+                  label={content.home}
                   onClick={scrollToTopOfPage}
                 ></Tab>
-                <Tab value="feature" label="FEATURE" href="/#feature"></Tab>
-                <Tab value="about" label="ABOUT" href="/#about"></Tab>
-                <Tab value="docs" label="DOCS" href="/docs"></Tab>
+                <Tab
+                  value="service"
+                  label={content.service}
+                  href="/#service"
+                ></Tab>
+                <Tab value="about" label={content.about} href="/#about"></Tab>
+                <Tab value="docs" label={content.docs} href="/docs"></Tab>
               </Tabs>
             </Box>
           ) : (
@@ -129,10 +138,14 @@ export default function DefaultNavbar() {
                 variant="contained"
                 sx={{ bg: colorScheme.theme, mr: 1, ml: 'auto' }}
               >
-                {router.pathname === '/login' ? (
-                  <Link href="/register">Register</Link>
+                {router.pathname === '/sign-in' ? (
+                  <Link href="/sign-up" locale={locale}>
+                    {content.register}
+                  </Link>
                 ) : (
-                  <Link href="/login">Login</Link>
+                  <Link href="/sign-in" locale={locale}>
+                    {content.signIn}
+                  </Link>
                 )}
               </Button>
             </>

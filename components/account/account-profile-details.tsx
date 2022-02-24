@@ -12,22 +12,11 @@ import {
 import { authStore, userStore } from 'store';
 import { observer } from 'mobx-react-lite';
 
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama',
-  },
-  {
-    value: 'new-york',
-    label: 'New York',
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco',
-  },
-];
+interface IProps{
+  content:any,
+}
 
-export const AccountProfileDetails = observer((props: any) => {
+export const AccountProfileDetails = observer(({content}:IProps) => {
   const [values, setValues] = useState({
     firstName: '',
     lastName: '',
@@ -47,21 +36,22 @@ export const AccountProfileDetails = observer((props: any) => {
     });
   };
 
+  const{header,body,footer}  = content;
+
   return (
-    <form autoComplete="off" noValidate {...props}>
+    <form autoComplete="off" noValidate >
       <Card>
-        <CardHeader subheader="The information can be edited" title="Profile" />
+        <CardHeader subheader={header.content} title={header.title} />
         <Divider />
         <CardContent>
           <Grid container spacing={3}>
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
-                helperText="Please specify the first name"
-                label="First name"
+                // helperText="Please specify the first name"
+                label={body.firstName}
                 name="firstName"
                 onChange={handleChange}
-                required
                 value={values.firstName}
                 variant="outlined"
               />
@@ -69,10 +59,9 @@ export const AccountProfileDetails = observer((props: any) => {
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
-                label="Last name"
+                label={body.lastName}
                 name="lastName"
                 onChange={handleChange}
-                required
                 value={values.lastName}
                 variant="outlined"
               />
@@ -80,8 +69,8 @@ export const AccountProfileDetails = observer((props: any) => {
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
-                label="Email Address"
-                name="email"
+                label={body.emailAddress}
+                name='email'
                 onChange={handleChange}
                 required
                 value={values.email}
@@ -91,7 +80,7 @@ export const AccountProfileDetails = observer((props: any) => {
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
-                label="Phone Number"
+                label={body.phoneNumber}
                 name="phone"
                 onChange={handleChange}
                 type="number"
@@ -102,10 +91,9 @@ export const AccountProfileDetails = observer((props: any) => {
             <Grid item md={6} xs={12}>
               <TextField
                 fullWidth
-                label="Country"
+                label={body.country}
                 name="country"
                 onChange={handleChange}
-                required
                 value={values.country}
                 variant="outlined"
               />
@@ -121,7 +109,7 @@ export const AccountProfileDetails = observer((props: any) => {
           }}
         >
           <Button color="primary" variant="contained">
-            Save details
+            {footer.saveDetails}
           </Button>
         </Box>
       </Card>

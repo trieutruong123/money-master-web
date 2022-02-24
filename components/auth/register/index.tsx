@@ -25,7 +25,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import { colorScheme } from 'utils/color-scheme';
 import { userService, firebaseService } from 'services';
 import { authStore, userStore } from 'store';
-import { previousPath } from 'helpers';
+import { httpError, previousPath } from 'helpers';
 
 type FormValues = {
   email: string;
@@ -33,11 +33,16 @@ type FormValues = {
   confirmPassword: string;
 };
 
-export const RegisterForm = observer(() => {
+interface IProps {
+  content: any;
+}
+
+export const RegisterForm = observer(({ content }: IProps) => {
   const router = useRouter();
+  const { locale } = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [loginError, setLoginError] = useState<string>('');
+  const [registerError, setRegisterError] = useState<string>('');
 
   useEffect(() => {
     if (userService.isAuthToken()) {
@@ -52,21 +57,25 @@ export const RegisterForm = observer(() => {
     if (!authStore.isAuthenticating) {
       if (userStore.user) {
         const redirect = previousPath.getPreviousPath();
-        router.push(redirect);
+        router.push(redirect, redirect, { locale: locale });
         previousPath.clearRedirect();
-        console.log(redirect);
       }
     }
   }, [router, previousPath, authStore.isAuthenticating, userStore.user]);
 
   const validationSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email is invalid'),
+    email: Yup.string()
+      .required(String(content.error.emailRequired))
+      .email(String(content.error.invalidEmail)),
     password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
-      .required('Password is required'),
+      .required(String(content.error.passwordRequired))
+      .min(8, String(content.error.passwordMin)),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Password must match')
-      .required('Confirm password is required'),
+      .required(String(content.error.confirmPasswordRequired))
+      .oneOf(
+        [Yup.ref('password'),null],
+        String(content.error.confirmPasswordNotMatch),
+      ),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, reset, handleSubmit, formState, getValues, setError } =
@@ -89,8 +98,10 @@ export const RegisterForm = observer(() => {
       password: getValues('password'),
     });
     if (res.isError) {
-      setLoginError(res?.data?.data);
-    } else router.push('/');
+      const content = httpError.getSignUpError(res);
+      const message = locale ==='vi'? content.vi: content.en; 
+      setRegisterError(message);
+    } else router.push('/', '/', { locale: locale });
   };
 
   const googleSignUp = async () => {
@@ -111,7 +122,7 @@ export const RegisterForm = observer(() => {
             }}
             align="center"
           >
-            Sign up
+            {content.signUp}
           </Typography>
           <Typography
             variant="body1"
@@ -119,7 +130,7 @@ export const RegisterForm = observer(() => {
             color={colorScheme.red500}
             sx={{ display: 'static', height: '1.2rem' }}
           >
-            {loginError}
+            {registerError}
           </Typography>
           <CardContent
             sx={{
@@ -142,7 +153,7 @@ export const RegisterForm = observer(() => {
                 fullWidth
                 sx={{ my: 1, display: 'block' }}
                 id="outlined-email-address"
-                label="Email address"
+                label={content.email}
                 {...register('email')}
                 variant="outlined"
                 error={typeof errors.email?.message !== 'undefined'}
@@ -173,7 +184,7 @@ export const RegisterForm = observer(() => {
                       </IconButton>
                     </InputAdornment>
                   }
-                  label="Password"
+                  label={content.password}
                   aria-describedby="password-error-text"
                 />
                 <FormHelperText id="password-error-text">
@@ -205,7 +216,7 @@ export const RegisterForm = observer(() => {
                       </IconButton>
                     </InputAdornment>
                   }
-                  label="Confirm password"
+                  label={content.confirmPassword}
                   aria-describedby="confirm-password-error-text"
                 />
                 <FormHelperText id="password-error-text">
@@ -218,7 +229,7 @@ export const RegisterForm = observer(() => {
                 variant="contained"
                 sx={{ bg: colorScheme.theme }}
               >
-                Sign up
+                {content.signUp}
               </Button>
             </Box>
             <Typography
@@ -226,7 +237,7 @@ export const RegisterForm = observer(() => {
               align="center"
               color={colorScheme.red500}
             >
-              or
+              {content.or}
             </Typography>
             <Button
               variant="contained"
@@ -240,7 +251,7 @@ export const RegisterForm = observer(() => {
               startIcon={<GoogleIcon />}
               onClick={googleSignUp}
             >
-              Sign up with Google{' '}
+              {content.googleSignUp}{' '}
             </Button>
             <Button
               variant="contained"
@@ -248,7 +259,7 @@ export const RegisterForm = observer(() => {
               startIcon={<FacebookIcon />}
               onClick={facebookSignUp}
             >
-              Sign up with Facebook{' '}
+              {content.facebookSignUp}{' '}
             </Button>
           </CardContent>
         </Card>

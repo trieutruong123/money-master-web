@@ -12,9 +12,12 @@ import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { userStore } from 'store';
 
+interface IProps{
+  content:any,
+}
 
 
-export const AccountProfile = observer((props: any) => {
+export const AccountProfile = observer(({content}:IProps) => {
   const [user,setUser] = useState({
     avatar: '/static/images/avatars/avatar_6.png',
     city: '',
@@ -27,8 +30,9 @@ export const AccountProfile = observer((props: any) => {
     const email = userStore.user?.email||'';
     setUser({...user, name:email });
   },[])
+
   return (
-    <Card {...props}>
+    <Card >
       <CardContent>
         <Box
           sx={{
@@ -59,7 +63,7 @@ export const AccountProfile = observer((props: any) => {
       <Divider />
       <CardActions>
         <Button color="primary" fullWidth variant="text">
-          Upload picture
+          {content.uploadPicture}
         </Button>
       </CardActions>
     </Card>
