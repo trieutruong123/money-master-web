@@ -17,6 +17,7 @@ import { Bell as BellIcon } from 'assets/icons/bell';
 import { UserCircle as UserCircleIcon } from 'assets/icons/user-circle';
 import { Users as UsersIcon } from 'assets/icons/users';
 import { Link } from 'components';
+import { MultipleLanguage } from './mutiple-languages';
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }: any) => ({
   backgroundColor: theme.palette.background.paper,
@@ -82,13 +83,14 @@ export const DashboardNavbar = (props: any) => {
               sx={{
                 height: 40,
                 width: 40,
-                ml: 1,
+                mx: 1,
               }}
               src="/static/images/avatars/avatar_1.png"
             >
               <UserCircleIcon fontSize="small" />
             </Avatar>
           </Link>
+          <MultipleLanguage></MultipleLanguage>
         </Toolbar>
       </DashboardNavbarRoot>
     </>

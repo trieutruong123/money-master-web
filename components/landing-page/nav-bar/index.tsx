@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import {
   AppBar,
   Box,
@@ -17,15 +17,16 @@ import { Link } from 'components';
 import { colorScheme } from 'utils/color-scheme';
 import DrawerComponent from './drawer-component';
 import styled from './style/header.module.css';
+import { MultipleLanguage } from 'components/mutiple-languages';
 
 interface IProps {
   content: any;
 }
 
 export default function DefaultNavbar({ content }: IProps) {
-  const { locale } = useRouter();
   const [value, setValue] = useState<any>('home');
   const [openDrawer, setOpenDrawer] = useState(false);
+  const { locale, pathname, query, asPath } = useRouter();
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -38,14 +39,15 @@ export default function DefaultNavbar({ content }: IProps) {
     setValue(newValue);
   };
 
+  const handleSelectedSectionChange = (newValue: string) => {
+    setValue(newValue);
+  };
+
   const scrollToTopOfPage = async () => {
-    if (router.pathname !== '/') router.push('/');
-    else {
-      document
-        .getElementById('top-of-page')
-        ?.scrollIntoView({ behavior: 'smooth' });
-      router.push('/', undefined, { shallow: true });
-    }
+    document
+      .getElementById('top-of-page')
+      ?.scrollIntoView({ behavior: 'smooth' });
+    router.push('/', '/', { locale: locale, shallow: true });
   };
 
   return (
@@ -68,6 +70,7 @@ export default function DefaultNavbar({ content }: IProps) {
                 <MenuIcon />
               </IconButton>
               <DrawerComponent
+                handleSelectionChange={handleSelectedSectionChange}
                 content={content}
                 openDrawer={openDrawer}
                 setOpenDrawer={setOpenDrawer}
@@ -121,10 +124,30 @@ export default function DefaultNavbar({ content }: IProps) {
                 <Tab
                   value="service"
                   label={content.service}
-                  href="/#service"
+                  onClick={() => {
+                    router.push({ pathname, query }, '/#service', {
+                      locale: locale,
+                    });
+                  }}
                 ></Tab>
-                <Tab value="about" label={content.about} href="/#about"></Tab>
-                <Tab value="docs" label={content.docs} href="/docs"></Tab>
+                <Tab
+                  value="about"
+                  label={content.about}
+                  onClick={() => {
+                    router.push({ pathname, query }, '/#about', {
+                      locale: locale,
+                    });
+                  }}
+                ></Tab>
+                <Tab
+                  value="docs"
+                  label={content.docs}
+                  onClick={() => {
+                    router.push({ pathname, query }, '/docs', {
+                      locale: locale,
+                    });
+                  }}
+                ></Tab>
               </Tabs>
             </Box>
           ) : (
@@ -150,6 +173,7 @@ export default function DefaultNavbar({ content }: IProps) {
               </Button>
             </>
           )}
+          {!isMobile && <MultipleLanguage></MultipleLanguage>}
         </Toolbar>
       </AppBar>
     </Box>

@@ -10,13 +10,16 @@ import {
   ListItem,
   ListItemText,
   Typography,
+  useMediaQuery,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Link } from 'components';
+import { MultipleLanguage } from 'components/mutiple-languages';
 
 interface IProps {
+  handleSelectionChange?: any;
   openDrawer: boolean;
   setOpenDrawer: any;
   content: any;
@@ -32,12 +35,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 export default function DrawerComponent({
+  handleSelectionChange,
   content,
   openDrawer,
   setOpenDrawer,
 }: IProps) {
   const { locale } = useRouter();
+  const router = useRouter();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const toggleDrawer =
     (anchor: string, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -51,6 +57,12 @@ export default function DrawerComponent({
       }
       setOpenDrawer(open);
     };
+  const scrollToTopOfPage = async () => {
+    document
+      .getElementById('top-of-page')
+      ?.scrollIntoView({ behavior: 'smooth' });
+    router.push('/', '/', { locale: locale, shallow: true });
+  };
 
   const anchor = 'left';
   return (
@@ -77,19 +89,34 @@ export default function DrawerComponent({
         </DrawerHeader>
         <Divider />
         <List component="nav">
-          <ListItem sx={{ p: 0 }}>
+          <ListItem
+            sx={{
+              py: 0,
+              px: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
             <ListItemButton>
+              <MultipleLanguage></MultipleLanguage>
+            </ListItemButton>
+          </ListItem>
+          <ListItem sx={{ py: 0, px: 1 }}>
+            <ListItemButton onClick={scrollToTopOfPage}>
               <ListItemText>
-                <Link href="/" locale={locale}>
-                  <Typography sx={{ fontSize: '1.2rem' }} align="center">
-                    {content.home}
-                  </Typography>
-                </Link>
+                <Typography sx={{ fontSize: '1.2rem' }} align="center">
+                  {content.home}
+                </Typography>
               </ListItemText>
             </ListItemButton>
           </ListItem>
-          <ListItem>
-            <ListItemButton>
+          <ListItem sx={{ py: 0, px: 1 }}>
+            <ListItemButton
+              onClick={() => {
+                handleSelectionChange('service');
+              }}
+            >
               <ListItemText>
                 <Link href="/#service" locale={locale}>
                   <Typography sx={{ fontSize: '1.2rem' }} align="center">
@@ -99,8 +126,12 @@ export default function DrawerComponent({
               </ListItemText>
             </ListItemButton>
           </ListItem>
-          <ListItem>
-            <ListItemButton>
+          <ListItem sx={{ py: 0, px: 1 }}>
+            <ListItemButton
+              onClick={() => {
+                handleSelectionChange('about');
+              }}
+            >
               <ListItemText>
                 <Link href="/#about" locale={locale}>
                   <Typography sx={{ fontSize: '1.2rem' }} align="center">
@@ -110,10 +141,12 @@ export default function DrawerComponent({
               </ListItemText>
             </ListItemButton>
           </ListItem>
-        </List>
-        <List>
-          <ListItem>
-            <ListItemButton>
+          <ListItem sx={{ py: 0, px: 1 }}>
+            <ListItemButton
+              onClick={() => {
+                handleSelectionChange('docs');
+              }}
+            >
               <ListItemText>
                 <Link href="/docs" locale={locale}>
                   <Typography sx={{ fontSize: '1.2rem' }} align="center">
