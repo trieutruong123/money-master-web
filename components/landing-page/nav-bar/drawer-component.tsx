@@ -58,10 +58,10 @@ export default function DrawerComponent({
       setOpenDrawer(open);
     };
   const scrollToTopOfPage = async () => {
-    document
-      .getElementById('top-of-page')
-      ?.scrollIntoView({ behavior: 'smooth' });
     router.push('/', '/', { locale: locale, shallow: true });
+    document
+        .getElementById('top-of-page')
+        ?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const anchor = 'left';

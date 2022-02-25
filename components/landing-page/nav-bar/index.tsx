@@ -44,10 +44,10 @@ export default function DefaultNavbar({ content }: IProps) {
   };
 
   const scrollToTopOfPage = async () => {
+    router.push('/', '/', { locale: locale, shallow: true });
     document
       .getElementById('top-of-page')
       ?.scrollIntoView({ behavior: 'smooth' });
-    router.push('/', '/', { locale: locale, shallow: true });
   };
 
   return (
@@ -77,33 +77,32 @@ export default function DefaultNavbar({ content }: IProps) {
               />
             </>
           ) : null}
-          <Link href="/" locale={locale}>
-            <Box
-              display="flex"
-              mr="auto"
-              justifyContent="start"
-              alignItems="end"
+          <Box
+            display="flex"
+            mr="auto"
+            justifyContent="start"
+            alignItems="end"
+            onClick={scrollToTopOfPage}
+          >
+            <img
+              id="app-icon"
+              src="/images/app-icon.png"
+              alt="app icon"
+              style={{ width: '2rem', height: '2rem' }}
+            />
+            <Typography
+              id="brand-name"
+              sx={{
+                ml: 1,
+                color: colorScheme.theme,
+              }}
+              fontWeight="bold"
+              style={{ cursor: 'pointer' }}
+              variant="h6"
             >
-              <img
-                id="app-icon"
-                src="/images/app-icon.png"
-                alt="app icon"
-                style={{ width: '2rem', height: '2rem' }}
-              />
-              <Typography
-                id="brand-name"
-                sx={{
-                  ml: 1,
-                  color: colorScheme.theme,
-                }}
-                fontWeight="bold"
-                style={{ cursor: 'pointer' }}
-                variant="h6"
-              >
-                Money Master
-              </Typography>
-            </Box>
-          </Link>
+              Money Master
+            </Typography>
+          </Box>
           {!isMobile && matchSpecificPage ? (
             <Box
               sx={{ flexGrow: 1, display: { xs: 'none', sm: 'flex' } }}
@@ -125,7 +124,7 @@ export default function DefaultNavbar({ content }: IProps) {
                   value="service"
                   label={content.service}
                   onClick={() => {
-                    router.push({ pathname, query }, '/#service', {
+                    router.push('/#service', '/#service', {
                       locale: locale,
                     });
                   }}
@@ -134,7 +133,7 @@ export default function DefaultNavbar({ content }: IProps) {
                   value="about"
                   label={content.about}
                   onClick={() => {
-                    router.push({ pathname, query }, '/#about', {
+                    router.push('/#about', '/#about', {
                       locale: locale,
                     });
                   }}
@@ -143,7 +142,7 @@ export default function DefaultNavbar({ content }: IProps) {
                   value="docs"
                   label={content.docs}
                   onClick={() => {
-                    router.push({ pathname, query }, '/docs', {
+                    router.push('/docs', '/docs', {
                       locale: locale,
                     });
                   }}
