@@ -12,6 +12,7 @@ import YourRealEstate from './real-estate/your-real-estate';
 import YourStock from './stock/your-stock';
 import { BankDepositToolbar } from './bank-deposit/bank-deposit-toolbar';
 import YourBankDeposit from './bank-deposit/your-bank-deposit';
+import PortfolioCard from './portfolio-card';
 
 export {
   BankDepositToolbar,
@@ -28,4 +29,5 @@ export {
   YourCoin,
   YourRealEstate,
   YourStock,
+  PortfolioCard
 };
