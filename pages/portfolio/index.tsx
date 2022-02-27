@@ -30,17 +30,17 @@ var portfolioList = [
   {
     name: "Investment 1",
     initBalance: 200,
-    id: 1,
+    id: '1',
   },
   {
     name: "Investment 2",
     initBalance: 400,
-    id: 2,
+    id: '2',
   },
   {
     name: "Investment 3",
     initBalance: 600,
-    id: 3,
+    id: '3',
   },
 ];
 
@@ -55,7 +55,7 @@ const Portfolio = () => {
   const createHandler = () => {
     portfolioList.push({
       name: values.portfolioName,
-      initBalance: values.initBalance,
+      initBalance: parseInt(values.initBalance),
       id: Date.now().toString(16),
     });
 
