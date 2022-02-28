@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import NextLink from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import {
@@ -87,11 +88,12 @@ export const DashboardSidebar = (props: any) => {
           <Box sx={{ p: 3 }} justifyContent="center" alignItems="center">
             <NextLink href="/dashboard" passHref>
               <a>
-                <img
+                <Image
                   id="app-icon"
                   src="/images/app-icon.png"
                   alt="app icon"
-                  style={{ width: '3.5rem', height: '3.5rem' }}
+                  width={'60rem'}
+                  height={'60rem'}
                 />
               </a>
             </NextLink>

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Router, useRouter } from 'next/router';
+import Image from 'next/image';
 import {
   AppBar,
   Box,
@@ -84,11 +85,13 @@ export default function DefaultNavbar({ content }: IProps) {
             alignItems="end"
             onClick={scrollToTopOfPage}
           >
-            <img
+            <Image
               id="app-icon"
               src="/images/app-icon.png"
               alt="app icon"
-              style={{ width: '2rem', height: '2rem' }}
+              width={'30'}
+              height={'30'}
+              priority
             />
             <Typography
               id="brand-name"

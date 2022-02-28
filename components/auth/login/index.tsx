@@ -73,7 +73,7 @@ export const LoginForm = observer(({ content }: IProps) => {
         previousPath.clearRedirect();
       }
     }
-  }, [router, previousPath, authStore.isAuthenticating, userStore.user]);
+  }, [router, previousPath, authStore.isAuthenticating, userStore.user,locale]);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);

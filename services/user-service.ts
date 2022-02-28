@@ -58,14 +58,12 @@ async function login(params: { email: string; password: string }) {
   return res;
 }
 
-
-
 async function googleAuthentication() {
   authStore.setAuthenticating(true);
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
-  const response: any = await firebaseService
+  await firebaseService
     .googleLogin()
-    .then(async (data: any) => {
+    .then((data: any) => {
       /*const url = "/authentication/google";
       const res: any = await httpService.post(url, { token: data?.token });
       if (!res?.isError) {
@@ -78,9 +76,26 @@ async function googleAuthentication() {
     });
 }
 
-async function facebookAuthentication() {}
+async function facebookAuthentication() {
+  authStore.setAuthenticating(true);
+  storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
+  await firebaseService
+    .facebookLogin()
+    .then((data: any) => {
+      /*const url = "/authentication/google";
+      const res: any = await httpService.post(url, { token: data?.token });
+      if (!res?.isError) {
+        storageService.setLocalStorage(mainConstant.TOKEN_KEY, res.data.token);
+      }*/
+      return data;
+    })
+    .catch((error) => {
+      return error;
+    });
+}
 
 async function logout() {
+  firebaseService.signOut();
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
   Router.push('/login');
 }

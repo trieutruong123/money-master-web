@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { format } from 'date-fns';
 import { v4 as uuid } from 'uuid';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -99,13 +100,11 @@ export const RecentlyAdded = (props: any) => (
             {orders.map((order) => (
               <TableRow hover key={order.id}>
                 <TableCell>
-                  <img
-                    alt='alt'
+                  <Image
+                    alt="alt"
                     src={order.imgUrl}
-                    style={{
-                      height: 48,
-                      width: 48,
-                    }}
+                    height={'48'}
+                    width={'48'}
                   />
                 </TableCell>
                 <TableCell>{order.product.name}</TableCell>

@@ -1,7 +1,6 @@
 .navbar {
   display: flex;
   justify-content: space-between;
-  border-bottom: var(--border-bottom-width) solid var(--light-gray);
   position: fixed;
   top: 0;
   left: 0;

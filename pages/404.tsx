@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import NextLink from 'next/link';
+import Image from 'next/image';
 import { Box, Button, Container, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { content } from 'i18n';
@@ -48,16 +48,19 @@ const NotFound = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               >
                 {_404Page.subContent}
               </Typography>
-              <Box sx={{ textAlign: 'center' }}>
-                <img
+              <Box
+                sx={{
+                  textAlign: 'center',
+                  marginTop: 1,
+                  display: 'inline-block',
+                  maxWidth: '100%',
+                }}
+              >
+                <Image
                   alt="Under development"
                   src="/images/undraw_page_not_found_su7k.svg"
-                  style={{
-                    marginTop: 50,
-                    display: 'inline-block',
-                    maxWidth: '100%',
-                    width: 560,
-                  }}
+                  width={400}
+                  height = {360}
                 />
               </Box>
               <Button

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import { Box, Typography, Button } from '@mui/material';
 
 export const MultipleLanguage: React.FunctionComponent = (props: any) => {
@@ -23,7 +24,7 @@ export const MultipleLanguage: React.FunctionComponent = (props: any) => {
             alignItems="center"
             justifyContent="center"
           >
-            <img
+            <Image
               src={`/languages/${lang}.svg`}
               alt={locale}
               width={36}

@@ -78,14 +78,14 @@ export const DashboardNavbar = (props: any) => {
             </IconButton>
           </Tooltip>
 
-          <Link href="/account">
+          <Link href="/profile">
             <Avatar
               sx={{
                 height: 40,
                 width: 40,
                 mx: 1,
               }}
-              src="/static/images/avatars/avatar_1.png"
+              src="/images/avatar_1.png"
             >
               <UserCircleIcon fontSize="small" />
             </Avatar>

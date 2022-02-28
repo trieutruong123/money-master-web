@@ -1,5 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -16,5 +16,15 @@ if (!getApps().length) {
 }
 
 export const auth = getAuth();
+
+export const signOutMethod = () => {
+  signOut(auth)
+    .then((res) => {
+      return res;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
 
 export const app = initializeApp(firebaseConfig);

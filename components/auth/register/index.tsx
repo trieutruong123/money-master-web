@@ -61,7 +61,7 @@ export const RegisterForm = observer(({ content }: IProps) => {
         previousPath.clearRedirect();
       }
     }
-  }, [router, previousPath, authStore.isAuthenticating, userStore.user]);
+  }, [router, previousPath, authStore.isAuthenticating, userStore.user, locale]);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()

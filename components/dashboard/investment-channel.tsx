@@ -1,4 +1,5 @@
 import { formatDistanceToNow, subHours } from 'date-fns';
+import Image from 'next/image';
 import { v4 as uuid } from 'uuid';
 import {
   Box,
@@ -59,13 +60,11 @@ export const InvestmentChannel = (props: any) => (
       {products.map((product, i) => (
         <ListItem divider={i < products.length - 1} key={product.id}>
           <ListItemAvatar>
-            <img
+            <Image
               alt={product.name}
               src={product.imageUrl}
-              style={{
-                height: 48,
-                width: 48,
-              }}
+              height={48}
+              width={48}
             />
           </ListItemAvatar>
           <ListItemText

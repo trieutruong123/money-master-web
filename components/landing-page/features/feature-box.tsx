@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Box, Grid, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { colorScheme } from 'utils/color-scheme';
 
@@ -30,7 +31,7 @@ export default function FeatureBox({ features }: IProps) {
             xs={11}
           >
             <Grid item md={6} alignItems="center">
-              <img src={feature.img} alt="alt" style={{ width: '90%' }} />
+              <Image src={feature.img} alt="alt" width={'400'} height={400} />
             </Grid>
             <Grid item md={6}>
               <Box mt={isSm ? '3rem' : '0'} mb="1.5rem">
@@ -75,7 +76,7 @@ export default function FeatureBox({ features }: IProps) {
               </Box>
             </Grid>
             <Grid item md={5} mt={isSm ? '3rem' : '0'}>
-              <img src={feature.img} alt="alt" style={{ width: '90%' }} />
+              <Image src={feature.img} alt="alt" width={'400'} height={'350'} />
             </Grid>
           </Grid>
         );

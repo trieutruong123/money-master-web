@@ -10,11 +10,11 @@ import {
 import { colorScheme } from 'utils/color-scheme';
 import { Link } from 'components';
 
-interface IProps   {
-  content:any,
+interface IProps {
+  content: any;
 }
 
-export default function BrandIntro({content}:IProps) {
+export default function BrandIntro({ content }: IProps) {
   const theme = useTheme();
   const isLg = useMediaQuery(theme.breakpoints.down('lg'));
   const isSm = useMediaQuery(theme.breakpoints.down('sm'));
@@ -68,11 +68,13 @@ export default function BrandIntro({content}:IProps) {
           </div>
         </Grid>
         <Grid item lg={4} md={7} sm={8} xs={11} mt={isLg ? '1rem' : '0rem'}>
-          <img
+          <Image
             id="landing-image-01"
-            src="images/landing-image-01.png"
+            src="/images/landing-image-01.png"
             alt="landing image 01"
-            style={{ width: '90%' }}
+            width={'450'}
+            height = {'420'}
+            priority
           />
         </Grid>
       </Grid>
