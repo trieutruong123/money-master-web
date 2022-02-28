@@ -2,7 +2,6 @@ import Head from 'next/head';
 import { Box, Container, Typography } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { DashboardLayout } from 'components/dashboard-layout';
-import { Cash, InterestBearingAssets, NoneInterestBearingAssets, RealEstate } from 'components/portfolio';
 
 
 const Portfolio = () => (
@@ -23,10 +22,6 @@ const Portfolio = () => (
         </Typography>
       </Container>
       <Container maxWidth={false}>
-        <NoneInterestBearingAssets />
-        <InterestBearingAssets/>
-        <RealEstate/>
-        <Cash/>
       </Container>
     </Box>
   </>

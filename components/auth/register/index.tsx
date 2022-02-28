@@ -23,7 +23,7 @@ import { VisibilityOff, Visibility } from '@mui/icons-material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { colorScheme } from 'utils/color-scheme';
-import { userService, firebaseService } from 'services';
+import { userService, googleAuth, facebookAuth } from 'services';
 import { authStore, userStore } from 'store';
 import { httpError, previousPath } from 'helpers';
 
@@ -105,11 +105,11 @@ export const RegisterForm = observer(({ content }: IProps) => {
   };
 
   const googleSignUp = async () => {
-    const res: any = await firebaseService.googleLogin();
+    const res: any = await googleAuth.googleLogin();
   };
 
   const facebookSignUp = async () => {
-    const res: any = await firebaseService.facebookLogin();
+    const res: any = await facebookAuth.facebookLogin();
   };
 
   return (
