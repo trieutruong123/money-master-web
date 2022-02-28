@@ -2,7 +2,7 @@ import Router from 'next/router';
 import { httpError, mainConstant } from 'helpers';
 import { cryptoService, httpService, storageService } from 'services';
 import { userStore, authStore } from 'store';
-import { firebaseService } from 'services';
+import { facebookAuth, googleAuth } from 'services';
 import { UserInfo } from 'models';
 export const userService = {
   register,
@@ -61,7 +61,7 @@ async function login(params: { email: string; password: string }) {
 async function googleAuthentication() {
   authStore.setAuthenticating(true);
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
-  await firebaseService
+  await googleAuth
     .googleLogin()
     .then((data: any) => {
       /*const url = "/authentication/google";
@@ -79,7 +79,7 @@ async function googleAuthentication() {
 async function facebookAuthentication() {
   authStore.setAuthenticating(true);
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
-  await firebaseService
+  await facebookAuth
     .facebookLogin()
     .then((data: any) => {
       /*const url = "/authentication/google";
@@ -95,7 +95,7 @@ async function facebookAuthentication() {
 }
 
 async function logout() {
-  firebaseService.signOut();
+  googleAuth.signOut();
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
   Router.push('/login');
 }

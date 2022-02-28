@@ -1,2 +1,4 @@
-import { firebaseService } from './auth';
-export { firebaseService };
+import { facebookAuth } from './facebookAuth';
+import { googleAuth } from './googleAuth';
+
+export { facebookAuth, googleAuth };

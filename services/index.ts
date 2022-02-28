@@ -1,4 +1,4 @@
-import { firebaseService } from 'services/firebase-service';
+import { facebookAuth,googleAuth } from 'services/firebase-service';
 import { cryptoService } from './crypto-service';
 import { storageService } from './storage-service';
 import { alertService } from './alert-service';
@@ -11,5 +11,6 @@ export {
   storageService,
   alertService,
   cryptoService,
-  firebaseService,
+  facebookAuth,
+  googleAuth,
 };

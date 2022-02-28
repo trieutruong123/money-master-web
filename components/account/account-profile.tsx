@@ -19,7 +19,7 @@ interface IProps{
 
 export const AccountProfile = observer(({content}:IProps) => {
   const [user,setUser] = useState({
-    avatar: '/static/images/avatars/avatar_6.png',
+    avatar: '/images/avatar_1.png',
     city: '',
     country: '',
     jobTitle: '',

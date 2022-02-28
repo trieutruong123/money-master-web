@@ -1,3 +1,4 @@
+import React from 'react';
 import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -34,7 +35,7 @@ export default function MyApp(props: AppProps) {
     <>
       <Head>
         <title>Money Master</title>
-        <link rel="icon" href="images/app-icon.png" />
+        <link rel="icon" href="/images/app-icon.png" />
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
@@ -42,11 +43,13 @@ export default function MyApp(props: AppProps) {
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            {Component.requireAuth ? (
-              <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
-            ) : (
-              getLayout(<Component {...pageProps} />)
-            )}{' '}
+            <React.StrictMode>
+              {Component.requireAuth ? (
+                <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
+              ) : (
+                getLayout(<Component {...pageProps} />)
+              )}
+            </React.StrictMode>
           </ThemeProvider>
         </LocalizationProvider>
       </CacheProvider>
