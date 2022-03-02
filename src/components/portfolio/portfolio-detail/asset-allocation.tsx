@@ -1,15 +1,9 @@
 import { Box, Card, CardContent, CardHeader, Grid } from '@mui/material';
 import { Doughnut } from 'react-chartjs-2';
 import chroma from 'chroma-js';
-import { theme } from 'theme/index';
-
-type allocationDataType = {
-  symbol: string;
-  portfolioAllocation: string;
-};
-
+import { PortfolioAllocation } from 'types';
 interface IProps {
-  assetAllocationData: Array<allocationDataType>;
+  assetAllocationData: Array<PortfolioAllocation>;
 }
 
 export const AssetAllocation = ({ assetAllocationData }: IProps) => {
@@ -17,8 +11,6 @@ export const AssetAllocation = ({ assetAllocationData }: IProps) => {
   const dataSet = assetAllocationData.map(
     (data) => parseFloat(data.portfolioAllocation) * 100,
   );
-  console.log(chartLabels);
-  console.log(dataSet);
   const colors = chroma
     .scale(['#313bf0', '#96ffea', '#008080'])
     .mode('lrgb')

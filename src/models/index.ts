@@ -1,2 +1,3 @@
 import { UserInfo } from './user.model';
-export{UserInfo}
+
+export { UserInfo };

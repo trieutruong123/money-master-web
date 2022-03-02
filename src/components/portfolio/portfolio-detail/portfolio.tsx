@@ -14,6 +14,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { PortfolioItem } from 'types';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -33,20 +34,8 @@ const TableBodyCell = styled(TableCell)`
   text-align: right;
 `;
 
-type portfolioItemType = {
-  symbol: string;
-  description: string;
-  price: number;
-  pricePaid: string;
-  priceChange: string;
-  percentChange: string;
-  profitLossAmount: string;
-  quantity: number;
-  marketValue: string;
-  portfolioAllocation: string;
-};
 interface IProps {
-  data: Array<portfolioItemType>;
+  data: Array<PortfolioItem>;
 }
 
 export const Portfolio = ({ data }: IProps) => {

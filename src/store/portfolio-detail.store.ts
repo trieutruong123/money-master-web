@@ -1,3 +1,46 @@
+import { action, makeAutoObservable, observable } from 'mobx';
+import { UserInfo } from 'models';
+import { PortfolioAllocation, PortfolioItem } from 'types';
+
+class PortfolioDetailStore {
+  portfolioAllocationData: Array<PortfolioAllocation> = [];
+  portfolioDetailData: Array<PortfolioItem> = [];
+  portfolioValue: number = 0;
+  todaysChange: number = 0;
+  isOpenAddNewAssetModal: boolean = false;
+
+  constructor() {
+    makeAutoObservable(this, {
+      portfolioAllocationData: observable,
+      portfolioDetailData: observable,
+      portfolioValue: observable,
+      todaysChange: observable,
+      isOpenAddNewAssetModal: observable,
+      setOpenAddNewAssetModal: action,
+      fetchPortfolioDetailData: action,
+    });
+  }
+
+  setOpenAddNewAssetModal(isOpen: boolean) {
+    this.isOpenAddNewAssetModal = isOpen;
+  }
+
+  fetchPortfolioDetailData() {
+    this.portfolioAllocationData = portfolioData.portfolioAllocation;
+    this.portfolioDetailData = portfolioData.portfolioData;
+    this.portfolioValue = portfolioData.portfolioValue;
+    this.todaysChange = portfolioData.todaysChange;
+    return true;
+  }
+
+  updatePortfolioDetailData() {
+    return true;
+  }
+}
+
+export const portfolioDetailStore = new PortfolioDetailStore();
+
+//template data;
 export const portfolioData = {
   portfolioData: [
     {

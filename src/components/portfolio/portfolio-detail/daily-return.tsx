@@ -1,20 +1,9 @@
 import { Box, Card, CardHeader, CardContent, Grid } from '@mui/material';
 import { Bar } from 'react-chartjs-2';
+import { PortfolioItem } from 'types';
 
-type dailyReturnType = {
-  symbol: string;
-  description: string;
-  price: number;
-  pricePaid: string;
-  priceChange: string;
-  percentChange: string;
-  profitLossAmount: string;
-  quantity: number;
-  marketValue: string;
-  portfolioAllocation: string;
-};
 interface IProps {
-  dailyReturnsData: Array<dailyReturnType>;
+  dailyReturnsData: Array<PortfolioItem>;
 }
 
 export const DailyReturns = ({ dailyReturnsData }: IProps) => {
