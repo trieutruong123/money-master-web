@@ -44,6 +44,18 @@ export const theme = createTheme({
         disableRipple: true,
       },
     },
+    MuiCard: {
+      variants: [
+        {
+          props: { variant: "rounded-soft" },
+          style: {
+            borderRadius: "12px",
+            padding: "5px 20px 20px 20px",
+            boxShadow: "0 0 8px rgba(0,0,0,0.11)",
+          },
+        },
+      ],
+    },
     MuiCardContent: {
       styleOverrides: {
         root: {

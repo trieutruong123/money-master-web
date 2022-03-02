@@ -92,7 +92,6 @@ export const vi = {
       confirmPasswordRequired: 'Vui lòng nhập mật khẩu xác nhận',
       confirmPasswordNotMatch: 'Mật khẩu xác nhận không khớp',
       emailRequired: 'Vui lòng nhập email',
-
     },
   },
   mainSidebar: {
@@ -139,6 +138,9 @@ export const vi = {
         saveDetails: 'Luư thay đổi',
       },
     },
+  },
+  portfolioDetailPage: {
+    title: 'PORTFOLIO DETAIL',
   },
   settingsPage: {
     title: 'Cài đặt',

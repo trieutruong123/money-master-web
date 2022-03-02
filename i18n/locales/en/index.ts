@@ -139,6 +139,9 @@ export const en = {
       },
     },
   },
+  portfolioDetailPage:{
+    title: 'PORTFOLIO DETAIL',
+  },
   settingsPage: {
     title: 'SETTINGS',
   },

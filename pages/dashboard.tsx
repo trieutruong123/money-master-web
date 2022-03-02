@@ -15,9 +15,9 @@ import {
 
 const Dashboard = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;
-
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { dashboardPage } = detail;
+
   return (
     <>
       <Head>
