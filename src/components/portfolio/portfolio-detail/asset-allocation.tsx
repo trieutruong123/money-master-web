@@ -67,7 +67,15 @@ export const AssetAllocation = ({ assetAllocationData }: IProps) => {
   };
 
   return (
-    <Grid item lg={6} md={6} xl={6} xs={12}>
+    <Grid
+      item
+      lg={6}
+      md={6}
+      xl={6}
+      sm={8}
+      xs={12}
+      
+    >
       <Card
         sx={{
           borderRadius: '12px',
@@ -87,7 +95,7 @@ export const AssetAllocation = ({ assetAllocationData }: IProps) => {
               height: 'auto',
             }}
           >
-            <Doughnut data={data} height= {140} options={options} />
+            <Doughnut data={data} height={140} options={options} />
           </Box>
         </CardContent>
       </Card>

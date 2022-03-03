@@ -25,7 +25,7 @@ class PortfolioDetailStore {
     this.isOpenAddNewAssetModal = isOpen;
   }
 
-  fetchPortfolioDetailData() {
+  async fetchPortfolioDetailData() {
     this.portfolioAllocationData = portfolioData.portfolioAllocation;
     this.portfolioDetailData = portfolioData.portfolioData;
     this.portfolioValue = portfolioData.portfolioValue;

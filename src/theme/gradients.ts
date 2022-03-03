@@ -1,4 +1,4 @@
-export const gradients = (ctx) => {
+export const gradients = (ctx: CanvasRenderingContext2D) => {
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
   
     gradient.addColorStop(0, "rgba(60, 155, 252, 0.2)");

@@ -92,7 +92,15 @@ export const DailyReturns = ({ dailyReturnsData }: IProps) => {
   };
 
   return (
-    <Grid item lg={6} md={6} xl={6} xs={12}>
+    <Grid
+      item
+      lg={6}
+      md={6}
+      xl={6}
+      sm={8}
+      xs={12}
+      
+    >
       <Card
         sx={{
           borderRadius: '12px',

@@ -1,29 +1,26 @@
 import { Box, Container, Grid, IconButton, Tooltip } from '@mui/material';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { AssetAllocation } from './asset-allocation';
 import { DailyReturns } from './daily-return';
 import { Portfolio } from './portfolio';
+import { AddNewAssetsModal } from './add-new-assets-modal';
 import { portfolioDetailStore } from 'store';
 import { PortfolioAllocation, PortfolioItem } from 'types';
 
 export const PortfolioDetail = observer(() => {
-  const [portfolioDataSet, setPortfolioDataSet] = useState<
-    Array<PortfolioItem>
-  >(portfolioDetailStore.portfolioDetailData);
-  const [assetAllocationData, setAssetAllocationData] = useState<
-    Array<PortfolioAllocation>
-  >(portfolioDetailStore.portfolioAllocationData);
-  const [portfolioValue, setPortfolioValue] = useState(
-    portfolioDetailStore.portfolioValue,
-  );
-  const [todaysChange, setTodaysChange] = useState(
-    portfolioDetailStore.todaysChange,
-  );
+  useEffect(() => {
+    portfolioDetailStore.fetchPortfolioDetailData();
+  }, []);
 
-  const { isOpenAddNewAssetModal, setOpenAddNewAssetModal } =
-    portfolioDetailStore;
+  const {
+    portfolioDetailData,
+    portfolioAllocationData,
+    portfolioValue,
+    todaysChange,
+    isOpenAddNewAssetModal,
+  } = portfolioDetailStore;
 
   return (
     <Box
@@ -44,17 +41,22 @@ export const PortfolioDetail = observer(() => {
       >
         <Box sx={{ overflow: 'auto' }}>
           <Container>
-            <Grid container spacing={3}>
-              <AssetAllocation assetAllocationData={assetAllocationData} />
-              <DailyReturns dailyReturnsData={portfolioDataSet} />
-              <Portfolio data={portfolioDataSet} />
+            <Grid container spacing={3} display="fex" justifyContent="center">
+              <AssetAllocation assetAllocationData={portfolioAllocationData} />
+              <DailyReturns dailyReturnsData={portfolioDetailData} />
+              <Portfolio data={portfolioDetailData} />
             </Grid>
           </Container>
         </Box>
       </Box>
+      <AddNewAssetsModal />
       <Tooltip title="Add new assets">
         <IconButton
-          onClick={() => setOpenAddNewAssetModal(!isOpenAddNewAssetModal)}
+          onClick={() =>
+            portfolioDetailStore.setOpenAddNewAssetModal(
+              !isOpenAddNewAssetModal,
+            )
+          }
           color="success"
           sx={{ position: 'absolute', right: '6vw', bottom: '6vh' }}
         >

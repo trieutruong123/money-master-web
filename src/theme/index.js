@@ -47,11 +47,11 @@ export const theme = createTheme({
     MuiCard: {
       variants: [
         {
-          props: { variant: "rounded-soft" },
+          props: { variant: 'rounded-soft' },
           style: {
-            borderRadius: "12px",
-            padding: "5px 20px 20px 20px",
-            boxShadow: "0 0 8px rgba(0,0,0,0.11)",
+            borderRadius: '12px',
+            padding: '5px 20px 20px 20px',
+            boxShadow: '0 0 8px rgba(0,0,0,0.11)',
           },
         },
       ],
@@ -154,6 +154,19 @@ export const theme = createTheme({
       700: '#374151',
       800: '#1F2937',
       900: '#111827',
+    },
+    appColor: {
+      blue: '#2D7CF3',
+      black: '#282727',
+      gray: '#ABABAB',
+      darkGreen: '#209E2C',
+      red: '#FA0606',
+      cyan: '#3DB8C0',
+      lightGray: '#E5E5E5',
+      lightGreen: '#88EA65',
+      yellow: '#F6E549',
+      orange: '#FF7B1B',
+      darkGray: '#5E5656',
     },
     action: {
       active: '#6B7280',
