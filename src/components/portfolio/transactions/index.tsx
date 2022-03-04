@@ -1,27 +1,18 @@
 import { Box, Container, Grid, IconButton, Tooltip } from '@mui/material';
 import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { AssetAllocation } from './asset-allocation';
-import { DailyReturns } from './daily-return';
-import { Portfolio } from './portfolio';
-import { AddNewAssetsModal } from './add-new-assets-modal';
-import { portfolioDetailStore } from 'store';
-import { PortfolioAllocation, PortfolioItem } from 'types';
+import { transactionHistoryStore } from 'store';
+import { AddNewTransactionModal } from './add-new-transaction-modal';
 
-export const PortfolioDetail = observer(() => {
- 
+export const TransactionHitory = observer(() => {
+  
   useEffect(() => {
-    portfolioDetailStore.fetchPortfolioDetailData();
+    transactionHistoryStore.fetchTransactionHistoryData();
   }, []);
 
-  const {
-    portfolioDetailData,
-    portfolioAllocationData,
-    portfolioValue,
-    todaysChange,
-    isOpenAddNewAssetModal,
-  } = portfolioDetailStore;
+  const { isOpenAddNewTransactionModal } = transactionHistoryStore;
 
   return (
     <Box
@@ -42,20 +33,21 @@ export const PortfolioDetail = observer(() => {
       >
         <Box sx={{ overflow: 'auto' }}>
           <Container>
-            <Grid container spacing={3} display="fex" justifyContent="center">
-              <AssetAllocation assetAllocationData={portfolioAllocationData} />
-              <DailyReturns dailyReturnsData={portfolioDetailData} />
-              <Portfolio data={portfolioDetailData} />
-            </Grid>
+            <Grid
+              container
+              spacing={3}
+              display="fex"
+              justifyContent="center"
+            ></Grid>
           </Container>
         </Box>
       </Box>
-      <AddNewAssetsModal />
+      <AddNewTransactionModal />
       <Tooltip title="Add new assets">
         <IconButton
           onClick={() => {
-            portfolioDetailStore.setOpenAddNewAssetModal(
-              !isOpenAddNewAssetModal,
+            transactionHistoryStore.setOpenAddNewTransactionModal(
+              !isOpenAddNewTransactionModal,
             );
             
           }}

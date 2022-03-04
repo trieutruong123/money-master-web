@@ -10,6 +10,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import { useRouter } from 'next/router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
@@ -39,6 +40,10 @@ interface IProps {
 }
 
 export const Portfolio = ({ data }: IProps) => {
+  const router = useRouter();
+  const { locale } = useRouter();
+
+
   const headings = [
     'Price',
     "Today's Price Change",
@@ -112,6 +117,13 @@ export const Portfolio = ({ data }: IProps) => {
               <TableBody>
                 {data.map((record, i) => (
                   <TableRow
+                    onClick={() => {
+                      router.push(
+                        `/portfolio/transaction/test`,
+                        `/portfolio/transaction/test`,
+                        { locale: locale },
+                      );
+                    }}
                     key={i}
                     sx={{
                       cursor: 'pointer',
@@ -147,4 +159,3 @@ export const Portfolio = ({ data }: IProps) => {
     </Grid>
   );
 };
-

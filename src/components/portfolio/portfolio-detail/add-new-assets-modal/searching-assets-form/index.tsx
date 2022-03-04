@@ -22,6 +22,7 @@ import { AiFillDollarCircle, AiOutlineStock } from 'react-icons/ai';
 import { v4 as uuid } from 'uuid';
 import { portfolioDetailStore } from 'store';
 import { sampleData } from '../searching-data';
+import { Link } from 'components';
 
 type SearchingItemType = {
   id: string;
@@ -159,7 +160,7 @@ export const SearchingAssetsForm = observer(
           })}
         </Box>{' '}
         <PerfectScrollbar>
-          <List sx={{ width: 'auto' ,height:'50vh' }}>
+          <List sx={{ width: 'auto', height: '50vh' }}>
             {searchingData.map((item: SearchingItemType) => {
               return (
                 <ListItemButton
