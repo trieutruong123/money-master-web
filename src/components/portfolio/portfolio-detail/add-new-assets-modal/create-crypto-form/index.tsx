@@ -36,14 +36,20 @@ interface IProps {
 }
 
 export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
-  const theme = useTheme()
+  const theme = useTheme();
   const [date, setDate] = useState<Date | null>(new Date());
   const [focusedButtonKey, setFocusedButtonKey] = useState(1);
   const validationSchema = Yup.object().shape({
-    pricePerShare: Yup.number().required('Price per share is missing'),
-    amount: Yup.number().required('Amount is missing'),
+    pricePerShare: Yup.number()
+      .required('Price is required')
+      .typeError('Price must be a number')
+      .positive('Price must be greater than zero'),
+    amount: Yup.number()
+      .required('Amount is required')
+      .typeError('Amount must be a number')
+      .positive('Amount must be greater than zero'),
   });
-  
+
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, reset, handleSubmit, formState, getValues, setError } =
     useForm<FormValues>(formOptions);
@@ -67,12 +73,12 @@ export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
 
   return (
     <Box>
-      <Box mt="1rem">
+      <Box sx={{ mt: '1rem' }}>
         <Typography align="center" id="modal-modal-title" variant="h4">
           Transaction
         </Typography>
         <IconButton
-          sx={{ position: 'absolute', left: '2rem' , top: '1rem' }}
+          sx={{ position: 'absolute', left: '2rem', top: '1rem' }}
           onClick={handleComeback}
         >
           <ArrowBackIcon />
@@ -103,9 +109,9 @@ export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
           flexDirection: 'column',
           mx: '3rem',
           mt: '1rem',
-          [theme.breakpoints.down('xs')]:{
+          [theme.breakpoints.down('xs')]: {
             mx: '2rem',
-          }
+          },
         }}
       >
         <TextField
@@ -162,7 +168,12 @@ export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
         <Button
           type="submit"
           variant="contained"
-          sx={{ bg: colorScheme.theme }}
+          sx={{
+            bg: colorScheme.theme,
+            width: '100%',
+            fontSize: '1.7rem',
+            height: '3rem',
+          }}
         >
           Add new
         </Button>

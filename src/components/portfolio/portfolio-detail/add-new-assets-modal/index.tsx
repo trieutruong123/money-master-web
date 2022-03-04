@@ -19,6 +19,7 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
   //boxShadow: '0 0 0 50vmax rgba(0,0,0,.5);',
   [theme.breakpoints.up('md')]: {
     minWidth: '450px',
+    width:'450px',
     height: '60vh',
   },
   [theme.breakpoints.down('md')]: {

@@ -10,6 +10,7 @@ import {
   ListItemIcon,
   Paper,
   Typography,
+  useTheme,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -28,13 +29,13 @@ type SearchingItemType = {
   label: string;
 };
 
-
 interface IProps {
   openTransactionForm: any;
 }
 
 export const SearchingAssetsForm = observer(
   ({ openTransactionForm }: IProps) => {
+    const theme = useTheme();
     const [categories, setCategories] = useState(CategoryList);
     const [selectedArray, setSelectedArray] = useState<Array<boolean>>(
       categories.map((item) => true),
@@ -158,10 +159,11 @@ export const SearchingAssetsForm = observer(
           })}
         </Box>{' '}
         <PerfectScrollbar>
-          <List sx={{ width: 'auto', ml: '2rem' }}>
+          <List sx={{ width: 'auto' ,height:'50vh' }}>
             {searchingData.map((item: SearchingItemType) => {
               return (
                 <ListItemButton
+                  sx={{ pl: '1.4rem' }}
                   key={item.id}
                   onClick={() => handleItemClick(item.id)}
                 >
