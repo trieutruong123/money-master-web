@@ -2,70 +2,40 @@ import Head from "next/head";
 import { Box, Container, Typography, Button } from "@mui/material";
 import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 import { DashboardLayout } from "components/dashboard-layout";
-import {
-  PortfolioCard,
-} from "components/portfolio";
-import { Link } from "components";
+import PortfolioCard from "components/portfolio/portfolio-list/portfolio-card";
 import * as React from "react";
 import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
-
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import NewPortfolio from "../../components/portfolio/portfolio-list/new-portfolio";
 
 var portfolioList = [
   {
     name: "Investment 1",
-    initBalance: 200,
-    id: '1',
+    balance: 200,
+    currency: "VND",
+    id: "1",
   },
   {
     name: "Investment 2",
-    initBalance: 400,
-    id: '2',
-  },
-  {
-    name: "Investment 3",
-    initBalance: 600,
-    id: '3',
+    balance: 400,
+    currency: "USD",
+    id: "2",
   },
 ];
 
 const Portfolio = () => {
-  const [values, setValues] = React.useState({
-    portfolioName: "",
-    initBalance: "",
-  });
   const [openCreateModal, setOpenCreateModal] = React.useState(false);
   const handleOpenCreateModal = () => setOpenCreateModal(true);
   const handleCloseCreateModal = () => setOpenCreateModal(false);
-  const createHandler = () => {
+  const createHandler = (data: any) => {
+    console.log(data);
     portfolioList.push({
-      name: values.portfolioName,
-      initBalance: parseInt(values.initBalance),
-      id: Date.now().toString(16),
+      name: data.portfolioName,
+      balance: 0,
+      currency: data.currency,
+      id: Date.now().toString(16), // dummy ID
     });
-
-    console.log(values);
     setOpenCreateModal(false);
   };
-  const handleChange = (event: any) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  const portfolioName = React.useRef();
 
   return (
     <>
@@ -98,54 +68,13 @@ const Portfolio = () => {
             onClose={handleCloseCreateModal}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
+            sx={{ mt: 10 }}
           >
-            <Box sx={style}>
-              <Typography sx={{ mb: 3 }} variant="h4">
-                ADD NEW PORTFOLIO
-              </Typography>
-              <Box
-                component="form"
-                sx={{
-                  "& .MuiTextField-root": { m: 1, width: "25ch" },
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <div>
-                  <TextField
-                    required
-                    id="portfolioName"
-                    name="portfolioName"
-                    label="Portfolio Name"
-                    onChange={handleChange}
-                  />
-                  <TextField
-                    required
-                    id="initBalance"
-                    name="initBalance"
-                    label="Initial Balance"
-                    type="number"
-                    InputProps={{
-                      inputProps: { min: 0 },
-                    }}
-                    onChange={handleChange}
-                  />
-                </div>
-                <Button variant="contained" onClick={createHandler}>
-                  Create
-                </Button>
-              </Box>
-            </Box>
+            <NewPortfolio onCreatePortfolio={createHandler} />
           </Modal>
           {portfolioList.map((portfolio) => (
-            <PortfolioCard
-              name={portfolio.name}
-              initBalance={portfolio.initBalance}
-              id={portfolio.id}
-              key={portfolio.id}
-            />
+            <PortfolioCard portfolio={portfolio} key={portfolio.id} />
           ))}
-          ;
         </Container>
       </Box>
     </>
