@@ -5,7 +5,9 @@ import { DashboardLayout } from "components/dashboard-layout";
 import PortfolioCard from "components/portfolio/portfolio-list/portfolio-card";
 import * as React from "react";
 import Modal from "@mui/material/Modal";
-import NewPortfolio from "../../components/portfolio/portfolio-list/new-portfolio";
+import NewPortfolio from "../../components/portfolio/portfolio-list/modify-portfolio";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
+import { content } from "i18n";
 
 var portfolioList = [
   {
@@ -22,20 +24,29 @@ var portfolioList = [
   },
 ];
 
-const Portfolio = () => {
+const Portfolio = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const { locale } = props.context;
+  const detail = locale === "vi" ? content["vi"] : content["en"];
+  const pageContent = detail.portfolioListPage;
+
   const [openCreateModal, setOpenCreateModal] = React.useState(false);
   const handleOpenCreateModal = () => setOpenCreateModal(true);
   const handleCloseCreateModal = () => setOpenCreateModal(false);
   const createHandler = (data: any) => {
-    console.log(data);
-    portfolioList.push({
-      name: data.portfolioName,
-      balance: 0,
-      currency: data.currency,
-      id: Date.now().toString(16), // dummy ID
-    });
+    // call create API
+    console.log(data);     
     setOpenCreateModal(false);
   };
+
+  const updateHandler = (data: any) => {
+   // call update API
+   console.log("UPDATED: ",data);
+  };
+
+  const deleteHandler=(portfolioId:string)=>{
+    // call delete APi
+    console.log("DELETED ID: ",portfolioId);
+  }
 
   return (
     <>
@@ -54,12 +65,12 @@ const Portfolio = () => {
           sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
         >
           <Typography sx={{ mb: 3 }} variant="h4">
-            Portfolio
+            {pageContent.title}
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
 
           <Button variant="contained" onClick={handleOpenCreateModal}>
-            Create
+            {pageContent.add}
           </Button>
         </Container>
         <Container maxWidth={false}>
@@ -70,10 +81,19 @@ const Portfolio = () => {
             aria-describedby="modal-modal-description"
             sx={{ mt: 10 }}
           >
-            <NewPortfolio onCreatePortfolio={createHandler} />
+            <NewPortfolio
+              content={pageContent.newPortfolioModal}
+              onModifyPortfolio={createHandler}
+            />
           </Modal>
           {portfolioList.map((portfolio) => (
-            <PortfolioCard portfolio={portfolio} key={portfolio.id} />
+            <PortfolioCard
+              content={pageContent}
+              portfolio={portfolio}
+              key={portfolio.id}
+              onUpdate={updateHandler}
+              onDelete={deleteHandler}
+            />
           ))}
         </Container>
       </Box>
@@ -85,5 +105,13 @@ const Portfolio = () => {
 Portfolio.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  return {
+    props: {
+      context,
+    },
+  };
+};
 
 export default Portfolio;
