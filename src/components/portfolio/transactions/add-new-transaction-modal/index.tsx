@@ -18,6 +18,7 @@ import * as Yup from 'yup';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import { colorScheme } from 'utils/color-scheme';
 import { transactionHistoryStore } from 'store';
 
@@ -31,6 +32,7 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
   backgroundColor: '#FFFFFF',
   borderRadius: '12px',
   overflow: 'hidden',
+
   //boxShadow: '0 0 0 50vmax rgba(0,0,0,.5);',
   [theme.breakpoints.up('md')]: {
     minWidth: '450px',
@@ -83,7 +85,7 @@ export const AddNewTransactionModal = observer(({}: IProps) => {
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
-  const buttonLabels = ['Buy', 'Sell', 'Divident'];
+  const buttonLabels = ['Buy', 'Sell', 'Dividend'];
 
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
@@ -114,102 +116,105 @@ export const AddNewTransactionModal = observer(({}: IProps) => {
                 Transaction
               </Typography>
             </Box>
-            <Box sx={{ ml: '3rem', mt: '1rem' }}>
-              <ButtonGroup aria-label="outlined primary button group">
-                {buttonLabels.map((item: string, key: number) => {
-                  return (
-                    <Button
-                      key={key.toString()}
-                      variant={
-                        key === focusedButtonKey ? 'contained' : 'outlined'
-                      }
-                      onClick={() => handleSelectionChanged(key)}
-                    >
-                      {item}
-                    </Button>
-                  );
-                })}
-              </ButtonGroup>
-            </Box>
-            <Box
-              component="form"
-              autoComplete="off"
-              onSubmit={handleSubmit(onSubmit)}
-              sx={{
-                justifyContent: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                mx: '3rem',
-                mt: '1rem',
-                [theme.breakpoints.down('xs')]: {
-                  mx: '2rem',
-                },
-              }}
-            >
-              <TextField
-                type="number"
-                fullWidth
-                sx={{ my: 1, display: 'block' }}
-                id="outlined-price-per-share"
-                label={'*Price per share'}
-                {...register('pricePerShare')}
-                variant="outlined"
-                error={typeof errors.pricePerShare?.message !== 'undefined'}
-                helperText={errors.pricePerShare?.message}
-              ></TextField>
-              <TextField
-                type="number"
-                fullWidth
-                sx={{ my: 1, display: 'block' }}
-                id="outlined-amount"
-                label={'*Amount'}
-                {...register('amount')}
-                variant="outlined"
-                error={typeof errors.amount?.message !== 'undefined'}
-                helperText={errors.amount?.message}
-              ></TextField>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DesktopDatePicker
-                  label="*Date desktop"
-                  inputFormat="dd/MM/yyyy"
-                  value={date}
-                  onChange={handleDateChange}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-              <TextField
-                type="number"
-                fullWidth
-                sx={{ my: 1, display: 'block' }}
-                id="outlined-broker-fee"
-                label={'Broker fee'}
-                {...register('brokerFee')}
-                variant="outlined"
-              ></TextField>
-              <TextField
-                type="text"
-                fullWidth
-                sx={{ my: 1, display: 'block' }}
-                id="outlined-note"
-                label={'Note'}
-                {...register('note')}
-                variant="outlined"
-                error={typeof errors.note?.message !== 'undefined'}
-                helperText={errors.note?.message}
-              ></TextField>
-              <Button
-                type="submit"
-                variant="contained"
+            <PerfectScrollbar>
+              <Box sx={{ ml: '3rem', mt: '1rem' }}>
+                <ButtonGroup aria-label="outlined primary button group">
+                  {buttonLabels.map((item: string, key: number) => {
+                    return (
+                      <Button
+                        key={key.toString()}
+                        variant={
+                          key === focusedButtonKey ? 'contained' : 'outlined'
+                        }
+                        onClick={() => handleSelectionChanged(key)}
+                      >
+                        {item}
+                      </Button>
+                    );
+                  })}
+                </ButtonGroup>
+              </Box>
+              <Box
+                component="form"
+                autoComplete="off"
+                onSubmit={handleSubmit(onSubmit)}
                 sx={{
-                  bg: colorScheme.theme,
-                  width: '100%',
-                  fontSize: '1.7rem',
-                  height: '3rem',
+                  justifyContent: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  mx: '3rem',
+                  mt: '1rem',
+                  [theme.breakpoints.down('xs')]: {
+                    mx: '2rem',
+                  },
                 }}
               >
-                Add transaction
-              </Button>
-            </Box>
+                <TextField
+                  type="number"
+                  fullWidth
+                  sx={{ my: 1, display: 'block' }}
+                  id="outlined-price-per-share"
+                  label={'*Price per share'}
+                  {...register('pricePerShare')}
+                  variant="outlined"
+                  error={typeof errors.pricePerShare?.message !== 'undefined'}
+                  helperText={errors.pricePerShare?.message}
+                ></TextField>
+                <TextField
+                  type="number"
+                  fullWidth
+                  sx={{ my: 1, display: 'block' }}
+                  id="outlined-amount"
+                  label={'*Amount'}
+                  {...register('amount')}
+                  variant="outlined"
+                  error={typeof errors.amount?.message !== 'undefined'}
+                  helperText={errors.amount?.message}
+                ></TextField>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DesktopDatePicker
+                    label="*Date desktop"
+                    inputFormat="dd/MM/yyyy"
+                    value={date}
+                    onChange={handleDateChange}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+                <TextField
+                  type="number"
+                  fullWidth
+                  sx={{ my: 1, display: 'block' }}
+                  id="outlined-broker-fee"
+                  label={'Broker fee'}
+                  {...register('brokerFee')}
+                  variant="outlined"
+                ></TextField>
+                <TextField
+                  type="text"
+                  fullWidth
+                  sx={{ my: 1, display: 'block' }}
+                  id="outlined-note"
+                  label={'Note'}
+                  {...register('note')}
+                  variant="outlined"
+                  error={typeof errors.note?.message !== 'undefined'}
+                  helperText={errors.note?.message}
+                ></TextField>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    bg: colorScheme.theme,
+                    width: '100%',
+                    fontSize: '1.7rem',
+                    height: '3rem',
+                    mb:'1rem'
+                  }}
+                >
+                  Add transaction
+                </Button>
+              </Box>
+            </PerfectScrollbar>
           </Box>
         </StyledModal>
       </Modal>

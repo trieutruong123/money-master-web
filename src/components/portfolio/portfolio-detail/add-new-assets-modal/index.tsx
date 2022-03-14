@@ -12,26 +12,31 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 'auto',
-  height: '60vh',
+  minWidth: '320px',
+  height: '650px',
+  maxHeight: '100vh',
   backgroundColor: '#FFFFFF',
   borderRadius: '12px',
   overflow: 'hidden',
   //boxShadow: '0 0 0 50vmax rgba(0,0,0,.5);',
   [theme.breakpoints.up('md')]: {
     minWidth: '450px',
-    width:'450px',
-    height: '60vh',
+    width: '450px',
   },
   [theme.breakpoints.down('md')]: {
     width: '70vw',
-    height: '60vh',
   },
   [theme.breakpoints.down('sm')]: {
     width: '90vw',
-    height: '70vh',
+    height: '570px',
+    '@media (maxHeight: 570px)': {
+      height: '100vh',
+    },
+  },
+  '@media(maxHeight: 650px) and (minWidth:600px)': {
+    height: '100vh',
   },
 }));
-
 
 export const AddNewAssetsModal = observer(() => {
   const [current, setCurrent] = useState<any>(null);
@@ -41,7 +46,7 @@ export const AddNewAssetsModal = observer(() => {
       <SearchingAssetsForm openTransactionForm={openTransactionForm} />,
     );
   }, []);
-  
+
   const { isOpenAddNewAssetModal } = portfolioDetailStore;
 
   const handleClose = () => {
