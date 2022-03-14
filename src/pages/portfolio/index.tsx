@@ -2,70 +2,51 @@ import Head from "next/head";
 import { Box, Container, Typography, Button } from "@mui/material";
 import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 import { DashboardLayout } from "components/dashboard-layout";
-import {
-  PortfolioCard,
-} from "components/portfolio";
-import { Link } from "components";
+import PortfolioCard from "components/portfolio/portfolio-list/portfolio-card";
 import * as React from "react";
 import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
-
-const style = {
-  position: "absolute" as "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+import NewPortfolio from "../../components/portfolio/portfolio-list/modify-portfolio";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
+import { content } from "i18n";
 
 var portfolioList = [
   {
     name: "Investment 1",
-    initBalance: 200,
-    id: '1',
+    balance: 200,
+    currency: "VND",
+    id: "1",
   },
   {
     name: "Investment 2",
-    initBalance: 400,
-    id: '2',
-  },
-  {
-    name: "Investment 3",
-    initBalance: 600,
-    id: '3',
+    balance: 400,
+    currency: "USD",
+    id: "2",
   },
 ];
 
-const Portfolio = () => {
-  const [values, setValues] = React.useState({
-    portfolioName: "",
-    initBalance: "",
-  });
+const Portfolio = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const { locale } = props.context;
+  const detail = locale === "vi" ? content["vi"] : content["en"];
+  const pageContent = detail.portfolioListPage;
+
   const [openCreateModal, setOpenCreateModal] = React.useState(false);
   const handleOpenCreateModal = () => setOpenCreateModal(true);
   const handleCloseCreateModal = () => setOpenCreateModal(false);
-  const createHandler = () => {
-    portfolioList.push({
-      name: values.portfolioName,
-      initBalance: parseInt(values.initBalance),
-      id: Date.now().toString(16),
-    });
-
-    console.log(values);
+  const createHandler = (data: any) => {
+    // call create API
+    console.log(data);     
     setOpenCreateModal(false);
   };
-  const handleChange = (event: any) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
-    });
+
+  const updateHandler = (data: any) => {
+   // call update API
+   console.log("UPDATED: ",data);
   };
 
-  const portfolioName = React.useRef();
+  const deleteHandler=(portfolioId:string)=>{
+    // call delete APi
+    console.log("DELETED ID: ",portfolioId);
+  }
 
   return (
     <>
@@ -84,12 +65,12 @@ const Portfolio = () => {
           sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
         >
           <Typography sx={{ mb: 3 }} variant="h4">
-            Portfolio
+            {pageContent.title}
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
 
           <Button variant="contained" onClick={handleOpenCreateModal}>
-            Create
+            {pageContent.add}
           </Button>
         </Container>
         <Container maxWidth={false}>
@@ -98,54 +79,22 @@ const Portfolio = () => {
             onClose={handleCloseCreateModal}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
+            sx={{ mt: 10 }}
           >
-            <Box sx={style}>
-              <Typography sx={{ mb: 3 }} variant="h4">
-                ADD NEW PORTFOLIO
-              </Typography>
-              <Box
-                component="form"
-                sx={{
-                  "& .MuiTextField-root": { m: 1, width: "25ch" },
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <div>
-                  <TextField
-                    required
-                    id="portfolioName"
-                    name="portfolioName"
-                    label="Portfolio Name"
-                    onChange={handleChange}
-                  />
-                  <TextField
-                    required
-                    id="initBalance"
-                    name="initBalance"
-                    label="Initial Balance"
-                    type="number"
-                    InputProps={{
-                      inputProps: { min: 0 },
-                    }}
-                    onChange={handleChange}
-                  />
-                </div>
-                <Button variant="contained" onClick={createHandler}>
-                  Create
-                </Button>
-              </Box>
-            </Box>
+            <NewPortfolio
+              content={pageContent.newPortfolioModal}
+              onModifyPortfolio={createHandler}
+            />
           </Modal>
           {portfolioList.map((portfolio) => (
             <PortfolioCard
-              name={portfolio.name}
-              initBalance={portfolio.initBalance}
-              id={portfolio.id}
+              content={pageContent}
+              portfolio={portfolio}
               key={portfolio.id}
+              onUpdate={updateHandler}
+              onDelete={deleteHandler}
             />
           ))}
-          ;
         </Container>
       </Box>
     </>
@@ -156,5 +105,13 @@ const Portfolio = () => {
 Portfolio.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  return {
+    props: {
+      context,
+    },
+  };
+};
 
 export default Portfolio;

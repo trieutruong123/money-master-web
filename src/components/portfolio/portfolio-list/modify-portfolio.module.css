@@ -1,0 +1,66 @@
+.body { 
+  border-radius: 10px;
+  background-color: whitesmoke;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  margin: 3rem auto;
+  width: 90%;
+  max-width: 40rem;
+  text-align: center;
+  
+}
+
+.row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.control {
+  margin-bottom: 0.5rem;
+  flex: 1;
+  min-width: 10rem;
+}
+
+.control label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.control input,
+.control select,
+.control textarea {
+  font: inherit;
+  padding: 0.25rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+  background: linear-gradient(to right, #e0eafc, #cfdef3);
+}
+
+.form .btn {
+  background-color: white;
+}
+
+.form button {
+  font: inherit;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  color: #5048E5;
+  border: 1px solid #5048E5;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 150px;
+}
+
+.form button:hover,
+.form button:active {
+  background: linear-gradient(to right, #e0eafc, #cfdef3);
+}
+
+.title{
+  margin-bottom: 20px;
+}
