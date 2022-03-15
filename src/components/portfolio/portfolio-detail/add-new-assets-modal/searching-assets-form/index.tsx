@@ -71,7 +71,6 @@ export const SearchingAssetsForm = observer(
     };
 
     const searchData = () => {
-      console.log('search data');
       if (searchingText === '' || searchingText === null) {
         setSearchingData([]);
       } else {

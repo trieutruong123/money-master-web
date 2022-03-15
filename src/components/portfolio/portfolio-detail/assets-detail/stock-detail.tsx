@@ -15,7 +15,6 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { PortfolioItem } from 'types';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -36,13 +35,12 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  data: Array<PortfolioItem>;
+  stockDetail: Array<any>;
 }
 
-export const Portfolio = ({ data }: IProps) => {
+export const StockInvestments = ({ stockDetail }: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
-
 
   const headings = [
     'Price',
@@ -51,9 +49,8 @@ export const Portfolio = ({ data }: IProps) => {
     "Today's Gain/Loss",
     'Shares',
   ];
-
   const renderPriceWithCommas = (price: number) => {
-    return '$' + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return '$' + price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   };
 
   const renderPriceChange = (number: string) => {
@@ -79,8 +76,8 @@ export const Portfolio = ({ data }: IProps) => {
     } else return undefined;
   };
 
-  return (
-    <Grid item lg={12} md={12} xl={12} xs={12}>
+  return stockDetail.length ? (
+    <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
           borderRadius: '12px',
@@ -96,13 +93,13 @@ export const Portfolio = ({ data }: IProps) => {
             boxShadow: 'none',
           }}
         >
-          <CardHeader title="Portfolio" sx={{ padding: '0px' }} />
+          <CardHeader title="Stock" sx={{ padding: '0px' }} />
           <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
             <MoreHorizIcon />
           </Button>
         </Card>
         <PerfectScrollbar>
-          <Box sx={{ minWidth: 800 }}>
+          <Box >
             <Table>
               <TableHead>
                 <TableRow>
@@ -115,47 +112,59 @@ export const Portfolio = ({ data }: IProps) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.map((record, i) => (
-                  <TableRow
-                    onClick={() => {
-                      router.push(
-                        `/portfolio/transaction/test`,
-                        `/portfolio/transaction/test`,
-                        { locale: locale },
-                      );
-                    }}
-                    key={i}
-                    sx={{
-                      cursor: 'pointer',
-                      ':hover': {
-                        backgroundColor: '#F7F7F7',
-                      },
-                    }}
-                  >
-                    <TableBodyCellSymbol>
-                      <Box sx={{ fontWeight: 700 }}>{record.symbol}</Box>
-                      <Box sx={{ color: '#4c4c4c' }}>{record.description}</Box>
-                    </TableBodyCellSymbol>
-                    <TableBodyCell>
-                      {renderPriceWithCommas(record.price)}
-                    </TableBodyCell>
-                    <TableBodyCell>
-                      {renderPriceChange(record.priceChange)}
-                    </TableBodyCell>
-                    <TableBodyCell>
-                      {renderPercentage(record.percentChange)}
-                    </TableBodyCell>
-                    <TableBodyCell>
-                      {renderPriceChange(record.profitLossAmount)}
-                    </TableBodyCell>
-                    <TableBodyCell>{record.quantity}</TableBodyCell>
-                  </TableRow>
-                ))}
+                {stockDetail.map((record, i) => {
+                  return (
+                    <TableRow
+                      onClick={() => {
+                        router.push(
+                          `/portfolio/transaction/test`,
+                          `/portfolio/transaction/test`,
+                          { locale: locale },
+                        );
+                      }}
+                      key={i}
+                      sx={{
+                        cursor: 'pointer',
+                        ':hover': {
+                          backgroundColor: '#F7F7F7',
+                        },
+                      }}
+                    >
+                      <TableBodyCellSymbol>
+                        <Box
+                          sx={{ fontWeight: 700, textTransform: 'capitalize' }}
+                        >
+                          {record.symbol}
+                        </Box>
+                        <Box
+                          sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
+                        >
+                          {record.description}
+                        </Box>
+                      </TableBodyCellSymbol>
+                      <TableBodyCell>
+                        {renderPriceWithCommas(record.price)}
+                      </TableBodyCell>
+                      <TableBodyCell>
+                        {renderPriceChange(record.priceChange)}
+                      </TableBodyCell>
+                      <TableBodyCell>
+                        {renderPercentage(record.percentChange)}
+                      </TableBodyCell>
+                      <TableBodyCell>
+                        {renderPriceChange(record.profitLossAmount)}
+                      </TableBodyCell>
+                      <TableBodyCell>{record.quantity}</TableBodyCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </Box>
         </PerfectScrollbar>
       </Card>
     </Grid>
+  ) : (
+    <></>
   );
 };

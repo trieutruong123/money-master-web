@@ -9,13 +9,13 @@ export const coinGeckoService = {
 const BASE_URL = 'https://api.coingecko.com/api/v3';
 
 async function getCoinInfoByCode(params: any) {
-  const url = `/coins/${params.coinCode}?${
-    params?.localization ? 'localization=true' : null
-  }&${params?.tickers ? 'tickers=true' : null}&${
-    params?.marketData ? 'market_data=true' : null
-  }&${params?.communityData ? 'community_data=true' : null}&${
-    params?.developerData ? 'developer_data=true' : null
-  }&${params?.sparkLine ? 'sparkline=false' : null}`;
+  const url = `/coins/${params?.coinCode}?${
+    params?.exclude?.localization ? 'localization=false' : ''
+  }${params?.exclude?.tickers ? '&tickers=false' : ''}${
+    params?.exclude?.marketData ? '&market_data=false' : ''
+  }${params?.exclude?.communityData ? '&community_data=false' : ''}&${
+    params?.exclude?.developerData ? '&developer_data=false' : ''
+  }${params?.exclude?.sparkline ? '&sparkline=false' : ''}`;
   try {
     const response = await axios.get(`${BASE_URL}${url}`, {
       headers: { 'Content-Type': 'application/json' },

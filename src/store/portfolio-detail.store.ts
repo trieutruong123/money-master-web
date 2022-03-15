@@ -1,25 +1,32 @@
-import { getCurrencyByCode } from './../helpers/currency-info';
 import { action, makeAutoObservable, observable } from 'mobx';
-import { UserInfo } from 'models';
-import { PortfolioAllocation, PortfolioItem } from 'types';
+import { PortfolioAllocation } from 'types';
 import { coinGeckoService } from 'services';
 
 class PortfolioDetailStore {
   portfolioAllocationData: Array<PortfolioAllocation> = [];
-  portfolioDetailData: Array<PortfolioItem> = [];
+  stockDetail: Array<Object> = [];
+  cryptoDetail: Array<any> = [];
+  cashDetail: Array<Object> = [];
+  realEstateDetail: Array<Object> = [];
+  bankingDetail: Array<Object> = [];
   portfolioValue: number = 0;
   todaysChange: number = 0;
   isOpenAddNewAssetModal: boolean = false;
-
+  currencyCode: string = '';
   constructor() {
     makeAutoObservable(this, {
       portfolioAllocationData: observable,
-      portfolioDetailData: observable,
+      stockDetail: observable,
+      cryptoDetail: observable,
+      cashDetail: observable,
+      realEstateDetail: observable,
+      bankingDetail: observable,
       portfolioValue: observable,
       todaysChange: observable,
       isOpenAddNewAssetModal: observable,
       setOpenAddNewAssetModal: action,
       fetchPortfolioDetailData: action,
+      fetchCoinData: action,
     });
   }
 
@@ -28,34 +35,70 @@ class PortfolioDetailStore {
   }
 
   async fetchPortfolioDetailData() {
+    this.currencyCode = 'usd';
     this.portfolioAllocationData = portfolioData.portfolioAllocation;
-    this.portfolioDetailData = portfolioData.portfolioData;
     this.portfolioValue = portfolioData.portfolioValue;
     this.todaysChange = portfolioData.todaysChange;
+    const portfolioDetail = portfolioData.portfolioData;
+    this.stockDetail = portfolioDetail.stocks;
+    this.cashDetail = portfolioDetail.cash;
+    this.bankingDetail = portfolioDetail.banking;
+    this.realEstateDetail = portfolioDetail.realEstate;
+    this.cryptoDetail = portfolioDetail.crypto;
     return true;
   }
 
-  updatePortfolioDetailData() {
+  updatePortfolioDetailData(coins: any) {
+    const res = coins.map();
     return true;
   }
 
-  async fetchCoinData({ code }: { code: string }) {
-    try{
-    const response: any = await coinGeckoService.getCoinInfoByCode({
-      coinCode: code,
-      marketData: true,
-      sparkline: true,
+  async fetchCoinData() {
+    const coins = this.cryptoDetail;
+    const data = await coins.map(async (coin: any) => {
+      const res: any = await this.fetchCoinInfoByCode({ code: coin.coinName });
+      if (!res.isError) {
+        const coinInfo = res.data;
+        return {
+          ...coin,
+          price: coinInfo.price,
+          priceChange: coinInfo.priceChange,
+          percentChange: coinInfo.percentChange,
+          profitLossAmount: coinInfo.priceChange * coin.quantity,
+          totalValue: coinInfo.price * coin.quantity,
+        };
+      } else return coin;
     });
-    const {market_data} = response;
-    return {
-      price: market_data?.current_,
-      priceChange: ,
-      percentChange: 0,
-      profitLossAmount: 0,};
-    }
-    catch(error:any){
-      return error;
-    }
+    Promise.all(data).then((arr) => {
+      this.cryptoDetail = arr;
+    });
+  }
+
+  async fetchCoinInfoByCode({ code }: { code: string }) {
+    const res: any = await coinGeckoService.getCoinInfoByCode({
+      coinCode: code,
+      exclude: {
+        localization: true,
+        ticker: true,
+        communityData: true,
+        developerData: true,
+      },
+    });
+    if (!res.isError) {
+      const { market_data } = res.data;
+      return {
+        isError: false,
+        data: {
+          price: market_data?.current_price[this.currencyCode],
+          priceChange:
+            market_data?.price_change_24h_in_currency[this.currencyCode],
+          percentChange:
+            market_data?.price_change_percentage_24h_in_currency[
+              this.currencyCode
+            ],
+        },
+      };
+    } else return res;
   }
 }
 
@@ -68,20 +111,21 @@ export const portfolioData = {
       {
         id: ' VND',
         currencyCode: 'VND',
-        amount: '12000000',
+        total: '12000000',
       },
       {
         id: 'USD',
         currencyCode: 'USD',
-        amount: '5000',
+        total: '5000',
       },
     ],
     crypto: [
       {
         id: 'bitcoin',
         coinName: 'bitcoin',
+        description: 'bitcoin',
         symbol: 'btc',
-        amount: 1.43,
+        quantity: 1.43,
         price: 0,
         priceChange: 0,
         percentChange: 0,
@@ -92,8 +136,9 @@ export const portfolioData = {
       {
         id: 'ethereum',
         coinName: 'ethereum',
+        description: 'ethereum',
         symbol: 'eth',
-        amount: 1.55,
+        quantity: 1.55,
         price: 0,
         priceChange: 0,
         percentChange: 0,
@@ -240,7 +285,7 @@ export const portfolioData = {
         name: 'My home',
         address: '235 Nguyễn Văn Cừ, P.4, Q.5, Tp.Hồ Chí Minh',
         area: '123 meters',
-        currency_code: 'VND',
+        currencyCode: 'VND',
         valuation: 100000,
       },
       {
@@ -248,7 +293,7 @@ export const portfolioData = {
         name: 'My Farm',
         address: '123, Trần Hưng Đạo, Thị xã Dĩ An, Tỉnh Bình Dương',
         area: '1 hecta',
-        currency_code: 'USD',
+        currencyCode: 'USD',
         valuation: 150000,
       },
     ],
@@ -256,7 +301,7 @@ export const portfolioData = {
       {
         id: 'saving_1',
         name: 'ACB 3months',
-        inputDay: '2022-13-01T00:00:00',
+        inputDay: '2022-01-13T00:00:00',
         inputMoneyAmount: 1200.0,
         inputCurrency: 'USD',
         description: 'test custom asset',
@@ -266,7 +311,7 @@ export const portfolioData = {
       {
         id: 'saving_2',
         name: 'SCB 1year',
-        inputDay: '2022-12-01T00:00:00',
+        inputDay: '2022-01-12T00:00:00',
         inputMoneyAmount: 4000.0,
         inputCurrency: 'USD',
         description: 'test custom asset',
