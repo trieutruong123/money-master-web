@@ -20,7 +20,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { colorScheme } from 'utils/color-scheme';
-import { transactionHistoryStore } from 'store';
+import { cryptoVolatilityDetailStore } from 'store';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
   position: 'absolute',
@@ -66,7 +66,7 @@ interface IProps {}
 export const AddNewTransactionModal = observer(({}: IProps) => {
   const theme = useTheme();
   const [date, setDate] = useState<Date | null>(new Date());
-  const { isOpenAddNewTransactionModal } = transactionHistoryStore;
+  const { isOpenAddNewTransactionModal } = cryptoVolatilityDetailStore;
 
   const [focusedButtonKey, setFocusedButtonKey] = useState(1);
   const validationSchema = Yup.object().shape({
@@ -96,7 +96,7 @@ export const AddNewTransactionModal = observer(({}: IProps) => {
   };
 
   const handleClose = () => {
-    transactionHistoryStore.setOpenAddNewTransactionModal(false);
+    cryptoVolatilityDetailStore.setOpenAddNewTransactionModal(false);
   };
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {};
@@ -208,7 +208,7 @@ export const AddNewTransactionModal = observer(({}: IProps) => {
                     width: '100%',
                     fontSize: '1.7rem',
                     height: '3rem',
-                    mb:'1rem'
+                    mb: '1rem',
                   }}
                 >
                   Add transaction

@@ -3,16 +3,15 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { transactionHistoryStore } from 'store';
+import { stockVolatilityDetailStore } from 'store';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
 
-export const AssetVolatilityDetail = observer(() => {
-  
+export const StockVolatilityDetail = observer(() => {
   useEffect(() => {
-    transactionHistoryStore.fetchTransactionHistoryData();
+    stockVolatilityDetailStore.fetchTransactionHistoryData();
   }, []);
 
-  const { isOpenAddNewTransactionModal } = transactionHistoryStore;
+  const { isOpenAddNewTransactionModal } = stockVolatilityDetailStore;
 
   return (
     <Box
@@ -38,18 +37,21 @@ export const AssetVolatilityDetail = observer(() => {
               spacing={3}
               display="fex"
               justifyContent="center"
-            ></Grid>
+            >
+
+
+              
+            </Grid>
           </Container>
         </Box>
       </Box>
       <AddNewTransactionModal />
-      <Tooltip title="Add new assets">
+      <Tooltip title="Add new transaction">
         <IconButton
           onClick={() => {
-            transactionHistoryStore.setOpenAddNewTransactionModal(
+            stockVolatilityDetailStore.setOpenAddNewTransactionModal(
               !isOpenAddNewTransactionModal,
             );
-            
           }}
           color="success"
           sx={{ position: 'absolute', right: '6vw', bottom: '6vh' }}

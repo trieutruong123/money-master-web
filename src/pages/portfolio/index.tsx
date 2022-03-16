@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { Box, Container, Typography, Button } from "@mui/material";
 import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
-import { DashboardLayout } from "components/dashboard-layout";
+import { DashboardLayout } from "components/layouts";
 import PortfolioCard from "components/portfolio/portfolio-list/portfolio-card";
 import * as React from "react";
 import Modal from "@mui/material/Modal";

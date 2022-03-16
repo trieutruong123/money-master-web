@@ -3,7 +3,7 @@ import axios from 'axios';
 export const coinGeckoService = {
   getCoinInfoByCode,
   searchForCoin,
-  getMarketChartData,
+  getCoinOHCL,
 };
 
 const BASE_URL = 'https://api.coingecko.com/api/v3';
@@ -35,4 +35,21 @@ async function getCoinInfoByCode(params: any) {
 
 async function searchForCoin() {}
 
-async function getMarketChartData() {}
+async function getCoinOHCL(params: any) {
+  const url = `/coins/${params?.coinCode}/ohlc?vs_currency=${params.vsCurrency}&days=${params.days}`;
+  try {
+    const response = await axios.get(`${BASE_URL}${url}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    return {
+      isError: false,
+      data: response.data,
+    };
+  } catch (error: any) {
+    return {
+      isError: true,
+      data: error.response,
+    };
+  }
+}

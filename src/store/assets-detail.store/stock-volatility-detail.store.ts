@@ -1,6 +1,6 @@
 import { action, makeAutoObservable, observable } from 'mobx';
 
-class TransactionHistoryStore {
+class StockVolatilityDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
 
   constructor() {
@@ -24,4 +24,4 @@ class TransactionHistoryStore {
   }
 }
 
-export const transactionHistoryStore = new TransactionHistoryStore();
+export const stockVolatilityDetailStore = new StockVolatilityDetailStore();

@@ -1,5 +1,16 @@
-import { AssetVolatilityDetail } from './asset-volatility-detail';
-import PortfolioCard from './portfolio-card';
+import { CryptoVolatilityDetail, StockVolatilityDetail } from './asset-detail';
+import {
+  DeletePortfolio,
+  ModifyPortfolio,
+  PortfolioCard,
+} from './portfolio-list';
 import { PortfolioDetail } from './portfolio-detail';
 
-export { AssetVolatilityDetail, PortfolioCard, PortfolioDetail };
+export {
+  CryptoVolatilityDetail,
+  StockVolatilityDetail,
+  DeletePortfolio,
+  ModifyPortfolio,
+  PortfolioCard,
+  PortfolioDetail,
+};

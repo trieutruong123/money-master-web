@@ -5,7 +5,7 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
-import { AssetVolatilityDetail } from 'components/portfolio';
+import { CryptoVolatilityDetail } from 'components/portfolio';
 
 const AssetVolatilityDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
@@ -13,7 +13,7 @@ const AssetVolatilityDetailPage = (
   const { locale } = props.context;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
-  //const { AssetVolatilityDetailPage } = detail;
+  //const { assetVolatilityDetailPage } = detail;
 
   return (
     <>
@@ -36,7 +36,7 @@ const AssetVolatilityDetailPage = (
           </Typography>
         </Container>
         <Container maxWidth="lg">
-          <AssetVolatilityDetail />
+          <CryptoVolatilityDetail />
         </Container>
       </Box>
     </>
