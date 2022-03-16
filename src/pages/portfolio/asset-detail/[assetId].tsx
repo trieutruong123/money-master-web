@@ -1,25 +1,24 @@
 import Head from 'next/head';
 import { Box, Container, Typography } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
-import { TransactionHitory } from 'components/portfolio/transactions';
+import { AssetVolatilityDetail } from 'components/portfolio';
 
-const TransactionHistoryPage = (
+const AssetVolatilityDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
   const { locale } = props.context;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
-  const { portfolioDetailPage } = detail;
+  //const { AssetVolatilityDetailPage } = detail;
 
   return (
-    // StyledEngineProvider allows CSS-in-JS to be used
     <>
       <Head>
-        <title>Transaction | Money Master</title>
+        <title>Asset Detail | Money Master</title>
       </Head>
       <Box
         component="main"
@@ -33,21 +32,30 @@ const TransactionHistoryPage = (
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
           <Typography sx={{ mb: 3 }} variant="h4">
-            Transaction History
+            Asset Detail
           </Typography>
         </Container>
         <Container maxWidth="lg">
-          <TransactionHitory />
+          <AssetVolatilityDetail />
         </Container>
       </Box>
     </>
   );
 };
 
-//TransactionHistoryPage.requireAuth = true;
-TransactionHistoryPage.getLayout = (page: ReactJSXElement) => (
+//AssetVolatilityDetailPage.requireAuth = true;
+AssetVolatilityDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
+
+export const getStaticPaths: GetStaticPaths<{
+  assetId: string;
+}> = async () => {
+  return {
+    paths: [], //indicates that no page needs be created at build time
+    fallback: 'blocking', //indicates the type of fallback
+  };
+};
 
 export const getStaticProps: GetStaticProps = async (context) => {
   return {
@@ -57,4 +65,4 @@ export const getStaticProps: GetStaticProps = async (context) => {
   };
 };
 
-export default TransactionHistoryPage;
+export default AssetVolatilityDetailPage;

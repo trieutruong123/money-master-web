@@ -1,13 +1,5 @@
-import { CryptoCurrencyListResults } from './crypto-currency/crypto-currency-list';
-import { CryptoCurrencyToolbar } from './crypto-currency/crypto-currency-toolbar';
-import { YourCoin } from './crypto-currency/your-coin';
+import { AssetVolatilityDetail } from './asset-volatility-detail';
 import PortfolioCard from './portfolio-card';
+import { PortfolioDetail } from './portfolio-detail';
 
-
-export {
-  CryptoCurrencyToolbar,
-  CryptoCurrencyListResults,
-  PortfolioCard,
-  YourCoin,
-};
-
+export { AssetVolatilityDetail, PortfolioCard, PortfolioDetail };

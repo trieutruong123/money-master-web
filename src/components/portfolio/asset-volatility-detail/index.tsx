@@ -6,7 +6,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { transactionHistoryStore } from 'store';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
 
-export const TransactionHitory = observer(() => {
+export const AssetVolatilityDetail = observer(() => {
   
   useEffect(() => {
     transactionHistoryStore.fetchTransactionHistoryData();

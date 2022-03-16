@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Link } from 'components';
-import { MultipleLanguage } from 'components/mutiple-languages';
+import { MultipleLanguage } from 'components/shared/mutiple-languages';
 
 interface IProps {
   handleSelectionChange?: any;

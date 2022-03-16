@@ -130,8 +130,8 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                     <TableRow
                       onClick={() => {
                         router.push(
-                          `/portfolio/transaction/test`,
-                          `/portfolio/transaction/test`,
+                          `/portfolio/asset-detail/test`,
+                          `/portfolio/asset-detail/test`,
                           { locale: locale },
                         );
                       }}
@@ -145,7 +145,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                     >
                       <TableBodyCellSymbol>
                         <Box
-                          sx={{ fontWeight: 700, textTransform: 'capitalize' }}
+                          sx={{ fontWeight: 700, textTransform: 'uppercase' }}
                         >
                           {record.symbol}
                         </Box>
