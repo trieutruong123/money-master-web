@@ -160,4 +160,31 @@ export const vi = {
     credentialFailed: 'Lỗi! Email/ mật khẩu không hợp lệ',
     alreadyEmailExist: 'Lỗi! Email đã được đăng ký',
   },
+  portfolioListPage: {
+    title: "Danh mục tài sản",
+    add:"Thêm danh mục",
+    portfolioCard:{
+      detail:"Chi tiết",
+      update:"Cập nhật",
+      delete:"Xóa"
+    },
+    newPortfolioModal:{
+      title:"THÊM DANH MỤC TÀI SẢN",
+      name:"Tên danh mục tài sản (*)",
+      currency:"Đơn vị tiền tệ (*)",
+      submit:"Thêm"
+    },
+    updatePortfolioModal:{
+      title:"CẬP NHẬT DANH MỤC TÀI SẢN",
+      name:"Tên danh mục tài sản (*)",
+      currency:"Đơn vị tiền tệ (*)",
+      submit:"Cập nhật"
+    },
+    deletePortfolioModal:{
+      title:"XÓA DANH MỤC TÀI SẢN",
+      message:"Bạn có chắc chắn rằng muốn xóa danh mục tài sản này không?",
+      confirm:"Xóa",
+      cancel:"Trở lại"
+    }
+  },
 };
