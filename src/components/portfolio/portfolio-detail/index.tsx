@@ -27,7 +27,6 @@ export const PortfolioDetail = observer(() => {
     portfolioAllocationData,
     isOpenAddNewAssetModal,
   } = portfolioDetailStore;
-  console.log(portfolioDetailStore.cryptoDetail);
   return (
     <Box
       sx={{

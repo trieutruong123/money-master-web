@@ -74,9 +74,7 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
           </Container>
         </Box>
       </Box>
-      <Box
-        
-      >
+      <Box>
         <AddNewTransactionModal />
       </Box>
       <Tooltip title="Add new transaction">

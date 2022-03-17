@@ -8,7 +8,6 @@ interface IProps {
 
 export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
   const marketData = assetMarketData.market_data;
-  console.log(assetMarketData);
   const renderDailyPL = () => {
     const priceChange24h = marketData?.price_change_24h;
     const priceChangePercentage24h =

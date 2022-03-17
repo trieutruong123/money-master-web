@@ -48,9 +48,6 @@ class CryptoVolatilityDetailStore {
     );
     this.coinMarketData = await this.fetchCoinInfoByCode({ code: this.coinId });
 
-    console.log(this.coinId);
-    console.log(this.coinDetail);
-    console.log(this.coinMarketData);
     return true;
   }
 
