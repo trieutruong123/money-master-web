@@ -1,20 +1,28 @@
 import { Box, Container, Grid, IconButton, Tooltip } from '@mui/material';
 import { useCallback, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { cryptoVolatilityDetailStore } from 'store';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
 import { HistoricalMarketChart } from './historical-market-chart';
+import { IntroSection } from './intro-section';
+import { TransactionHistory } from './transaction-history';
+interface IProps {
+  coinCode: string;
+}
 
-export const CryptoVolatilityDetail = observer(() => {
+export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
   useEffect(() => {
-    cryptoVolatilityDetailStore.setCoinId('bitcoin');
+    cryptoVolatilityDetailStore.setCoinId(coinCode);
     cryptoVolatilityDetailStore.fetchData();
     cryptoVolatilityDetailStore.fetchHistoricalMarketData();
   }, []);
-  const { isOpenAddNewTransactionModal, historicalMarketData, timeInterval } =
-    cryptoVolatilityDetailStore;
+  const {
+    isOpenAddNewTransactionModal,
+    historicalMarketData,
+    coinDetail,
+    coinMarketData,
+  } = cryptoVolatilityDetailStore;
 
   const handleTimeIntervalChanged = useCallback((interval: number) => {
     cryptoVolatilityDetailStore.setTimeInterval(interval);
@@ -38,9 +46,17 @@ export const CryptoVolatilityDetail = observer(() => {
           overflow: 'hidden',
         }}
       >
-        <Box sx={{ overflow: 'auto' }}>
+        <Box sx={{ overflow: 'hidden' }}>
           <Container>
             <Grid container spacing={3} display="fex" justifyContent="center">
+              {coinDetail !== undefined && coinMarketData !== undefined ? (
+                <IntroSection
+                  assetDetail={coinDetail}
+                  assetMarketData={coinMarketData}
+                />
+              ) : (
+                <></>
+              )}
               {historicalMarketData !== undefined ? (
                 <HistoricalMarketChart
                   data={historicalMarketData}
@@ -49,11 +65,20 @@ export const CryptoVolatilityDetail = observer(() => {
               ) : (
                 <></>
               )}
+              {coinDetail !== undefined && coinMarketData !== undefined ? (
+                <TransactionHistory assetMarketData={coinMarketData} />
+              ) : (
+                <></>
+              )}
             </Grid>
           </Container>
         </Box>
       </Box>
-      <AddNewTransactionModal />
+      <Box
+        
+      >
+        <AddNewTransactionModal />
+      </Box>
       <Tooltip title="Add new transaction">
         <IconButton
           onClick={() => {

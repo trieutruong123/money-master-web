@@ -1,12 +1,12 @@
 import { coinGeckoService } from 'services';
 import { action, makeAutoObservable, observable } from 'mobx';
-import { AnyMessageParams } from 'yup/lib/types';
-
+import { portfolioData } from '../portfolio-detail.store';
 class CryptoVolatilityDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
   transactionHistoryData: Array<any> = [];
   historicalMarketData: Array<any> = [];
   coinId: string = '';
+  coinMarketData: any = undefined;
   coinDetail: any = undefined;
   timeInterval: number = 1;
   currencyCode: string = 'usd';
@@ -43,8 +43,14 @@ class CryptoVolatilityDetailStore {
     this.currencyCode = currencyCode;
   }
   async fetchData() {
-    this.coinDetail = await this.fetchCoinInfoByCode({ code: this.coinId });
+    this.coinDetail = portfolioData.portfolioData.crypto.find(
+      (item) => item.id === this.coinId,
+    );
+    this.coinMarketData = await this.fetchCoinInfoByCode({ code: this.coinId });
+
+    console.log(this.coinId);
     console.log(this.coinDetail);
+    console.log(this.coinMarketData);
     return true;
   }
 

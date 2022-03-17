@@ -6,9 +6,10 @@ const ReactApexChart = dynamic(() => import('react-apexcharts'), {
 
 interface IProps {
   data: Array<any>;
+  timeInterval: number;
 }
 
-export const AreaChart = ({ data }: IProps) => {
+export const AreaChart = ({ timeInterval, data }: IProps) => {
   const areaData = data.map((item: Array<number>) => {
     return [item[0], item[1]];
   });
@@ -23,11 +24,11 @@ export const AreaChart = ({ data }: IProps) => {
       },
     },
     title: {
-        text: `Bitcoin - Updated at ${dayjs(data[data.length - 1]?.at(0)).format(
-          'MMM DD HH:mm',
-        )}`,
-        align: 'left',
-      },
+      text: `Bitcoin - Updated at ${dayjs(data[data.length - 1]?.at(0)).format(
+        'MMM DD HH:mm',
+      )}`,
+      align: 'left',
+    },
     annotations: {
       yaxis: [
         {
@@ -70,8 +71,13 @@ export const AreaChart = ({ data }: IProps) => {
       type: 'datetime',
       tickAmount: 6,
       labels: {
-        formatter: function (val: any) {
-          return dayjs(val).format('MMM DD HH:mm');
+        labels: {
+          formatter: function (val: any) {
+            if (timeInterval <= 1) return dayjs(val).format('MMM DD HH:mm');
+            else if (timeInterval <= 30)
+              return dayjs(val).format('MMM DD HH:00');
+            else return dayjs(val).format('MMM DD YYYY');
+          },
         },
       },
     },
@@ -99,7 +105,6 @@ export const AreaChart = ({ data }: IProps) => {
     },
   };
   return (
-    <div id="chart">
       <ReactApexChart
         options={areaOptions}
         series={areaSeries}
@@ -107,6 +112,5 @@ export const AreaChart = ({ data }: IProps) => {
         height={350}
         width={700}
       />
-    </div>
   );
 };

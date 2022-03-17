@@ -31,8 +31,8 @@ function ModifyPortfolio(props:any) {
         <div className={classes.control}>
           <label htmlFor="currency">{pageContent.currency}</label>
           <select id="currency" required ref={currencyRef}>
-            {Object.keys(currencyList).map((currency) => (
-              <option value={currency}>{`${currencyList[currency]} (${currency})`}</option>
+            {Object.keys(currencyList).map((currency,index) => (
+              <option key = {index} value={currency}>{`${currencyList[currency]} (${currency})`}</option>
             ))}
           </select>
         </div>

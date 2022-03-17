@@ -14,7 +14,7 @@ const AssetVolatilityDetailPage = (
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;
-
+  const coinCode = 'bitcoin';
   return (
     <>
       <Head>
@@ -36,7 +36,7 @@ const AssetVolatilityDetailPage = (
           </Typography>
         </Container>
         <Container maxWidth="lg">
-          <CryptoVolatilityDetail />
+          <CryptoVolatilityDetail coinCode={coinCode} />
         </Container>
       </Box>
     </>

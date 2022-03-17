@@ -135,10 +135,20 @@ export const HistoricalMarketChart = ({
             </Stack>
             <div id="chart">
               <Box display={chartType === 'area' ? 'none' : 'inherit'}>
-                <CandleStickChart timeInterval = {timeRangeList[Number.parseInt(selection)]?.amount} data={data} />
+                <CandleStickChart
+                  timeInterval={
+                    timeRangeList[Number.parseInt(selection)]?.amount
+                  }
+                  data={data}
+                />
               </Box>
               <Box display={chartType === 'candlestick' ? 'none' : 'inherit'}>
-                <AreaChart data={data} />
+                <AreaChart
+                  timeInterval={
+                    timeRangeList[Number.parseInt(selection)]?.amount
+                  }
+                  data={data}
+                />
               </Box>
             </div>
           </CardContent>

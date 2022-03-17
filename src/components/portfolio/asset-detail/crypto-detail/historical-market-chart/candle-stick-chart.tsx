@@ -38,7 +38,7 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
         formatter: function (val: any) {
           if (timeInterval <= 1) return dayjs(val).format('MMM DD HH:mm');
           else if (timeInterval <= 30) return dayjs(val).format('MMM DD HH:00');
-          else return dayjs(val).format('MMM YYYY');
+          else return dayjs(val).format('MMM DD YYYY');
         },
       },
     },
@@ -52,14 +52,12 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
     },
   };
   return (
-    <div id="chart">
       <ReactApexChart
         options={candleStickOptions}
         series={candleStickSeries}
         type={'candlestick'}
         height={350}
-        width={700}
+        width={'800'}
       />
-    </div>
   );
 };
