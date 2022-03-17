@@ -25,19 +25,7 @@ var portfolioList = [
   },
 ];
 
-const StyledModal = styled(Box)(({ theme }: any) => ({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 'auto',
-  minWidth: '320px',
-  height: '650px',
-  maxHeight: '100vh',
-  backgroundColor: '#FFFFFF',
-  borderRadius: '12px',
-  overflow: 'hidden',
-}));
+
 export const Portfolio = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
@@ -97,12 +85,10 @@ export const Portfolio = (
               aria-describedby="modal-modal-description"
               sx={{ mt: 10 }}
             >
-              <StyledModal>
                 <NewPortfolio
                   content={pageContent.newPortfolioModal}
                   onModifyPortfolio={createHandler}
                 />
-              </StyledModal>
             </Modal>
           </Box>
           {portfolioList.map((portfolio) => (
