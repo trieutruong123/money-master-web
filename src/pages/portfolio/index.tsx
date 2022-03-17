@@ -1,32 +1,48 @@
-import Head from "next/head";
-import { Box, Container, Typography, Button } from "@mui/material";
-import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
-import { DashboardLayout } from "components/dashboard-layout";
-import PortfolioCard from "components/portfolio/portfolio-list/portfolio-card";
-import * as React from "react";
-import Modal from "@mui/material/Modal";
-import NewPortfolio from "../../components/portfolio/portfolio-list/modify-portfolio";
-import { GetStaticProps, InferGetStaticPropsType } from "next";
-import { content } from "i18n";
+import Head from 'next/head';
+import { Box, Container, Typography, Button } from '@mui/material';
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import { DashboardLayout } from 'components/layouts';
+import PortfolioCard from 'components/portfolio/portfolio-list/portfolio-card';
+import * as React from 'react';
+import Modal from '@mui/material/Modal';
+import NewPortfolio from '../../components/portfolio/portfolio-list/modify-portfolio';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { content } from 'i18n';
+import { styled } from '@mui/material/styles';
 
 var portfolioList = [
   {
-    name: "Investment 1",
+    name: 'Investment 1',
     balance: 200,
-    currency: "VND",
-    id: "1",
+    currency: 'VND',
+    id: '1',
   },
   {
-    name: "Investment 2",
+    name: 'Investment 2',
     balance: 400,
-    currency: "USD",
-    id: "2",
+    currency: 'USD',
+    id: '2',
   },
 ];
 
-const Portfolio = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+const StyledModal = styled(Box)(({ theme }: any) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 'auto',
+  minWidth: '320px',
+  height: '650px',
+  maxHeight: '100vh',
+  backgroundColor: '#FFFFFF',
+  borderRadius: '12px',
+  overflow: 'hidden',
+}));
+export const Portfolio = (
+  props: InferGetStaticPropsType<typeof getStaticProps>,
+) => {
   const { locale } = props.context;
-  const detail = locale === "vi" ? content["vi"] : content["en"];
+  const detail = locale === 'vi' ? content['vi'] : content['en'];
   const pageContent = detail.portfolioListPage;
 
   const [openCreateModal, setOpenCreateModal] = React.useState(false);
@@ -34,19 +50,18 @@ const Portfolio = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const handleCloseCreateModal = () => setOpenCreateModal(false);
   const createHandler = (data: any) => {
     // call create API
-    console.log(data);     
     setOpenCreateModal(false);
   };
 
   const updateHandler = (data: any) => {
-   // call update API
-   console.log("UPDATED: ",data);
+    // call update API
+    console.log('UPDATED: ', data);
   };
 
-  const deleteHandler=(portfolioId:string)=>{
+  const deleteHandler = (portfolioId: string) => {
     // call delete APi
-    console.log("DELETED ID: ",portfolioId);
-  }
+    console.log('DELETED ID: ', portfolioId);
+  };
 
   return (
     <>
@@ -62,7 +77,7 @@ const Portfolio = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       >
         <Container
           maxWidth="lg"
-          sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
           <Typography sx={{ mb: 3 }} variant="h4">
             {pageContent.title}
@@ -74,18 +89,22 @@ const Portfolio = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           </Button>
         </Container>
         <Container maxWidth={false}>
-          <Modal
-            open={openCreateModal}
-            onClose={handleCloseCreateModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            sx={{ mt: 10 }}
-          >
-            <NewPortfolio
-              content={pageContent.newPortfolioModal}
-              onModifyPortfolio={createHandler}
-            />
-          </Modal>
+          <Box>
+            <Modal
+              open={openCreateModal}
+              onClose={handleCloseCreateModal}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+              sx={{ mt: 10 }}
+            >
+              <StyledModal>
+                <NewPortfolio
+                  content={pageContent.newPortfolioModal}
+                  onModifyPortfolio={createHandler}
+                />
+              </StyledModal>
+            </Modal>
+          </Box>
           {portfolioList.map((portfolio) => (
             <PortfolioCard
               content={pageContent}

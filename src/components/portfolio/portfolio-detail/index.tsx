@@ -4,24 +4,29 @@ import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { AssetAllocation } from './asset-allocation';
 import { DailyReturns } from './daily-return';
-import { Portfolio } from './portfolio';
+import { AssetsDetail } from './assets-detail';
 import { AddNewAssetsModal } from './add-new-assets-modal';
 import { portfolioDetailStore } from 'store';
 import { PortfolioAllocation, PortfolioItem } from 'types';
 
 export const PortfolioDetail = observer(() => {
   useEffect(() => {
-    portfolioDetailStore.fetchPortfolioDetailData();
+    const fetchData = async () => {
+      await portfolioDetailStore.fetchPortfolioDetailData();
+      await portfolioDetailStore.fetchCoinData();
+    };
+    fetchData();
   }, []);
 
   const {
-    portfolioDetailData,
+    cryptoDetail,
+    cashDetail,
+    stockDetail,
+    realEstateDetail,
+    bankingDetail,
     portfolioAllocationData,
-    portfolioValue,
-    todaysChange,
     isOpenAddNewAssetModal,
   } = portfolioDetailStore;
-
   return (
     <Box
       sx={{
@@ -43,8 +48,14 @@ export const PortfolioDetail = observer(() => {
           <Container>
             <Grid container spacing={3} display="fex" justifyContent="center">
               <AssetAllocation assetAllocationData={portfolioAllocationData} />
-              <DailyReturns dailyReturnsData={portfolioDetailData} />
-              <Portfolio data={portfolioDetailData} />
+              {/* <DailyReturns dailyReturnsData={portfolioDetailData} /> */}
+              <AssetsDetail
+                cryptoDetail={cryptoDetail}
+                cashDetail={cashDetail}
+                stockDetail={stockDetail}
+                realEstateDetail={realEstateDetail}
+                bankingDetail={bankingDetail}
+              />
             </Grid>
           </Container>
         </Box>
@@ -52,11 +63,11 @@ export const PortfolioDetail = observer(() => {
       <AddNewAssetsModal />
       <Tooltip title="Add new assets">
         <IconButton
-          onClick={() =>
+          onClick={() => {
             portfolioDetailStore.setOpenAddNewAssetModal(
               !isOpenAddNewAssetModal,
-            )
-          }
+            );
+          }}
           color="success"
           sx={{ position: 'absolute', right: '6vw', bottom: '6vh' }}
         >

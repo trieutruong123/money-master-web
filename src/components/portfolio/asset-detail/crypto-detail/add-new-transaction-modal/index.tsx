@@ -1,9 +1,7 @@
 import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { portfolioDetailStore } from 'store';
-import { SearchingAssetsForm } from './searching-assets-form';
+import { cryptoVolatilityDetailStore, portfolioDetailStore } from 'store';
 import { CreateCryptoForm } from './create-crypto-form';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
@@ -38,42 +36,24 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
   },
 }));
 
-export const AddNewAssetsModal = observer(() => {
-  const [current, setCurrent] = useState<any>(null);
-
-  useEffect(() => {
-    setCurrent(
-      <SearchingAssetsForm openTransactionForm={openTransactionForm} />,
-    );
-  }, []);
-
-  const { isOpenAddNewAssetModal } = portfolioDetailStore;
+export const AddNewTransactionModal = observer(() => {
+  const { isOpenAddNewTransactionModal } = cryptoVolatilityDetailStore;
 
   const handleClose = () => {
-    portfolioDetailStore.setOpenAddNewAssetModal(false);
-    returnSearchingForm();
-  };
-
-  const openTransactionForm = (itemId: string) => {
-    //if(itemId)
-    setCurrent(<CreateCryptoForm comeBack={returnSearchingForm} />);
-  };
-
-  const returnSearchingForm = () => {
-    setCurrent(
-      <SearchingAssetsForm openTransactionForm={openTransactionForm} />,
-    );
+    cryptoVolatilityDetailStore.setOpenAddNewTransactionModal(false);
   };
 
   return (
-    <Box>
+    <Box >
       <Modal
-        open={isOpenAddNewAssetModal}
+        open={isOpenAddNewTransactionModal}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <StyledModal>{current}</StyledModal>
+        <StyledModal>
+          <CreateCryptoForm />
+        </StyledModal>
       </Modal>
     </Box>
   );

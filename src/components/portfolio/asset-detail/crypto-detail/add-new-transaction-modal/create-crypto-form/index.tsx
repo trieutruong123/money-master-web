@@ -10,15 +10,13 @@ import {
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PerfrectScrollbar from 'react-perfect-scrollbar';
-import { DividendCryptoForm } from './dividend-crypto-form';
 import { BuyCryptoForm } from './buy-cryto-form';
 import { SellCryptoForm } from './sell-crypto-form';
 
 interface IProps {
-  comeBack: any;
 }
 
-export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
+export const CreateCryptoForm = observer(({}: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
@@ -34,12 +32,7 @@ export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
   const formArray = [
     <BuyCryptoForm key={focusedButtonKey} handleFormSubmit />,
     <SellCryptoForm key={focusedButtonKey} handleFormSubmit />,
-    <DividendCryptoForm key={focusedButtonKey} handleFormSubmit />,
   ];
-  const handleComeback = () => {
-    comeBack();
-  };
-
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
     setSelectedForm(formArray[key]);
@@ -56,12 +49,6 @@ export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
         <Typography align="center" id="modal-modal-title" variant="h4">
           Transaction
         </Typography>
-        <IconButton
-          sx={{ position: 'absolute', left: '2rem', top: '1rem' }}
-          onClick={handleComeback}
-        >
-          <ArrowBackIcon />
-        </IconButton>
       </Box>
       <Box sx={{ ml: '3rem', mt: '1rem' }}>
         <ButtonGroup aria-label="outlined primary button group">

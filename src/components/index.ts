@@ -1,9 +1,7 @@
-import { Alert } from './alert';
 import { LoginForm, RegisterForm } from './auth';
-import { DashboardLayout } from './dashboard-layout';
-import DefaultLayout from './default-layout';
+import { DashboardLayout, DefaultLayout } from './layouts';
 import { DefaultNavbar } from './landing-page';
-import { Link } from './link';
+import { Link, MultipleLanguage, SeverityPill } from './shared';
 import { CircularLoading } from './loading';
 import { AuthGuard } from './protected-route/auth-guard';
 
@@ -16,5 +14,6 @@ export {
   Link,
   LoginForm,
   RegisterForm,
-  Alert,
+  MultipleLanguage,
+  SeverityPill,
 };

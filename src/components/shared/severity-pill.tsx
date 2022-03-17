@@ -15,7 +15,7 @@ const SeverityPillRoot = styled('span')(({ theme, ownerState }: any) => {
     flexGrow: 0,
     flexShrink: 0,
     fontFamily: theme.typography.fontFamily,
-    fontSize: theme.typography.pxToRem(12),
+    fontSize: theme.typography.pxToRem(15),
     lineHeight: 2,
     fontWeight: 600,
     justifyContent: 'center',
@@ -43,11 +43,11 @@ export const SeverityPill = (props: any) => {
 SeverityPill.propTypes = {
   children: PropTypes.node,
   color: PropTypes.oneOf([
+    'success.light',
+    'error.light',
     'primary',
     'secondary',
-    'error',
-    'info',
-    'warning',
-    'success',
+    'warning.light',
+    'info.light',
   ]),
 };

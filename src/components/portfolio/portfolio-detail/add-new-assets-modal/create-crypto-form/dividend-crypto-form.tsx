@@ -8,7 +8,7 @@ import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
 type FormValues = {
-  sellPrice: number;
+  dividendPerShare: number;
   amount: number;
   date: Date;
   currency?: string;
@@ -23,11 +23,11 @@ interface IProps {
   handleFormSubmit: any;
 }
 
-export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
+export const DividendCryptoForm = ({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
-    sellPrice: Yup.number()
+    dividendPerShare: Yup.number()
       .required('Price is required')
       .typeError('Price must be a number')
       .positive('Price must be greater than zero'),
@@ -50,6 +50,7 @@ export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
   };
 
   return (
+    
     <Box
       component="form"
       autoComplete="off"
@@ -59,8 +60,8 @@ export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
         justifyContent: 'center',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'stretch',
         mx: '3rem',
+        
         [theme.breakpoints.down('xs')]: {
           mx: '2rem',
         },
@@ -70,12 +71,12 @@ export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
         type="number"
         fullWidth
         sx={{ my: 1, display: 'block' }}
-        id="outlined-sell-price"
-        label={'*Sell Price'}
-        {...register('sellPrice')}
+        id="outlined-price-per-share"
+        label={'*Dividend per share'}
+        {...register('dividendPerShare')}
         variant="outlined"
-        error={typeof errors.sellPrice?.message !== 'undefined'}
-        helperText={errors.sellPrice?.message}
+        error={typeof errors.dividendPerShare?.message !== 'undefined'}
+        helperText={errors.dividendPerShare?.message}
       ></TextField>
       <TextField
         type="number"
@@ -89,12 +90,7 @@ export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
         helperText={errors.amount?.message}
       ></TextField>
       <LocalizationProvider
-        sx={{
-          my: 1,
-          display: 'block',
-          width: 'inherit',
-          
-        }}
+        sx={{ my: 1, display: 'block' }}
         dateAdapter={AdapterDateFns}
       >
         <DesktopDatePicker
@@ -125,14 +121,13 @@ export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
         error={typeof errors.note?.message !== 'undefined'}
         helperText={errors.note?.message}
       ></TextField>
-
-      <Button 
+      <Box sx={{ flexGrow: 1 }} />
+      <Button
         type="submit"
         variant="contained"
         sx={{
           mt: 'auto',
           bg: colorScheme.theme,
-          width: '100%',
           fontSize: '1.4rem',
           height: '2.5rem',
         }}

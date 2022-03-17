@@ -1,14 +1,17 @@
-import { useRef } from "react";
-import classes from "./modify-portfolio.module.css";
-import { currencyList } from "../../../helpers/enum";
+import { useRef } from 'react';
+import classes from './modify-portfolio.module.css';
+import { currencyList } from '../../../helpers/enum';
+import React from 'react';
 
-
-function ModifyPortfolio(props:any) {
+const ModifyPortfolio = (
+  props: any,
+  ref: React.ForwardedRef<HTMLDivElement>,
+) => {
   const pageContent = props.content;
-  
-  const nameRef:any = useRef();
-  const currencyRef:any = useRef();
-  function submitHandler(event:any) {
+
+  const nameRef: any = useRef();
+  const currencyRef: any = useRef();
+  function submitHandler(event: any) {
     event.preventDefault();
 
     const portfolioName = nameRef.current.value;
@@ -21,7 +24,7 @@ function ModifyPortfolio(props:any) {
   }
 
   return (
-    <div className={classes.body}>
+    <div ref={ref} className={classes.body}>
       <h1 className={classes.title}>{pageContent.title}</h1>
       <form className={classes.form} onSubmit={submitHandler}>
         <div className={classes.control}>
@@ -31,8 +34,11 @@ function ModifyPortfolio(props:any) {
         <div className={classes.control}>
           <label htmlFor="currency">{pageContent.currency}</label>
           <select id="currency" required ref={currencyRef}>
-            {Object.keys(currencyList).map((currency) => (
-              <option value={currency}>{`${currencyList[currency]} (${currency})`}</option>
+            {Object.keys(currencyList).map((currency, index) => (
+              <option
+                key={index}
+                value={currency}
+              >{`${currencyList[currency]} (${currency})`}</option>
             ))}
           </select>
         </div>
@@ -40,6 +46,6 @@ function ModifyPortfolio(props:any) {
       </form>
     </div>
   );
-}
+};
 
-export default ModifyPortfolio;
+export default React.forwardRef(ModifyPortfolio);
