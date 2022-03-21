@@ -10,6 +10,7 @@ import {
   Select,
   SelectChangeEvent,
   Stack,
+  useTheme,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
@@ -29,6 +30,8 @@ export const HistoricalMarketChart = ({
   data,
   handleTimeIntervalChanged,
 }: IProps) => {
+  const theme = useTheme();
+  const isMobile = theme.breakpoints.down('sm');
   const [selection, setSelection] = useState('0');
   const [chartType, setChartType] = useState('candlestick');
 
@@ -52,7 +55,8 @@ export const HistoricalMarketChart = ({
       <Card
         sx={{
           borderRadius: '12px',
-          padding: '5px 20px 20px 20px',
+          padding: isMobile ? '5px':'5px 20px 20px 20px',
+          
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -63,15 +67,19 @@ export const HistoricalMarketChart = ({
             boxShadow: 'none',
           }}
         >
-          <CardContent>
-            <Stack
+          <CardContent sx={{ padding: isMobile ? '32px 0px' : 'initial', width: '100%' }}>
+            <Grid
               id="chart-display-selection"
+              container
               direction="row"
               spacing={1}
               display="flex"
               alignItems="center"
+              justifyContent="center"
+              paddingLeft ={'10px'}
+              
             >
-              <FormControl sx={{ minWidth: 120 }}>
+              <FormControl sx={{ minWidth: 80, pb: '.2rem' }}>
                 <InputLabel id="time-range-select-label">Range</InputLabel>
                 <Select
                   labelId="time-range-select-label"
@@ -87,7 +95,7 @@ export const HistoricalMarketChart = ({
                   ))}
                 </Select>
               </FormControl>
-              <FormControl sx={{ minWidth: 120 }}>
+              <FormControl sx={{ minWidth: 80, px: '.2rem', pb: '.2rem' }}>
                 <InputLabel id="interval-select-label">Interval</InputLabel>
                 <Select
                   labelId="interval-select-label"
@@ -107,7 +115,7 @@ export const HistoricalMarketChart = ({
               <Stack direction="row">
                 <Button
                   sx={{
-                    width: '8rem',
+                    width: '7rem',
                     height: '3.8rem',
                     fontSize: '1.2rem',
                     display: chartType === 'candlestick' ? 'none' : 'inherit',
@@ -132,8 +140,8 @@ export const HistoricalMarketChart = ({
                   Candle
                 </Button>
               </Stack>
-            </Stack>
-            <div id="chart">
+            </Grid>
+            <Grid>
               <Box display={chartType === 'area' ? 'none' : 'inherit'}>
                 <CandleStickChart
                   timeInterval={
@@ -150,7 +158,7 @@ export const HistoricalMarketChart = ({
                   data={data}
                 />
               </Box>
-            </div>
+            </Grid>
           </CardContent>
         </Card>
       </Card>

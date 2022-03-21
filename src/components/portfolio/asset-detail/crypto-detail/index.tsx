@@ -1,4 +1,11 @@
-import { Box, Container, Grid, IconButton, Tooltip } from '@mui/material';
+import {
+  Box,
+  Container,
+  Grid,
+  IconButton,
+  Tooltip,
+  useTheme,
+} from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -12,6 +19,8 @@ interface IProps {
 }
 
 export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
+  const theme = useTheme();
+  const isMobile = theme.breakpoints.down('sm');
   useEffect(() => {
     cryptoVolatilityDetailStore.setCoinId(coinCode);
     cryptoVolatilityDetailStore.fetchData();
@@ -47,8 +56,8 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
         }}
       >
         <Box sx={{ overflow: 'hidden' }}>
-          <Container>
-            <Grid container spacing={3} display="fex" justifyContent="center">
+          <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
+            <Grid container display="fex" justifyContent="center">
               {coinDetail !== undefined && coinMarketData !== undefined ? (
                 <IntroSection
                   assetDetail={coinDetail}

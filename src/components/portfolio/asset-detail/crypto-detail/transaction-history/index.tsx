@@ -1,4 +1,12 @@
-import { CardContent, Card, Grid, Box, Chip, Typography } from '@mui/material';
+import {
+  CardContent,
+  Card,
+  Grid,
+  Box,
+  Chip,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import {
   DataGrid,
   GridColDef,
@@ -192,6 +200,8 @@ interface IProps {
 }
 
 export const TransactionHistory = ({ assetMarketData }: IProps) => {
+  const theme = useTheme();
+  const isMobile = theme.breakpoints.down('sm');
   const marketData = assetMarketData.market_data;
   const customizedRow = rows.map((item) => {
     return { ...item, netValue: marketData.current_price.usd };
@@ -201,7 +211,7 @@ export const TransactionHistory = ({ assetMarketData }: IProps) => {
       <Card
         sx={{
           borderRadius: '12px',
-          padding: '5px 20px 20px 20px',
+          padding: isMobile ? '5px':'5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -212,18 +222,24 @@ export const TransactionHistory = ({ assetMarketData }: IProps) => {
             boxShadow: 'none',
           }}
         >
-          <CardContent sx={{ height: 400, width: '1000%' }}>
-              <DataGrid
-                rows={customizedRow}
-                columns={columns}
-                pageSize={10}
-                rowsPerPageOptions={[10]}
-                disableSelectionOnClick
-                components={{
-                  Toolbar: GridToolbar,
-                  NoRowsOverlay: CustomNoRowsOverlay,
-                }}
-              />
+          <CardContent
+            sx={{
+              height: 400,
+              width: '100%',
+              padding: isMobile ? '32px 0px' : 'initial',
+            }}
+          >
+            <DataGrid
+              rows={customizedRow}
+              columns={columns}
+              pageSize={10}
+              rowsPerPageOptions={[10]}
+              disableSelectionOnClick
+              components={{
+                Toolbar: GridToolbar,
+                NoRowsOverlay: CustomNoRowsOverlay,
+              }}
+            />
           </CardContent>
         </Card>
       </Card>

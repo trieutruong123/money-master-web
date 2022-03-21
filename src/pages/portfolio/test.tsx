@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { Box, Container, Grid, CssBaseline } from '@mui/material';
+import {
+  Box,
+  Container,
+  Grid,
+  CssBaseline,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
@@ -11,6 +18,8 @@ import { PortfolioDetail } from 'components/portfolio/portfolio-detail';
 const PortfolioDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
+  const theme = useTheme();
+  const isMobile = theme.breakpoints.down('sm');
   const { locale } = props.context;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
@@ -30,6 +39,11 @@ const PortfolioDetailPage = (
         }}
       >
         <Container maxWidth="lg">
+          <Typography sx={{ mb: 3 }} variant="h4">
+            Portfolio Detail
+          </Typography>
+        </Container>
+        <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
           <PortfolioDetail></PortfolioDetail>
         </Container>
       </Box>

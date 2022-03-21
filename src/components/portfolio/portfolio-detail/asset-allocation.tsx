@@ -95,7 +95,7 @@ export const AssetAllocation = ({ assetAllocationData }: IProps) => {
               height: 'auto',
             }}
           >
-            <Doughnut data={data} height={140} options={options} />
+            <Doughnut data={data} width ='100%' height={140} options={options} />
           </Box>
         </CardContent>
       </Card>

@@ -21,12 +21,15 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
     chart: {
       height: 350,
       type: 'candlestick',
+      zoom: {
+        autoScaleYaxis: true,
+      },
     },
     title: {
-      text: `Bitcoin - Updated at ${dayjs(data[data.length - 1]?.x).format(
-        'MMM DD HH:mm',
-      )}`,
+      text: 'Bitcoin',
+
       align: 'left',
+      margin: 10,
     },
     tooltip: {
       enabled: true,
@@ -52,12 +55,12 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
     },
   };
   return (
-      <ReactApexChart
-        options={candleStickOptions}
-        series={candleStickSeries}
-        type={'candlestick'}
-        height={350}
-        width={'800'}
-      />
+    <ReactApexChart
+      options={candleStickOptions}
+      series={candleStickSeries}
+      type={'candlestick'}
+      height="350"
+      width={'100%'}
+    />
   );
 };
