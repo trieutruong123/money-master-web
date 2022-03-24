@@ -1,23 +1,21 @@
 import Head from 'next/head';
-import { Box, Container, Typography ,useTheme} from '@mui/material';
+import { Box, Container, Typography, useTheme } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { GetStaticProps, InferGetStaticPropsType } from 'next';
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
 import { CryptoVolatilityDetail } from 'components/portfolio';
-
 
 const AssetVolatilityDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
   const theme = useTheme();
   const isMobile = theme.breakpoints.down('sm');
-  const { locale } = props.context;
+  const { context:{locale},assetId } = props;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;
-  const coinCode = 'bitcoin';
   return (
     <>
       <Head>
@@ -39,7 +37,7 @@ const AssetVolatilityDetailPage = (
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <CryptoVolatilityDetail coinCode={coinCode} />
+          <CryptoVolatilityDetail coinCode={assetId} />
         </Container>
       </Box>
     </>
@@ -51,10 +49,21 @@ AssetVolatilityDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
 
+export const getStaticPaths: GetStaticPaths<{
+  id: string;
+}> = async () => {
+  return {
+    paths: [], //indicates that no page needs be created at build time
+    fallback: 'blocking', //indicates the type of fallback
+  };
+};
+
 export const getStaticProps: GetStaticProps = async (context) => {
+  const assetId = context?.params?.id;
   return {
     props: {
       context,
+      assetId,
     },
   };
 };

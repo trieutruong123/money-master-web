@@ -24,9 +24,7 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
       },
     },
     title: {
-      text: `Bitcoin - Updated at ${dayjs(data[data.length - 1]?.at(0)).format(
-        'MMM DD HH:mm',
-      )}`,
+      text: 'Bitcoin',
       align: 'left',
     },
     annotations: {
@@ -105,12 +103,12 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
     },
   };
   return (
-      <ReactApexChart
-        options={areaOptions}
-        series={areaSeries}
-        type={'area'}
-        height={350}
-        width={700}
-      />
+    <ReactApexChart
+      options={areaOptions}
+      series={areaSeries}
+      type={'area'}
+      height="350"
+      width={'100%'}
+    />
   );
 };

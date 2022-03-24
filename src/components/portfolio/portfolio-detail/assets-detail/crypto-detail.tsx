@@ -129,6 +129,11 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                   return (
                     <TableRow
                       onClick={() => {
+                        // router.push(
+                        //   `/portfolio/asset-detail/${record.coinName}`,
+                        //   `/portfolio/asset-detail/${record.coinName}`,
+                        //   { locale: locale },
+                        // );
                         router.push(
                           `/portfolio/asset-detail/test`,
                           `/portfolio/asset-detail/test`,

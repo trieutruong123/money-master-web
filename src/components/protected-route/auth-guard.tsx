@@ -15,7 +15,7 @@ export const AuthGuard = observer(({ children }: { children: JSX.Element }) => {
       const check = userService.fetchUserInfo();
       //invalid token or internal server error;
       if (!check) {
-        router.push('/login');
+        router.push('/sign-in');
       }
     }
   }, []);
@@ -30,7 +30,7 @@ export const AuthGuard = observer(({ children }: { children: JSX.Element }) => {
           mainConstant.REDIRECT_KEY,
           router.route,
         );
-        router.push('/login');
+        router.push('/sign-in');
       }
     }
   }, [authStore.isAuthenticating, userStore.user, router, storageService]);

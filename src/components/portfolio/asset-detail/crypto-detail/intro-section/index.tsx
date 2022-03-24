@@ -10,15 +10,14 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
   const marketData = assetMarketData.market_data;
   const renderDailyPL = () => {
     const priceChange24h = marketData?.price_change_24h;
-    const priceChangePercentage24h =
-      marketData?.price_change_percentage_24h;
+    const priceChangePercentage24h = marketData?.price_change_percentage_24h;
     if (priceChangePercentage24h < 0) {
       return (
         <Typography
           variant="body1"
           color={priceChangePercentage24h < 0 ? 'error.main' : 'success.main'}
         >
-          -${priceChange24h} ({precisionRound(priceChangePercentage24h, 4)}%)
+          -${precisionRound(priceChange24h,4)} ({precisionRound(priceChangePercentage24h, 4)}%)
         </Typography>
       );
     } else
@@ -27,7 +26,7 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
           variant="body1"
           color={priceChangePercentage24h < 0 ? 'error.main' : 'success.main'}
         >
-          +${priceChange24h} (+{precisionRound(priceChangePercentage24h, 4)}%)
+          +${precisionRound(priceChange24h,4)} (+{precisionRound(priceChangePercentage24h, 4)}%)
         </Typography>
       );
   };
@@ -38,9 +37,12 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
       return (
         <Typography variant="body1" color={'error.main'}>
           -$
-          {precisionRound(assetDetail.quantity *
-            marketData?.current_price?.usd *
-            priceChangePercentage1h,4)}{' '}
+          {precisionRound(
+            -assetDetail.quantity *
+              marketData?.current_price?.usd *
+              priceChangePercentage1h,
+            4,
+          )}{' '}
           ({precisionRound(priceChangePercentage1h, 4)}%)
         </Typography>
       );
@@ -48,9 +50,12 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
       return (
         <Typography variant="body1" color={'success.main'}>
           +$
-          {precisionRound(assetDetail.quantity *
-            marketData?.current_price?.usd *
-            priceChangePercentage1h,4)}{' '}
+          {precisionRound(
+            assetDetail.quantity *
+              marketData?.current_price?.usd *
+              priceChangePercentage1h,
+            4,
+          )}{' '}
           (+{precisionRound(priceChangePercentage1h, 4)}%)
         </Typography>
       );
@@ -80,7 +85,13 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
             }}
           >
             <Stack direction="column" spacing={1}>
-              <Stack direction="row" display="flex" alignItems="center">
+              <Grid
+                container
+                direction="row"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
                 <Typography
                   variant="h5"
                   fontWeight="bold"
@@ -90,25 +101,47 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
                 </Typography>
 
                 <Typography variant="h2" fontWeight="bold">
-                  ${precisionRound(assetDetail?.quantity * marketData?.current_price?.usd,4)}
+                  $
+                  {precisionRound(
+                    assetDetail?.quantity * marketData?.current_price?.usd,
+                    4,
+                  )}
                 </Typography>
-              </Stack>
-              <Stack direction="row">
+              </Grid>
+              <Grid
+                container
+                direction="row"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
                 <Typography variant="body1">
                   Open @ avg. price: &nbsp;
                 </Typography>
                 <Typography variant="body1" color={'success.main'}>
                   {assetDetail?.quantity} @ ${marketData?.current_price?.usd}
                 </Typography>
-              </Stack>
-              <Stack direction="row">
+              </Grid>
+              <Grid
+                container
+                direction="row"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
                 <Typography variant="body1">Open Net P/L: &nbsp;</Typography>
                 {renderOpenNetPL()}
-              </Stack>
-              <Stack direction="row">
+              </Grid>
+              <Grid
+                container
+                direction="row"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
                 <Typography variant="body1">Daily P/L: &nbsp;</Typography>
                 {renderDailyPL()}
-              </Stack>
+              </Grid>
             </Stack>
           </CardContent>
         </Card>
