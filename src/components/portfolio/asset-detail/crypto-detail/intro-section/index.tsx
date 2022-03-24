@@ -38,7 +38,7 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
         <Typography variant="body1" color={'error.main'}>
           -$
           {precisionRound(
-            assetDetail.quantity *
+            -assetDetail.quantity *
               marketData?.current_price?.usd *
               priceChangePercentage1h,
             4,
