@@ -7,6 +7,7 @@ import {
   CssBaseline,
   Typography,
   useTheme,
+  useMediaQuery
 } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
@@ -19,7 +20,7 @@ const PortfolioDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
   const theme = useTheme();
-  const isMobile = theme.breakpoints.down('sm');
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { locale } = props.context;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];

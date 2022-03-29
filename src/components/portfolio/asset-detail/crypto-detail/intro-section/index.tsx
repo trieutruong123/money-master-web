@@ -2,63 +2,40 @@ import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { precisionRound } from 'utils/number';
 
 interface IProps {
-  assetMarketData: any;
-  assetDetail: any;
+  assetDetail: any | undefined;
 }
 
-export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
-  const marketData = assetMarketData.market_data;
-  const renderDailyPL = () => {
-    const priceChange24h = marketData?.price_change_24h;
-    const priceChangePercentage24h = marketData?.price_change_percentage_24h;
-    if (priceChangePercentage24h < 0) {
-      return (
-        <Typography
-          variant="body1"
-          color={priceChangePercentage24h < 0 ? 'error.main' : 'success.main'}
-        >
-          -${precisionRound(priceChange24h,4)} ({precisionRound(priceChangePercentage24h, 4)}%)
-        </Typography>
-      );
-    } else
-      return (
-        <Typography
-          variant="body1"
-          color={priceChangePercentage24h < 0 ? 'error.main' : 'success.main'}
-        >
-          +${precisionRound(priceChange24h,4)} (+{precisionRound(priceChangePercentage24h, 4)}%)
-        </Typography>
-      );
+export const IntroSection = ({ assetDetail }: IProps) => {
+  const render24HChange = () => {
+    const priceChange24h = assetDetail._24HChange;
+    const priceChangePercentage24h = assetDetail._24HChangePercentage;
+    const sign = priceChange24h > 0 ? '+' : '';
+    return (
+      <Typography
+        variant="body1"
+        color={priceChangePercentage24h < 0 ? 'error.main' : 'success.main'}
+      >
+        ${sign}
+        {precisionRound(priceChange24h, 4).toString()} ({sign}
+        {precisionRound(priceChangePercentage24h, 4).toString()}%)
+      </Typography>
+    );
   };
-  const renderOpenNetPL = () => {
-    const priceChangePercentage1h =
-      marketData?.price_change_percentage_1h_in_currency?.usd;
-    if (priceChangePercentage1h < 0)
-      return (
-        <Typography variant="body1" color={'error.main'}>
-          -$
-          {precisionRound(
-            -assetDetail.quantity *
-              marketData?.current_price?.usd *
-              priceChangePercentage1h,
-            4,
-          )}{' '}
-          ({precisionRound(priceChangePercentage1h, 4)}%)
-        </Typography>
-      );
-    else
-      return (
-        <Typography variant="body1" color={'success.main'}>
-          +$
-          {precisionRound(
-            assetDetail.quantity *
-              marketData?.current_price?.usd *
-              priceChangePercentage1h,
-            4,
-          )}{' '}
-          (+{precisionRound(priceChangePercentage1h, 4)}%)
-        </Typography>
-      );
+  const renderTotalPL = () => {
+    const totalPL = assetDetail.totalPL;
+    const PLPercentage = assetDetail.PLPercentage;
+    const sign = PLPercentage > 0 ? '+' : '';
+    return (
+      <Typography
+        variant="body1"
+        color={PLPercentage < 0 ? 'error.main' : 'success.main'}
+      >
+        ${sign}
+        {precisionRound(totalPL, 4).toString()} ({sign}
+        {precisionRound(PLPercentage * 100, 4).toString()}
+        %)
+      </Typography>
+    );
   };
   return (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
@@ -103,7 +80,7 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
                 <Typography variant="h2" fontWeight="bold">
                   $
                   {precisionRound(
-                    assetDetail?.quantity * marketData?.current_price?.usd,
+                    assetDetail?.quantity * assetDetail?.marketPrice,
                     4,
                   )}
                 </Typography>
@@ -119,7 +96,7 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
                   Open @ avg. price: &nbsp;
                 </Typography>
                 <Typography variant="body1" color={'success.main'}>
-                  {assetDetail?.quantity} @ ${marketData?.current_price?.usd}
+                  {assetDetail?.quantity} @ ${assetDetail?.marketPrice}
                 </Typography>
               </Grid>
               <Grid
@@ -129,8 +106,8 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
                 alignItems="center"
                 justifyContent="center"
               >
-                <Typography variant="body1">Open Net P/L: &nbsp;</Typography>
-                {renderOpenNetPL()}
+                <Typography variant="body1">24H change: &nbsp;</Typography>
+                {render24HChange()}
               </Grid>
               <Grid
                 container
@@ -139,8 +116,8 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
                 alignItems="center"
                 justifyContent="center"
               >
-                <Typography variant="body1">Daily P/L: &nbsp;</Typography>
-                {renderDailyPL()}
+                <Typography variant="body1">Total P/L: &nbsp;</Typography>
+                {renderTotalPL()}
               </Grid>
             </Stack>
           </CardContent>

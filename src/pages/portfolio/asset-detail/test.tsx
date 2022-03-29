@@ -1,5 +1,11 @@
 import Head from 'next/head';
-import { Box, Container, Typography ,useTheme} from '@mui/material';
+import {
+  Box,
+  Container,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
@@ -7,12 +13,11 @@ import { content } from 'i18n';
 import { DashboardLayout } from 'components';
 import { CryptoVolatilityDetail } from 'components/portfolio';
 
-
 const AssetVolatilityDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
   const theme = useTheme();
-  const isMobile = theme.breakpoints.down('sm');
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { locale } = props.context;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];

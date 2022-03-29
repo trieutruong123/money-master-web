@@ -9,6 +9,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  useTheme,
+  useMediaQuery
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -42,7 +44,8 @@ interface IProps {
 export const BankingInvestments = ({ bankingDetail }: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [
     'Deposit',
     'Interest Rate',
@@ -79,7 +82,7 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
       <Card
         sx={{
           borderRadius: '12px',
-          padding: '5px 20px 20px 20px',
+          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >

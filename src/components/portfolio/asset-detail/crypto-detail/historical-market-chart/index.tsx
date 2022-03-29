@@ -11,6 +11,7 @@ import {
   SelectChangeEvent,
   Stack,
   useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
@@ -31,23 +32,36 @@ export const HistoricalMarketChart = ({
   handleTimeIntervalChanged,
 }: IProps) => {
   const theme = useTheme();
-  const isMobile = theme.breakpoints.down('sm');
-  const [selection, setSelection] = useState('0');
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [rangeSelection, setTimeRangeSelection] = useState('0');
+  const [intervalSelection, setInterval] = useState('0');
   const [chartType, setChartType] = useState('candlestick');
 
   const timeRangeList = [
-    { timeRange: '1 day', interval: '30 minutes', amount: 1 },
-    { timeRange: '1 week', interval: '4 hours', amount: 7 },
-    { timeRange: '2 weeks', interval: '4 hours', amount: 14 },
-    { timeRange: '1 month', interval: '4 hours', amount: 30 },
-    { timeRange: '6 months', interval: '4 days', amount: 180 },
-    { timeRange: '1 year', interval: '4 days', amount: 365 },
+    { timeRange: '1 day', intervalId: 0, amount: 1 },
+    { timeRange: '1 week', intervalId: 1, amount: 7 },
+    { timeRange: '2 weeks', intervalId: 1, amount: 14 },
+    { timeRange: '1 month', intervalId: 1, amount: 30 },
+    { timeRange: '6 months', intervalId: 2, amount: 180 },
+    { timeRange: '1 year', intervalId: 2, amount: 365 },
   ];
 
-  const handleSelectionChanged = (event: SelectChangeEvent) => {
-    setSelection(event.target.value as string);
+  const timeIntervalList = ['30 minutes', '4 hours', '4 days'];
+
+  const handeTimeRangeChange = (event: SelectChangeEvent) => {
+    setTimeRangeSelection(event.target.value as string);
     const index = Number.parseInt(event.target.value);
+    setInterval(timeRangeList[index].intervalId.toString());
     handleTimeIntervalChanged(timeRangeList[index].amount);
+  };
+
+  const handleTimeIntervalChange = (event: SelectChangeEvent) => {
+    setInterval(event.target.value as string);
+    const index = Number.parseInt(event.target.value);
+    const timeRangeIndex = timeRangeList.findIndex(
+      (item) => item.intervalId === index,
+    );
+    handleTimeIntervalChanged(timeRangeList[timeRangeIndex].amount);
   };
 
   return (
@@ -55,9 +69,9 @@ export const HistoricalMarketChart = ({
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px':'5px 20px 20px 20px',
-          
+          padding: isMobile ? '10px 5px 10px 5px' : '10px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
+          width: '100%',
         }}
       >
         <Card
@@ -65,9 +79,15 @@ export const HistoricalMarketChart = ({
             display: 'flex',
             justifyContent: 'space-between',
             boxShadow: 'none',
+            width: '100%',
           }}
         >
-          <CardContent sx={{ padding: isMobile ? '32px 0px' : 'initial', width: '100%' }}>
+          <CardContent
+            sx={{
+              padding: isMobile ? '32px 0px 20px 0px' : '32px 0px',
+              width: '100%',
+            }}
+          >
             <Grid
               id="chart-display-selection"
               container
@@ -76,17 +96,17 @@ export const HistoricalMarketChart = ({
               display="flex"
               alignItems="center"
               justifyContent="center"
-              paddingLeft ={'10px'}
-              
+              paddingLeft={'10px'}
             >
               <FormControl sx={{ minWidth: 80, pb: '.2rem' }}>
                 <InputLabel id="time-range-select-label">Range</InputLabel>
                 <Select
                   labelId="time-range-select-label"
                   id="time-range-select"
-                  value={selection}
+                  value={rangeSelection}
                   label="Range"
-                  onChange={handleSelectionChanged}
+                  onChange={handeTimeRangeChange}
+                  sx = {{width:110}}
                 >
                   {timeRangeList.map((item, index) => (
                     <MenuItem key={index.toString()} value={index}>
@@ -95,18 +115,19 @@ export const HistoricalMarketChart = ({
                   ))}
                 </Select>
               </FormControl>
-              <FormControl sx={{ minWidth: 80, px: '.2rem', pb: '.2rem' }}>
+              <FormControl sx={{ minWidth: 80, px: '.2rem', pb: '.2rem'}}>
                 <InputLabel id="interval-select-label">Interval</InputLabel>
                 <Select
+                  sx = {{width:120}}
                   labelId="interval-select-label"
                   id="interva-select"
-                  value={selection}
+                  value={intervalSelection}
                   label="Interval"
-                  onChange={handleSelectionChanged}
+                  onChange={handleTimeIntervalChange}
                 >
-                  {timeRangeList.map((item, index) => (
+                  {timeIntervalList.map((item, index) => (
                     <MenuItem key={index.toString()} value={index}>
-                      {item.interval}
+                      {item}
                     </MenuItem>
                   ))}
                 </Select>
@@ -115,7 +136,7 @@ export const HistoricalMarketChart = ({
               <Stack direction="row">
                 <Button
                   sx={{
-                    width: '7rem',
+                    width: 112,
                     height: '3.8rem',
                     fontSize: '1.2rem',
                     display: chartType === 'candlestick' ? 'none' : 'inherit',
@@ -128,7 +149,7 @@ export const HistoricalMarketChart = ({
                 </Button>
                 <Button
                   sx={{
-                    width: '8rem',
+                    width: 112,
                     height: '3.8rem',
                     fontSize: '1.2rem',
                     display: chartType === 'area' ? 'none' : 'inherit',
@@ -145,7 +166,7 @@ export const HistoricalMarketChart = ({
               <Box display={chartType === 'area' ? 'none' : 'inherit'}>
                 <CandleStickChart
                   timeInterval={
-                    timeRangeList[Number.parseInt(selection)]?.amount
+                    timeRangeList[Number.parseInt(rangeSelection)]?.amount
                   }
                   data={data}
                 />
@@ -153,7 +174,7 @@ export const HistoricalMarketChart = ({
               <Box display={chartType === 'candlestick' ? 'none' : 'inherit'}>
                 <AreaChart
                   timeInterval={
-                    timeRangeList[Number.parseInt(selection)]?.amount
+                    timeRangeList[Number.parseInt(rangeSelection)]?.amount
                   }
                   data={data}
                 />

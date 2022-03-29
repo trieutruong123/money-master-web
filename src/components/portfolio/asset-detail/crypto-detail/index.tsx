@@ -5,6 +5,7 @@ import {
   IconButton,
   Tooltip,
   useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
@@ -20,19 +21,22 @@ interface IProps {
 
 export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
   const theme = useTheme();
-  const isMobile = theme.breakpoints.down('sm');
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   useEffect(() => {
     cryptoVolatilityDetailStore.setCoinId(coinCode);
-    cryptoVolatilityDetailStore.fetchData();
+    cryptoVolatilityDetailStore.fetchData({code:coinCode});
     cryptoVolatilityDetailStore.fetchHistoricalMarketData();
-  }, []);
+  }, [coinCode]);
+  
   const {
     isOpenAddNewTransactionModal,
-    historicalMarketData,
-    coinDetail,
     coinMarketData,
   } = cryptoVolatilityDetailStore;
-
+  const coinDetail = cryptoVolatilityDetailStore.getAssetDetail;
+  const transactionHistoryData = cryptoVolatilityDetailStore.getTransactionHistoryData;
+  const historicalMarketData =
+    cryptoVolatilityDetailStore.historicalMarketData.slice();
+  
   const handleTimeIntervalChanged = useCallback((interval: number) => {
     cryptoVolatilityDetailStore.setTimeInterval(interval);
     cryptoVolatilityDetailStore.fetchHistoricalMarketData();
@@ -57,11 +61,10 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
       >
         <Box sx={{ overflow: 'hidden' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-            <Grid container display="fex" justifyContent="center">
+            <Grid container display="flex" justifyContent="center">
               {coinDetail !== undefined && coinMarketData !== undefined ? (
                 <IntroSection
                   assetDetail={coinDetail}
-                  assetMarketData={coinMarketData}
                 />
               ) : (
                 <></>
@@ -75,7 +78,9 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
                 <></>
               )}
               {coinDetail !== undefined && coinMarketData !== undefined ? (
-                <TransactionHistory assetMarketData={coinMarketData} />
+                <TransactionHistory
+                  transactionHistoryData={transactionHistoryData}
+                />
               ) : (
                 <></>
               )}

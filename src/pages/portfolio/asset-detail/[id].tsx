@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { Box, Container, Typography, useTheme } from '@mui/material';
+import { Box, Container, Typography, useTheme,useMediaQuery } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
@@ -11,7 +11,7 @@ const AssetVolatilityDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
   const theme = useTheme();
-  const isMobile = theme.breakpoints.down('sm');
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { context:{locale},assetId } = props;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];

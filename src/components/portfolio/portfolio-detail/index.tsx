@@ -1,4 +1,12 @@
-import { Box, Container, Grid, IconButton, Tooltip } from '@mui/material';
+import {
+  Box,
+  Container,
+  Grid,
+  IconButton,
+  Tooltip,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
@@ -17,7 +25,8 @@ export const PortfolioDetail = observer(() => {
     };
     fetchData();
   }, []);
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
     cryptoDetail,
     cashDetail,
@@ -45,7 +54,7 @@ export const PortfolioDetail = observer(() => {
         }}
       >
         <Box sx={{ overflow: 'auto' }}>
-          <Container>
+          <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
             <Grid container spacing={3} display="fex" justifyContent="center">
               <AssetAllocation assetAllocationData={portfolioAllocationData} />
               {/* <DailyReturns dailyReturnsData={portfolioDetailData} /> */}

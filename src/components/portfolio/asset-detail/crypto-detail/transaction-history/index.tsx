@@ -6,6 +6,9 @@ import {
   Chip,
   Typography,
   useTheme,
+  Stack,
+  Tooltip,
+  useMediaQuery,
 } from '@mui/material';
 import {
   DataGrid,
@@ -25,7 +28,7 @@ const columns: GridColDef[] = [
   {
     field: 'time',
     headerName: 'Purchase Date',
-    width: 160,
+    width: 140,
     valueGetter: (params: GridValueGetterParams) =>
       `${dayjs(params.id).format('MMM DD YYYY HH:mm')}`,
   },
@@ -70,16 +73,17 @@ const columns: GridColDef[] = [
   },
   {
     field: 'amount',
-    headerName: 'Amount',
+    headerName: 'Holdings',
     width: 70,
     editable: false,
   },
   {
-    field: 'price',
-    headerName: 'Price',
-    width: 90,
+    field: 'purchasePrice',
+    headerName: 'Purchase Price',
+    width: 115,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) => `$${params.row.price}`,
+    valueGetter: (params: GridValueGetterParams) =>
+      `$${params.row.purchasePrice}`,
   },
   {
     field: 'fee',
@@ -93,37 +97,21 @@ const columns: GridColDef[] = [
     headerName: 'Total Cost',
     width: 100,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) =>
-      `$${params.row.amount * params.row.price - params.row.fee}`,
+    valueGetter: (params: GridValueGetterParams) => `$${params.row.totalCost}`,
   },
   {
-    field: 'netValue',
-    headerName: 'Net Value',
-    width: 90,
-    editable: false,
-    valueGetter: (params: GridValueGetterParams) =>
-      `$${params.row.netValue * params.row.amount}`,
-  },
-  {
-    field: 'netPL',
-    headerName: 'Net P/L',
+    field: 'totalPL',
+    headerName: 'P/L',
     width: 160,
     editable: false,
     renderCell: (params: GridCellParams) => {
-      const netValue = params.row.netValue * params.row.amount;
-      const purchasePrice =
-        params.row.amount * params.row.price - params.row.fee;
-      switch (params.row.type) {
-        case 'buy':
-          return (
-            <NetPLCell firstValue={purchasePrice} secondValue={netValue} />
-          );
-        case 'sell':
-          return (
-            <NetPLCell firstValue={netValue} secondValue={purchasePrice} />
-          );
-        case 'dividend':
-      }
+      const { totalProfitLoss, profitLossPercentage, type } = params.row;
+      return (
+        <NetPLCell
+          totalPL={totalProfitLoss}
+          PLPercentage={profitLossPercentage}
+        />
+      );
     },
   },
   {
@@ -135,39 +123,6 @@ const columns: GridColDef[] = [
     renderCell: (params: GridCellParams) => {
       return <SettingsMenuButton />;
     },
-  },
-];
-
-const rows = [
-  {
-    id: 1647501595399,
-    time: 1647501595399,
-    type: 'buy',
-    amount: 43,
-    price: 41000,
-    fee: 43,
-    netValue: 0,
-    settings: 0,
-  },
-  {
-    id: 1647501595310,
-    time: 1647501595310,
-    type: 'sell',
-    amount: 43,
-    price: 41000,
-    fee: 43,
-    netValue: 0,
-    settings: 0,
-  },
-  {
-    id: 1647501595311,
-    time: 1647501595311,
-    type: 'dividend',
-    amount: 43,
-    price: 41000,
-    fee: 43,
-    netValue: 0,
-    settings: 0,
   },
 ];
 
@@ -196,22 +151,19 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
   },
 }));
 interface IProps {
-  assetMarketData: any;
+  transactionHistoryData: Array<any> | undefined;
 }
 
-export const TransactionHistory = ({ assetMarketData }: IProps) => {
+export const TransactionHistory = ({ transactionHistoryData }: IProps) => {
   const theme = useTheme();
-  const isMobile = theme.breakpoints.down('sm');
-  const marketData = assetMarketData.market_data;
-  const customizedRow = rows.map((item) => {
-    return { ...item, netValue: marketData.current_price.usd };
-  });
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   return (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px':'5px 20px 20px 20px',
+          padding: isMobile ? '5px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -230,7 +182,7 @@ export const TransactionHistory = ({ assetMarketData }: IProps) => {
             }}
           >
             <DataGrid
-              rows={customizedRow}
+              rows={transactionHistoryData || []}
               columns={columns}
               pageSize={10}
               rowsPerPageOptions={[10]}
@@ -248,25 +200,32 @@ export const TransactionHistory = ({ assetMarketData }: IProps) => {
 };
 
 interface NetPLCellProps {
-  firstValue: number;
-  secondValue: number;
+  totalPL: number;
+  PLPercentage: number;
 }
 
-function NetPLCell({ firstValue, secondValue }: NetPLCellProps) {
-  const weight = secondValue - firstValue;
-  const profitLoss = precisionRound((weight / firstValue) * 100, 4);
+function NetPLCell({ totalPL, PLPercentage }: NetPLCellProps) {
   const dollarSign = '$';
+  const displayText = `${totalPL > 0 ? '+' : '-'}${dollarSign}${
+    totalPL < 0 ? totalPL.toString().slice(1) : totalPL
+  } (${PLPercentage > 0 ? '+' : '-'}${
+    PLPercentage < 0
+      ? precisionRound(PLPercentage * 100, 4)
+          .toString()
+          .slice(1)
+      : precisionRound(PLPercentage * 100, 4)
+  }%)`;
   return (
-    <Typography
-      variant="body1"
-      color={profitLoss < 0 ? 'error.main' : 'success.main'}
-    >
-      {profitLoss > 0 ? '+' : '-'}
-      {dollarSign}
-      {weight < 0 ? weight.toString().slice(1) : weight} (
-      {profitLoss > 0 ? '+' : ''}
-      {precisionRound(profitLoss, 4)}%)
-    </Typography>
+    <Tooltip title={displayText}>
+      <Stack spacing={0.5} direction="row">
+        <Typography
+          variant="body2"
+          color={totalPL < 0 ? 'error.main' : 'success.main'}
+        >
+          {displayText}
+        </Typography>
+      </Stack>
+    </Tooltip>
   );
 }
 

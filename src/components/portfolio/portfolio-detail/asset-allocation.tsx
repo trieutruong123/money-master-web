@@ -1,4 +1,12 @@
-import { Box, Card, CardContent, CardHeader, Grid } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Grid,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 import { Doughnut } from 'react-chartjs-2';
 import chroma from 'chroma-js';
 import { PortfolioAllocation } from 'types';
@@ -7,6 +15,8 @@ interface IProps {
 }
 
 export const AssetAllocation = ({ assetAllocationData }: IProps) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const chartLabels = assetAllocationData.map((data) => data.symbol);
   const dataSet = assetAllocationData.map(
     (data) => parseFloat(data.portfolioAllocation) * 100,
@@ -67,19 +77,11 @@ export const AssetAllocation = ({ assetAllocationData }: IProps) => {
   };
 
   return (
-    <Grid
-      item
-      lg={6}
-      md={6}
-      xl={6}
-      sm={8}
-      xs={12}
-      
-    >
+    <Grid item lg={6} md={6} xl={6} sm={8} xs={12}>
       <Card
         sx={{
           borderRadius: '12px',
-          padding: '5px 20px 20px 20px',
+          padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -95,7 +97,7 @@ export const AssetAllocation = ({ assetAllocationData }: IProps) => {
               height: 'auto',
             }}
           >
-            <Doughnut data={data} width ='100%' height={140} options={options} />
+            <Doughnut data={data} width="100%" height={140} options={options} />
           </Box>
         </CardContent>
       </Card>
