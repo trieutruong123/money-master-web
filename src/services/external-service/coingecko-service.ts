@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { mainConstant } from 'helpers';
 
 export const coinGeckoService = {
   getCoinInfoByCode,
@@ -6,7 +7,7 @@ export const coinGeckoService = {
   getCoinOHCL,
 };
 
-const BASE_URL = 'https://api.coingecko.com/api/v3';
+const BASE_URL = mainConstant.CRYPTO_API_URL;
 
 async function getCoinInfoByCode(params: any) {
   const url = `/coins/${params?.coinCode}?${

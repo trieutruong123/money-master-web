@@ -138,8 +138,8 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                         //   { locale: locale },
                         // );
                         router.push(
-                          `/portfolio/asset-detail/test`,
-                          `/portfolio/asset-detail/test`,
+                          `/portfolio/coin/test`,
+                          `/portfolio/coin/test`,
                           { locale: locale },
                         );
                       }}

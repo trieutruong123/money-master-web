@@ -120,8 +120,8 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
                     <TableRow
                       onClick={() => {
                         router.push(
-                          `/portfolio/asset-detail/test`,
-                          `/portfolio/asset-detail/test`,
+                          `/portfolio/stock/test`,
+                          `/portfolio/stock/test`,
                           { locale: locale },
                         );
                       }}

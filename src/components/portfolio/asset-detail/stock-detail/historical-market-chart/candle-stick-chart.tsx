@@ -1,18 +1,19 @@
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
+import { precisionRound } from 'utils/number';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 
 interface IProps {
   data: Array<any>;
-  timeInterval: number;
+  timeInterval: string;
 }
 
 export const CandleStickChart = ({ timeInterval, data }: IProps) => {
   const candleStickData = data.map((item: Array<number>) => {
     return {
-      x: new Date(item[0]),
+      x: item[0],
       y: [item[1], item[2], item[3], item[4]],
     };
   });
@@ -39,9 +40,12 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
       tickAmount: 6,
       labels: {
         formatter: function (val: any) {
-          if (timeInterval <= 1) return dayjs(val).format('MMM DD HH:mm');
-          else if (timeInterval <= 30) return dayjs(val).format('MMM DD HH:00');
-          else return dayjs(val).format('MMM DD YYYY');
+          if (timeInterval === '15' || timeInterval === '30')
+            return dayjs.unix(val).format('MMM DD HH:mm');
+          else if (timeInterval === '60')
+            return dayjs.unix(val).format('MMM DD HH:00');
+          else if (timeInterval === 'D') return dayjs.unix(val).format('MMM DD YY');
+          else return dayjs.unix(val).format('MMM DD YYYY');
         },
       },
     },
@@ -53,6 +57,7 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
         enabled: true,
       },
       decimalsInFloat:4
+
     },
   };
   return (
