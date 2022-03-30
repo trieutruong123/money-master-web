@@ -33,11 +33,13 @@ export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
     });
   }, [stockId]);
 
-  const { isOpenAddNewTransactionModal } = stockVolatilityDetailStore;
+  const { isOpenAddNewTransactionModal, stockMarketData } =
+    stockVolatilityDetailStore;
   const stockDetail = stockVolatilityDetailStore.getStockDetail;
   const transactionHistoryData =
     stockVolatilityDetailStore.getTransactionHistoryData;
-  const historicalMarketData = stockVolatilityDetailStore.historicalMarketData;
+  const historicalMarketData =
+    stockVolatilityDetailStore.historicalMarketData.slice();
 
   const handleDateSelectionChanged = useCallback((params: any) => {
     stockVolatilityDetailStore.setTimeInterval(params?.interval);
@@ -47,7 +49,6 @@ export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
       interval: params?.interval,
     });
   }, []);
-
   return (
     <Box
       sx={{
@@ -68,13 +69,11 @@ export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
         <Box sx={{ overflow: 'hidden' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
             <Grid container display="flex" justifyContent="center">
-              {/* {stockDetail !== undefined && coinMarketData !== undefined ? (
-                <IntroSection
-                  assetDetail={stockDetail}
-                />
+              {stockDetail !== undefined && stockMarketData !== undefined ? (
+                <IntroSection assetDetail={stockDetail} />
               ) : (
                 <></>
-              )} */}
+              )}
               {historicalMarketData !== undefined &&
               historicalMarketData !== [] ? (
                 <HistoricalMarketChart
@@ -84,13 +83,13 @@ export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
               ) : (
                 <></>
               )}
-              {/* {stockDetail !== undefined && coinMarketData !== undefined ? (
+              {stockDetail !== undefined && stockMarketData !== undefined ? (
                 <TransactionHistory
                   transactionHistoryData={transactionHistoryData}
                 />
               ) : (
                 <></>
-              )} */}
+              )}
             </Grid>
           </Container>
         </Box>

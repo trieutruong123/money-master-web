@@ -97,7 +97,7 @@ const columns: GridColDef[] = [
     headerName: 'Total Cost',
     width: 100,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) => `$${params.row.totalCost}`,
+    valueGetter: (params: GridValueGetterParams) => `$${precisionRound(params.row.totalCost,4)}`,
   },
   {
     field: 'totalPL',

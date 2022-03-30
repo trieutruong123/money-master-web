@@ -39,7 +39,7 @@ export const CreateCryptoForm = observer(({}: IProps) => {
   };
 
   const portfolioName = 'demo portoflio';
-  const assetName = 'Ethereum';
+  const assetName = 'APPL';
 
   const handleFormSubmit = async (data: any) => {};
 

@@ -43,10 +43,10 @@ class StockVolatilityDetailStore {
   }
 
   async fetchData({ stockId }: { stockId: string }) {
-    this.stockMarketData = await this.fetchCoinInfoByCode({ stockId });
+    this.stockMarketData = await this.fetchStockInfoByCode({ stockId });
   }
 
-  async fetchCoinInfoByCode({ stockId }: { stockId: string }) {
+  async fetchStockInfoByCode({ stockId }: { stockId: string }) {
     const res: any = await finhubService.getStockInfoByCode({
       symbol: stockId,
     });
@@ -80,29 +80,101 @@ class StockVolatilityDetailStore {
   }
 
   get getTransactionHistoryData() {
-    return true;
+    if (typeof this.stockMarketData === 'undefined') return undefined;
+
+    const marketPrice = this.stockMarketData.c;
+    const res = transactionHistory.map((item) => {
+      const { amount, purchasePrice, fee, type } = item;
+      const totalCost =
+        type === 'buy'
+          ? amount * purchasePrice + fee
+          : type === 'sell'
+          ? amount * purchasePrice - fee
+          : 0;
+      const totalProfitLoss =
+        type === 'buy'
+          ? marketPrice * amount - totalCost
+          : type === 'sell'
+          ? totalCost - marketPrice * amount
+          : 0;
+      const profitLossPercentage = totalProfitLoss / totalCost;
+      return {
+        ...item,
+        totalCost,
+        totalProfitLoss,
+        profitLossPercentage,
+      };
+    });
+    return res;
   }
 
   get getStockDetail() {
     if (typeof this.stockMarketData === 'undefined') return undefined;
-
-    // const res = {
-    //   coinName: portfolioData.portfolioData.stocks.find(
-    //     (item) => item.id === this.stockId,
-    //   )?.description,
-    //   totalPrice: quantity * marketPrice,
-    //   quantity,
-    //   marketPrice,
-    //   totalPL,
-    //   PLPercentage: totalPL / (quantity * marketPrice),
-    //   _24HChange: this.coinMarketData.market_data.price_change_24h,
-    //   _24HChangePercentage:
-    //     this.coinMarketData.market_data.price_change_percentage_24h,
-    // };
-    return;
+    const marketPrice = this.stockMarketData.c;
+    
+    const { quantity, totalPL } = transactionHistory.reduce(
+      (total: any, curr: any, index: number): any => {
+        if (curr.type === 'buy')
+          return {
+            quantity: total.quantity + curr.amount,
+            totalPL:
+              total.totalPL +
+              marketPrice * curr.amount -
+              (curr.amount * curr.purchasePrice + curr.fee),
+          };
+        else if (curr.type === 'sell')
+          return {
+            quantity: total.quantity - curr.amount,
+            totalPL:
+              total.totalPL +
+              (curr.amount * curr.purchasePrice - curr.fee) -
+              marketPrice * curr.amount,
+          };
+        else return total;
+      },
+      { quantity: 0, totalPL: 0 },
+    );
+    const res = {
+      stockName: portfolioData.portfolioData.stocks.find(
+        (item) => item.id === this.stockId,
+      )?.description,
+      totalPrice: quantity * marketPrice,
+      quantity,
+      marketPrice,
+      totalPL,
+      PLPercentage: totalPL / (quantity * marketPrice),
+      _24HChange: this.stockMarketData.dp,
+      _24HChangePercentage:
+        this.stockMarketData.pc,
+    };
+    return res;
   }
 
   updateTransactionHistoryData() {}
 }
 
 export const stockVolatilityDetailStore = new StockVolatilityDetailStore();
+
+
+const transactionHistory = [
+  {
+    id: 1647501595399,
+    time: 1647501595399,
+    type: 'buy',
+    amount: 3,
+    purchasePrice: 178.96,
+    fee: 1,
+    netValue: 0,
+    settings: 0,
+  },
+  {
+    id: 1647501595310,
+    time: 1647501595310,
+    type: 'sell',
+    amount: 1,
+    purchasePrice: 180.96,
+    fee: 1,
+    netValue: 0,
+    settings: 0,
+  },
+];
