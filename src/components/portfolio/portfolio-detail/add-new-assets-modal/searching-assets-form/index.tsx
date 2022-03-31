@@ -1,4 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { observer } from 'mobx-react-lite';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import _ from 'lodash';
 import {
   Box,
   Chip,
@@ -14,9 +17,7 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { observer } from 'mobx-react-lite';
-import _ from 'lodash';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { FaBitcoin, FaHome } from 'react-icons/fa';
 import { AiFillDollarCircle, AiOutlineStock } from 'react-icons/ai';
 import { v4 as uuid } from 'uuid';
@@ -30,11 +31,12 @@ type SearchingItemType = {
 };
 
 interface IProps {
-  openTransactionForm: any;
+  openNextForm: any;
+  openPreviousForm: any;
 }
 
 export const SearchingAssetsForm = observer(
-  ({ openTransactionForm }: IProps) => {
+  ({ openNextForm, openPreviousForm }: IProps) => {
     const theme = useTheme();
     const [categories, setCategories] = useState(CategoryList);
     const [selectedArray, setSelectedArray] = useState<Array<boolean>>(
@@ -92,8 +94,12 @@ export const SearchingAssetsForm = observer(
     };
 
     const handleItemClick = (itemId: string) => {
-      openTransactionForm(itemId);
+      openNextForm({curFormType:'search',assetId:itemId});
     };
+
+    const handleComeback= ()=>{
+      openPreviousForm({curFormType:'search' });
+    }
 
     const getListElementHeight = (): number => {
       var ref, ref1;
@@ -112,16 +118,20 @@ export const SearchingAssetsForm = observer(
     };
 
     return (
-      <Box height = 'inherit' id="searching-form-modal">
+      <Box height="inherit" id="searching-form-modal">
         <Box id="header-searching-form">
-          <Typography
-            id="modal-modal-title"
-            variant="h4"
-            align="center"
-            mt="1rem"
-          >
-            Choose Assets
-          </Typography>
+          <Box sx={{ mt: '1rem' }}>
+            <Typography id="modal-modal-title" variant="h4" align="center">
+              Search Assets
+            </Typography>
+           
+            <IconButton
+              sx={{ position: 'absolute', left: '2rem', top: '1rem' }}
+              onClick={handleComeback}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          </Box>
           <Paper
             component="div"
             sx={{

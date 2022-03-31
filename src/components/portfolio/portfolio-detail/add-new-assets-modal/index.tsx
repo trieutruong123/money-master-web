@@ -4,7 +4,14 @@ import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { portfolioDetailStore } from 'store';
 import { SearchingAssetsForm } from './searching-assets-form';
-import { CreateCryptoForm } from './create-crypto-form';
+import { ChooseTypesForm } from './choose-types-form';
+import {
+  AddNewCryptoForm,
+  AddNewStockForm,
+  AddNewCashForm,
+  AddNewRealEstateForm,
+  AddNewBankSavingsForm,
+} from './add-asset-forms';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
   position: 'absolute',
@@ -40,28 +47,84 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
 
 export const AddNewAssetsModal = observer(() => {
   const [current, setCurrent] = useState<any>(null);
-
+  const [selectedType, setSelectedType] = useState<string>('');
   useEffect(() => {
-    setCurrent(
-      <SearchingAssetsForm openTransactionForm={openTransactionForm} />,
-    );
+    setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
   }, []);
 
   const { isOpenAddNewAssetModal } = portfolioDetailStore;
 
   const handleClose = () => {
     portfolioDetailStore.setOpenAddNewAssetModal(false);
-    returnSearchingForm();
+    setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+    setSelectedType('');
   };
 
-  const openTransactionForm = (itemId: string) => {
-    //if(itemId)
-    setCurrent(<CreateCryptoForm comeBack={returnSearchingForm} />);
+  const openNextForm = (params: any) => {
+    switch (params.curFormType) {
+      case 'type':
+        setSelectedType(params.selectedType);
+        if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
+          openSearchingForm(params);
+        else if (
+          ['realEstate', 'cash', 'bankSavings'].includes(params.selectedType)
+        )
+          openTransactionForm(params);
+        break;
+      case 'search':
+        openTransactionForm(params);
+        break;
+      default:
+        setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+        break;
+    }
   };
 
-  const returnSearchingForm = () => {
+  const openPreviousForm = (params: any) => {
+    switch (params.curFormType) {
+      case 'search':
+        setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+        break;
+      case 'transaction':
+        if (['cryptoCurrency', 'stocks'].includes(selectedType))
+          openSearchingForm(params);
+        else if (['realEstate', 'cash', 'bankSavings'].includes(selectedType))
+          setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+        break;
+      default:
+        setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+        break;
+    }
+  };
+
+  const openTransactionForm = (params: any) => {
+    switch (selectedType) {
+      case 'cryptoCurrency':
+        // const assetId = params.assetId;
+        setCurrent(<AddNewCryptoForm openPreviousForm={openPreviousForm} />);
+        break;
+      case 'stocks':
+        // const assetId = params.assetId;
+        setCurrent(<AddNewStockForm openPreviousForm={openPreviousForm} />);
+        break;
+      case 'cash':
+        setCurrent(<AddNewCashForm openPreviousForm={openPreviousForm} />);
+        break;
+      case 'realEstate':
+        setCurrent(<AddNewRealEstateForm openPreviousForm={openPreviousForm} />);
+        break;
+      case 'bankSavings':
+        setCurrent(<AddNewBankSavingsForm openPreviousForm={openPreviousForm} />);
+        break;
+    }
+  };
+
+  const openSearchingForm = (params: any) => {
     setCurrent(
-      <SearchingAssetsForm openTransactionForm={openTransactionForm} />,
+      <SearchingAssetsForm
+        openNextForm={openNextForm}
+        openPreviousForm={openPreviousForm}
+      />,
     );
   };
 
@@ -78,3 +141,11 @@ export const AddNewAssetsModal = observer(() => {
     </Box>
   );
 });
+
+const AddingFormList = [
+  { formType: 'cryptoCurrency', form: <AddNewCryptoForm openPreviousForm /> },
+  { formType: 'stocks', form: <AddNewStockForm openPreviousForm /> },
+  { formType: 'cash', form: <AddNewCashForm openPreviousForm /> },
+  { formType: 'realEstate', form: <AddNewRealEstateForm openPreviousForm /> },
+  { formType: 'bankSavings', form: <AddNewBankSavingsForm openPreviousForm /> },
+];

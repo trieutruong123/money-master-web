@@ -10,39 +10,22 @@ import {
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PerfrectScrollbar from 'react-perfect-scrollbar';
-import { DividendCryptoForm } from './dividend-crypto-form';
-import { BuyCryptoForm } from './buy-cryto-form';
-import { SellCryptoForm } from './sell-crypto-form';
+import {BuyStockForm} from './buy-stock-form';
 
 interface IProps {
-  comeBack: any;
+  openPreviousForm: any;
 }
 
-export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
+export const AddNewStockForm = observer(({ openPreviousForm }: IProps) => {
   const theme = useTheme();
-  const [focusedButtonKey, setFocusedButtonKey] = useState(0);
-  const [selectedForm, setSelectedForm] = useState<any>(null);
-  const [assetPrice, setAssetPrice] = useState(0);
 
   useEffect(() => {
     const fetchAssetPrice = async () => {};
     fetchAssetPrice();
-    setSelectedForm(<BuyCryptoForm key={focusedButtonKey} handleFormSubmit />);
   }, []);
 
-  const buttonLabels = ['Buy', 'Sell', 'Dividend'];
-  const formArray = [
-    <BuyCryptoForm key={focusedButtonKey} handleFormSubmit />,
-    <SellCryptoForm key={focusedButtonKey} handleFormSubmit />,
-    <DividendCryptoForm key={focusedButtonKey} handleFormSubmit />,
-  ];
   const handleComeback = () => {
-    comeBack();
-  };
-
-  const handleSelectionChanged = (key: number) => {
-    setFocusedButtonKey(key);
-    setSelectedForm(formArray[key]);
+    openPreviousForm({ curFormType: 'transaction' });
   };
 
   const portfolioName = 'demo portoflio';
@@ -64,19 +47,6 @@ export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
         </IconButton>
       </Box>
       <Box sx={{ ml: '3rem', mt: '1rem' }}>
-        <ButtonGroup aria-label="outlined primary button group">
-          {buttonLabels.map((item: string, key: number) => {
-            return (
-              <Button
-                key={key.toString()}
-                variant={key === focusedButtonKey ? 'contained' : 'outlined'}
-                onClick={() => handleSelectionChanged(key)}
-              >
-                {item}
-              </Button>
-            );
-          })}
-        </ButtonGroup>
         <Typography
           variant="body1"
           sx={{
@@ -103,7 +73,7 @@ export const CreateCryptoForm = observer(({ comeBack }: IProps) => {
           },
         }}
       >
-        {selectedForm}
+        <BuyStockForm handleFormSubmit={handleFormSubmit}/>
       </Box>
     </Box>
   );

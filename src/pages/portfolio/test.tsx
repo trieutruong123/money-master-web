@@ -25,7 +25,7 @@ const PortfolioDetailPage = (
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { portfolioDetailPage } = detail;
-
+  const portfolioId = '1';
   return (
     // StyledEngineProvider allows CSS-in-JS to be used
     <>
@@ -45,7 +45,7 @@ const PortfolioDetailPage = (
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <PortfolioDetail></PortfolioDetail>
+          <PortfolioDetail portfolioId = {portfolioId}></PortfolioDetail>
         </Container>
       </Box>
     </>
