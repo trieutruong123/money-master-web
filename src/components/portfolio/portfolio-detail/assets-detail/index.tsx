@@ -8,13 +8,14 @@ import { CryptoInvestments } from './crypto-detail';
 import { StockInvestments } from './stock-detail';
 import { RealEstateInvesments } from './real-estate-detail';
 import { CashInvestments } from './cash-detail';
+import { RealEstateItem, BankSavingItem } from 'types';
 
 interface IProps {
-  cryptoDetail: Array<any>;
-  cashDetail: Array<any>;
-  stockDetail: Array<any>;
-  realEstateDetail: Array<any>;
-  bankingDetail: Array<any>;
+  cryptoDetail: Array<any> | undefined;
+  cashDetail: Array<any> | undefined;
+  stockDetail: Array<any> | undefined;
+  realEstateDetail: Array<RealEstateItem> | undefined;
+  bankingDetail: Array<BankSavingItem> | undefined;
 }
 
 export const AssetsDetail = observer(
@@ -30,15 +31,42 @@ export const AssetsDetail = observer(
 
     return (
       <Grid container item>
-        <CryptoInvestments cryptoDetail={cryptoDetail}></CryptoInvestments>
-        <StockInvestments stockDetail={stockDetail}></StockInvestments>
-        <BankingInvestments bankingDetail={bankingDetail}></BankingInvestments>
+        {typeof cashDetail !== undefined && cashDetail?.length ? (
+          <CryptoInvestments cryptoDetail={cryptoDetail}></CryptoInvestments>
+        ) : (
+          <></>
+        )}
+        {typeof cashDetail !== undefined && cashDetail?.length ? (
+          <StockInvestments stockDetail={stockDetail}></StockInvestments>
+        ) : (
+          <></>
+        )}
+        {typeof bankingDetail !== undefined && bankingDetail?.length ? (
+          <BankingInvestments
+            bankingDetail={bankingDetail}
+          ></BankingInvestments>
+        ) : (
+          <></>
+        )}
 
-        <Grid container item spacing={2} sx = {{display:'flex', alignItems:'stretch'}}>
-          <CashInvestments cashDetail={cashDetail}></CashInvestments>
-          <RealEstateInvesments
-            realEstateDetail={realEstateDetail}
-          ></RealEstateInvesments>
+        <Grid
+          container
+          item
+          spacing={2}
+          sx={{ display: 'flex', alignItems: 'stretch' }}
+        >
+          {typeof cashDetail !== undefined && cashDetail?.length ? (
+            <CashInvestments cashDetail={cashDetail}></CashInvestments>
+          ) : (
+            <></>
+          )}
+          {typeof realEstateDetail !== undefined && realEstateDetail?.length ? (
+            <RealEstateInvesments
+              realEstateDetail={realEstateDetail}
+            ></RealEstateInvesments>
+          ) : (
+            <></>
+          )}
         </Grid>
       </Grid>
     );

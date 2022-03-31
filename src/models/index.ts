@@ -1,3 +1,1 @@
-import { UserInfo } from './user.model';
-
-export { UserInfo };
+export * from './user.model';

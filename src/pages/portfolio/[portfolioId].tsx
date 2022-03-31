@@ -21,7 +21,10 @@ const PortfolioDetailPage = (
 ) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { locale } = props.context;
+  const {
+    context: { locale },
+    portfolioId,
+  } = props;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { portfolioDetailPage } = detail;
@@ -45,7 +48,7 @@ const PortfolioDetailPage = (
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <PortfolioDetail></PortfolioDetail>
+          <PortfolioDetail portfolioId = {portfolioId}></PortfolioDetail>
         </Container>
       </Box>
     </>
@@ -67,9 +70,11 @@ export const getStaticPaths: GetStaticPaths<{
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
+  const portfolioId = context?.params?.portfolioId;
   return {
     props: {
       context,
+      portfolioId,
     },
   };
 };

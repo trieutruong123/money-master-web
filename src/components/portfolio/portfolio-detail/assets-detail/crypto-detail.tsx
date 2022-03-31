@@ -39,7 +39,7 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  cryptoDetail: Array<any>;
+  cryptoDetail: Array<any>|undefined;
 }
 
 export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
@@ -92,7 +92,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
     );
   };
 
-  return cryptoDetail.length ? (
+  return cryptoDetail?.length ? (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{

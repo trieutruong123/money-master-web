@@ -1,6 +1,6 @@
 import { coinGeckoService } from 'services';
 import { action, computed, makeAutoObservable, observable } from 'mobx';
-import { portfolioData } from '../portfolio-detail.store';
+import { portfolioData } from '../portfolio/portfolio-data';
 class CryptoVolatilityDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
   //transactionHistoryData: Array<any> = [];

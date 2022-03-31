@@ -38,7 +38,7 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  cashDetail: Array<any>;
+  cashDetail: Array<any>|undefined;
 }
 
 export const CashInvestments = ({ cashDetail }: IProps) => {
@@ -58,7 +58,7 @@ export const CashInvestments = ({ cashDetail }: IProps) => {
     return getCurrencyByCode(code)?.symbol.toString() + num.toString();
   };
 
-  return cashDetail.length ? (
+  return cashDetail?.length ? (
     <Grid item xl={4} lg={4} md={4} sm={4} xs={12} mt="1rem">
       <Card
         sx={{

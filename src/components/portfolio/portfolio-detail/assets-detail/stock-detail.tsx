@@ -37,7 +37,7 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  stockDetail: Array<any>;
+  stockDetail: Array<any>|undefined;
 }
 
 export const StockInvestments = ({ stockDetail }: IProps) => {
@@ -79,7 +79,7 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
     } else return undefined;
   };
 
-  return stockDetail.length ? (
+  return stockDetail?.length ? (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{

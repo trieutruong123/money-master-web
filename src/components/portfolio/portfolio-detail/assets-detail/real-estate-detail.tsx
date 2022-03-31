@@ -11,7 +11,7 @@ import {
   TableRow,
   Tooltip,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -19,6 +19,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getCurrencyByCode } from 'helpers';
+import { RealEstateItem } from 'types';
+import dayjs from 'dayjs';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -39,7 +41,7 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  realEstateDetail: Array<any>;
+  realEstateDetail: Array<RealEstateItem> | undefined;
 }
 
 export const RealEstateInvesments = ({ realEstateDetail }: IProps) => {
@@ -47,22 +49,27 @@ export const RealEstateInvesments = ({ realEstateDetail }: IProps) => {
   const { locale } = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const headings = [ 'Valuation', 'Area', 'Address'];
+  const headings = ['Buy Price', 'Current Price', , 'Description'];
 
   const renderValuation = (num: number, code: string) => {
-    return getCurrencyByCode(code)?.symbol.toString() + num.toString();
+    const currencySymbol = getCurrencyByCode(
+      code.toUpperCase(),
+    )?.symbol.toString();
+    return typeof currencySymbol !== 'undefined'
+      ? currencySymbol + num.toString()
+      : num.toString();
   };
 
-  const renderAddress = (address: any) => {
-    return address.toString().slice(0, 25) + '...';
+  const renderDescription = (description: any) => {
+    return description.toString().slice(0, 25) + '...';
   };
 
-  return realEstateDetail.length ? (
-    <Grid item xl={8} lg={8} md={8} sm={8} xs={12}  mt="1rem">
+  return realEstateDetail?.length ? (
+    <Grid item xl={8} lg={8} md={8} sm={8} xs={12} mt="1rem">
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
+          padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -84,7 +91,7 @@ export const RealEstateInvesments = ({ realEstateDetail }: IProps) => {
             <Table>
               <TableHead>
                 <TableRow>
-                <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell>Name</TableHeaderCell>
                   {headings.map((heading, i) => (
                     <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
                       {heading}
@@ -117,14 +124,27 @@ export const RealEstateInvesments = ({ realEstateDetail }: IProps) => {
                         >
                           {record.name}
                         </Box>
+                        <Box
+                          sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
+                        >
+                          {dayjs(record.inputDay).format('DD-MM-YYYY')}
+                        </Box>
                       </TableBodyCellSymbol>
                       <TableBodyCell>
-                        {renderValuation(record.valuation, record.currencyCode)}
+                        {renderValuation(
+                          record.inputMoneyAmount,
+                          record.inputCurrency,
+                        )}
                       </TableBodyCell>
-                      <TableBodyCell>{record.area}</TableBodyCell>
-                      <Tooltip title={record.address}>
+                      <TableBodyCell>
+                        {renderValuation(
+                          record.currentPrice,
+                          record.inputCurrency,
+                        )}
+                      </TableBodyCell>
+                      <Tooltip title={record.description}>
                         <TableBodyCell>
-                          {renderAddress(record.address)}
+                          {renderDescription(record.description)}
                         </TableBodyCell>
                       </Tooltip>
                     </TableRow>

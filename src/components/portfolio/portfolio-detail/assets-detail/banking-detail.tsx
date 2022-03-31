@@ -10,7 +10,7 @@ import {
   TableHead,
   TableRow,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -18,6 +18,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getCurrencyByCode } from 'helpers';
+import { BankSavingItem } from 'types';
+import dayjs from 'dayjs';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -38,7 +40,7 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  bankingDetail: Array<any>;
+  bankingDetail: Array<BankSavingItem> | undefined;
 }
 
 export const BankingInvestments = ({ bankingDetail }: IProps) => {
@@ -46,43 +48,39 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
   const { locale } = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const headings = [
-    'Deposit',
-    'Interest Rate',
-    'Term Range',
-    'Sent Day',
-  ];
+  const headings = ['Deposit', 'Interest Rate', 'Term Range', 'Description'];
 
   const renderDeposit = (num: number, code: string) => {
-    return getCurrencyByCode(code)?.symbol.toString() + num.toString();
+    const currencySymbol = getCurrencyByCode(
+      code.toUpperCase(),
+    )?.symbol.toString();
+    return typeof currencySymbol !== 'undefined'
+      ? currencySymbol + num.toString()
+      : num.toString();
   };
 
   const renderInterestRate = (interestRate: number) => {
-    const rate = interestRate*100
-    return (
-      <span style={{ color: '#0d6f3f' }}>{rate.toString() + '%'}</span>
-    );
+    const rate = interestRate;
+    return <span style={{ color: '#0d6f3f' }}>{rate.toString() + '%'}</span>;
   };
 
   const renderTermRange = (termRange: number, unit: string) => {
-    return termRange.toString() + ' ' + unit;
+    const years = Math.floor(termRange / 12);
+    const months = termRange % 12;
+    const displayText = `${
+      years > 1 ? years + ' years ' : years === 1 ? years+ ' year ' : ''
+    }${years>0 &&months !==0 ?'& ':''}${
+      months > 1 ? months + ' months' : months === 1 ? '1 month' : ''
+    }`;
+    return displayText;
   };
 
-  const renderSentDay = (inputDay: string) => {
-    const timestamp = Date.parse(inputDay);
-    const todate = new Date(timestamp).getDate();
-    const tomonth = new Date(timestamp).getMonth() + 1;
-    const toyear = new Date(timestamp).getFullYear();
-    const originalDate = todate + '/' + tomonth + '/' + toyear;
-    return originalDate;
-  };
-
-  return bankingDetail.length ? (
-    <Grid item lg={12} md={12} xl={12} xs={12}  mt="1rem">
+  return bankingDetail?.length ? (
+    <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
+          padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -104,7 +102,7 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
             <Table>
               <TableHead>
                 <TableRow>
-                <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell>Name</TableHeaderCell>
                   {headings.map((heading, i) => (
                     <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
                       {heading}
@@ -137,6 +135,11 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
                         >
                           {record.name}
                         </Box>
+                        <Box
+                          sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
+                        >
+                          {dayjs(record.inputDay).format('DD-MM-YYYY')}
+                        </Box>
                       </TableBodyCellSymbol>
                       <TableBodyCell>
                         {renderDeposit(
@@ -149,9 +152,6 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
                       </TableBodyCell>
                       <TableBodyCell>
                         {renderTermRange(record.termRange, 'months')}
-                      </TableBodyCell>
-                      <TableBodyCell>
-                        {renderSentDay(record.inputDay)}
                       </TableBodyCell>
                     </TableRow>
                   );

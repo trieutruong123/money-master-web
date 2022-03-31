@@ -17,10 +17,17 @@ import { AddNewAssetsModal } from './add-new-assets-modal';
 import { portfolioDetailStore } from 'store';
 import { PortfolioAllocation, PortfolioItem } from 'types';
 
-export const PortfolioDetail = observer(() => {
+interface IProps{
+  portfolioId:string,
+}
+
+export const PortfolioDetail = observer(({portfolioId}:IProps) => {
   useEffect(() => {
     const fetchData = async () => {
+      portfolioDetailStore.setPortfolioId(portfolioId);
       await portfolioDetailStore.fetchPortfolioDetailData();
+      await portfolioDetailStore.fetchRealEstate();
+      await portfolioDetailStore.fetchBankSaving();
       await portfolioDetailStore.fetchCoinData();
     };
     fetchData();
