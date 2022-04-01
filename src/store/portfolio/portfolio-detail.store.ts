@@ -64,24 +64,24 @@ class PortfolioDetailStore {
   }
 
   async fetchCoinData() {
-    // const coins = this.cryptoDetail;
-    // const data = await coins.map(async (coin: any) => {
-    //   const res: any = await this.fetchCoinInfoByCode({ code: coin.coinName });
-    //   if (!res.isError) {
-    //     const coinInfo = res.data;
-    //     return {
-    //       ...coin,
-    //       price: coinInfo.price,
-    //       priceChange: coinInfo.priceChange,
-    //       percentChange: coinInfo.percentChange,
-    //       profitLossAmount: coinInfo.priceChange * coin.quantity,
-    //       totalValue: coinInfo.price * coin.quantity,
-    //     };
-    //   } else return coin;
-    // });
-    // Promise.all(data).then((arr) => {
-    //   this.cryptoDetail = arr;
-    // });
+    const coins = this.cryptoDetail;
+    const data = await coins.map(async (coin: any) => {
+      const res: any = await this.fetchCoinInfoByCode({ code: coin.coinName });
+      if (!res.isError) {
+        const coinInfo = res.data;
+        return {
+          ...coin,
+          price: coinInfo.price,
+          priceChange: coinInfo.priceChange,
+          percentChange: coinInfo.percentChange,
+          profitLossAmount: coinInfo.priceChange * coin.quantity,
+          totalValue: coinInfo.price * coin.quantity,
+        };
+      } else return coin;
+    });
+    Promise.all(data).then((arr) => {
+      this.cryptoDetail = arr;
+    });
   }
 
   async fetchCoinInfoByCode({ code }: { code: string }) {
