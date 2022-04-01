@@ -33,6 +33,8 @@ class PortfolioDetailStore {
       fetchCoinData: action,
       setPortfolioId: action,
       fetchRealEstate: action,
+      addNewBankSaving:action,
+      addNewRealEstate:action,
     });
   }
 

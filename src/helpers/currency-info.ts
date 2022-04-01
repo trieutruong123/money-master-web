@@ -3,6 +3,136 @@ export const getCurrencyByCode = (currencyCode: string) => {
   return info;
 };
 
+export const getSupportedCurrencyList = (): Array<{
+  name: string;
+  symbol: string;
+  symbolNative: string;
+  decimalDigits: any;
+  rounding: number;
+  code: string;
+  namePlural: string;
+}> => {
+  return [
+    {
+      name: 'Singapore Dollar',
+      symbol: 'S$',
+      symbolNative: '$',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'SGD',
+      namePlural: 'Singapore dollars',
+    },
+    {
+      name: 'Hong Kong Dollar',
+      symbol: 'HK$',
+      symbolNative: '$',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'HKD',
+      namePlural: 'Hong Kong dollars',
+    },
+    {
+      name: 'US Dollar',
+      symbol: '$',
+      symbolNative: '$',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'USD',
+      namePlural: 'US dollars',
+    },
+    {
+      name: 'Canadian Dollar',
+      symbol: 'CA$',
+      symbolNative: '$',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'CAD',
+      namePlural: 'Canadian dollars',
+    },
+    {
+      name: 'Euro',
+      symbol: '€',
+      symbolNative: '€',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'EUR',
+      namePlural: 'euros',
+    },
+    {
+      name: 'Chinese Yuan',
+      symbol: 'CN¥',
+      symbolNative: 'CN¥',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'CNY',
+      namePlural: 'Chinese yuan',
+    },
+    {
+      name: 'Australian Dollar',
+      symbol: 'AU$',
+      symbolNative: '$',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'AUD',
+      namePlural: 'Australian dollars',
+    },
+    {
+      name: 'New Zealand Dollar',
+      symbol: 'NZ$',
+      symbolNative: '$',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'NZD',
+      namePlural: 'New Zealand dollars',
+    },
+    {
+      name: 'British Pound Sterling',
+      symbol: '£',
+      symbolNative: '£',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'GBP',
+      namePlural: 'British pounds sterling',
+    },
+    {
+      name: 'Japanese Yen',
+      symbol: '¥',
+      symbolNative: '￥',
+      decimalDigits: 0,
+      rounding: 0,
+      code: 'JPY',
+      namePlural: 'Japanese yen',
+    },
+    {
+      name: 'Indian Rupee',
+      symbol: 'Rs',
+      symbolNative: 'টকা',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'INR',
+      namePlural: 'Indian rupees',
+    },
+    {
+      name: 'Russian Ruble',
+      symbol: 'RUB',
+      symbolNative: '₽.',
+      decimalDigits: 2,
+      rounding: 0,
+      code: 'RUB',
+      namePlural: 'Russian rubles',
+    },
+    {
+      name: 'South Korean Won',
+      symbol: '₩',
+      symbolNative: '₩',
+      decimalDigits: 0,
+      rounding: 0,
+      code: 'KRW',
+      namePlural: 'South Korean won',
+    },
+  ];
+};
+
 const currency: Array<{
   name: string;
   symbol: string;
@@ -12,6 +142,15 @@ const currency: Array<{
   code: string;
   namePlural: string;
 }> = [
+  {
+    name: 'Vietnamese Dong',
+    symbol: '₫',
+    symbolNative: '₫',
+    decimalDigits: 0,
+    rounding: 0,
+    code: 'VND',
+    namePlural: 'Vietnamese dong',
+  },
   {
     name: 'US Dollar',
     symbol: '$',

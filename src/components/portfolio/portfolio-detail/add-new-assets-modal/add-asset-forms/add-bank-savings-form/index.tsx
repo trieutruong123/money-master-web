@@ -9,12 +9,14 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PerfrectScrollbar from 'react-perfect-scrollbar';
 import { BuyBankSavingsForm } from './buy-bank-savings-form';
+import { portfolioDetailStore } from 'store';
 
 interface IProps {
+  handleClose:any
   openPreviousForm: any;
 }
 
-export const AddNewBankSavingsForm = observer(({ openPreviousForm }: IProps) => {
+export const AddNewBankSavingsForm = observer(({handleClose, openPreviousForm }: IProps) => {
   const theme = useTheme();
 
   useEffect(() => {
@@ -28,7 +30,11 @@ export const AddNewBankSavingsForm = observer(({ openPreviousForm }: IProps) => 
 
   const portfolioName = 'demo portoflio';
 
-  const handleFormSubmit = async (data: any) => {};
+  const handleFormSubmit = async (data: any) => {
+    console.log(data);
+    portfolioDetailStore.addNewBankSaving(data);
+    // handleClose();
+  };
 
   return (
     <Box sx={{ height: 'inherit' }}>
@@ -57,10 +63,10 @@ export const AddNewBankSavingsForm = observer(({ openPreviousForm }: IProps) => 
       </Box>
       <Box
         sx={{
-          [theme.breakpoints.down('sm')]: { height: '410px' },
+          [theme.breakpoints.down('sm')]: { height: '480px' },
 
           [theme.breakpoints.up('sm')]: {
-            height: '480px',
+            height: '550px',
           },
         }}
       >

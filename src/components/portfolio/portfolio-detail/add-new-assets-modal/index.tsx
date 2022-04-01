@@ -63,6 +63,7 @@ export const AddNewAssetsModal = observer(() => {
   const openNextForm = (params: any) => {
     switch (params.curFormType) {
       case 'type':
+        console.log('type nè');
         setSelectedType(params.selectedType);
         if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
           openSearchingForm(params);
@@ -111,10 +112,20 @@ export const AddNewAssetsModal = observer(() => {
         setCurrent(<AddNewCashForm openPreviousForm={openPreviousForm} />);
         break;
       case 'realEstate':
-        setCurrent(<AddNewRealEstateForm openPreviousForm={openPreviousForm} />);
+        setCurrent(
+          <AddNewRealEstateForm
+            handleClose={handleClose}
+            openPreviousForm={openPreviousForm}
+          />,
+        );
         break;
       case 'bankSavings':
-        setCurrent(<AddNewBankSavingsForm openPreviousForm={openPreviousForm} />);
+        setCurrent(
+          <AddNewBankSavingsForm
+            handleClose={handleClose}
+            openPreviousForm={openPreviousForm}
+          />,
+        );
         break;
     }
   };
@@ -141,11 +152,3 @@ export const AddNewAssetsModal = observer(() => {
     </Box>
   );
 });
-
-const AddingFormList = [
-  { formType: 'cryptoCurrency', form: <AddNewCryptoForm openPreviousForm /> },
-  { formType: 'stocks', form: <AddNewStockForm openPreviousForm /> },
-  { formType: 'cash', form: <AddNewCashForm openPreviousForm /> },
-  { formType: 'realEstate', form: <AddNewRealEstateForm openPreviousForm /> },
-  { formType: 'bankSavings', form: <AddNewBankSavingsForm openPreviousForm /> },
-];

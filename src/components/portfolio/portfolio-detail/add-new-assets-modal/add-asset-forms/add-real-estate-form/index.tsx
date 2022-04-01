@@ -4,12 +4,14 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PerfrectScrollbar from 'react-perfect-scrollbar';
 import { BuyRealEstateForm } from './buy-real-estate-form';
+import {portfolioDetailStore} from 'store';
 
 interface IProps {
+  handleClose:any,
   openPreviousForm: any;
 }
 
-export const AddNewRealEstateForm = observer(({ openPreviousForm }: IProps) => {
+export const AddNewRealEstateForm = observer(({ handleClose,openPreviousForm }: IProps) => {
   const theme = useTheme();
 
   useEffect(() => {
@@ -23,7 +25,10 @@ export const AddNewRealEstateForm = observer(({ openPreviousForm }: IProps) => {
 
   const portfolioName = 'demo portoflio';
 
-  const handleFormSubmit = async (data: any) => {};
+  const handleFormSubmit = async (data: any) => {
+    portfolioDetailStore.addNewRealEstate(data);
+    handleClose()
+  };
 
   return (
     <Box sx={{ height: 'inherit' }}>
@@ -52,10 +57,10 @@ export const AddNewRealEstateForm = observer(({ openPreviousForm }: IProps) => {
       </Box>
       <Box
         sx={{
-          [theme.breakpoints.down('sm')]: { height: '410px' },
+          [theme.breakpoints.down('sm')]: { height: '470px' },
 
           [theme.breakpoints.up('sm')]: {
-            height: '480px',
+            height: '540px',
           },
         }}
       >
