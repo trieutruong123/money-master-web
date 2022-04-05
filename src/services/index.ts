@@ -5,3 +5,4 @@ export * from './crypto-service';
 export * from './http-service';
 export * from './storage-service';
 export * from './user-service'
+export * from './portfolio-service'
