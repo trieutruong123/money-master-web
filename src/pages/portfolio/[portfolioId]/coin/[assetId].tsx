@@ -1,26 +1,21 @@
 import Head from 'next/head';
-import {
-  Box,
-  Container,
-  Typography,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
+import { Box, Container, Typography, useTheme,useMediaQuery } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
-import { StockVolatilityDetail } from 'components/portfolio';
+import { CryptoVolatilityDetail } from 'components/portfolio';
 
 const AssetVolatilityDetailPage = (
-  props: InferGetStaticPropsType<typeof getStaticProps>,
+  props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
-    context: { locale },
-    assetId,
+    locale,
+    resolvedUrl,
+    params: { portfolioId,  assetId },
   } = props;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
@@ -28,7 +23,7 @@ const AssetVolatilityDetailPage = (
   return (
     <>
       <Head>
-        <title>Stock Detail | Money Master</title>
+        <title>Crypto Currency | Money Master</title>
       </Head>
       <Box
         component="main"
@@ -42,11 +37,11 @@ const AssetVolatilityDetailPage = (
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
           <Typography sx={{ mb: 3 }} variant="h4">
-            Stock Detail
+            Crypto Currency
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <StockVolatilityDetail stockId={assetId} />
+          <CryptoVolatilityDetail coinCode={assetId} />
         </Container>
       </Box>
     </>
@@ -58,21 +53,17 @@ AssetVolatilityDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
 
-export const getStaticPaths: GetStaticPaths<{
-  id: string;
-}> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking', //indicates the type of fallback
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const assetId = context?.params?.id;
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { query, params, locales, locale, defaultLocale, resolvedUrl } =
+    context;
   return {
     props: {
-      context,
-      assetId,
+      query,
+      params,
+      locales,
+      locale,
+      defaultLocale,
+      resolvedUrl,
     },
   };
 };

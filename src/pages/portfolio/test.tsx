@@ -7,7 +7,7 @@ import {
   CssBaseline,
   Typography,
   useTheme,
-  useMediaQuery,
+  useMediaQuery
 } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
@@ -21,7 +21,10 @@ const PortfolioDetailPage = (
 ) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { locale } = props.context;
+  const {
+    context: { locale },
+    //portfolioId,
+  } = props;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { portfolioDetailPage } = detail;
@@ -45,7 +48,7 @@ const PortfolioDetailPage = (
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <PortfolioDetail portfolioId = {portfolioId}></PortfolioDetail>
+          <PortfolioDetail  portfolioId = {portfolioId}></PortfolioDetail>
         </Container>
       </Box>
     </>
@@ -57,10 +60,21 @@ PortfolioDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
 
+// export const getStaticPaths: GetStaticPaths<{
+//   portoflioId: string;
+// }> = async () => {
+//   return {
+//     paths: [], //indicates that no page needs be created at build time
+//     fallback: 'blocking', //indicates the type of fallback
+//   };
+// };
+
 export const getStaticProps: GetStaticProps = async (context) => {
+  // const portfolioId = context?.params?.portfolioId;
   return {
     props: {
       context,
+      //portfolioId,
     },
   };
 };

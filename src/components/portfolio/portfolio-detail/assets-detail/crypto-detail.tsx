@@ -39,12 +39,13 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  cryptoDetail: Array<any>|undefined;
+  cryptoDetail: Array<any> | undefined;
 }
 
 export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
+  const { portfolioId } = router.query;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [
@@ -97,7 +98,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
+          padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -132,16 +133,16 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                   return (
                     <TableRow
                       onClick={() => {
-                        // router.push(
-                        //   `/portfolio/asset-detail/${record.coinName}`,
-                        //   `/portfolio/asset-detail/${record.coinName}`,
-                        //   { locale: locale },
-                        // );
                         router.push(
-                          `/portfolio/coin/test`,
-                          `/portfolio/coin/test`,
+                          `/portfolio/${portfolioId}/coin/${record.id}`,
+                          `/portfolio/${portfolioId}/coin/${record.id}`,
                           { locale: locale },
                         );
+                        // router.push(
+                        //   `/portfolio/coin/test`,
+                        //   `/portfolio/coin/test`,
+                        //   { locale: locale },
+                        // );
                       }}
                       key={i}
                       sx={{

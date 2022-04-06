@@ -10,7 +10,7 @@ import {
   TableHead,
   TableRow,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -37,12 +37,13 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  stockDetail: Array<any>|undefined;
+  stockDetail: Array<any> | undefined;
 }
 
 export const StockInvestments = ({ stockDetail }: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
+  const { portfolioId } = router.query;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [
@@ -84,7 +85,7 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
+          padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -102,7 +103,7 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
           </Button>
         </Card>
         <PerfectScrollbar>
-          <Box >
+          <Box>
             <Table>
               <TableHead>
                 <TableRow>
@@ -120,10 +121,15 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
                     <TableRow
                       onClick={() => {
                         router.push(
-                          `/portfolio/stock/test`,
-                          `/portfolio/stock/test`,
+                          `/portfolio/${portfolioId}/stock/${record.id.toUpperCase()}`,
+                          `/portfolio/${portfolioId}/stock/${record.id.toUpperCase()}`,
                           { locale: locale },
                         );
+                        // router.push(
+                        //   `/portfolio/stock/test`,
+                        //   `/portfolio/stock/test`,
+                        //   { locale: locale },
+                        // );
                       }}
                       key={i}
                       sx={{

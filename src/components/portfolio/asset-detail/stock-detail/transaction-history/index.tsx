@@ -97,7 +97,8 @@ const columns: GridColDef[] = [
     headerName: 'Total Cost',
     width: 100,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) => `$${precisionRound(params.row.totalCost,4)}`,
+    valueGetter: (params: GridValueGetterParams) =>
+      `$${precisionRound(params.row.totalCost, 4)}`,
   },
   {
     field: 'totalPL',
@@ -207,7 +208,9 @@ interface NetPLCellProps {
 function NetPLCell({ totalPL, PLPercentage }: NetPLCellProps) {
   const dollarSign = '$';
   const displayText = `${totalPL > 0 ? '+' : '-'}${dollarSign}${
-    totalPL < 0 ? totalPL.toString().slice(1) : totalPL
+    totalPL < 0
+      ? precisionRound(totalPL, 4).toString().slice(1)
+      : precisionRound(totalPL, 4)
   } (${PLPercentage > 0 ? '+' : '-'}${
     PLPercentage < 0
       ? precisionRound(PLPercentage * 100, 4)

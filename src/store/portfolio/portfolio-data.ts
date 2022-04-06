@@ -43,7 +43,7 @@ export const portfolioData = {
       ],
       stocks: [
         {
-          id: 'appl',
+          id: 'aapl',
           symbol: 'AAPL',
           description: 'Apple Inc',
           price: 165.12,
