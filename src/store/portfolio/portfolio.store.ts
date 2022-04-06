@@ -28,6 +28,7 @@ class PortfolioStore {
       .addNewPortfolio(data)
       .then((portfolio) => this.portfolio.push(portfolio));
   }
+
 }
 
 export const portfolioStore = new PortfolioStore();

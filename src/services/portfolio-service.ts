@@ -16,7 +16,6 @@ async function getPortfolioList() {
     });
     return res;
   }
-  console.log(res);
   return res;
 }
 

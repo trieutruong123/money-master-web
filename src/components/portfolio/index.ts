@@ -3,6 +3,7 @@ import {
   DeletePortfolio,
   ModifyPortfolio,
   PortfolioCard,
+  PortfolioList
 } from './portfolio-list';
 import { PortfolioDetail } from './portfolio-detail';
 
@@ -12,5 +13,6 @@ export {
   DeletePortfolio,
   ModifyPortfolio,
   PortfolioCard,
+  PortfolioList,
   PortfolioDetail,
 };
