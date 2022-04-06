@@ -59,9 +59,9 @@ export const CashInvestments = ({ cashDetail }: IProps) => {
   };
 
   return cashDetail?.length ? (
-    <Grid item xl={4} lg={4} md={4} sm={4} xs={12} mt="1rem">
       <Card
         sx={{
+          height:'100%',
           borderRadius: '12px',
           padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
@@ -135,7 +135,6 @@ export const CashInvestments = ({ cashDetail }: IProps) => {
           </Box>
         </PerfectScrollbar>
       </Card>
-    </Grid>
   ) : (
     <></>
   );

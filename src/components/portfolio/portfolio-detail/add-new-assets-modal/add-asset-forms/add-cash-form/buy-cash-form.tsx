@@ -1,17 +1,29 @@
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
-import { Box, Button, TextField, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  Select,
+  TextField,
+  MenuItem,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { getSupportedCurrencyList } from 'helpers';
 
 type FormValues = {
   purchasePrice: number;
   amount: number;
   date: Date;
-  currency?: string;
+  inputCurrency: string;
   note?: string;
   brokerFeeInPercent?: number;
   brokerFee?: number;
@@ -25,6 +37,8 @@ interface IProps {
 
 export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
     dividendPerShare: Yup.number()
@@ -35,7 +49,9 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
       .required('Amount is required')
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
+    inputCurrency: Yup.string().required().default('USD'),
   });
+  const currencyList = getSupportedCurrencyList();
 
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, reset, handleSubmit, formState, getValues, setError } =
@@ -50,27 +66,35 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
   };
 
   return (
+    <Box
+      sx={{
+        height: 'inherit',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+      }}
+    >
       <Box
+        id="buy-cash-form"
         component="form"
         autoComplete="off"
         onSubmit={handleSubmit(onSubmit)}
         sx={{
-          height: 'inherit',
-          overflow:'auto',
-          justifyContent: 'center',
+          width: '100%',
+          overflow: 'auto',
           display: 'flex',
           alignItems: 'stretch',
           flexDirection: 'column',
-          mx: '3rem',
+          px: '3rem',
           [theme.breakpoints.down('xs')]: {
-            mx: '2rem',
+            px: '2rem',
           },
         }}
       >
         <TextField
           type="number"
           fullWidth
-          sx={{ my: 1, display: 'block' }}
+          sx={{ mt: 1, display: 'block' }}
           id="outlined-buy-price"
           label={'*Purchase Price'}
           {...register('purchasePrice')}
@@ -81,7 +105,7 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
         <TextField
           type="number"
           fullWidth
-          sx={{ my: 1, display: 'block' }}
+          sx={{ mt: 1, display: 'block' }}
           id="outlined-amount"
           label={'*Amount'}
           {...register('amount')}
@@ -89,24 +113,48 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
           error={typeof errors.amount?.message !== 'undefined'}
           helperText={errors.amount?.message}
         ></TextField>
-        <LocalizationProvider
-          sx={{ my: 1, display: 'block' }}
-          dateAdapter={AdapterDateFns}
-        >
-          <DesktopDatePicker
-            label="*Date desktop"
-            inputFormat="dd/MM/yyyy"
-            value={date}
-            onChange={handleDateChange}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
+        <Grid container spacing={isXs ? 1 : 2}>
+          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+            <FormControl fullWidth>
+              <InputLabel id="currency-list">Currency</InputLabel>
+              <Select
+                variant="outlined"
+                labelId="currency-list"
+                id="currency-list-select"
+                label="*Currency"
+                value="USD"
+                {...register('inputCurrency')}
+              >
+                {currencyList.map((item, index) => {
+                  return (
+                    <MenuItem key={item.code} value={item.code}>
+                      {item.code} - {item.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DesktopDatePicker
+                label="*Input day"
+                inputFormat="dd/MM/yyyy"
+                value={date}
+                onChange={handleDateChange}
+                renderInput={(params) => (
+                  <TextField sx={{ width: '100%' }} {...params} />
+                )}
+              />
+            </LocalizationProvider>
+          </Grid>
+        </Grid>
         <TextField
           type="number"
           fullWidth
-          sx={{ my: 1, display: 'block' }}
+          sx={{ mt: 1, display: 'block' }}
           id="outlined-broker-fee"
-          label={'Broker fee'}
+          label={'Fee'}
           {...register('brokerFee')}
           variant="outlined"
         ></TextField>
@@ -121,11 +169,22 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
           error={typeof errors.note?.message !== 'undefined'}
           helperText={errors.note?.message}
         ></TextField>
+      </Box>
+      <Box
+        sx={{
+          mt: 'auto',
+          px: '3rem',
+          [theme.breakpoints.down('xs')]: {
+            px: '2rem',
+          },
+          width: '100%',
+        }}
+      >
         <Button
           type="submit"
+          form="bank-cash-form"
           variant="contained"
           sx={{
-            mt: 'auto',
             bg: colorScheme.theme,
             width: '100%',
             fontSize: '1.4rem',
@@ -135,5 +194,6 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
           ADD
         </Button>
       </Box>
+    </Box>
   );
 };

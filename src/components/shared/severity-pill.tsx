@@ -32,7 +32,7 @@ export const SeverityPill = (props: any) => {
   const { color = 'primary', children, ...other } = props;
 
   const ownerState = { color };
-
+  
   return (
     <SeverityPillRoot ownerState={ownerState} {...other}>
       {children}
@@ -43,11 +43,11 @@ export const SeverityPill = (props: any) => {
 SeverityPill.propTypes = {
   children: PropTypes.node,
   color: PropTypes.oneOf([
-    'success.light',
-    'error.light',
+    'success',
+    'error',
     'primary',
     'secondary',
-    'warning.light',
-    'info.light',
+    'warning',
+    'info',
   ]),
 };

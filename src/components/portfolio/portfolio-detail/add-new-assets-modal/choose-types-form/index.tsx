@@ -84,14 +84,15 @@ export const ChooseTypesForm = ({ openNextForm }: IProps) => {
           </ListItemButton>
           <Collapse in={isOtherCollapse} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem sx={{ pl: 4 }}>
+              <ListItemButton sx={{ pl: 8 }}>
                 <ListItemIcon>
                   <Avatar sx={{ bgcolor: 'appColor.blue' }}>
                     <AiFillGolden />
                   </Avatar>
                 </ListItemIcon>
                 <ListItemText primary="Gold" />
-              </ListItem>
+                <ChevronRightIcon />
+              </ListItemButton>
             </List>
           </Collapse>
         </List>

@@ -65,9 +65,9 @@ export const RealEstateInvesments = ({ realEstateDetail }: IProps) => {
   };
 
   return realEstateDetail?.length ? (
-    <Grid item xl={8} lg={8} md={8} sm={8} xs={12} mt="1rem">
       <Card
         sx={{
+          height:'100%',
           borderRadius: '12px',
           padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
@@ -155,7 +155,6 @@ export const RealEstateInvesments = ({ realEstateDetail }: IProps) => {
           </Box>
         </PerfectScrollbar>
       </Card>
-    </Grid>
   ) : (
     <></>
   );

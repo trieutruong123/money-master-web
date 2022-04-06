@@ -25,7 +25,7 @@ export const AddNewCashForm = observer(({ openPreviousForm }: IProps) => {
   }, []);
 
   const handleComeback = () => {
-    openPreviousForm({ curFormType: 'transaction' });
+    openPreviousForm({ curFormType: 'transaction',selectedType:'cash' });
   };
 
   const portfolioName = 'demo portoflio';
@@ -59,10 +59,10 @@ export const AddNewCashForm = observer(({ openPreviousForm }: IProps) => {
       </Box>
       <Box
         sx={{
-          [theme.breakpoints.down('sm')]: { height: '410px' },
+          [theme.breakpoints.down('sm')]: { height: '470px' },
 
           [theme.breakpoints.up('sm')]: {
-            height: '480px',
+            height: '550px',
           },
         }}
       >

@@ -94,12 +94,16 @@ export const SearchingAssetsForm = observer(
     };
 
     const handleItemClick = (itemId: string) => {
-      openNextForm({curFormType:'search',assetId:itemId});
+      openNextForm({
+        curFormType: 'search',
+        selectedType: 'cryptoCurrency',
+        assetId: itemId,
+      });
     };
 
-    const handleComeback= ()=>{
-      openPreviousForm({curFormType:'search' });
-    }
+    const handleComeback = () => {
+      openPreviousForm({ curFormType: 'search' });
+    };
 
     const getListElementHeight = (): number => {
       var ref, ref1;
@@ -124,7 +128,7 @@ export const SearchingAssetsForm = observer(
             <Typography id="modal-modal-title" variant="h4" align="center">
               Search Assets
             </Typography>
-           
+
             <IconButton
               sx={{ position: 'absolute', left: '2rem', top: '1rem' }}
               onClick={handleComeback}
@@ -150,6 +154,7 @@ export const SearchingAssetsForm = observer(
               value={searchingText}
               id="searching-frame"
               type="text"
+              autoComplete = 'off'
               onKeyDown={handleKeyDown}
               onChange={handleChange}
               sx={{ ml: 1, flex: 1 }}

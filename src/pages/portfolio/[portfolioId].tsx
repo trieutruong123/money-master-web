@@ -48,7 +48,7 @@ const PortfolioDetailPage = (
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <PortfolioDetail portfolioId = {portfolioId}></PortfolioDetail>
+          <PortfolioDetail  portfolioId = {portfolioId}></PortfolioDetail>
         </Container>
       </Box>
     </>

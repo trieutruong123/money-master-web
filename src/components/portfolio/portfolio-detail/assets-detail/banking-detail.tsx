@@ -76,7 +76,6 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
   };
 
   return bankingDetail?.length ? (
-    <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
           borderRadius: '12px',
@@ -161,7 +160,6 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
           </Box>
         </PerfectScrollbar>
       </Card>
-    </Grid>
   ) : (
     <></>
   );

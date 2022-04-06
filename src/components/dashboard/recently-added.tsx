@@ -112,9 +112,9 @@ export const RecentlyAdded = (props: any) => (
                 <TableCell>
                   <SeverityPill
                     color={
-                      (order.status === 'delivered' && 'success.main') ||
-                      (order.status === 'refunded' && 'error.main') ||
-                      'warning.main'
+                      (order.status === 'delivered' && 'success') ||
+                      (order.status === 'refunded' && 'error') ||
+                      'warning'
                     }
                   >
                     {order.amount}

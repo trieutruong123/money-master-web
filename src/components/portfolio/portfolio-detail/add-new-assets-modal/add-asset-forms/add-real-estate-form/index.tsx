@@ -20,7 +20,7 @@ export const AddNewRealEstateForm = observer(({ handleClose,openPreviousForm }: 
   }, []);
 
   const handleComeback = () => {
-    openPreviousForm({ curFormType: 'transaction' });
+    openPreviousForm({ curFormType: 'transaction',selectedType:'realEstate' });
   };
 
   const portfolioName = 'demo portoflio';
@@ -60,7 +60,7 @@ export const AddNewRealEstateForm = observer(({ handleClose,openPreviousForm }: 
           [theme.breakpoints.down('sm')]: { height: '470px' },
 
           [theme.breakpoints.up('sm')]: {
-            height: '540px',
+            height: '550px',
           },
         }}
       >

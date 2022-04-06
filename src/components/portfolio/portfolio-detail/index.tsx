@@ -21,7 +21,7 @@ interface IProps{
   portfolioId:string,
 }
 
-export const PortfolioDetail = observer(({portfolioId}:IProps) => {
+export const PortfolioDetail = observer(({ portfolioId}:IProps) => {
   useEffect(() => {
     const fetchData = async () => {
       portfolioDetailStore.setPortfolioId(portfolioId);

@@ -25,7 +25,7 @@ export const AddNewCryptoForm = observer(({ openPreviousForm }: IProps) => {
   }, []);
 
   const handleComeback = () => {
-    openPreviousForm({ curFormType: 'transaction' });
+    openPreviousForm({ curFormType: 'transaction',selectedType:'cryptoCurrency' });
   };
 
   const portfolioName = 'demo portoflio';
@@ -66,10 +66,10 @@ export const AddNewCryptoForm = observer(({ openPreviousForm }: IProps) => {
       </Box>
       <Box
         sx={{
-          [theme.breakpoints.down('sm')]: { height: '410px' },
+          [theme.breakpoints.down('sm')]: { height: '450px' },
 
           [theme.breakpoints.up('sm')]: {
-            height: '480px',
+            height: '530px',
           },
         }}
       >

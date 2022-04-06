@@ -25,7 +25,7 @@ export const AddNewBankSavingsForm = observer(({handleClose, openPreviousForm }:
   }, []);
 
   const handleComeback = () => {
-    openPreviousForm({ curFormType: 'transaction' });
+    openPreviousForm({ curFormType: 'transaction',selectedType:'bankSavings' });
   };
 
   const portfolioName = 'demo portoflio';
@@ -33,7 +33,7 @@ export const AddNewBankSavingsForm = observer(({handleClose, openPreviousForm }:
   const handleFormSubmit = async (data: any) => {
     console.log(data);
     portfolioDetailStore.addNewBankSaving(data);
-    // handleClose();
+    handleClose();
   };
 
   return (
@@ -63,7 +63,7 @@ export const AddNewBankSavingsForm = observer(({handleClose, openPreviousForm }:
       </Box>
       <Box
         sx={{
-          [theme.breakpoints.down('sm')]: { height: '480px' },
+          [theme.breakpoints.down('sm')]: { height: '470px' },
 
           [theme.breakpoints.up('sm')]: {
             height: '550px',

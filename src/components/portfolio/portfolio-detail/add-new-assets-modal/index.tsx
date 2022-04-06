@@ -1,6 +1,6 @@
 import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { portfolioDetailStore } from 'store';
 import { SearchingAssetsForm } from './searching-assets-form';
@@ -47,24 +47,27 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
 
 export const AddNewAssetsModal = observer(() => {
   const [current, setCurrent] = useState<any>(null);
-  const [selectedType, setSelectedType] = useState<string>('');
+  const [type, setType] = useState('');
   useEffect(() => {
     setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
   }, []);
 
+  useEffect(() => {
+    console.log(type);
+    console.log(portfolioDetailStore.isOpenAddNewAssetModal);
+  }, [type, portfolioDetailStore.isOpenAddNewAssetModal]);
   const { isOpenAddNewAssetModal } = portfolioDetailStore;
 
-  const handleClose = () => {
-    portfolioDetailStore.setOpenAddNewAssetModal(false);
+  const handleClose = useCallback(() => {
+    setType('');
     setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
-    setSelectedType('');
-  };
+    portfolioDetailStore.setOpenAddNewAssetModal(false);
+  }, []);
 
   const openNextForm = (params: any) => {
     switch (params.curFormType) {
       case 'type':
-        console.log('type nè');
-        setSelectedType(params.selectedType);
+        setType(params.selectedType);
         if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
           openSearchingForm(params);
         else if (
@@ -76,30 +79,32 @@ export const AddNewAssetsModal = observer(() => {
         openTransactionForm(params);
         break;
       default:
-        setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+        openChooseTypesForm(params);
         break;
     }
   };
 
   const openPreviousForm = (params: any) => {
+    console.log(type);
     switch (params.curFormType) {
       case 'search':
         setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
         break;
       case 'transaction':
-        if (['cryptoCurrency', 'stocks'].includes(selectedType))
+        if (['cryptoCurrency', 'stocks'].includes(type))
           openSearchingForm(params);
-        else if (['realEstate', 'cash', 'bankSavings'].includes(selectedType))
-          setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+        else if (['realEstate', 'cash', 'bankSavings'].includes(type))
+          openChooseTypesForm(params);
+        else openChooseTypesForm(params);
         break;
       default:
-        setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+        openChooseTypesForm(params);
         break;
     }
   };
 
   const openTransactionForm = (params: any) => {
-    switch (selectedType) {
+    switch (params.selectedType) {
       case 'cryptoCurrency':
         // const assetId = params.assetId;
         setCurrent(<AddNewCryptoForm openPreviousForm={openPreviousForm} />);
@@ -137,6 +142,10 @@ export const AddNewAssetsModal = observer(() => {
         openPreviousForm={openPreviousForm}
       />,
     );
+  };
+
+  const openChooseTypesForm = (params: any) => {
+    setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
   };
 
   return (
