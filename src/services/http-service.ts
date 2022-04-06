@@ -17,7 +17,6 @@ async function sendGet(url: string) {
     const response = await axios.get(`${BASE_URL}${url}`, {
       headers: getHeader(),
     });
-
     return {
       isError: false,
       data: response.data,

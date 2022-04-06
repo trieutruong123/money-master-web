@@ -18,8 +18,9 @@ const ModifyPortfolio = (
     const currency = currencyRef.current.value;
 
     props.onModifyPortfolio({
-      portfolioName,
-      currency,
+      name:portfolioName,
+      initialCurrency:currency,
+      initialCash:0
     });
   }
 
