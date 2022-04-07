@@ -11,12 +11,16 @@ import {
   TableRow,
   useTheme,
   useMediaQuery,
+  Tooltip,
+  IconButton,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { precisionRound } from 'utils';
+import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -48,10 +52,11 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [
     'Price',
-    "Today's Price Change",
-    "Today's % Change",
+    "Today's Change",
     "Today's Gain/Loss",
     'Shares',
+    'Total',
+    '',
   ];
   const renderPriceWithCommas = (price: number) => {
     return '$' + price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -78,6 +83,18 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
       if (num < 0) return <span style={{ color: '#e01616' }}>{number}%</span>;
       else return <span style={{ color: '#0d6f3f' }}>{number}%</span>;
     } else return undefined;
+  };
+
+  const renderTotal = (price: number, shares: number) => {
+    return precisionRound(price * shares, 4);
+  };
+
+  const handleItemClick = (assetId: string) => {
+    router.push(
+      `/portfolio/${portfolioId}/stock/${assetId.toUpperCase()}`,
+      `/portfolio/${portfolioId}/stock/${assetId.toUpperCase()}`,
+      { locale: locale },
+    );
   };
 
   return stockDetail?.length ? (
@@ -119,18 +136,6 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
                 {stockDetail.map((record, i) => {
                   return (
                     <TableRow
-                      onClick={() => {
-                        router.push(
-                          `/portfolio/${portfolioId}/stock/${record.id.toUpperCase()}`,
-                          `/portfolio/${portfolioId}/stock/${record.id.toUpperCase()}`,
-                          { locale: locale },
-                        );
-                        // router.push(
-                        //   `/portfolio/stock/test`,
-                        //   `/portfolio/stock/test`,
-                        //   { locale: locale },
-                        // );
-                      }}
                       key={i}
                       sx={{
                         cursor: 'pointer',
@@ -139,7 +144,9 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
                         },
                       }}
                     >
-                      <TableBodyCellSymbol>
+                      <TableBodyCellSymbol
+                        onClick={() => handleItemClick(record.id)}
+                      >
                         <Box
                           sx={{ fontWeight: 700, textTransform: 'uppercase' }}
                         >
@@ -151,19 +158,25 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
                           {record.description}
                         </Box>
                       </TableBodyCellSymbol>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderPriceWithCommas(record.price)}
                       </TableBodyCell>
-                      <TableBodyCell>
-                        {renderPriceChange(record.priceChange)}
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {renderPriceChange(record.priceChange)}{' '}
+                        {(renderPercentage(record.percentChange))}
                       </TableBodyCell>
-                      <TableBodyCell>
-                        {renderPercentage(record.percentChange)}
-                      </TableBodyCell>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderPriceChange(record.profitLossAmount)}
                       </TableBodyCell>
-                      <TableBodyCell>{record.quantity}</TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {record.quantity}
+                      </TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {renderTotal(record.price, record.quantity)}
+                      </TableBodyCell>
+                      <TableBodyCell>
+                        <SettingsMenuButton />
+                      </TableBodyCell>
                     </TableRow>
                   );
                 })}

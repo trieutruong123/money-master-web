@@ -52,10 +52,6 @@ export const AddNewAssetsModal = observer(() => {
     setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
   }, []);
 
-  useEffect(() => {
-    console.log(type);
-    console.log(portfolioDetailStore.isOpenAddNewAssetModal);
-  }, [type, portfolioDetailStore.isOpenAddNewAssetModal]);
   const { isOpenAddNewAssetModal } = portfolioDetailStore;
 
   const handleClose = useCallback(() => {

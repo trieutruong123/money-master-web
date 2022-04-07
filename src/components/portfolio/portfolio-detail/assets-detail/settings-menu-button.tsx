@@ -18,6 +18,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
+
 interface IProps {
   assetId: string;
   portfolioId: string;
@@ -36,7 +37,7 @@ export default function SettingsMenuButton() {
 
   return (
     <React.Fragment>
-      <Tooltip title="Transaction settings">
+      <Tooltip title="Asset settings">
         <IconButton
           onClick={handleClick}
           size="small"
@@ -78,18 +79,6 @@ export default function SettingsMenuButton() {
       >
         <MenuItem>
           <ListItemIcon>
-            <EditIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Edit</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <ContentCopyIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Duplicate</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
             <ShowChartIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Move to portfolio</ListItemText>
@@ -99,7 +88,7 @@ export default function SettingsMenuButton() {
           <ListItemIcon>
             <DeleteForeverIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Delete Forever</ListItemText>
+          <ListItemText>Delete</ListItemText>
         </MenuItem>
       </Menu>
     </React.Fragment>

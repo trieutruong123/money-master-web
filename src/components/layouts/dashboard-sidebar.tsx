@@ -18,17 +18,19 @@ import { User as UserIcon } from 'assets/icons/user';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PieChartOutlineIcon from '@mui/icons-material/PieChartOutline';
 import { RiTodoFill } from 'react-icons/ri';
+import { MdDashboard } from 'react-icons/md';
+import { BsFillBagFill } from 'react-icons/bs';
 import { NavItem } from './nav-item';
 
 const items = [
   {
     href: '/dashboard',
-    icon: <ChartBarIcon fontSize="small" />,
+    icon: <MdDashboard fontSize="small" />,
     title: 'Dashboard',
   },
   {
     href: '/portfolio',
-    icon: <AttachMoneyIcon fontSize="small" />,
+    icon: <BsFillBagFill fontSize="small" />,
     title: 'Portfolio',
   },
   {

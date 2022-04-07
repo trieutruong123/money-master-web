@@ -117,7 +117,7 @@ const columns: GridColDef[] = [
   },
   {
     field: 'settings',
-    headerName: 'Settings',
+    headerName: '',
     sortable: false,
     filterable: false,
     width: 80,

@@ -11,17 +11,16 @@ import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { AssetAllocation } from './asset-allocation';
-import { DailyReturns } from './daily-return';
 import { AssetsDetail } from './assets-detail';
 import { AddNewAssetsModal } from './add-new-assets-modal';
 import { portfolioDetailStore } from 'store';
-import { PortfolioAllocation, PortfolioItem } from 'types';
+import { useSnackbar } from 'notistack';
 
-interface IProps{
-  portfolioId:string,
+interface IProps {
+  portfolioId: string;
 }
 
-export const PortfolioDetail = observer(({ portfolioId}:IProps) => {
+export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
   useEffect(() => {
     const fetchData = async () => {
       portfolioDetailStore.setPortfolioId(portfolioId);
@@ -32,6 +31,7 @@ export const PortfolioDetail = observer(({ portfolioId}:IProps) => {
     };
     fetchData();
   }, []);
+  const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
@@ -80,9 +80,17 @@ export const PortfolioDetail = observer(({ portfolioId}:IProps) => {
       <Tooltip title="Add new assets">
         <IconButton
           onClick={() => {
-            portfolioDetailStore.setOpenAddNewAssetModal(
-              !isOpenAddNewAssetModal,
-            );
+            enqueueSnackbar('Notistack is great with mobx!', {
+              variant: 'info',
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+            });
+
+            // portfolioDetailStore.setOpenAddNewAssetModal(
+            //   !isOpenAddNewAssetModal,
+            // );
           }}
           color="success"
           sx={{ position: 'absolute', right: '6vw', bottom: '6vh' }}

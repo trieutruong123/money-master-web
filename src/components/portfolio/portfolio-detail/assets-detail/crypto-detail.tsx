@@ -11,14 +11,18 @@ import {
   TableRow,
   useTheme,
   useMediaQuery,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { precisionRound } from 'utils/number';
 import { getCurrencyByCode } from 'helpers';
+import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -50,11 +54,11 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [
     'Price',
-    "Today's Price Change",
-    "Today's % Change",
+    "Today's Change",
     "Today's Gain/Loss",
     'Shares',
     'Total',
+    '',
   ];
   const renderPriceWithCommas = (price: number) => {
     return '$' + price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -93,6 +97,14 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
     );
   };
 
+  const handleItemClick = (assetId: string) => {
+    router.push(
+      `/portfolio/${portfolioId}/coin/${assetId.toLowerCase()}`,
+      `/portfolio/${portfolioId}/coin/${assetId.toLowerCase()}`,
+      { locale: locale },
+    );
+  };
+
   return cryptoDetail?.length ? (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
@@ -117,7 +129,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
         </Card>
         <PerfectScrollbar>
           <Box>
-            <Table>
+            <Table sx={{ overflowY: 'auto' }}>
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Symbol</TableHeaderCell>
@@ -132,18 +144,6 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                 {cryptoDetail.map((record, i) => {
                   return (
                     <TableRow
-                      onClick={() => {
-                        router.push(
-                          `/portfolio/${portfolioId}/coin/${record.id}`,
-                          `/portfolio/${portfolioId}/coin/${record.id}`,
-                          { locale: locale },
-                        );
-                        // router.push(
-                        //   `/portfolio/coin/test`,
-                        //   `/portfolio/coin/test`,
-                        //   { locale: locale },
-                        // );
-                      }}
                       key={i}
                       sx={{
                         cursor: 'pointer',
@@ -152,7 +152,9 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                         },
                       }}
                     >
-                      <TableBodyCellSymbol>
+                      <TableBodyCellSymbol
+                        onClick={() => handleItemClick(record.id)}
+                      >
                         <Box
                           sx={{ fontWeight: 700, textTransform: 'uppercase' }}
                         >
@@ -164,24 +166,27 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                           {record.description}
                         </Box>
                       </TableBodyCellSymbol>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderPriceWithCommas(record.price)}
                       </TableBodyCell>
-                      <TableBodyCell>
-                        {renderPriceChange(record.priceChange)}
-                      </TableBodyCell>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {renderPriceChange(record.priceChange)}{' '}
                         {renderPercentage(record.percentChange)}
                       </TableBodyCell>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderPriceChange(record.profitLossAmount)}
                       </TableBodyCell>
-                      <TableBodyCell>{record.quantity}</TableBodyCell>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {record.quantity}
+                      </TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderTotalValue(
                           record.totalValue,
                           record.currencyCode,
                         )}
+                      </TableBodyCell>
+                      <TableBodyCell>
+                        <SettingsMenuButton />
                       </TableBodyCell>
                     </TableRow>
                   );
