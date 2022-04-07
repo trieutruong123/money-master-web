@@ -70,7 +70,7 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
         val = `-$${number.slice(1)}`;
         return <span style={{ color: '#e01616' }}>{val}</span>;
       } else {
-        val = `$${number.slice(1)}`;
+        val = `+$${number}`;
         return <span style={{ color: '#0d6f3f' }}>{val}</span>;
       }
     }
@@ -80,8 +80,8 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
   const renderPercentage = (number: string) => {
     const num = parseFloat(number);
     if (typeof num !== 'undefined') {
-      if (num < 0) return <span style={{ color: '#e01616' }}>{number}%</span>;
-      else return <span style={{ color: '#0d6f3f' }}>{number}%</span>;
+      if (num < 0) return <span style={{ color: '#e01616' }}>&#40;{number}%&#41;</span>;
+      else return <span style={{ color: '#0d6f3f' }}>&#40;&#43;{number}%&#41;</span>;
     } else return undefined;
   };
 
@@ -162,8 +162,8 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
                         {renderPriceWithCommas(record.price)}
                       </TableBodyCell>
                       <TableBodyCell onClick={() => handleItemClick(record.id)}>
-                        {renderPriceChange(record.priceChange)}{' '}
-                        {(renderPercentage(record.percentChange))}
+                        {renderPriceChange(record.priceChange)}&nbsp;
+                        {renderPercentage(record.percentChange)}
                       </TableBodyCell>
                       <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderPriceChange(record.profitLossAmount)}

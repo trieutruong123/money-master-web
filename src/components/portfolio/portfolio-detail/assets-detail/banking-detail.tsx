@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardHeader,
-  Grid,
   Table,
   TableBody,
   TableCell,
@@ -71,7 +70,7 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
 
   const renderInterestRate = (interestRate: number) => {
     const rate = interestRate;
-    return <span style={{ color: '#0d6f3f' }}>{rate.toString() + '%'}</span>;
+    return <span style={{ color: '#0d6f3f' }}>&#43;{rate.toString() + '%'}</span>;
   };
 
   const renderTermRange = (termRange: number, unit: string) => {
@@ -91,10 +90,10 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
 
   const handleItemClick = (assetId: number) => {
     router.push(
-      `/portfolio/${portfolioId}/savings/${assetId
+      `/portfolio/${portfolioId}/bank-savings/${assetId
         .toString()
         .toUpperCase()}`,
-      `/portfolio/${portfolioId}/savings/${assetId
+      `/portfolio/${portfolioId}/bank-savings/${assetId
         .toString()
         .toUpperCase()}`,
       { locale: locale },

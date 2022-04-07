@@ -1346,5 +1346,7 @@ export const cryptoCurrencies2: Array<SearchingItemType> = [
   { id: 'coin_DTF', symbol: 'DTF', label: 'Digitalfund' },
 ];
 
-export const sampleData: Array<SearchingItemType> =
-  currencyList.concat(cryptoCurrencies).slice(1,600);
+// export const sampleData: Array<SearchingItemType> =
+//   currencyList.concat(cryptoCurrencies).slice(1,600);
+
+  export const sampleData: Array<SearchingItemType> =cryptoCurrencies;

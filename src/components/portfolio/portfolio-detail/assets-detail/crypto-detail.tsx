@@ -71,7 +71,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
         val = `-$${precisionRound(num, 3).toString().slice(1)}`;
         return <span style={{ color: '#e01616' }}>{val}</span>;
       } else {
-        val = `$${precisionRound(num, 3).toString().slice(1)}`;
+        val = `+$${precisionRound(num, 3).toString()}`;
         return <span style={{ color: '#0d6f3f' }}>{val}</span>;
       }
     } else return undefined;
@@ -81,11 +81,11 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
     if (typeof num !== 'undefined') {
       if (num < 0)
         return (
-          <span style={{ color: '#e01616' }}>{precisionRound(num, 3)}%</span>
+          <span style={{ color: '#e01616' }}>&#40;{precisionRound(num, 3)}%&#41;</span>
         );
       else
         return (
-          <span style={{ color: '#0d6f3f' }}>{precisionRound(num, 3)}%</span>
+          <span style={{ color: '#0d6f3f' }}>&#40;&#43;{precisionRound(num, 3)}%&#41;</span>
         );
     } else return undefined;
   };
@@ -170,7 +170,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                         {renderPriceWithCommas(record.price)}
                       </TableBodyCell>
                       <TableBodyCell onClick={() => handleItemClick(record.id)}>
-                        {renderPriceChange(record.priceChange)}{' '}
+                        {renderPriceChange(record.priceChange)}&nbsp;
                         {renderPercentage(record.percentChange)}
                       </TableBodyCell>
                       <TableBodyCell onClick={() => handleItemClick(record.id)}>

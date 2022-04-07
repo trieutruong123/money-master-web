@@ -4,7 +4,6 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import _ from 'lodash';
 import {
   Box,
-  Chip,
   IconButton,
   InputBase,
   List,
@@ -13,14 +12,10 @@ import {
   ListItemIcon,
   Paper,
   Typography,
-  useTheme,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { FaBitcoin, FaHome } from 'react-icons/fa';
-import { AiFillDollarCircle, AiOutlineStock } from 'react-icons/ai';
-import { v4 as uuid } from 'uuid';
 import { portfolioDetailStore } from 'store';
 import { sampleData } from '../searching-data';
 
@@ -37,27 +32,14 @@ interface IProps {
 
 export const SearchingAssetsForm = observer(
   ({ openNextForm, openPreviousForm }: IProps) => {
-    const theme = useTheme();
-    const [categories, setCategories] = useState(CategoryList);
-    const [selectedArray, setSelectedArray] = useState<Array<boolean>>(
-      categories.map((item) => true),
-    );
     const [searchingData, setSearchingData] = useState<
       Array<SearchingItemType>
     >([]);
     const [searchingText, setSearchingText] = useState<string>('');
-    const ref = useRef<any>(null);
 
     useEffect(() => {
       //ref.current = _.debounce(searchData, 300);
     }, []);
-
-    const handleSelectedCategoryClick = (id: string) => {
-      const newArray: Array<boolean> = categories.map((item, key) =>
-        item.id === id ? !selectedArray[key] : selectedArray[key],
-      );
-      setSelectedArray(newArray);
-    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchingText(e.target.value);
@@ -136,6 +118,7 @@ export const SearchingAssetsForm = observer(
               <ArrowBackIcon />
             </IconButton>
           </Box>
+
           <Paper
             component="div"
             sx={{
@@ -154,7 +137,7 @@ export const SearchingAssetsForm = observer(
               value={searchingText}
               id="searching-frame"
               type="text"
-              autoComplete = 'off'
+              autoComplete="off"
               onKeyDown={handleKeyDown}
               onChange={handleChange}
               sx={{ ml: 1, flex: 1 }}
@@ -169,30 +152,6 @@ export const SearchingAssetsForm = observer(
               <SearchIcon />
             </IconButton>
           </Paper>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-              flexDirection: 'row',
-              mx: '1rem',
-              my: 0.5,
-            }}
-          >
-            {categories.map((item: any, key: number) => {
-              return (
-                <Chip
-                  key={item.id}
-                  icon={item.icon}
-                  label={item.label}
-                  id={item.id}
-                  variant={selectedArray[key] ? 'filled' : 'outlined'}
-                  onClick={() => handleSelectedCategoryClick(item.id)}
-                  sx={{ fontSize: '1rem', m: '0.2rem' }}
-                />
-              );
-            })}
-          </Box>
         </Box>
         <PerfectScrollbar
           style={{
@@ -224,11 +183,3 @@ export const SearchingAssetsForm = observer(
     );
   },
 );
-
-const CategoryList = [
-  { id: uuid(), label: 'Crypto', icon: <FaBitcoin /> },
-  { id: uuid(), label: 'Stocks', icon: <AiOutlineStock /> },
-  { id: uuid(), label: 'Real Estate', icon: <FaHome /> },
-  { id: uuid(), label: 'Cash', icon: <AiFillDollarCircle /> },
-  { id: uuid(), label: 'Others+', icon: <></> },
-];

@@ -80,17 +80,16 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
       <Tooltip title="Add new assets">
         <IconButton
           onClick={() => {
-            enqueueSnackbar('Notistack is great with mobx!', {
-              variant: 'info',
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-            });
-
-            // portfolioDetailStore.setOpenAddNewAssetModal(
-            //   !isOpenAddNewAssetModal,
-            // );
+            // enqueueSnackbar('Notistack is great with mobx!', {
+            //   variant: 'info',
+            //   anchorOrigin: {
+            //     vertical: 'top',
+            //     horizontal: 'right',
+            //   },
+            // });
+            portfolioDetailStore.setOpenAddNewAssetModal(
+              !isOpenAddNewAssetModal,
+            );
           }}
           color="success"
           sx={{ position: 'absolute', right: '6vw', bottom: '6vh' }}
