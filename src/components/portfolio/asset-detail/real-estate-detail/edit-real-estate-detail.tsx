@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+import { useSnackbar } from 'notistack';
 import {
   Box,
   FormControl,
@@ -17,17 +21,21 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import * as Yup from 'yup';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import dayjs from 'dayjs';
 import { getSupportedCurrencyList } from 'helpers';
 import { colorScheme } from 'utils';
+import { RealEstateItem } from 'types';
+
+interface IProps {
+  assetDetail: RealEstateItem | undefined;
+  handleFormSubmit: any;
+}
 
 type FormValues = {
   name: string;
-  currentPrice: number;  
-  inputMoneyAmount:number;
+  currentPrice: number;
+  inputMoneyAmount: number;
   inputCurrency: string;
   description: string;
   brokerFee?: number;
@@ -36,12 +44,18 @@ type FormValues = {
   incomeTax?: number;
 };
 
-export const EditRealEstateDetail = () => {
+export const EditRealEstateDetail = ({
+  assetDetail,
+  handleFormSubmit,
+}: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const [date, setDate] = useState<Date | null>(new Date());
+  const [date, setDate] = useState<Date | null>(
+    dayjs(assetDetail?.inputDay).toDate(),
+  );
   const [isEditing, setEdit] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -54,9 +68,10 @@ export const EditRealEstateDetail = () => {
       .typeError('Current price must be a number')
       .positive('Current price must be greater than zero'),
     inputCurrency: Yup.string().required().default('USD'),
+    description: Yup.string(),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
-  const { register, reset, handleSubmit, formState, getValues, setError } =
+  const { register, handleSubmit, formState } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
@@ -66,21 +81,24 @@ export const EditRealEstateDetail = () => {
     setDate(newValue);
   };
 
-  const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    //   handleFormSubmit({
-    //     name: data.name,
-    //     bankCode: data.bankCode,
-    //     inputCurrency: data.inputCurrency,
-    //     inputDay: date,
-    //     inputMoneyAmount: data.inputMoneyAmount,
-    //     isGoingReinState: true,
-    //     interestRate: data.interestRate,
-    //     termRange: data.termRange,
-    //     description: 'description',
-    //   });
+  const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+    const res: any = await handleFormSubmit({
+      name: data.name,
+      inputCurrency: data.inputCurrency,
+      inputDay: date,
+      inputMoneyAmount: data.inputMoneyAmount,
+      currentPrice: data.currentPrice,
+      description: data.description,
+    });
+    if (res.isError) {
+      enqueueSnackbar(res.data.en, { variant: 'error' });
+    } else {
+      setEdit(false);
+      enqueueSnackbar(res.data.en, { variant: 'success' });
+    }
   };
 
-  return (
+  return typeof assetDetail !== 'undefined' ? (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
@@ -97,7 +115,7 @@ export const EditRealEstateDetail = () => {
             flexDirection: 'column',
           }}
         >
-          <CardHeader title="Bank Savings Detail" sx={{ py: '1rem' }} />
+          <CardHeader title="Real Estate Detail" sx={{ py: '1rem' }} />
           <CardContent
             sx={{
               width: '100%',
@@ -105,7 +123,7 @@ export const EditRealEstateDetail = () => {
             }}
           >
             <Box
-              id="edit-bank-savings-form"
+              id="edit-real-estate-form"
               component="form"
               autoComplete="off"
               onSubmit={handleSubmit(onSubmit)}
@@ -113,21 +131,25 @@ export const EditRealEstateDetail = () => {
               <Grid container spacing={1}>
                 <Grid item sm={12} xs={12} sx={{ height: '5.7rem' }}>
                   <TextField
-                    type="text"
-                    fullWidth
                     id="outlined-name"
+                    type="text"
+                    variant="outlined"
+                    defaultValue={assetDetail?.name}
                     label={'*Name'}
                     {...register('name')}
-                    variant="outlined"
                     error={typeof errors.name?.message !== 'undefined'}
                     helperText={errors.name?.message}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    fullWidth
                   ></TextField>
                 </Grid>
                 <Grid item sm={6} xs={12} sx={{ height: '5.7rem' }}>
                   <TextField
-                    type="number"
-                    fullWidth
                     id="outlined-input-money-amount"
+                    type="number"
+                    defaultValue={assetDetail?.inputMoneyAmount}
                     label={'*Input Money'}
                     {...register('inputMoneyAmount')}
                     variant="outlined"
@@ -135,23 +157,32 @@ export const EditRealEstateDetail = () => {
                       typeof errors.inputMoneyAmount?.message !== 'undefined'
                     }
                     helperText={errors.inputMoneyAmount?.message}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    fullWidth
                   ></TextField>
                 </Grid>
                 <Grid item sm={6} xs={12} sx={{ height: '5.7rem' }}>
                   <TextField
-                    type="number"
-                    fullWidth
                     id="outlined-current-price"
+                    type="number"
+                    variant="outlined"
+                    defaultValue={assetDetail?.currentPrice}
                     label={'*Current Price'}
                     {...register('currentPrice')}
-                    variant="outlined"
                     error={typeof errors.currentPrice?.message !== 'undefined'}
                     helperText={errors.currentPrice?.message}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    fullWidth
                   ></TextField>
                 </Grid>
                 <Grid item sm={6} xs={12} sx={{ height: '5.7rem' }}>
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DesktopDatePicker
+                      readOnly={!isEditing}
                       label="*Input day"
                       inputFormat="dd/MM/yyyy"
                       value={date}
@@ -166,12 +197,15 @@ export const EditRealEstateDetail = () => {
                   <FormControl fullWidth>
                     <InputLabel id="currency-list">*Currency</InputLabel>
                     <Select
+                      id="currency-list-select"
                       variant="outlined"
                       labelId="currency-list"
-                      id="currency-list-select"
                       label="*Currency"
-                      value="USD"
+                      defaultValue={
+                        assetDetail?.inputCurrency.toUpperCase() || 'USD'
+                      }
                       {...register('inputCurrency')}
+                      inputProps={{ readOnly: !isEditing }}
                     >
                       {currencyList.map((item, index) => {
                         return (
@@ -183,50 +217,60 @@ export const EditRealEstateDetail = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item sm={12} xs={12} >
+                <Grid item sm={12} xs={12}>
                   <TextField
-                    type="text"
-                    fullWidth
                     id="outlined-description"
-                    multiline
-                    rows={3}
+                    type="text"
+                    defaultValue={assetDetail?.description}
                     label={'Description'}
                     {...register('description')}
                     variant="outlined"
                     error={typeof errors.description?.message !== 'undefined'}
                     helperText={errors.description?.message}
+                    rows={3}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    fullWidth
+                    multiline
                   ></TextField>
                 </Grid>
-              </Grid>
-              <Box sx={{ display: 'flex', width: '100%' ,mt:'1rem'}}>
+              </Grid>{' '}
+              <Box sx={{ display: 'flex', width: '100%', mt: '1rem' }}>
                 <Box sx={{ flex: '1 1 auto' }}></Box>
+
                 <Button
-                  type="submit"
-                  form="edit-bank-savings-form"
+                  type="button"
                   variant="contained"
                   sx={{
                     ml: 'auto',
                     mr: '2rem',
                     px: '1.5rem',
-                    bg: colorScheme.theme,
+
                     fontSize: '1.4rem',
                     height: '3rem',
+                    display: isEditing ? 'none' : 'visible',
+                  }}
+                  onClick={() => {
+                    setEdit(true);
                   }}
                   startIcon={<EditIcon />}
                 >
                   Edit
                 </Button>
+
                 <Button
                   type="submit"
-                  form="edit-bank-savings-form"
+                  form="edit-real-estate-form"
                   variant="contained"
                   sx={{
                     ml: 'auto',
                     mr: '2rem',
                     px: '1.5rem',
-                    bg: colorScheme.theme,
+
                     fontSize: '1.4rem',
                     height: '3rem',
+                    display: isEditing ? 'visible' : 'none',
                   }}
                   startIcon={<SaveIcon />}
                 >
@@ -238,5 +282,7 @@ export const EditRealEstateDetail = () => {
         </Card>
       </Card>
     </Grid>
+  ) : (
+    <></>
   );
 };

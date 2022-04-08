@@ -55,7 +55,7 @@ const PortfolioDetailPage = (
   );
 };
 
-//PortfolioDetailPage.requireAuth = true;
+PortfolioDetailPage.requireAuth = true;
 PortfolioDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );

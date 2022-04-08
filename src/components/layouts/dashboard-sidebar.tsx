@@ -87,7 +87,7 @@ export const DashboardSidebar = (props: any) => {
         }}
       >
         <div>
-          <Box sx={{ p: 3 }} justifyContent="center" alignItems="center">
+          <Box sx={{ p: 3 }} display ='flex' justifyContent="center" alignItems="center">
             <NextLink href="/dashboard" passHref>
               <a>
                 <Image

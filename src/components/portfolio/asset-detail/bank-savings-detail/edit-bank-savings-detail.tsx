@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import {
   Box,
   FormControl,
@@ -12,17 +14,25 @@ import {
   Card,
   CardContent,
   CardHeader,
+  FormControlLabel,
+  Switch,
   useTheme,
   useMediaQuery,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import * as Yup from 'yup';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
+import dayjs from 'dayjs';
 import { getSupportedCurrencyList } from 'helpers';
 import { colorScheme } from 'utils';
+import { BankSavingItem } from 'types';
+import { useSnackbar } from 'notistack';
+
+interface IProps {
+  assetDetail: BankSavingItem | undefined;
+  handleFormSubmit: any;
+}
 
 type FormValues = {
   name: string;
@@ -31,20 +41,28 @@ type FormValues = {
   termRange: number;
   inputCurrency: string;
   isGoingToReinState: boolean;
-  description?: string;
-  bankCode?: string;
+  description: string;
+  bankCode: string;
   brokerFee?: number;
   brokerFeeInPercent?: number;
   brokerFeeForSecurity?: number;
   incomeTax?: number;
 };
 
-export const EditBankSavingsDetail = () => {
+export const EditBankSavingsDetail = ({
+  assetDetail,
+  handleFormSubmit,
+}: IProps) => {
+  const [isGoingToReinState, setGoingToReinState] = useState(
+    assetDetail?.isGoingToReinState || false,
+  );
+  const [date, setDate] = useState<Date | null>(
+    dayjs(assetDetail?.inputDay).toDate(),
+  );
+  const [isEditing, setEdit] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const [date, setDate] = useState<Date | null>(new Date());
-  const [isEditing, setEdit] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -61,9 +79,11 @@ export const EditBankSavingsDetail = () => {
       .typeError('Term range must be a number')
       .positive('Term range must be greater than zero'),
     inputCurrency: Yup.string().required().default('USD'),
+    description: Yup.string(),
+    bankCode: Yup.string(),
   });
   const formOptions = { resolver: yupResolver(validationSchema) };
-  const { register, reset, handleSubmit, formState, getValues, setError } =
+  const { register, handleSubmit, formState } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
@@ -73,21 +93,27 @@ export const EditBankSavingsDetail = () => {
     setDate(newValue);
   };
 
-  const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    //   handleFormSubmit({
-    //     name: data.name,
-    //     bankCode: data.bankCode,
-    //     inputCurrency: data.inputCurrency,
-    //     inputDay: date,
-    //     inputMoneyAmount: data.inputMoneyAmount,
-    //     isGoingReinState: true,
-    //     interestRate: data.interestRate,
-    //     termRange: data.termRange,
-    //     description: 'description',
-    //   });
-  };
+  const onSubmit: SubmitHandler<FormValues> = useCallback(async (data: any) => {
+    const res: any = await handleFormSubmit({
+      name: data.name,
+      bankCode: data.bankCode,
+      inputCurrency: data.inputCurrency,
+      inputDay: date,
+      inputMoneyAmount: data.inputMoneyAmount,
+      isGoingToReinState,
+      interestRate: data.interestRate,
+      termRange: data.termRange,
+      description: data.description,
+    });
+    if (res.isError) {
+      enqueueSnackbar(res.data.en, { variant: 'error' });
+    } else {
+      setEdit(false);
+      enqueueSnackbar(res.data.en, { variant: 'success' });
+    }
+  }, []);
 
-  return (
+  return typeof assetDetail !== 'undefined' ? (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
@@ -120,64 +146,84 @@ export const EditBankSavingsDetail = () => {
               <Grid container spacing={1}>
                 <Grid item sm={12} xs={12} sx={{ height: '5.7rem' }}>
                   <TextField
-                    type="text"
-                    fullWidth
                     id="outlined-name"
-                    label={'*Name'}
-                    {...register('name')}
                     variant="outlined"
+                    type="text"
+                    label={'*Name'}
+                    defaultValue={assetDetail?.name}
+                    {...register('name')}
                     error={typeof errors.name?.message !== 'undefined'}
                     helperText={errors.name?.message}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    fullWidth
                   ></TextField>
                 </Grid>
                 <Grid item sm={6} xs={12} sx={{ height: '5.7rem' }}>
                   <TextField
-                    type="number"
-                    fullWidth
                     id="outlined-input-money-amount"
-                    label={'*Input Money'}
-                    {...register('inputMoneyAmount')}
                     variant="outlined"
+                    type="number"
+                    label={'*Input Money'}
+                    defaultValue={assetDetail?.inputMoneyAmount}
+                    {...register('inputMoneyAmount')}
                     error={
                       typeof errors.inputMoneyAmount?.message !== 'undefined'
                     }
                     helperText={errors.inputMoneyAmount?.message}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    fullWidth
                   ></TextField>
                 </Grid>
                 <Grid item sm={6} xs={12} sx={{ height: '5.7rem' }}>
                   <TextField
-                    type="number"
-                    fullWidth
                     id="outlined-interest-rate"
-                    label={'*Interest Rate'}
-                    {...register('interestRate')}
                     variant="outlined"
+                    type="number"
+                    label={'*Interest Rate'}
+                    defaultValue={assetDetail?.interestRate}
+                    {...register('interestRate')}
                     error={typeof errors.interestRate?.message !== 'undefined'}
                     helperText={errors.interestRate?.message}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    fullWidth
                   ></TextField>
                 </Grid>
                 <Grid item sm={6} xs={12} sx={{ height: '5.7rem' }}>
                   <TextField
-                    type="number"
-                    fullWidth
                     id="outlined-term-range"
-                    label={'*Term Range (months)'}
-                    {...register('termRange')}
                     variant="outlined"
+                    type="number"
+                    label={'*Term Range (months)'}
+                    defaultValue={assetDetail?.termRange}
+                    {...register('termRange')}
                     error={typeof errors.termRange?.message !== 'undefined'}
                     helperText={errors.termRange?.message}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    fullWidth
                   ></TextField>
                 </Grid>
                 <Grid item sm={6} xs={12} sx={{ height: '5.7rem' }}>
                   <TextField
-                    type="text"
-                    fullWidth
                     id="outlined-bank-code"
-                    label={'Bank Code'}
-                    {...register('bankCode')}
                     variant="outlined"
+                    type="text"
+                    label={'Bank Code'}
+                    defaultValue={assetDetail?.bankCode}
+                    {...register('bankCode')}
                     error={typeof errors.bankCode?.message !== 'undefined'}
                     helperText={errors.bankCode?.message}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    fullWidth
                   ></TextField>
                 </Grid>
                 <Grid item sm={6} xs={12} sx={{ height: '5.7rem' }}>
@@ -186,6 +232,7 @@ export const EditBankSavingsDetail = () => {
                       label="*Input day"
                       inputFormat="dd/MM/yyyy"
                       value={date}
+                      readOnly={!isEditing}
                       onChange={handleDateChange}
                       renderInput={(params) => (
                         <TextField sx={{ width: '100%' }} {...params} />
@@ -197,11 +244,14 @@ export const EditBankSavingsDetail = () => {
                   <FormControl fullWidth>
                     <InputLabel id="currency-list">*Currency</InputLabel>
                     <Select
-                      variant="outlined"
-                      labelId="currency-list"
                       id="currency-list-select"
+                      labelId="currency-list"
                       label="*Currency"
-                      value="USD"
+                      defaultValue={
+                        assetDetail?.inputCurrency.toUpperCase() || 'USD'
+                      }
+                      variant="outlined"
+                      inputProps={{ readOnly: !isEditing }}
                       {...register('inputCurrency')}
                     >
                       {currencyList.map((item, index) => {
@@ -214,60 +264,91 @@ export const EditBankSavingsDetail = () => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item sm={12} xs={12} >
+                <Grid item sm={12} xs={12}>
                   <TextField
-                    type="text"
-                    fullWidth
                     id="outlined-note"
-                    multiline
-                    rows={3}
-                    label={'Description'}
-                    {...register('description')}
                     variant="outlined"
+                    type="text"
+                    label={'Description'}
+                    defaultValue={assetDetail?.description}
+                    {...register('description')}
                     error={typeof errors.description?.message !== 'undefined'}
                     helperText={errors.description?.message}
+                    InputProps={{
+                      readOnly: !isEditing,
+                    }}
+                    rows={3}
+                    multiline
+                    fullWidth
                   ></TextField>
                 </Grid>
+                <Grid item sm={12} xs={12}>
+                  <FormControlLabel
+                    sx={{
+                      display: 'block',
+                    }}
+                    control={
+                      <Switch
+                        readOnly={!isEditing}
+                        checked={isGoingToReinState}
+                        onChange={() =>
+                          setGoingToReinState(!isGoingToReinState)
+                        }
+                        name="loading"
+                        color="primary"
+                      />
+                    }
+                    label="Reinstate Interest Rate"
+                  />
+                </Grid>
               </Grid>
-              <Box sx={{ display: 'flex', width: '100%' ,mt:'1rem'}}>
-                <Box sx={{ flex: '1 1 auto' }}></Box>
-                <Button
-                  type="submit"
-                  form="edit-bank-savings-form"
-                  variant="contained"
-                  sx={{
-                    ml: 'auto',
-                    mr: '2rem',
-                    px: '1.5rem',
-                    bg: colorScheme.theme,
-                    fontSize: '1.4rem',
-                    height: '3rem',
-                  }}
-                  startIcon={<EditIcon />}
-                >
-                  Edit
-                </Button>
-                <Button
-                  type="submit"
-                  form="edit-bank-savings-form"
-                  variant="contained"
-                  sx={{
-                    ml: 'auto',
-                    mr: '2rem',
-                    px: '1.5rem',
-                    bg: colorScheme.theme,
-                    fontSize: '1.4rem',
-                    height: '3rem',
-                  }}
-                  startIcon={<SaveIcon />}
-                >
-                  Save
-                </Button>
-              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', width: '100%', mt: '1rem' }}>
+              <Box sx={{ flex: '1 1 auto' }}></Box>
+
+              <Button
+                type="button"
+                variant="contained"
+                sx={{
+                  ml: 'auto',
+                  mr: '2rem',
+                  px: '1.5rem',
+                  
+                  fontSize: '1.4rem',
+                  height: '3rem',
+                  display: isEditing ? 'none' : 'visible',
+                }}
+                onClick={() => {
+                  setEdit(true);
+                }}
+                startIcon={<EditIcon />}
+              >
+                Edit
+              </Button>
+
+              <Button
+                type="submit"
+                form="edit-bank-savings-form"
+                variant="contained"
+                sx={{
+                  ml: 'auto',
+                  mr: '2rem',
+                  px: '1.5rem',
+                 
+                  fontSize: '1.4rem',
+                  height: '3rem',
+                  display: isEditing ? 'visible' : 'none',
+                }}
+                startIcon={<SaveIcon />}
+              >
+                Save
+              </Button>
             </Box>
           </CardContent>
         </Card>
       </Card>
     </Grid>
+  ) : (
+    <></>
   );
 };

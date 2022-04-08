@@ -46,7 +46,7 @@ const AssetDetailPage = (
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <BankSavingsDetail  />
+          <BankSavingsDetail portfolioId = {portfolioId} assetId = {assetId} />
         </Container>
       </Box>
     </>

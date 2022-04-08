@@ -2,6 +2,7 @@ import { action, makeAutoObservable, observable } from 'mobx';
 import { PortfolioAllocation, RealEstateItem, BankSavingItem } from 'types';
 import { coinGeckoService, httpService } from 'services';
 import { portfolioData } from './portfolio-data';
+import { httpError } from 'helpers';
 
 class PortfolioDetailStore {
   portfolioId: string = '';
@@ -33,8 +34,8 @@ class PortfolioDetailStore {
       fetchCoinData: action,
       setPortfolioId: action,
       fetchRealEstate: action,
-      addNewBankSaving:action,
-      addNewRealEstate:action,
+      addNewBankSaving: action,
+      addNewRealEstate: action,
     });
   }
 
@@ -64,24 +65,24 @@ class PortfolioDetailStore {
   }
 
   async fetchCoinData() {
-    // const coins = this.cryptoDetail;
-    // const data = await coins.map(async (coin: any) => {
-    //   const res: any = await this.fetchCoinInfoByCode({ code: coin.coinName });
-    //   if (!res.isError) {
-    //     const coinInfo = res.data;
-    //     return {
-    //       ...coin,
-    //       price: coinInfo.price,
-    //       priceChange: coinInfo.priceChange,
-    //       percentChange: coinInfo.percentChange,
-    //       profitLossAmount: coinInfo.priceChange * coin.quantity,
-    //       totalValue: coinInfo.price * coin.quantity,
-    //     };
-    //   } else return coin;
-    // });
-    // Promise.all(data).then((arr) => {
-    //   this.cryptoDetail = arr;
-    // });
+    const coins = this.cryptoDetail;
+    const data = await coins.map(async (coin: any) => {
+      const res: any = await this.fetchCoinInfoByCode({ code: coin.coinName });
+      if (!res.isError) {
+        const coinInfo = res.data;
+        return {
+          ...coin,
+          price: coinInfo.price,
+          priceChange: coinInfo.priceChange,
+          percentChange: coinInfo.percentChange,
+          profitLossAmount: coinInfo.priceChange * coin.quantity,
+          totalValue: coinInfo.price * coin.quantity,
+        };
+      } else return coin;
+    });
+    Promise.all(data).then((arr) => {
+      this.cryptoDetail = arr;
+    });
   }
 
   async fetchCoinInfoByCode({ code }: { code: string }) {
@@ -144,7 +145,8 @@ class PortfolioDetailStore {
     });
     if (!res.isError) {
       await this.fetchRealEstate();
-    }
+      return { isError: false, data: httpError.handleSuccessMessage('add') };
+    } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
   async addNewBankSaving(params: any) {
@@ -162,7 +164,8 @@ class PortfolioDetailStore {
     });
     if (!res.isError) {
       await this.fetchBankSaving();
-    }
+      return { isError: false, data: httpError.handleSuccessMessage('add') };
+    } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 }
 

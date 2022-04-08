@@ -5,9 +5,37 @@ export const httpError = {
   handleErrorCode,
   getSignInError,
   getSignUpError,
+  handleSuccessMessage,
 };
 
+type IMessageType = 'edit' | 'update' | 'delete' | 'create' | 'add';
+function handleSuccessMessage(type: IMessageType) {
+  const { en, vi } = content;
+
+  switch (type) {
+    case 'edit':
+      return { en: en.success.edit, vi: vi.success.edit };
+    case 'update':
+      return { en: en.success.update, vi: vi.success.update };
+    case 'delete':
+      return { en: en.success.delete, vi: vi.success.delete };
+    case 'create':
+      return { en: en.success.create, vi: vi.success.create };
+    case 'add':
+      return { en: en.success.add, vi: vi.success.add };
+
+    default:
+      return { en: en.success.default, vi: vi.success.default };
+  }
+}
+
 function handleErrorCode(res: { isError: boolean; data: any }) {
+  if (typeof res.data === 'undefined')
+    return {
+      en: '',
+      vi: '',
+    };
+
   const {
     data: { status, statusText },
   } = res;
@@ -16,29 +44,45 @@ function handleErrorCode(res: { isError: boolean; data: any }) {
 
   switch (status) {
     case 400:
-      return { en: en.error.badRequest, vi: vi.error.badRequest };
+      return { status, en: en.error.badRequest, vi: vi.error.badRequest };
     case 401:
       localStorage.clearItem(mainConstant.TOKEN_KEY);
-      return { en: en.error.unauthorizedUser, vi: vi.error.unauthorizedUser };
+      return {
+        status,
+        en: en.error.unauthorizedUser,
+        vi: vi.error.unauthorizedUser,
+      };
     case 404:
-      return { en: en.error.methodNotAllowed, vi: vi.error.methodNotAllowed };
+      return {
+        status,
+        en: en.error.methodNotAllowed,
+        vi: vi.error.methodNotAllowed,
+      };
     case 500:
       //errorStore.update(error);
       return {
+        status,
         en: en.error.internalServerError,
         vi: vi.error.internalServerError,
       };
     default:
       return {
-        en: '',
-        vi: '',
+        status,
+        en: en.success.default,
+        vi: vi.success.default,
       };
   }
 }
 
 function getSignUpError(res: { isError: boolean; data: any }) {
+  if (typeof res.data === 'undefined')
+    return {
+      en: '',
+      vi: '',
+    };
+
   const {
-    data: { status, statusText,data },
+    data: { status, statusText, data },
   } = res;
 
   const { en, vi } = content;
@@ -55,8 +99,14 @@ function getSignUpError(res: { isError: boolean; data: any }) {
 }
 
 function getSignInError(res: { isError: boolean; data: any }) {
+  if (typeof res.data === 'undefined')
+    return {
+      en: '',
+      vi: '',
+    };
+
   const {
-    data: { status, statusText,data },
+    data: { status, statusText, data },
   } = res;
 
   const { en, vi } = content;

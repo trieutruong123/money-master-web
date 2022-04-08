@@ -86,6 +86,8 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
             //     vertical: 'top',
             //     horizontal: 'right',
             //   },
+            //   autoHideDuration: 3000,
+
             // });
             portfolioDetailStore.setOpenAddNewAssetModal(
               !isOpenAddNewAssetModal,

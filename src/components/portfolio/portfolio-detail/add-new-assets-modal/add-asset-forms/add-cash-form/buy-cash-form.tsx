@@ -185,7 +185,7 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
           form="bank-cash-form"
           variant="contained"
           sx={{
-            bg: colorScheme.theme,
+            bg: 'appColor.theme',
             width: '100%',
             fontSize: '1.4rem',
             height: '2.5rem',

@@ -67,12 +67,8 @@ export const RealEstateInvesments = ({ realEstateDetail }: IProps) => {
 
   const handleItemClick = (assetId: number) => {
     router.push(
-      `/portfolio/${portfolioId}/real-estate/${assetId
-        .toString()
-        .toUpperCase()}`,
-      `/portfolio/${portfolioId}/real-estate/${assetId
-        .toString()
-        .toUpperCase()}`,
+      `/portfolio/${portfolioId}/real-estate/${assetId.toString()}`,
+      `/portfolio/${portfolioId}/real-estate/${assetId.toString()}`,
       { locale: locale },
     );
   };

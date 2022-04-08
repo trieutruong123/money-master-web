@@ -10,7 +10,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { SnackbarProvider } from 'notistack';
 import { createEmotionCache } from 'utils/create-emotion-cache';
 import { theme } from 'theme';
-import { AuthGuard } from 'components';
+import { AuthGuard, SnackbarCloseButton } from 'components';
 
 import '../styles/globals.css';
 
@@ -66,6 +66,9 @@ export default function MyApp(props: AppProps) {
                   info: 'ℹ️',
                 }}
                 hideIconVariant={false}
+                action={(snackbarKey) => (
+                  <SnackbarCloseButton snackbarKey={snackbarKey} />
+                )}
               >
                 {Component.requireAuth ? (
                   <AuthGuard>

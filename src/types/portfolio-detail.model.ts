@@ -36,8 +36,9 @@ export type BankSavingItem = {
   inputMoneyAmount:number,
   inputCurrency:string,
   lastChanged:string,
+  bankCode:string,
   description:string,
   interestRate:number,
   termRange:number,
-  isGoingToReinState:string
+  isGoingToReinState:boolean
 }

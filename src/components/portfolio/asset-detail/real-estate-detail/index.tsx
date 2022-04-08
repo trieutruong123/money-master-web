@@ -1,13 +1,31 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Container, Grid, useMediaQuery, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
-import { bankSavingsDetailStore } from 'store';
-import {EditRealEstateDetail} from './edit-real-estate-detail';
+import { useEffect } from 'react';
+import { realEstateDetailStore } from 'store';
+import { EditRealEstateDetail } from './edit-real-estate-detail';
 
-export const RealEstateDetail = observer(() => {
+interface IProps {
+  portfolioId: string;
+  assetId: string;
+}
+
+export const RealEstateDetail = observer(({ portfolioId, assetId }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  useEffect(() => {
+    realEstateDetailStore.setAssetId(assetId);
+    realEstateDetailStore.setPortfolioId(portfolioId);
+    realEstateDetailStore.fetchRealEstateDetail({ portfolioId, assetId });
+  }, []);
+
+  const { assetDetail } = realEstateDetailStore;
+
+  const handleFormSubmit = async (data: any) => {
+    const res = await realEstateDetailStore.updateAssetDetail(data);
+    return res;
+  };
   return (
     <Box
       sx={{
@@ -28,7 +46,14 @@ export const RealEstateDetail = observer(() => {
         <Box sx={{ overflow: 'hidden' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
             <Grid container display="flex" justifyContent="center">
-              <EditRealEstateDetail />
+              {typeof assetDetail !== 'undefined' ? (
+                <EditRealEstateDetail
+                  assetDetail={assetDetail}
+                  handleFormSubmit={handleFormSubmit}
+                />
+              ) : (
+                <></>
+              )}
             </Grid>
           </Container>
         </Box>

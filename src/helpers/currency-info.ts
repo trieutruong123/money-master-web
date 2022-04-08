@@ -14,6 +14,15 @@ export const getSupportedCurrencyList = (): Array<{
 }> => {
   return [
     {
+      name: 'Vietnamese Dong',
+      symbol: '₫',
+      symbolNative: '₫',
+      decimalDigits: 0,
+      rounding: 0,
+      code: 'VND',
+      namePlural: 'Vietnamese dong',
+    },
+    {
       name: 'Singapore Dollar',
       symbol: 'S$',
       symbolNative: '$',

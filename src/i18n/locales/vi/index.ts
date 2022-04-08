@@ -152,6 +152,14 @@ export const vi = {
       'Oops, có vẻ trang bạn đang tìm không có sẵn, vui lòng quay lại sau.',
     goBack: 'Quay lại trang trước đó',
   },
+  success: {
+    edit: 'Chỉnh sửa thành công',
+    update: 'Cập nhật thành công',
+    delete: 'Xóa thành công',
+    create: 'Tạo mới thành công',
+    add: 'Thêm mới thành công',
+    default: 'Đã hoàn thành',
+  },
   error: {
     methodNotAllowed: 'Lỗi! Truy cập không tồn tại.',
     badRequest: 'Lỗi! Không tìm thấy nội dung.',
@@ -159,6 +167,7 @@ export const vi = {
     internalServerError: 'Lỗi hệ thống. Vui lòng quay lại sau.',
     credentialFailed: 'Lỗi! Email/ mật khẩu không hợp lệ',
     alreadyEmailExist: 'Lỗi! Email đã được đăng ký',
+    default: 'Lỗi! Thất bại.',
   },
   portfolioListPage: {
     title: "Danh mục tài sản",
