@@ -1,5 +1,5 @@
 import { action, makeAutoObservable, observable } from 'mobx';
-import { UserInfo } from 'models';
+import { UserInfo } from 'shared/models';
 
 class UserStore {
   user: UserInfo | null = null;

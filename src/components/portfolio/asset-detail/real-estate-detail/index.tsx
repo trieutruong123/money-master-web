@@ -2,7 +2,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Container, Grid, useMediaQuery, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
-import { realEstateDetailStore } from 'store';
+import { realEstateDetailStore } from 'shared/store';
+import { UpdatedRealEstateItem } from 'shared/types';
 import { EditRealEstateDetail } from './edit-real-estate-detail';
 
 interface IProps {
@@ -22,7 +23,7 @@ export const RealEstateDetail = observer(({ portfolioId, assetId }: IProps) => {
 
   const { assetDetail } = realEstateDetailStore;
 
-  const handleFormSubmit = async (data: any) => {
+  const handleFormSubmit = async (data: UpdatedRealEstateItem) => {
     const res = await realEstateDetailStore.updateAssetDetail(data);
     return res;
   };

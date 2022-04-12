@@ -1,4 +1,4 @@
-import { mainConstant } from './constant';
+import { mainConstant } from 'shared/constants';
 export const previousPath = {
   getPreviousPath,
   setRedirect,

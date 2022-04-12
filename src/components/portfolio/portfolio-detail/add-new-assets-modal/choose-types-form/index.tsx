@@ -4,12 +4,9 @@ import {
   Box,
   Collapse,
   List,
-  ListItem,
-  ListItemAvatar,
   ListItemText,
   ListItemButton,
   ListItemIcon,
-  Typography,
   useTheme,
 } from '@mui/material';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -29,7 +26,6 @@ interface IProps {
 }
 
 export const ChooseTypesForm = ({ openNextForm }: IProps) => {
-  const theme = useTheme();
   const [isOtherCollapse, setOtherCollapse] = useState(false);
 
   const handleOpenOthersList = () => {
@@ -41,17 +37,12 @@ export const ChooseTypesForm = ({ openNextForm }: IProps) => {
   };
 
   return (
-    <Box height="inherit" id="searching-form-modal">
-      <Box id="header-searching-form">
-        <Typography
-          id="modal-modal-title"
-          variant="h4"
-          align="center"
-          mt="1rem"
-        >
+    <div id="searching-form-modal" style={{ height: 'inherit' }}>
+      <div id="header-searching-form">
+        <h2 id="modal-modal-title" style={{ textAlign:'center', marginTop: '1rem' }}>
           Choose Type
-        </Typography>
-      </Box>
+        </h2>
+      </div>
       <PerfectScrollbar>
         <List
           sx={{
@@ -97,7 +88,7 @@ export const ChooseTypesForm = ({ openNextForm }: IProps) => {
           </Collapse>
         </List>
       </PerfectScrollbar>
-    </Box>
+    </div>
   );
 };
 

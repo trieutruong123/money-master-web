@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import _ from 'lodash';
+import { useDebounce } from 'use-debounce';
 import {
   Box,
+  Typography,
   IconButton,
   InputBase,
   List,
@@ -11,67 +12,58 @@ import {
   ListItemButton,
   ListItemIcon,
   Paper,
-  Typography,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { portfolioDetailStore } from 'store';
+import { portfolioDetailStore } from 'shared/store';
 import { sampleData } from '../searching-data';
 
 type SearchingItemType = {
   id: string;
+  name: string;
   symbol: string;
-  label: string;
 };
 
 interface IProps {
-  openNextForm: any;
-  openPreviousForm: any;
+  openNextForm: (params: any) => void;
+  openPreviousForm: (params: any) => void;
+  searchData: any;
 }
 
 export const SearchingAssetsForm = observer(
-  ({ openNextForm, openPreviousForm }: IProps) => {
-    const [searchingData, setSearchingData] = useState<
-      Array<SearchingItemType>
-    >([]);
+  ({ openNextForm, openPreviousForm, searchData }: IProps) => {
+    const [searchingData, setSearchingData] =
+      useState<Array<SearchingItemType>>([]);
     const [searchingText, setSearchingText] = useState<string>('');
+    const [isSearching, setIsSearching] = useState(false);
+    const debouncedSearchTerm = useDebounce(searchingText, 500);
 
-    useEffect(() => {
-      //ref.current = _.debounce(searchData, 300);
-    }, []);
+    useEffect(
+      () => {
+        if (debouncedSearchTerm) {
+          setIsSearching(true);
+          searchData(debouncedSearchTerm).then(
+            (results: Array<SearchingItemType> | any) => {
+              setIsSearching(false);
+              setSearchingData(results);
+            },
+          );
+        } else {
+          setSearchingData(sampleData);
+          setIsSearching(false);
+        }
+      },
+      [debouncedSearchTerm], // Only call effect if debounced search term changes
+    );
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchingText(e.target.value);
-      //ref.current();
-      searchData();
     };
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
-        //ref.current();
-        searchData();
-      }
-    };
-
-    const searchData = () => {
-      if (searchingText === '' || searchingText === null) {
-        setSearchingData([]);
-      } else {
-        const text = searchingText.toLowerCase();
-        const data = sampleData.filter((item: SearchingItemType) => {
-          if (
-            item.symbol.toLowerCase().includes(text) ||
-            item.label.toLowerCase().includes(text)
-          )
-            return item;
-          else if (
-            item.label.toLowerCase().startsWith(text) ||
-            item.label.toLowerCase().startsWith(text)
-          )
-            return item;
-        });
-        setSearchingData(data);
+        searchData(searchingText);
       }
     };
 
@@ -104,10 +96,13 @@ export const SearchingAssetsForm = observer(
     };
 
     return (
-      <Box height="inherit" id="searching-form-modal">
+      <Box id="searching-form-modal" style={{ height: 'inherit' }}>
         <Box id="header-searching-form">
-          <Box sx={{ mt: '1rem' }}>
-            <Typography id="modal-modal-title" variant="h4" align="center">
+          <Box style={{ marginTop: '1rem' }}>
+            <Typography
+              id="modal-modal-title"
+              style={{ textAlign: 'center', marginTop: '1rem' }}
+            >
               Search Assets
             </Typography>
 
@@ -173,7 +168,7 @@ export const SearchingAssetsForm = observer(
                   <ListItemIcon>
                     <AccessTimeIcon />
                   </ListItemIcon>
-                  <ListItemText primary={`${item.symbol} - ${item.label}`} />
+                  <ListItemText primary={item.symbol} secondary={item.name} />
                 </ListItemButton>
               );
             })}

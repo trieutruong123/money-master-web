@@ -1,7 +1,7 @@
 import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { styled } from '@mui/material/styles';
-import { stockVolatilityDetailStore, portfolioDetailStore } from 'store';
+import { stockVolatilityDetailStore, portfolioDetailStore } from 'shared/store';
 import { CreateCryptoForm } from './create-crypto-form';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({

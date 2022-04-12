@@ -1,5 +1,7 @@
+import { SearchingStockItem } from './../../shared/models/portfolio-asset.model';
 import axios from 'axios';
-import { mainConstant } from 'helpers';
+import { mainConstant } from 'shared/constants';
+import { SearchingDataItem } from 'shared/types';
 
 export const finhubService = {
   getStockInfoByCode,
@@ -29,7 +31,24 @@ async function getStockInfoByCode(params: any) {
   }
 }
 
-async function searchForStock() {}
+async function searchForStock(searchingText: string) {
+  const url = `/search?q=${searchingText}&token=${ACCESS_TOKEN}`;
+  try {
+    const response = await axios.get(`${BASE_URL}${url}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    return {
+      isError: false,
+      data: parseSearchingData(response.data),
+    };
+  } catch (error: any) {
+    return {
+      isError: true,
+      data: error.response,
+    };
+  }
+}
 
 async function getStockOHCL(params: any) {
   const url = `/stock/candle?symbol=${params?.stockId}&resolution=${params.resolution}&from=${params.startDate}&to=${params.endDate}&token=${ACCESS_TOKEN}`;
@@ -49,3 +68,13 @@ async function getStockOHCL(params: any) {
     };
   }
 }
+
+const parseSearchingData = (searchingResult: any): Array<SearchingDataItem> => {
+  const { count, result } = searchingResult;
+  const searchingData: Array<SearchingDataItem> = result.map(
+    (item: SearchingStockItem) => {
+      return { id: item.symbol, name: item.displaySymbol, symbol: item.symbol };
+    },
+  );
+  return searchingData;
+};

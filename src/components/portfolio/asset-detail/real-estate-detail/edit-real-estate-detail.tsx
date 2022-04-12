@@ -23,9 +23,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import dayjs from 'dayjs';
-import { getSupportedCurrencyList } from 'helpers';
+import { getSupportedCurrencyList } from 'shared/helpers';
 import { colorScheme } from 'utils';
-import { RealEstateItem } from 'types';
+import { RealEstateItem } from 'shared/models';
 
 interface IProps {
   assetDetail: RealEstateItem | undefined;

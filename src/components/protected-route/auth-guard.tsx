@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { authStore, userStore } from 'store';
+import { authStore, userStore } from 'shared/store';
 import { storageService, userService } from 'services';
-import { mainConstant } from 'helpers';
+import { mainConstant } from 'shared/constants';
 import { CircularLoading } from 'components';
 
 export const AuthGuard = observer(({ children }: { children: JSX.Element }) => {

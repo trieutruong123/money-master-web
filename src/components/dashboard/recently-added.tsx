@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { SeverityPill } from 'components/shared';
+import { SeverityPill } from 'shared/components';
 
 const orders = [
   {

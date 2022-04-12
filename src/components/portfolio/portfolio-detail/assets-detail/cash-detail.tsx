@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardHeader,
-  Grid,
   Table,
   TableBody,
   TableCell,
@@ -17,9 +16,8 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { getCurrencyByCode } from 'helpers';
+import { getCurrencyByCode } from 'shared/helpers';
 import SettingsMenuButton from './settings-menu-button';
-import { MdTableRows } from 'react-icons/md';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;

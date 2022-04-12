@@ -13,4 +13,3 @@ export const SnackbarCloseButton = ({ snackbarKey }: any) => {
   );
 };
 
-export default SnackbarCloseButton;

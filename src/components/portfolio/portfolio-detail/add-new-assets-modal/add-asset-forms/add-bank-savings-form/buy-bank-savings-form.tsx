@@ -17,7 +17,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { getSupportedCurrencyList } from 'helpers';
+import { getSupportedCurrencyList } from 'shared/helpers';
 
 type FormValues = {
   name: string;
@@ -84,8 +84,8 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
   };
 
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         height: 'inherit',
         display: 'flex',
         flexDirection: 'column',
@@ -182,7 +182,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
                 inputFormat="dd/MM/yyyy"
                 value={date}
                 onChange={handleDateChange}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => <TextField sx={{ width: '100%' }} {...params} />}
               />
             </LocalizationProvider>
           </Grid>
@@ -244,6 +244,6 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
           ADD
         </Button>
       </Box>
-    </Box>
+    </div>
   );
 };

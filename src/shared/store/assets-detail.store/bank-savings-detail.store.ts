@@ -1,12 +1,11 @@
-import { httpError } from 'helpers';
 import { action, computed, makeAutoObservable, observable } from 'mobx';
 import { httpService } from 'services';
-import { RealEstateItem } from 'types';
-
-class RealEstateDetailStore {
+import { BankSavingItem } from 'shared/models';
+import { httpError } from 'shared/helpers';
+class BankSavingsDetailStore {
   portfolioId: string = '';
   assetId: string = '';
-  assetDetail: RealEstateItem | undefined = undefined;
+  assetDetail: BankSavingItem | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this, {
@@ -16,7 +15,7 @@ class RealEstateDetailStore {
 
       setPortfolioId: action,
       setAssetId: action,
-      fetchRealEstateDetail: action,
+      fetchBankSavingsDetail: action,
       updateAssetDetail: action,
     });
   }
@@ -29,14 +28,14 @@ class RealEstateDetailStore {
     this.assetId = val;
   }
 
-  async fetchRealEstateDetail({
+  async fetchBankSavingsDetail({
     portfolioId,
     assetId,
   }: {
     portfolioId: string;
     assetId: string;
   }) {
-    const url = `/portfolio/${portfolioId}/realEstate`;
+    const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: any = await httpService.get(url);
     if (!res.isError) {
       this.assetDetail = res.data.find((item: any) => item.id == assetId);
@@ -46,15 +45,18 @@ class RealEstateDetailStore {
   }
 
   async updateAssetDetail(params: any) {
-    const url = `/portfolio/${this.portfolioId}/realEstate/${this.assetId}`;
+    const url = `/portfolio/${this.portfolioId}/bankSaving/${this.assetId}`;
     const res: any = await httpService.put(url, {
       name: params.name,
+      bankCode: params.bankCode,
       inputDay: params.inputDay,
       inputMoneyAmount: params.inputMoneyAmount,
-      buyPrice: params.inputMoneyAmount,
       inputCurrency: params.inputCurrency,
+      isGoingToReinState: params.isGoingToReinState,
       description: params.description,
-      currentPrice: params.currentPrice,
+      interestRate: params.interestRate,
+      termRange: params.termRange,
+      changeInterestRateType: 'CONTINUE_WITH_RATE',
     });
     if (!res.isError) {
       this.assetDetail = res.data;
@@ -63,4 +65,4 @@ class RealEstateDetailStore {
   }
 }
 
-export const realEstateDetailStore = new RealEstateDetailStore();
+export const bankSavingsDetailStore = new BankSavingsDetailStore();

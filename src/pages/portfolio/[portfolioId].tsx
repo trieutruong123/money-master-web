@@ -1,15 +1,13 @@
-import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import {
   Box,
   Container,
-  Typography,
   useTheme,
   useMediaQuery,
+  Typography,
 } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
-import { useRouter } from 'next/router';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
 import { PortfolioDetail } from 'components/portfolio/portfolio-detail';
@@ -20,12 +18,9 @@ const PortfolioDetailPage = (
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
-    locales,
     locale,
-    defaultLocale,
     params: { portfolioId },
   } = props;
-  const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { portfolioDetailPage } = detail;
 

@@ -8,7 +8,7 @@ import { CryptoInvestments } from './crypto-detail';
 import { StockInvestments } from './stock-detail';
 import { RealEstateInvesments } from './real-estate-detail';
 import { CashInvestments } from './cash-detail';
-import { RealEstateItem, BankSavingItem } from 'types';
+import { RealEstateItem, BankSavingItem } from 'shared/models';
 
 interface IProps {
   cryptoDetail: Array<any> | undefined;

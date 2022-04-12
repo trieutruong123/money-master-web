@@ -17,7 +17,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { getSupportedCurrencyList } from 'helpers';
+import { getSupportedCurrencyList } from 'shared/helpers';
 
 type FormValues = {
   purchasePrice: number;
@@ -143,7 +143,7 @@ export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
                 inputFormat="dd/MM/yyyy"
                 value={date}
                 onChange={handleDateChange}
-                renderInput={(params) => <TextField {...params} />}
+                renderInput={(params) => <TextField sx={{ width: '100%' }} {...params} />}
               />
             </LocalizationProvider>
           </Grid>

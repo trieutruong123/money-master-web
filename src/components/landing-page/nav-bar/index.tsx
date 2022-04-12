@@ -18,7 +18,7 @@ import { Link } from 'components';
 import { colorScheme } from 'utils/color-scheme';
 import DrawerComponent from './drawer-component';
 import styled from './style/header.module.css';
-import { MultipleLanguage } from 'components/shared/mutiple-languages';
+import { MultipleLanguage } from 'shared/components'
 
 interface IProps {
   content: any;

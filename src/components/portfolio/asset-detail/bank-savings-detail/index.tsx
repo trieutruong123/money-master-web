@@ -2,7 +2,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Container, Grid, useMediaQuery, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { useEffect } from 'react';
-import { bankSavingsDetailStore } from 'store';
+import { bankSavingsDetailStore } from 'shared/store';
+import { UpdatedBankSavingItem } from 'shared/types';
 import { EditBankSavingsDetail } from './edit-bank-savings-detail';
 
 interface IProps {
@@ -23,7 +24,7 @@ export const BankSavingsDetail = observer(
 
     const { assetDetail } = bankSavingsDetailStore;
 
-    const handleFormSubmit = async (data: any) => {
+    const handleFormSubmit = async (data: UpdatedBankSavingItem) => {
       const res = await bankSavingsDetailStore.updateAssetDetail(data);
       return res;
     };

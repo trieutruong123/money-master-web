@@ -1,6 +1,6 @@
 import { action, computed, makeAutoObservable, observable } from 'mobx';
 import { finhubService } from 'services';
-import { portfolioData } from 'store/portfolio/portfolio-data';
+import { portfolioData } from 'shared/store/portfolio/portfolio-data';
 
 class StockVolatilityDetailStore {
   isOpenAddNewTransactionModal: boolean = false;

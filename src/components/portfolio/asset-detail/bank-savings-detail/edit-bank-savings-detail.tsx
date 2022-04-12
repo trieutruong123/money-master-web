@@ -24,9 +24,9 @@ import SaveIcon from '@mui/icons-material/Save';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
 import dayjs from 'dayjs';
-import { getSupportedCurrencyList } from 'helpers';
+import { getSupportedCurrencyList } from 'shared/helpers';
 import { colorScheme } from 'utils';
-import { BankSavingItem } from 'types';
+import { BankSavingItem } from 'shared/models';
 import { useSnackbar } from 'notistack';
 
 interface IProps {

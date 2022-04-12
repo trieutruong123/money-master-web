@@ -18,8 +18,8 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { getCurrencyByCode } from 'helpers';
-import { BankSavingItem } from 'types';
+import { getCurrencyByCode } from 'shared/helpers';
+import { BankSavingItem } from 'shared/models';
 import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`

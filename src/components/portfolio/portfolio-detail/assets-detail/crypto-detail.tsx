@@ -11,17 +11,14 @@ import {
   TableRow,
   useTheme,
   useMediaQuery,
-  IconButton,
-  Tooltip,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { precisionRound } from 'utils/number';
-import { getCurrencyByCode } from 'helpers';
+import { getCurrencyByCode } from 'shared/helpers';
 import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`

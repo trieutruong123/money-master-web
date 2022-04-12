@@ -9,7 +9,7 @@ import { CssBaseline, Slide } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { SnackbarProvider } from 'notistack';
 import { createEmotionCache } from 'utils/create-emotion-cache';
-import { theme } from 'theme';
+import { theme } from 'shared/theme';
 import { AuthGuard, SnackbarCloseButton } from 'components';
 
 import '../styles/globals.css';

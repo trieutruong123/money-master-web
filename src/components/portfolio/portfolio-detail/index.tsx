@@ -13,7 +13,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { AssetAllocation } from './asset-allocation';
 import { AssetsDetail } from './assets-detail';
 import { AddNewAssetsModal } from './add-new-assets-modal';
-import { portfolioDetailStore } from 'store';
+import { portfolioDetailStore } from 'shared/store';
 import { useSnackbar } from 'notistack';
 
 interface IProps {

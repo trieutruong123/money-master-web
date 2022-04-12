@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { Doughnut } from 'react-chartjs-2';
 import chroma from 'chroma-js';
-import { PortfolioAllocation } from 'types';
+import { PortfolioAllocation } from 'shared/modals';
 interface IProps {
   assetAllocationData: Array<PortfolioAllocation>;
 }
@@ -91,14 +91,14 @@ export const AssetAllocation = ({ assetAllocationData }: IProps) => {
         />
 
         <CardContent>
-          <Box
-            sx={{
+          <div
+            style={{
               width: '100%',
               height: 'auto',
             }}
           >
             <Doughnut data={data} width="100%" height={140} options={options} />
-          </Box>
+          </div>
         </CardContent>
       </Card>
     </Grid>

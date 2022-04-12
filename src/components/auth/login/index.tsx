@@ -24,8 +24,8 @@ import { VisibilityOff, Visibility } from '@mui/icons-material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { userService } from 'services';
-import { authStore, userStore } from 'store';
-import { httpError, previousPath } from 'helpers';
+import { authStore, userStore } from 'shared/store';
+import { httpError, previousPath } from 'shared/helpers';
 import { colorScheme } from 'utils/color-scheme';
 
 type FormValues = {

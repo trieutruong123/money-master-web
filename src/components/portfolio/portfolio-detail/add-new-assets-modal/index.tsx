@@ -2,7 +2,7 @@ import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { portfolioDetailStore } from 'store';
+import { portfolioDetailStore } from 'shared/store';
 import { SearchingAssetsForm } from './searching-assets-form';
 import { ChooseTypesForm } from './choose-types-form';
 import {
@@ -81,7 +81,6 @@ export const AddNewAssetsModal = observer(() => {
   };
 
   const openPreviousForm = (params: any) => {
-    console.log(type);
     switch (params.curFormType) {
       case 'search':
         setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
@@ -136,12 +135,18 @@ export const AddNewAssetsModal = observer(() => {
       <SearchingAssetsForm
         openNextForm={openNextForm}
         openPreviousForm={openPreviousForm}
+        searchData={searchData}
       />,
     );
   };
 
   const openChooseTypesForm = (params: any) => {
     setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+  };
+
+  const searchData = async(searchingText: string) => {
+    const res = await portfolioDetailStore.searchData({type,searchingText});
+    return res;
   };
 
   return (

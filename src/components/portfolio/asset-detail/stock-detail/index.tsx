@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { stockVolatilityDetailStore } from 'store';
+import { stockVolatilityDetailStore } from 'shared/store';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
 import { HistoricalMarketChart } from './historical-market-chart';
 import { IntroSection } from './intro-section';

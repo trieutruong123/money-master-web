@@ -1,4 +1,4 @@
-import { mainConstant } from 'helpers';
+import { mainConstant } from 'shared/constants';
 import { content } from 'i18n';
 
 export const httpError = {

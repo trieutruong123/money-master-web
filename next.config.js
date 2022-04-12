@@ -3,6 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
 };
 
+module.exports = {
+  swcMinify: true
+}
 
 module.exports = {
   i18n: {
