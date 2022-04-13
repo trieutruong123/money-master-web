@@ -1,3 +1,5 @@
+import { useCallback, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import {
   Box,
   Container,
@@ -7,10 +9,9 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { stockVolatilityDetailStore } from 'store';
+import { stockVolatilityDetailStore } from 'shared/store';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
 import { HistoricalMarketChart } from './historical-market-chart';
 import { IntroSection } from './intro-section';
@@ -23,7 +24,9 @@ interface IProps {
 export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
   useEffect(() => {
+    if (typeof stockId === 'undefined') router.push('/404');
     stockVolatilityDetailStore.setStockId(stockId);
     stockVolatilityDetailStore.fetchData({ stockId });
     stockVolatilityDetailStore.fetchHistoricalMarketData({

@@ -1,7 +1,7 @@
 import { LoginForm, RegisterForm } from './auth';
 import { DashboardLayout, DefaultLayout } from './layouts';
 import { DefaultNavbar } from './landing-page';
-import { Link, MultipleLanguage, SeverityPill } from './shared';
+import { Link, MultipleLanguage, SeverityPill, SnackbarCloseButton } from '../shared/components';
 import { CircularLoading } from './loading';
 import { AuthGuard } from './protected-route/auth-guard';
 
@@ -16,4 +16,5 @@ export {
   RegisterForm,
   MultipleLanguage,
   SeverityPill,
+  SnackbarCloseButton
 };

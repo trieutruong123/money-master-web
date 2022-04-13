@@ -10,13 +10,17 @@ import {
   TableHead,
   TableRow,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Tooltip,
+  IconButton,
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { precisionRound } from 'utils';
+import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -37,20 +41,22 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  stockDetail: Array<any>|undefined;
+  stockDetail: Array<any> | undefined;
 }
 
 export const StockInvestments = ({ stockDetail }: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
+  const { portfolioId } = router.query;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [
     'Price',
-    "Today's Price Change",
-    "Today's % Change",
+    "Today's Change",
     "Today's Gain/Loss",
     'Shares',
+    'Total',
+    '',
   ];
   const renderPriceWithCommas = (price: number) => {
     return '$' + price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -64,7 +70,7 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
         val = `-$${number.slice(1)}`;
         return <span style={{ color: '#e01616' }}>{val}</span>;
       } else {
-        val = `$${number.slice(1)}`;
+        val = `+$${number}`;
         return <span style={{ color: '#0d6f3f' }}>{val}</span>;
       }
     }
@@ -74,9 +80,21 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
   const renderPercentage = (number: string) => {
     const num = parseFloat(number);
     if (typeof num !== 'undefined') {
-      if (num < 0) return <span style={{ color: '#e01616' }}>{number}%</span>;
-      else return <span style={{ color: '#0d6f3f' }}>{number}%</span>;
+      if (num < 0) return <span style={{ color: '#e01616' }}>&#40;{number}%&#41;</span>;
+      else return <span style={{ color: '#0d6f3f' }}>&#40;&#43;{number}%&#41;</span>;
     } else return undefined;
+  };
+
+  const renderTotal = (price: number, shares: number) => {
+    return precisionRound(price * shares, 4);
+  };
+
+  const handleItemClick = (assetId: string) => {
+    router.push(
+      `/portfolio/${portfolioId}/stock/${assetId.toUpperCase()}`,
+      `/portfolio/${portfolioId}/stock/${assetId.toUpperCase()}`,
+      { locale: locale },
+    );
   };
 
   return stockDetail?.length ? (
@@ -84,7 +102,7 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
+          padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -102,7 +120,7 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
           </Button>
         </Card>
         <PerfectScrollbar>
-          <Box >
+          <Box>
             <Table>
               <TableHead>
                 <TableRow>
@@ -118,13 +136,6 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
                 {stockDetail.map((record, i) => {
                   return (
                     <TableRow
-                      onClick={() => {
-                        router.push(
-                          `/portfolio/stock/test`,
-                          `/portfolio/stock/test`,
-                          { locale: locale },
-                        );
-                      }}
                       key={i}
                       sx={{
                         cursor: 'pointer',
@@ -133,7 +144,9 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
                         },
                       }}
                     >
-                      <TableBodyCellSymbol>
+                      <TableBodyCellSymbol
+                        onClick={() => handleItemClick(record.id)}
+                      >
                         <Box
                           sx={{ fontWeight: 700, textTransform: 'uppercase' }}
                         >
@@ -145,19 +158,25 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
                           {record.description}
                         </Box>
                       </TableBodyCellSymbol>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderPriceWithCommas(record.price)}
                       </TableBodyCell>
-                      <TableBodyCell>
-                        {renderPriceChange(record.priceChange)}
-                      </TableBodyCell>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {renderPriceChange(record.priceChange)}&nbsp;
                         {renderPercentage(record.percentChange)}
                       </TableBodyCell>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderPriceChange(record.profitLossAmount)}
                       </TableBodyCell>
-                      <TableBodyCell>{record.quantity}</TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {record.quantity}
+                      </TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {renderTotal(record.price, record.quantity)}
+                      </TableBodyCell>
+                      <TableBodyCell>
+                        <SettingsMenuButton />
+                      </TableBodyCell>
                     </TableRow>
                   );
                 })}

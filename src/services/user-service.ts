@@ -1,9 +1,10 @@
 import Router from 'next/router';
-import { httpError, mainConstant } from 'helpers';
+import { httpError } from 'shared/helpers';
+import {mainConstant} from 'shared/constants';
 import { cryptoService, httpService, storageService } from 'services';
-import { userStore, authStore } from 'store';
+import { userStore, authStore } from 'shared/store';
 import { facebookAuth, googleAuth } from 'services';
-import { UserInfo } from 'models';
+import { UserInfo } from 'shared/models';
 export const userService = {
   register,
   login,

@@ -18,7 +18,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { precisionRound } from 'utils/number';
-import { getCurrencyByCode } from 'helpers';
+import { getCurrencyByCode } from 'shared/helpers';
+import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -39,21 +40,22 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  cryptoDetail: Array<any>|undefined;
+  cryptoDetail: Array<any> | undefined;
 }
 
 export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
+  const { portfolioId } = router.query;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [
     'Price',
-    "Today's Price Change",
-    "Today's % Change",
+    "Today's Change",
     "Today's Gain/Loss",
     'Shares',
     'Total',
+    '',
   ];
   const renderPriceWithCommas = (price: number) => {
     return '$' + price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -66,7 +68,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
         val = `-$${precisionRound(num, 3).toString().slice(1)}`;
         return <span style={{ color: '#e01616' }}>{val}</span>;
       } else {
-        val = `$${precisionRound(num, 3).toString().slice(1)}`;
+        val = `+$${precisionRound(num, 3).toString()}`;
         return <span style={{ color: '#0d6f3f' }}>{val}</span>;
       }
     } else return undefined;
@@ -76,11 +78,11 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
     if (typeof num !== 'undefined') {
       if (num < 0)
         return (
-          <span style={{ color: '#e01616' }}>{precisionRound(num, 3)}%</span>
+          <span style={{ color: '#e01616' }}>&#40;{precisionRound(num, 3)}%&#41;</span>
         );
       else
         return (
-          <span style={{ color: '#0d6f3f' }}>{precisionRound(num, 3)}%</span>
+          <span style={{ color: '#0d6f3f' }}>&#40;&#43;{precisionRound(num, 3)}%&#41;</span>
         );
     } else return undefined;
   };
@@ -92,12 +94,20 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
     );
   };
 
+  const handleItemClick = (assetId: string) => {
+    router.push(
+      `/portfolio/${portfolioId}/coin/${assetId.toLowerCase()}`,
+      `/portfolio/${portfolioId}/coin/${assetId.toLowerCase()}`,
+      { locale: locale },
+    );
+  };
+
   return cryptoDetail?.length ? (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
+          padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -116,7 +126,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
         </Card>
         <PerfectScrollbar>
           <Box>
-            <Table>
+            <Table sx={{ overflowY: 'auto' }}>
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Symbol</TableHeaderCell>
@@ -131,18 +141,6 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                 {cryptoDetail.map((record, i) => {
                   return (
                     <TableRow
-                      onClick={() => {
-                        // router.push(
-                        //   `/portfolio/asset-detail/${record.coinName}`,
-                        //   `/portfolio/asset-detail/${record.coinName}`,
-                        //   { locale: locale },
-                        // );
-                        router.push(
-                          `/portfolio/coin/test`,
-                          `/portfolio/coin/test`,
-                          { locale: locale },
-                        );
-                      }}
                       key={i}
                       sx={{
                         cursor: 'pointer',
@@ -151,7 +149,9 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                         },
                       }}
                     >
-                      <TableBodyCellSymbol>
+                      <TableBodyCellSymbol
+                        onClick={() => handleItemClick(record.id)}
+                      >
                         <Box
                           sx={{ fontWeight: 700, textTransform: 'uppercase' }}
                         >
@@ -163,24 +163,27 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
                           {record.description}
                         </Box>
                       </TableBodyCellSymbol>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderPriceWithCommas(record.price)}
                       </TableBodyCell>
-                      <TableBodyCell>
-                        {renderPriceChange(record.priceChange)}
-                      </TableBodyCell>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {renderPriceChange(record.priceChange)}&nbsp;
                         {renderPercentage(record.percentChange)}
                       </TableBodyCell>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderPriceChange(record.profitLossAmount)}
                       </TableBodyCell>
-                      <TableBodyCell>{record.quantity}</TableBodyCell>
-                      <TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {record.quantity}
+                      </TableBodyCell>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
                         {renderTotalValue(
                           record.totalValue,
                           record.currencyCode,
                         )}
+                      </TableBodyCell>
+                      <TableBodyCell>
+                        <SettingsMenuButton />
                       </TableBodyCell>
                     </TableRow>
                   );

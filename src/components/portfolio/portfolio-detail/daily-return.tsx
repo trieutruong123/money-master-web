@@ -1,6 +1,6 @@
 import { Box, Card, CardHeader, CardContent, Grid } from '@mui/material';
 import { Bar } from 'react-chartjs-2';
-import { PortfolioItem } from 'types';
+import { PortfolioItem } from 'shared/models';
 
 interface IProps {
   dailyReturnsData: Array<PortfolioItem>;

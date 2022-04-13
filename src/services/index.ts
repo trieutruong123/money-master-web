@@ -1,6 +1,5 @@
 export * from './external-service';
 export * from './firebase-service';
-export * from './alert-service';
 export * from './crypto-service';
 export * from './http-service';
 export * from './storage-service';

@@ -5,11 +5,13 @@ import Head from 'next/head';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, Slide } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
-import { createEmotionCache } from '../utils/create-emotion-cache';
-import { theme } from 'theme';
-import { AuthGuard } from 'components';
+import { SnackbarProvider } from 'notistack';
+import { createEmotionCache } from 'utils/create-emotion-cache';
+import { theme } from 'shared/theme';
+import { AuthGuard, SnackbarCloseButton } from 'components';
+
 import '../styles/globals.css';
 
 type NextApplicationPage<P = any, IP = P> = NextPage<P, IP> & {
@@ -44,11 +46,38 @@ export default function MyApp(props: AppProps) {
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <React.StrictMode>
-              {Component.requireAuth ? (
-                <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
-              ) : (
-                getLayout(<Component {...pageProps} />)
-              )}
+              <SnackbarProvider
+                classes={{
+                  variantSuccess: 'success.main',
+                  variantError: 'error.main',
+                  variantWarning: 'warning.main',
+                  variantInfo: 'info.main',
+                }}
+                maxSnack={3}
+                dense
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                iconVariant={{
+                  success: '✅',
+                  error: '✖️',
+                  warning: '⚠️',
+                  info: 'ℹ️',
+                }}
+                hideIconVariant={false}
+                action={(snackbarKey) => (
+                  <SnackbarCloseButton snackbarKey={snackbarKey} />
+                )}
+              >
+                {Component.requireAuth ? (
+                  <AuthGuard>
+                    {getLayout(<Component {...pageProps} />)}
+                  </AuthGuard>
+                ) : (
+                  getLayout(<Component {...pageProps} />)
+                )}
+              </SnackbarProvider>
             </React.StrictMode>
           </ThemeProvider>
         </LocalizationProvider>

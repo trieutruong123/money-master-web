@@ -10,7 +10,7 @@ import {
 import { useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { cryptoVolatilityDetailStore } from 'store';
+import { cryptoVolatilityDetailStore } from 'shared/store';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
 import { HistoricalMarketChart } from './historical-market-chart';
 import { IntroSection } from './intro-section';

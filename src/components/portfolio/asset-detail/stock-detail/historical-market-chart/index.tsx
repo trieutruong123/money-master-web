@@ -118,7 +118,8 @@ export const HistoricalMarketChart = ({
                     label="Start Date"
                     inputFormat="dd/MM/yyyy"
                     value={startDate}
-                    onChange={handleStartDateChange}
+                    onAccept = {handleStartDateChange}
+                    onChange={()=>true}
                     renderInput={(params) => (
                       <TextField {...params} sx={{ width: '10rem' }} />
                     )}

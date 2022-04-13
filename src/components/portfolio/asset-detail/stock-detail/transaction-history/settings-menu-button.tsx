@@ -17,6 +17,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
 
 interface IProps {
   assetId: string;
@@ -36,11 +37,10 @@ export default function SettingsMenuButton() {
 
   return (
     <React.Fragment>
-      <Tooltip title="Account settings">
+      <Tooltip title="Transaction settings">
         <IconButton
           onClick={handleClick}
           size="small"
-          sx={{ ml: 2 }}
           aria-controls={open ? 'account-menu' : undefined}
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
@@ -88,6 +88,12 @@ export default function SettingsMenuButton() {
             <ContentCopyIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Duplicate</ListItemText>
+        </MenuItem>
+        <MenuItem>
+          <ListItemIcon>
+            <ShowChartIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Move to portfolio</ListItemText>
         </MenuItem>
         <Divider />
         <MenuItem>

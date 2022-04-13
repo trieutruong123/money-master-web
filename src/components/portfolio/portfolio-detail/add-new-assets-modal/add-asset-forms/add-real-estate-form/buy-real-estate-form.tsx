@@ -9,13 +9,15 @@ import {
   MenuItem,
   Select,
   TextField,
+  Grid,
   useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { getSupportedCurrencyList } from 'helpers';
+import { getSupportedCurrencyList } from 'shared/helpers';
 
 type FormValues = {
   purchasePrice: number;
@@ -36,6 +38,8 @@ interface IProps {
 
 export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+
   const [date, setDate] = useState<Date | null>(new Date());
 
   const validationSchema = Yup.object().shape({
@@ -66,119 +70,148 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
       inputDay: date,
       inputMoneyAmount: data.purchasePrice,
       inputCurrency: data.currency,
-      buyPrice:data.purchasePrice,
-      currentPrice:data.currentPrice,
-      name:data.name,
-      description:data.description
+      buyPrice: data.purchasePrice,
+      currentPrice: data.currentPrice,
+      name: data.name,
+      description: data.description,
     });
   };
 
   return (
     <Box
-      component="form"
-      autoComplete="off"
-      onSubmit={handleSubmit(onSubmit)}
       sx={{
         height: 'inherit',
-        overflow: 'auto',
-        justifyContent: 'center',
         display: 'flex',
-        alignItems: 'stretch',
         flexDirection: 'column',
-        mx: '3rem',
-        [theme.breakpoints.down('xs')]: {
-          mx: '2rem',
-        },
+        alignItems: 'stretch',
       }}
     >
-      <TextField
-        type="text"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-name"
-        label={'*Name'}
-        {...register('name')}
-        variant="outlined"
-        error={typeof errors.name?.message !== 'undefined'}
-        helperText={errors.name?.message}
-      ></TextField>
-      <TextField
-        type="number"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-purchase-price"
-        label={'*Purchase Price'}
-        {...register('purchasePrice')}
-        variant="outlined"
-        error={typeof errors.purchasePrice?.message !== 'undefined'}
-        helperText={errors.purchasePrice?.message}
-      ></TextField>
-      <TextField
-        type="number"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-current-price"
-        label={'*Current Price'}
-        {...register('currentPrice')}
-        variant="outlined"
-        error={typeof errors.currentPrice?.message !== 'undefined'}
-        helperText={errors.currentPrice?.message}
-      ></TextField>
-      <FormControl sx={{ my: 1 }} fullWidth>
-        <InputLabel id="currency-list">Currency</InputLabel>
-        <Select
-          variant="outlined"
-          labelId="currency-list"
-          id="currency-list-select"
-          label="Currency"
-          value="USD"
-          {...register('currency')}
-        >
-          {currencyList.map((item, index) => {
-            return (
-              <MenuItem key={item.code} value={item.code}>
-                {item.code} - {item.name}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
-      <LocalizationProvider
-        sx={{ my: 1, display: 'block' }}
-        dateAdapter={AdapterDateFns}
-      >
-        <DesktopDatePicker
-          label="*Input day"
-          inputFormat="dd/MM/yyyy"
-          value={date}
-          onChange={handleDateChange}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </LocalizationProvider>
-      <TextField
-        type="text"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-description"
-        label={'Description'}
-        {...register('description')}
-        variant="outlined"
-        error={typeof errors.description?.message !== 'undefined'}
-        helperText={errors.description?.message}
-      ></TextField>
-      <Button
-        type="submit"
-        variant="contained"
+      <Box
+        id="buy-real-estate-form"
+        component="form"
+        autoComplete="off"
+        onSubmit={handleSubmit(onSubmit)}
         sx={{
-          mt: 'auto',
-          bg: colorScheme.theme,
           width: '100%',
-          fontSize: '1.4rem',
-          height: '2.5rem',
+          overflow: 'auto',
+          display: 'flex',
+          alignItems: 'stretch',
+          flexDirection: 'column',
+          px: '3rem',
+          [theme.breakpoints.down('xs')]: {
+            px: '2rem',
+          },
         }}
       >
-        ADD
-      </Button>
+        <Grid container spacing="2">
+          <TextField
+            type="text"
+            fullWidth
+            sx={{  mt: 1, display: 'block' }}
+            id="outlined-name"
+            label={'*Name'}
+            {...register('name')}
+            variant="outlined"
+            error={typeof errors.name?.message !== 'undefined'}
+            helperText={errors.name?.message}
+          ></TextField>
+          <TextField
+            type="number"
+            fullWidth
+            sx={{ mt: 1, display: 'block' }}
+            id="outlined-purchase-price"
+            label={'*Purchase Price'}
+            {...register('purchasePrice')}
+            variant="outlined"
+            error={typeof errors.purchasePrice?.message !== 'undefined'}
+            helperText={errors.purchasePrice?.message}
+          ></TextField>
+          <TextField
+            type="number"
+            fullWidth
+            sx={{  mt: 1, display: 'block' }}
+            id="outlined-current-price"
+            label={'*Current Price'}
+            {...register('currentPrice')}
+            variant="outlined"
+            error={typeof errors.currentPrice?.message !== 'undefined'}
+            helperText={errors.currentPrice?.message}
+          ></TextField>
+
+          <Grid container spacing={isXs ? 1 : 2}>
+            <Grid item xs={12} sm={6} sx={{ mt: 1 ,display: 'block' }}>
+              <FormControl fullWidth>
+                <InputLabel id="currency-list">Currency</InputLabel>
+                <Select
+                  variant="outlined"
+                  labelId="currency-list"
+                  id="currency-list-select"
+                  label="Currency"
+                  value="USD"
+                  {...register('currency')}
+                >
+                  {currencyList.map((item, index) => {
+                    return (
+                      <MenuItem key={item.code} value={item.code}>
+                        {item.code} - {item.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} sx={{  mt: 1,display: 'block' }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DesktopDatePicker
+                  label="*Input day"
+                  inputFormat="dd/MM/yyyy"
+                  value={date}
+                  onChange={handleDateChange}
+                  renderInput={(params) => (
+                    <TextField sx={{ width: '100%' }} {...params} />
+                  )}
+                />
+              </LocalizationProvider>
+            </Grid>
+          </Grid>
+
+          <TextField
+            type="text"
+            fullWidth
+            sx={{ my: 1, display: 'block' }}
+            id="outlined-description"
+            label={'Description'}
+            {...register('description')}
+            variant="outlined"
+            error={typeof errors.description?.message !== 'undefined'}
+            helperText={errors.description?.message}
+          ></TextField>
+        </Grid>
+      </Box>
+      <Box
+        sx={{
+          mt: 'auto',
+          px: '3rem',
+          [theme.breakpoints.down('xs')]: {
+            px: '2rem',
+          },
+          width: '100%',
+        }}
+      >
+        <Button
+          type="submit"
+          form="buy-real-estate-form"
+          variant="contained"
+          sx={{
+            bg: 'appColor.theme',
+            width: '100%',
+            fontSize: '1.4rem',
+            height: '2.5rem',
+          }}
+        >
+          ADD
+        </Button>
+      </Box>
     </Box>
   );
 };

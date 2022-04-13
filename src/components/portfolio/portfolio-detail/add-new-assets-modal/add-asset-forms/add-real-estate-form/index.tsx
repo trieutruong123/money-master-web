@@ -1,71 +1,83 @@
-import { useEffect, useState } from 'react';
-import { Box, IconButton, Typography, useTheme } from '@mui/material';
+import { useEffect } from 'react';
+import { Box, IconButton, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PerfrectScrollbar from 'react-perfect-scrollbar';
 import { BuyRealEstateForm } from './buy-real-estate-form';
-import {portfolioDetailStore} from 'store';
+import { portfolioDetailStore } from 'shared/store';
+import { NewRealEstateAsset, UpdatedRealEstateItem } from 'shared/types';
 
 interface IProps {
-  handleClose:any,
+  handleClose: any;
   openPreviousForm: any;
 }
 
-export const AddNewRealEstateForm = observer(({ handleClose,openPreviousForm }: IProps) => {
-  const theme = useTheme();
+export const AddNewRealEstateForm = observer(
+  ({ handleClose, openPreviousForm }: IProps) => {
+    const theme = useTheme();
 
-  useEffect(() => {
-    const fetchAssetPrice = async () => {};
-    fetchAssetPrice();
-  }, []);
+    useEffect(() => {
+      const fetchAssetPrice = async () => {};
+      fetchAssetPrice();
+    }, []);
 
-  const handleComeback = () => {
-    openPreviousForm({ curFormType: 'transaction' });
-  };
+    const handleComeback = () => {
+      openPreviousForm({
+        curFormType: 'transaction',
+        selectedType: 'realEstate',
+      });
+    };
 
-  const portfolioName = 'demo portoflio';
+    const portfolioName = 'demo portoflio';
 
-  const handleFormSubmit = async (data: any) => {
-    portfolioDetailStore.addNewRealEstate(data);
-    handleClose()
-  };
+    const handleFormSubmit = async (data: NewRealEstateAsset) => {
+      portfolioDetailStore.addNewRealEstate(data);
+      handleClose();
+    };
 
-  return (
-    <Box sx={{ height: 'inherit' }}>
-      <Box sx={{ mt: '1rem' }}>
-        <Typography align="center" id="modal-modal-title" variant="h4">
-          Transaction
-        </Typography>
-        <IconButton
-          sx={{ position: 'absolute', left: '2rem', top: '1rem' }}
-          onClick={handleComeback}
-        >
-          <ArrowBackIcon />
-        </IconButton>
-      </Box>
-      <Box sx={{ ml: '3rem', mt: '1rem' }}>
-        <Typography
-          variant="body1"
+    return (
+      <div style={{ height: 'inherit' }}>
+        <div style={{ marginTop: '1rem' }}>
+          <h2
+            id="modal-modal-title"
+            style={{
+              fontWeight: 700,
+              fontSize: '2rem',
+              lineHeight: 1.375,
+              textAlign: 'center',
+            }}
+          >
+            Transaction
+          </h2>
+          <IconButton
+            sx={{ position: 'absolute', left: '2rem', top: '1rem' }}
+            onClick={handleComeback}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+        </div>
+        <div style={{ marginLeft: '3rem', marginTop: '1rem' }}>
+          <p
+            style={{
+              marginTop: '0.4rem',
+              textTransform: 'uppercase',
+              fontWeight: 'bold',
+            }}
+          >
+            {portfolioName}
+          </p>
+        </div>
+        <Box
           sx={{
-            mt: '0.4rem',
-            textTransform: 'uppercase',
-            fontWeight: 'bold',
+            [theme.breakpoints.down('sm')]: { height: '470px' },
+
+            [theme.breakpoints.up('sm')]: {
+              height: '550px',
+            },
           }}
         >
-          {portfolioName}
-        </Typography>
-      </Box>
-      <Box
-        sx={{
-          [theme.breakpoints.down('sm')]: { height: '470px' },
-
-          [theme.breakpoints.up('sm')]: {
-            height: '540px',
-          },
-        }}
-      >
-        <BuyRealEstateForm handleFormSubmit={handleFormSubmit} />
-      </Box>
-    </Box>
-  );
-});
+          <BuyRealEstateForm handleFormSubmit={handleFormSubmit} />
+        </Box>
+      </div>
+    );
+  },
+);

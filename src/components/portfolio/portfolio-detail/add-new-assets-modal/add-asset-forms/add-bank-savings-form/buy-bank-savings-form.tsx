@@ -5,27 +5,32 @@ import {
   Box,
   Button,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  useMediaQuery,
   useTheme,
 } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { getSupportedCurrencyList } from 'helpers';
+import { getSupportedCurrencyList } from 'shared/helpers';
 
 type FormValues = {
   name: string;
-
   inputMoneyAmount: number;
   interestRate: number;
   termRange: number;
   inputCurrency: string;
   description?: string;
   bankCode?: string;
+  brokerFee?:number,
+  brokerFeeInPercent?: number;
+  brokerFeeForSecurity?: number;
+  incomeTax?: number;
 };
 
 interface IProps {
@@ -34,6 +39,8 @@ interface IProps {
 
 export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -63,7 +70,6 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    console.log('có submit nè');
     handleFormSubmit({
       name: data.name,
       bankCode: data.bankCode,
@@ -78,134 +84,166 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
   };
 
   return (
-    <Box
-      component="form"
-      autoComplete="off"
-      onSubmit={handleSubmit(onSubmit)}
-      sx={{
+    <div
+      style={{
         height: 'inherit',
-        overflow: 'auto',
-        justifyContent: 'center',
         display: 'flex',
-        alignItems: 'stretch',
         flexDirection: 'column',
-        mx: '3rem',
-        [theme.breakpoints.down('xs')]: {
-          mx: '2rem',
-        },
+        alignItems: 'stretch',
       }}
     >
-      <TextField
-        type="text"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-buy-price"
-        label={'*Name'}
-        {...register('name')}
-        variant="outlined"
-        error={typeof errors.name?.message !== 'undefined'}
-        helperText={errors.name?.message}
-      ></TextField>
-      <TextField
-        type="number"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-broker-fee"
-        label={'*Input Money'}
-        {...register('inputMoneyAmount')}
-        variant="outlined"
-        error={typeof errors.inputMoneyAmount?.message !== 'undefined'}
-        helperText={errors.inputMoneyAmount?.message}
-      ></TextField>
-      <TextField
-        type="number"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-broker-fee"
-        label={'*Interest Rate'}
-        {...register('interestRate')}
-        variant="outlined"
-        error={typeof errors.interestRate?.message !== 'undefined'}
-        helperText={errors.interestRate?.message}
-      ></TextField>
-      <TextField
-        type="number"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-broker-fee"
-        label={'*Term Range (months)'}
-        {...register('termRange')}
-        variant="outlined"
-        error={typeof errors.termRange?.message !== 'undefined'}
-        helperText={errors.termRange?.message}
-      ></TextField>
-      <FormControl sx={{ my: 1 }} fullWidth>
-        <InputLabel id="currency-list">Currency</InputLabel>
-        <Select
-          variant="outlined"
-          labelId="currency-list"
-          id="currency-list-select"
-          label="*Currency"
-          value="USD"
-          {...register('inputCurrency')}
-        >
-          {currencyList.map((item, index) => {
-            return (
-              <MenuItem key={item.code} value={item.code}>
-                {item.code} - {item.name}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </FormControl>
-      <LocalizationProvider
-        sx={{ my: 1, display: 'block' }}
-        dateAdapter={AdapterDateFns}
-      >
-        <DesktopDatePicker
-          label="*Input day"
-          inputFormat="dd/MM/yyyy"
-          value={date}
-          onChange={handleDateChange}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </LocalizationProvider>
-      <TextField
-        type="text"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-amount"
-        label={'Bank Code'}
-        {...register('bankCode')}
-        variant="outlined"
-        error={typeof errors.bankCode?.message !== 'undefined'}
-        helperText={errors.bankCode?.message}
-      ></TextField>
-
-      <TextField
-        type="text"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-note"
-        label={'Description'}
-        {...register('description')}
-        variant="outlined"
-        error={typeof errors.description?.message !== 'undefined'}
-        helperText={errors.description?.message}
-      ></TextField>
-      <Button
-        type="submit"
-        variant="contained"
+      <Box
+        id="buy-bank-savings-form"
+        component="form"
+        autoComplete="off"
+        onSubmit={handleSubmit(onSubmit)}
         sx={{
-          mt: 'auto',
-          bg: colorScheme.theme,
           width: '100%',
-          fontSize: '1.4rem',
-          height: '2.5rem',
+          overflow: 'auto',
+          display: 'flex',
+          alignItems: 'stretch',
+          flexDirection: 'column',
+          px: '3rem',
+          [theme.breakpoints.down('xs')]: {
+            px: '2rem',
+          },
         }}
       >
-        ADD
-      </Button>
-    </Box>
+        <TextField
+          type="text"
+          fullWidth
+          sx={{ mt: 1, display: 'block' }}
+          id="outlined-buy-price"
+          label={'*Name'}
+          {...register('name')}
+          variant="outlined"
+          error={typeof errors.name?.message !== 'undefined'}
+          helperText={errors.name?.message}
+        ></TextField>
+        <TextField
+          type="number"
+          fullWidth
+          sx={{ mt: 1, display: 'block' }}
+          id="outlined-broker-fee"
+          label={'*Input Money'}
+          {...register('inputMoneyAmount')}
+          variant="outlined"
+          error={typeof errors.inputMoneyAmount?.message !== 'undefined'}
+          helperText={errors.inputMoneyAmount?.message}
+        ></TextField>
+        <TextField
+          type="number"
+          fullWidth
+          sx={{ mt: 1, display: 'block' }}
+          id="outlined-broker-fee"
+          label={'*Interest Rate'}
+          {...register('interestRate')}
+          variant="outlined"
+          error={typeof errors.interestRate?.message !== 'undefined'}
+          helperText={errors.interestRate?.message}
+        ></TextField>
+        <TextField
+          type="number"
+          fullWidth
+          sx={{ mt: 1, display: 'block' }}
+          id="outlined-broker-fee"
+          label={'*Term Range (months)'}
+          {...register('termRange')}
+          variant="outlined"
+          error={typeof errors.termRange?.message !== 'undefined'}
+          helperText={errors.termRange?.message}
+        ></TextField>
+        <Grid container spacing={isXs ? 1 : 2}>
+          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+            <FormControl fullWidth>
+              <InputLabel id="currency-list">Currency</InputLabel>
+              <Select
+                variant="outlined"
+                labelId="currency-list"
+                id="currency-list-select"
+                label="*Currency"
+                value="USD"
+                {...register('inputCurrency')}
+              >
+                {currencyList.map((item, index) => {
+                  return (
+                    <MenuItem key={item.code} value={item.code}>
+                      {item.code} - {item.name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DesktopDatePicker
+                label="*Input day"
+                inputFormat="dd/MM/yyyy"
+                value={date}
+                onChange={handleDateChange}
+                renderInput={(params) => <TextField sx={{ width: '100%' }} {...params} />}
+              />
+            </LocalizationProvider>
+          </Grid>
+        </Grid>
+
+        <TextField
+          type="text"
+          fullWidth
+          sx={{ mt: 1, display: 'block' }}
+          id="outlined-amount"
+          label={'Bank Code'}
+          {...register('bankCode')}
+          variant="outlined"
+          error={typeof errors.bankCode?.message !== 'undefined'}
+          helperText={errors.bankCode?.message}
+        ></TextField>
+        <TextField
+          type="number"
+          fullWidth
+          sx={{ mt: 1, display: 'block' }}
+          id="outlined-broker-fee"
+          label={'Fee'}
+          {...register('brokerFee')}
+          variant="outlined"
+        ></TextField>
+        <TextField
+          type="text"
+          fullWidth
+          sx={{ my: 1, display: 'block' }}
+          id="outlined-note"
+          label={'Description'}
+          {...register('description')}
+          variant="outlined"
+          error={typeof errors.description?.message !== 'undefined'}
+          helperText={errors.description?.message}
+        ></TextField>
+      </Box>
+      <Box
+        sx={{
+          mt: 'auto',
+          px: '3rem',
+          [theme.breakpoints.down('xs')]: {
+            px: '2rem',
+          },
+          width: '100%',
+        }}
+      >
+        <Button
+          type="submit"
+          form="buy-bank-savings-form"
+          variant="contained"
+          sx={{
+            bg: colorScheme.theme,
+            width: '100%',
+            fontSize: '1.4rem',
+            height: '2.5rem',
+          }}
+        >
+          ADD
+        </Button>
+      </Box>
+    </div>
   );
 };
