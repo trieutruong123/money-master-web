@@ -3,7 +3,7 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { DashboardLayout } from 'components/layouts';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { PortfolioList } from 'components/portfolio';
-import { portfolioStore } from 'store';
+import { portfolioStore } from 'shared/store';
 import { useEffect } from 'react';
 
 const fetchData=async()=>{
