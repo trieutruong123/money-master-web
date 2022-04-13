@@ -18,7 +18,7 @@ import { observer } from 'mobx-react-lite';
 import PortfolioCard from 'components/portfolio/portfolio-list/portfolio-card';
 import Modal from '@mui/material/Modal';
 import NewPortfolio from 'components/portfolio/portfolio-list/modify-portfolio';
-import { portfolioStore } from 'store';
+import { portfolioStore } from '../../../shared/store';
 
 interface IProps {
   context:any
