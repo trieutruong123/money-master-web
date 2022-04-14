@@ -8,7 +8,6 @@ import { RectNode } from "./SankeyRect";
 import { PathLink } from "./SankeyLink";
 
 const d3Color = scaleOrdinal(schemeCategory10);
-const d3Color2 = scaleSequential(interpolatePiYG);
 
 export const colorRectFunc = (dataPoint: RectNode) =>
   d3Color(dataPoint.category || dataPoint.name);
@@ -35,11 +34,12 @@ export const formatLinkTitleFunc = ({
   source,
   target,
   value
-}: PathLink): string => {
+}: PathLink): any => {  
   const sourceName = typeof source === "object" ? source.name : source;
   const targetName = typeof target === "object" ? target.name : target;
 
-  return `${sourceName} → ${targetName}\n${d3format(value)}`;
+  
+   return `${sourceName.split('@@')[1]} → ${targetName.split('@@')[1]}\n${d3format(value)}`;
 };
 
 interface MakeSankeyInput {

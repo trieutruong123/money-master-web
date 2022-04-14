@@ -20,6 +20,7 @@ export const SankeyLink = ({
   strokeWidth,
   title
 }: SankeyLinkProps): JSX.Element => {
+  
   return (
     <g style={{ mixBlendMode: "multiply" }}>
       <path d={d} stroke={color} strokeWidth={strokeWidth}>

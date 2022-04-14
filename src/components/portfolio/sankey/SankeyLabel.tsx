@@ -13,7 +13,18 @@ export const SankeyLabel = ({
   text,
   ...textProps
 }: SankeyLabelProps): JSX.Element => {
-  return <text {...textProps}>{text}</text>;
+  const name=text.split('@@')[1];
+  const category=text.split('@@')[0];
+ 
+  return (
+      <text {...textProps}>
+        <tspan >{name}</tspan>
+        <tspan dy='1.2rem' dx='-1.5rem'>{category}</tspan>
+      </text>
+     
+  )
+ 
+  
 };
 
 const isFullRectNode = (node: RectNode): node is Required<RectNode> => {
