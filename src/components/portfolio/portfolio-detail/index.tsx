@@ -62,7 +62,7 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
       >
         <Box sx={{ overflow: 'auto' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-            <Grid container spacing={3} display="fex" justifyContent="center">
+            <Grid container  display="flex" justifyContent="center">
               <AssetAllocation assetAllocationData={portfolioAllocationData} />
               {/* <DailyReturns dailyReturnsData={portfolioDetailData} /> */}
               <AssetsDetail

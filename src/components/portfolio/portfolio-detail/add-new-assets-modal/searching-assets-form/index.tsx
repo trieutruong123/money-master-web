@@ -50,7 +50,7 @@ export const SearchingAssetsForm = observer(
             },
           );
         } else {
-          setSearchingData(sampleData);
+          //setSearchingData(sampleData);
           setIsSearching(false);
         }
       },

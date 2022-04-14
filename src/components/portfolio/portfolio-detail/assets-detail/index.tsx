@@ -30,7 +30,7 @@ export const AssetsDetail = observer(
     const { locale } = useRouter();
 
     return (
-      <Grid container item>
+      <Grid container item display="flex" justifyContent="center" mt = '1rem'>
         {typeof cashDetail !== undefined && cashDetail?.length ? (
           <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
             <CryptoInvestments cryptoDetail={cryptoDetail}></CryptoInvestments>
@@ -38,7 +38,7 @@ export const AssetsDetail = observer(
         ) : (
           <></>
         )}
-        {typeof cashDetail !== undefined && cashDetail?.length ? (
+        {typeof stockDetail !== undefined && stockDetail?.length ? (
           <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
             <StockInvestments stockDetail={stockDetail}></StockInvestments>
           </Grid>
@@ -61,21 +61,30 @@ export const AssetsDetail = observer(
           spacing={2}
           sx={{ display: 'flex', alignItems: 'stretch' }}
         >
-          {typeof cashDetail !== undefined && cashDetail?.length ? (
-            <Grid item xl={4} lg={4} md={4} sm={4} xs={12} mt="1rem">
+          {typeof cashDetail !== undefined &&
+          cashDetail?.length &&
+          typeof realEstateDetail !== undefined &&
+          realEstateDetail?.length ? (
+            <>
+              <Grid item xl={4} lg={4} md={4} sm={4} xs={12} mt="1rem">
+                <CashInvestments cashDetail={cashDetail}></CashInvestments>
+              </Grid>
+              <Grid item xl={8} lg={8} md={8} sm={8} xs={12} mt="1rem">
+                <RealEstateInvesments
+                  realEstateDetail={realEstateDetail}
+                ></RealEstateInvesments>
+              </Grid>
+            </>
+          ) : typeof cashDetail !== undefined && cashDetail?.length ? (
+            <Grid item xs={12} mt="1rem">
               <CashInvestments cashDetail={cashDetail}></CashInvestments>
             </Grid>
           ) : (
-            <></>
-          )}
-          {typeof realEstateDetail !== undefined && realEstateDetail?.length ? (
-            <Grid item xl={8} lg={8} md={8} sm={8} xs={12} mt="1rem">
+            <Grid item xs={12} mt="1rem">
               <RealEstateInvesments
                 realEstateDetail={realEstateDetail}
               ></RealEstateInvesments>
             </Grid>
-          ) : (
-            <></>
           )}
         </Grid>
       </Grid>
