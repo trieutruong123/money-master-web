@@ -1,16 +1,22 @@
-import { action, makeAutoObservable, observable } from 'mobx';
+import { action, makeAutoObservable, observable } from "mobx";
 import {
   PortfolioAllocation,
   RealEstateItem,
   BankSavingItem,
-} from 'shared/models';
-import { coinGeckoService, httpService, finhubService } from 'services';
-import { portfolioData } from './portfolio-data';
-import { httpError } from 'shared/helpers';
-import { SearchingDataItem } from 'shared/types';
+} from "shared/models";
+import {
+  coinGeckoService,
+  httpService,
+  finhubService,
+  portfolioService,
+} from "services";
+import { portfolioData } from "./portfolio-data";
+import { httpError } from "shared/helpers";
+import { SearchingDataItem } from "shared/types";
+import { SankeyDataLink } from "components/portfolio/portfolio-detail/sankey-chart/data";
 
 class PortfolioDetailStore {
-  portfolioId: string = '';
+  portfolioId: string = "";
   portfolioAllocationData: Array<PortfolioAllocation> = [];
   stockDetail: Array<Object> | undefined = undefined;
   cryptoDetail: Array<any> = [];
@@ -20,7 +26,8 @@ class PortfolioDetailStore {
   portfolioValue: number = 0;
   todaysChange: number = 0;
   isOpenAddNewAssetModal: boolean = false;
-  currencyCode: string = '';
+  currencyCode: string = "";
+  sankeyFlowData: Array<SankeyDataLink> = [];
   constructor() {
     makeAutoObservable(this, {
       portfolioId: observable,
@@ -33,6 +40,7 @@ class PortfolioDetailStore {
       portfolioValue: observable,
       todaysChange: observable,
       isOpenAddNewAssetModal: observable,
+      sankeyFlowData: observable,
 
       setOpenAddNewAssetModal: action,
       fetchPortfolioDetailData: action,
@@ -43,6 +51,7 @@ class PortfolioDetailStore {
       addNewRealEstate: action,
       addNewCryptoCurrency: action,
       addNewStock: action,
+      fetchSankeyFlowData: action,
     });
   }
 
@@ -55,7 +64,7 @@ class PortfolioDetailStore {
   }
 
   async fetchPortfolioDetailData() {
-    this.currencyCode = 'usd';
+    this.currencyCode = "usd";
     this.portfolioAllocationData = portfolioData.portfolioAllocation;
     this.portfolioValue = portfolioData.portfolioValue;
     this.todaysChange = portfolioData.todaysChange;
@@ -147,7 +156,7 @@ class PortfolioDetailStore {
     });
     if (!res.isError) {
       await this.fetchRealEstate();
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
@@ -166,7 +175,7 @@ class PortfolioDetailStore {
     });
     if (!res.isError) {
       await this.fetchBankSaving();
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
@@ -174,11 +183,11 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      {},
+      {}
     );
     if (!res.isError) {
       await this.fetchBankSaving();
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
@@ -186,11 +195,11 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      {},
+      {}
     );
     if (!res.isError) {
       await this.fetchBankSaving();
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
@@ -203,23 +212,34 @@ class PortfolioDetailStore {
   }): Promise<Array<SearchingDataItem>> {
     var res: { isError: boolean; data: any };
     switch (type) {
-      case 'stocks':
+      case "stocks":
         res = await finhubService.searchForStock(searchingText);
         if (!res.isError) return res.data;
         else return [];
 
-      case 'crypto':
+      case "crypto":
         res = await coinGeckoService.searchForCoin(searchingText);
         if (!res.isError) return res.data;
         else return [];
 
-      case 'currency':
+      case "currency":
         return [];
-      case 'gold':
+      case "gold":
         return [];
       default:
         return [];
     }
+  }
+
+  async fetchSankeyFlowData() {
+    var raw = await portfolioService.getCashFlowData(this.portfolioId);
+    this.sankeyFlowData = raw.map((link) => {
+      return {
+        source: `${link.sourceType}@@${link.sourceName}`,
+        target: `${link.targetType}@@${link.targetName}`,
+        value: link.amount.toString(),
+      };
+    });    
   }
 }
 

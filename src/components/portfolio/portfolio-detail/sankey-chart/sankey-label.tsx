@@ -1,5 +1,5 @@
 import React from "react";
-import { RectNode } from "./SankeyRect";
+import { RectNode } from "./sankey-rect";
 
 interface SankeyLabelProps {
   x: number;

@@ -1,7 +1,7 @@
 import React from "react";
 
 import { SankeyLink as SankeyLinkType, sankeyLinkHorizontal } from "d3-sankey";
-import { SankeyDataLink, SankeyDataNode } from "./data";
+import { SankeyDataLink, SankeyDataNode } from "./index";
 
 export type PathLink = SankeyLinkType<SankeyDataNode, SankeyDataLink>;
 
