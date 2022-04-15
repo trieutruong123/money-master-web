@@ -20,11 +20,10 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getSupportedCurrencyList } from 'shared/helpers';
 
 type FormValues = {
-  purchasePrice: number;
+  name: string;
   amount: number;
-  date: Date;
-  inputCurrency: string;
-  note?: string;
+  currencyCode: string;
+  description: string;
   brokerFeeInPercent?: number;
   brokerFee?: number;
   brokerFeeForSecurity?: number;
@@ -40,29 +39,36 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [date, setDate] = useState<Date | null>(new Date());
+
   const validationSchema = Yup.object().shape({
-    dividendPerShare: Yup.number()
-      .required('Price is required')
-      .typeError('Price must be a number')
-      .positive('Price must be greater than zero'),
+    currencyCode: Yup.string().required().default('USD'),
+    name: Yup.string().required('Name is required'),
     amount: Yup.number()
       .required('Amount is required')
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
-    inputCurrency: Yup.string().required().default('USD'),
+    description: Yup.string(),
   });
-  const currencyList = getSupportedCurrencyList();
 
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, reset, handleSubmit, formState, getValues, setError } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
+  const currencyList = getSupportedCurrencyList();
+
   const handleDateChange = (newValue: Date | null) => {
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    handleFormSubmit(data);
+    handleFormSubmit({
+      inputDay: date,
+      currencyCode: data.currencyCode,
+      amount: data.amount,
+      name: data.name,
+      description: data.description,
+    });
+    
   };
 
   return (
@@ -91,84 +97,78 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
           },
         }}
       >
-        <TextField
-          type="number"
-          fullWidth
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-buy-price"
-          label={'*Purchase Price'}
-          {...register('purchasePrice')}
-          variant="outlined"
-          error={typeof errors.purchasePrice?.message !== 'undefined'}
-          helperText={errors.purchasePrice?.message}
-        ></TextField>
-        <TextField
-          type="number"
-          fullWidth
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-amount"
-          label={'*Amount'}
-          {...register('amount')}
-          variant="outlined"
-          error={typeof errors.amount?.message !== 'undefined'}
-          helperText={errors.amount?.message}
-        ></TextField>
-        <Grid container spacing={isXs ? 1 : 2}>
-          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
-            <FormControl fullWidth>
-              <InputLabel id="currency-list">Currency</InputLabel>
-              <Select
-                variant="outlined"
-                labelId="currency-list"
-                id="currency-list-select"
-                label="*Currency"
-                value="USD"
-                {...register('inputCurrency')}
-              >
-                {currencyList.map((item, index) => {
-                  return (
-                    <MenuItem key={item.code} value={item.code}>
-                      {item.code} - {item.name}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
+        <Grid container spacing="2">
+          <TextField
+            type="text"
+            fullWidth
+            sx={{ mt: 1, display: 'block' }}
+            id="outlined-cash-name"
+            label={'*Name'}
+            {...register('name')}
+            variant="outlined"
+            error={typeof errors.name?.message !== 'undefined'}
+            helperText={errors.name?.message}
+          ></TextField>
+          <TextField
+            type="number"
+            fullWidth
+            sx={{ mt: 1, display: 'block' }}
+            id="outlined-cash-amount"
+            label={'*Amount'}
+            {...register('amount')}
+            variant="outlined"
+            error={typeof errors.amount?.message !== 'undefined'}
+            helperText={errors.amount?.message}
+          ></TextField>
+          <Grid container spacing={isXs ? 1 : 2}>
+            <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+              <FormControl fullWidth>
+                <InputLabel id="currency-list">Currency</InputLabel>
+                <Select
+                  variant="outlined"
+                  labelId="currency-list"
+                  id="cash-currency-list-select"
+                  label="*Currency"
+                  defaultValue="USD"
+                  {...register('currencyCode')}
+                >
+                  {currencyList.map((item, index) => {
+                    return (
+                      <MenuItem key={item.code} value={item.code}>
+                        {item.code} - {item.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DesktopDatePicker
+                  label="*Input day"
+                  inputFormat="dd/MM/yyyy"
+                  value={date}
+                  onChange={handleDateChange}
+                  renderInput={(params) => (
+                    <TextField sx={{ width: '100%' }} {...params} />
+                  )}
+                />
+              </LocalizationProvider>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DesktopDatePicker
-                label="*Input day"
-                inputFormat="dd/MM/yyyy"
-                value={date}
-                onChange={handleDateChange}
-                renderInput={(params) => (
-                  <TextField sx={{ width: '100%' }} {...params} />
-                )}
-              />
-            </LocalizationProvider>
-          </Grid>
+
+          <TextField
+            type="text"
+            fullWidth
+            sx={{ my: 1, display: 'block' }}
+            id="outlined-cash-description"
+            label={'Description'}
+            {...register('description')}
+            variant="outlined"
+            error={typeof errors.description?.message !== 'undefined'}
+            helperText={errors.description?.message}
+          ></TextField>
         </Grid>
-        <TextField
-          type="number"
-          fullWidth
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-broker-fee"
-          label={'Fee'}
-          {...register('brokerFee')}
-          variant="outlined"
-        ></TextField>
-        <TextField
-          type="text"
-          fullWidth
-          sx={{ my: 1, display: 'block' }}
-          id="outlined-note"
-          label={'Note'}
-          {...register('note')}
-          variant="outlined"
-          error={typeof errors.note?.message !== 'undefined'}
-          helperText={errors.note?.message}
-        ></TextField>
       </Box>
       <Box
         sx={{
@@ -182,7 +182,7 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
       >
         <Button
           type="submit"
-          form="bank-cash-form"
+          form="buy-cash-form"
           variant="contained"
           sx={{
             bg: 'appColor.theme',

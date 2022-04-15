@@ -102,14 +102,14 @@ export const AddNewAssetsModal = observer(() => {
     switch (params.selectedType) {
       case 'cryptoCurrency':
         // const assetId = params.assetId;
-        setCurrent(<AddNewCryptoForm openPreviousForm={openPreviousForm} />);
+        setCurrent(<AddNewCryptoForm openPreviousForm={openPreviousForm} handleClose={handleClose} />);
         break;
       case 'stocks':
         // const assetId = params.assetId;
-        setCurrent(<AddNewStockForm openPreviousForm={openPreviousForm} />);
+        setCurrent(<AddNewStockForm openPreviousForm={openPreviousForm} handleClose={handleClose}/>);
         break;
       case 'cash':
-        setCurrent(<AddNewCashForm openPreviousForm={openPreviousForm} />);
+        setCurrent(<AddNewCashForm openPreviousForm={openPreviousForm} handleClose={handleClose}/>);
         break;
       case 'realEstate':
         setCurrent(

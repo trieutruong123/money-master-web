@@ -3,24 +3,30 @@ import {
   PortfolioAllocation,
   RealEstateItem,
   BankSavingItem,
+  CashItem,
 } from 'shared/models';
 import { coinGeckoService, httpService, finhubService } from 'services';
 import { portfolioData } from './portfolio-data';
 import { httpError } from 'shared/helpers';
-import { SearchingDataItem } from 'shared/types';
-
+import {
+  SearchingDataItem,
+  NewBanksSavingAsset,
+  NewRealEstateAsset,
+  NewCashAsset,
+} from 'shared/types';
 class PortfolioDetailStore {
   portfolioId: string = '';
   portfolioAllocationData: Array<PortfolioAllocation> = [];
   stockDetail: Array<Object> | undefined = undefined;
-  cryptoDetail: Array<any> = [];
-  cashDetail: Array<Object> | undefined = undefined;
+  cryptoDetail: Array<Object> = [];
+  cashDetail: Array<CashItem> | undefined = undefined;
   realEstateDetail: Array<RealEstateItem> | undefined = undefined;
   bankingDetail: Array<BankSavingItem> | undefined = undefined;
   portfolioValue: number = 0;
   todaysChange: number = 0;
   isOpenAddNewAssetModal: boolean = false;
   currencyCode: string = '';
+
   constructor() {
     makeAutoObservable(this, {
       portfolioId: observable,
@@ -61,7 +67,6 @@ class PortfolioDetailStore {
     this.todaysChange = portfolioData.todaysChange;
     const portfolioDetail = portfolioData.portfolioData;
     this.stockDetail = portfolioDetail.stocks;
-    this.cashDetail = portfolioDetail.cash;
     this.cryptoDetail = portfolioDetail.crypto;
     return true;
   }
@@ -134,7 +139,17 @@ class PortfolioDetailStore {
     }
   }
 
-  async addNewRealEstate(params: any) {
+  async fetchCash() {
+    const url = `/portfolio/${this.portfolioId}/cash`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      this.cashDetail = res.data;
+    } else {
+      this.cashDetail = undefined;
+    }
+  }
+
+  async addNewRealEstate(params: NewRealEstateAsset) {
     const url = `/portfolio/${this.portfolioId}/realEstate`;
     const res: { isError: boolean; data: any } = await httpService.post(url, {
       name: params.name,
@@ -151,7 +166,7 @@ class PortfolioDetailStore {
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
-  async addNewBankSaving(params: any) {
+  async addNewBankSaving(params: NewBanksSavingAsset) {
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.post(url, {
       name: params.name,
@@ -190,6 +205,15 @@ class PortfolioDetailStore {
     );
     if (!res.isError) {
       await this.fetchBankSaving();
+      return { isError: false, data: httpError.handleSuccessMessage('add') };
+    } else return { isError: true, data: httpError.handleErrorCode(res) };
+  }
+
+  async addNewCash(params: NewCashAsset) {
+    const url = `/portfolio/${this.portfolioId}/cash`;
+    const res: { isError: boolean; data: any } = await httpService.post(url, params);
+    if (!res.isError) {
+      await this.fetchCash();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }

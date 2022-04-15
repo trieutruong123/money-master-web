@@ -68,6 +68,17 @@ export class CryptoItem {
   currentAmountInCurrency: number = 0;
 }
 
+export class CashItem {
+  id:number = 0;
+  amount:number = 0;
+  currencyCode:string = "";
+  name:string = "";
+  inputDay:string = "";
+  lastChanged:string = "";
+  portfolioId:number = 0;
+  description:string = "";
+}
+
 export class SearchingStockItem {
   description: string = '';
   displaySymbol: string = '';

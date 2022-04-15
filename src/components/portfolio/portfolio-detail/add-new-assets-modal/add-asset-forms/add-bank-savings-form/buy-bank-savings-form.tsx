@@ -27,7 +27,7 @@ type FormValues = {
   inputCurrency: string;
   description?: string;
   bankCode?: string;
-  brokerFee?:number,
+  brokerFee?: number;
   brokerFeeInPercent?: number;
   brokerFeeForSecurity?: number;
   incomeTax?: number;
@@ -45,9 +45,9 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     inputMoneyAmount: Yup.number()
-      .required('Price is required')
-      .typeError('Price must be a number')
-      .positive('Price must be greater than zero'),
+      .required('Input money is required')
+      .typeError('Input money must be a number')
+      .positive('Input money must be greater than zero'),
     interestRate: Yup.number()
       .required('Interest rate is required')
       .typeError('Interest rate must be a number')
@@ -113,7 +113,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
           type="text"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-buy-price"
+          id="outlined-bank-savings-name"
           label={'*Name'}
           {...register('name')}
           variant="outlined"
@@ -124,7 +124,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-broker-fee"
+          id="outlined-bank-saving-input-money"
           label={'*Input Money'}
           {...register('inputMoneyAmount')}
           variant="outlined"
@@ -135,7 +135,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-broker-fee"
+          id="outlined-bank-savings-interest-rate"
           label={'*Interest Rate'}
           {...register('interestRate')}
           variant="outlined"
@@ -146,7 +146,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-broker-fee"
+          id="outlined-bank-savings-term-range"
           label={'*Term Range (months)'}
           {...register('termRange')}
           variant="outlined"
@@ -160,9 +160,9 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
               <Select
                 variant="outlined"
                 labelId="currency-list"
-                id="currency-list-select"
+                id="bank-savings-currency-list-select"
                 label="*Currency"
-                value="USD"
+                defaultValue="USD"
                 {...register('inputCurrency')}
               >
                 {currencyList.map((item, index) => {
@@ -182,7 +182,9 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
                 inputFormat="dd/MM/yyyy"
                 value={date}
                 onChange={handleDateChange}
-                renderInput={(params) => <TextField sx={{ width: '100%' }} {...params} />}
+                renderInput={(params) => (
+                  <TextField sx={{ width: '100%' }} {...params} />
+                )}
               />
             </LocalizationProvider>
           </Grid>
@@ -192,14 +194,14 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
           type="text"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-amount"
+          id="outlined-bank-savings-bank-code"
           label={'Bank Code'}
           {...register('bankCode')}
           variant="outlined"
           error={typeof errors.bankCode?.message !== 'undefined'}
           helperText={errors.bankCode?.message}
         ></TextField>
-        <TextField
+        {/* <TextField
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
@@ -207,12 +209,12 @@ export const BuyBankSavingsForm = ({ handleFormSubmit }: IProps) => {
           label={'Fee'}
           {...register('brokerFee')}
           variant="outlined"
-        ></TextField>
+        ></TextField> */}
         <TextField
           type="text"
           fullWidth
           sx={{ my: 1, display: 'block' }}
-          id="outlined-note"
+          id="outlined-bank-savings-desciption"
           label={'Description'}
           {...register('description')}
           variant="outlined"

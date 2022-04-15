@@ -6,10 +6,11 @@ import { BuyStockForm } from './buy-stock-form';
 import { NewStockAsset } from 'shared/types';
 
 interface IProps {
+  handleClose: any;
   openPreviousForm: any;
 }
 
-export const AddNewStockForm = observer(({ openPreviousForm }: IProps) => {
+export const AddNewStockForm = observer(({handleClose, openPreviousForm }: IProps) => {
   const theme = useTheme();
 
   useEffect(() => {

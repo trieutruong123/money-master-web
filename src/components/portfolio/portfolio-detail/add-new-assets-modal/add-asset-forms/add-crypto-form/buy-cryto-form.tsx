@@ -20,37 +20,39 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getSupportedCurrencyList } from 'shared/helpers';
 
 type FormValues = {
+  name: string;
+  currentAmountHolding: number;
+  description: string;
   purchasePrice: number;
-  amount: number;
-  date: Date;
-  currency?: string;
-  note?: string;
+  currencyCode: string;
   brokerFeeInPercent?: number;
   brokerFee?: number;
   brokerFeeForSecurity?: number;
   incomeTax?: number;
-  inputCurrency: string;
 };
 
 interface IProps {
+  handleClose: any;
   handleFormSubmit: any;
 }
 
-export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
+export const BuyCryptoForm = ({ handleClose, handleFormSubmit }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
-    dividendPerShare: Yup.number()
-      .required('Price is required')
-      .typeError('Price must be a number')
-      .positive('Price must be greater than zero'),
+    name:Yup.string().required('Name is required'),
+    purchasePrice: Yup.number()
+      .required('Purchase price is required')
+      .typeError('Purchase price must be a number')
+      .positive('Purchase price must be greater than zero'),
     amount: Yup.number()
       .required('Amount is required')
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
-    inputCurrency: Yup.string().required().default('USD'),
+    currencyCode: Yup.string().required().default('USD'),
+    description:Yup.string(),
   });
   const currencyList = getSupportedCurrencyList();
 
@@ -63,7 +65,15 @@ export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    handleFormSubmit(data);
+    handleFormSubmit({
+      name:data.name,
+      inputDay:date,
+      currentAmountHolding:data.currentAmountHolding,
+      description:data.description,
+      purchasePrice:data.purchasePrice,
+      currencyCode:data.currencyCode,
+      cryptoCoinCode:"",
+    });
   };
 
   return (
@@ -93,10 +103,21 @@ export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
         }}
       >
         <TextField
-          type="number"
+          type="string"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-buy-price"
+          id="outlined-crypto-name"
+          label={'*Name'}
+          {...register('name')}
+          variant="outlined"
+          error={typeof errors.name?.message !== 'undefined'}
+          helperText={errors.name?.message}
+        ></TextField>
+        <TextField
+          type="string"
+          fullWidth
+          sx={{ mt: 1, display: 'block' }}
+          id="outlined-crypto-purchase-price"
           label={'*Purchase Price'}
           {...register('purchasePrice')}
           variant="outlined"
@@ -107,12 +128,12 @@ export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-amount"
-          label={'*Quantity'}
-          {...register('amount')}
+          id="outlined-crypto-current-amount-holding"
+          label={'*Amount'}
+          {...register('currentAmountHolding')}
           variant="outlined"
-          error={typeof errors.amount?.message !== 'undefined'}
-          helperText={errors.amount?.message}
+          error={typeof errors.currentAmountHolding?.message !== 'undefined'}
+          helperText={errors.currentAmountHolding?.message}
         ></TextField>
         <Grid container spacing={isXs ? 1 : 2}>
           <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
@@ -121,10 +142,10 @@ export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
               <Select
                 variant="outlined"
                 labelId="currency-list"
-                id="currency-list-select"
+                id="crypto-currency-list-select"
                 label="*Currency"
-                value="USD"
-                {...register('inputCurrency')}
+                defaultValue="USD"
+                {...register('currencyCode')}
               >
                 {currencyList.map((item, index) => {
                   return (
@@ -143,30 +164,32 @@ export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
                 inputFormat="dd/MM/yyyy"
                 value={date}
                 onChange={handleDateChange}
-                renderInput={(params) => <TextField sx={{ width: '100%' }} {...params} />}
+                renderInput={(params) => (
+                  <TextField sx={{ width: '100%' }} {...params} />
+                )}
               />
             </LocalizationProvider>
           </Grid>
         </Grid>
-        <TextField
+        {/* <TextField
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-broker-fee"
+          id="outlined-crypto-fee"
           label={'Fee'}
-          {...register('brokerFee')}
+          {...register('fee')}
           variant="outlined"
-        ></TextField>
+        ></TextField> */}
         <TextField
           type="text"
           fullWidth
           sx={{ my: 1, display: 'block' }}
-          id="outlined-note"
-          label={'Note'}
-          {...register('note')}
+          id="outlined-crypto-description"
+          label={'Description'}
+          {...register('description')}
           variant="outlined"
-          error={typeof errors.note?.message !== 'undefined'}
-          helperText={errors.note?.message}
+          error={typeof errors.description?.message !== 'undefined'}
+          helperText={errors.description?.message}
         ></TextField>{' '}
       </Box>
 

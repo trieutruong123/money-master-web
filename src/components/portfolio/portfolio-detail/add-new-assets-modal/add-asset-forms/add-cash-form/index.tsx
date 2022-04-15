@@ -3,12 +3,15 @@ import { Box, IconButton, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { BuyCashForm } from './buy-cash-form';
+import { NewCashAsset } from 'shared/types';
+import { portfolioDetailStore } from 'shared/store';
 
 interface IProps {
+  handleClose: any;
   openPreviousForm: any;
 }
 
-export const AddNewCashForm = observer(({ openPreviousForm }: IProps) => {
+export const AddNewCashForm = observer(({ handleClose,openPreviousForm }: IProps) => {
   const theme = useTheme();
 
   useEffect(() => {
@@ -22,7 +25,10 @@ export const AddNewCashForm = observer(({ openPreviousForm }: IProps) => {
 
   const portfolioName = 'demo portoflio';
 
-  const handleFormSubmit = async (data: any) => {};
+  const handleFormSubmit = async (data: NewCashAsset) => {
+    portfolioDetailStore.addNewCash(data);
+    handleClose();
+  };
 
   return (
     <div style={{ height: 'inherit' }}>

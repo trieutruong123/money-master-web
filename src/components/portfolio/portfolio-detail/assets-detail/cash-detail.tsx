@@ -18,6 +18,7 @@ import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getCurrencyByCode } from 'shared/helpers';
 import SettingsMenuButton from './settings-menu-button';
+import { CashItem } from 'shared/models';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -38,7 +39,7 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  cashDetail: Array<any> | undefined;
+  cashDetail: Array<CashItem> | undefined;
 }
 
 export const CashInvestments = ({ cashDetail }: IProps) => {
@@ -52,17 +53,17 @@ export const CashInvestments = ({ cashDetail }: IProps) => {
   const renderCurrencyName = (code: string) => {
     if (code) {
       return getCurrencyByCode(code)?.name;
-    } else return 'undefined';
+    } else return '';
   };
 
   const renderTotalCash = (num: number, code: string) => {
     return getCurrencyByCode(code)?.symbol.toString() + num.toString();
   };
 
-  const handleItemClick = (assetId: string) => {
+  const handleItemClick = (assetId: number) => {
     router.push(
-      `/portfolio/${portfolioId}/cash/${assetId.toUpperCase()}`,
-      `/portfolio/${portfolioId}/cash/${assetId.toUpperCase()}`,
+      `/portfolio/${portfolioId}/cash/${assetId.toString()}`,
+      `/portfolio/${portfolioId}/cash/${assetId.toString()}`,
       { locale: locale },
     );
   };
@@ -127,7 +128,7 @@ export const CashInvestments = ({ cashDetail }: IProps) => {
                       </Box>
                     </TableBodyCellSymbol>
                     <TableBodyCell onClick={() => handleItemClick(record.id)}>
-                      {renderTotalCash(record.total, record.currencyCode)}
+                      {renderTotalCash(record.amount, record.currencyCode)}
                     </TableBodyCell>
                     <TableBodyCell>
                       <SettingsMenuButton />

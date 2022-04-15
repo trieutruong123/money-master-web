@@ -43,12 +43,13 @@ export const SearchingAssetsForm = observer(
       () => {
         if (debouncedSearchTerm) {
           setIsSearching(true);
-          searchData(debouncedSearchTerm).then(
-            (results: Array<SearchingItemType> | any) => {
-              setIsSearching(false);
-              setSearchingData(results);
-            },
-          );
+          console.log('debouncedSearchTerm');
+          // searchData(debouncedSearchTerm).then(
+          //   (results: Array<SearchingItemType> | any) => {
+          //     setIsSearching(false);
+          //     setSearchingData(results);
+          //   },
+          // );
         } else {
           //setSearchingData(sampleData);
           setIsSearching(false);
@@ -159,6 +160,7 @@ export const SearchingAssetsForm = observer(
             }}
           >
             {searchingData.map((item: SearchingItemType) => {
+              console.log('searching data');
               return (
                 <ListItemButton
                   sx={{ pl: '1.4rem' }}

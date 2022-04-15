@@ -46,12 +46,12 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
     currency: Yup.string().required().default('USD'),
     name: Yup.string().required('Name is required'),
     purchasePrice: Yup.number()
-      .required('Price is required')
-      .typeError('Price must be a number')
-      .positive('Price must be greater than zero'),
+      .required('Purchase price is required')
+      .typeError('Purchase price must be a number')
+      .positive('Purchase price must be greater than zero'),
     currentPrice: Yup.number()
-      .required('Price is required')
-      .typeError('Price must be a number')
+      .required('Current price is required')
+      .typeError('Current price must be a number')
       .positive('Price must be greater than zero'),
   });
 
@@ -108,7 +108,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
             type="text"
             fullWidth
             sx={{  mt: 1, display: 'block' }}
-            id="outlined-name"
+            id="outlined-real-estate-name"
             label={'*Name'}
             {...register('name')}
             variant="outlined"
@@ -119,7 +119,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
             type="number"
             fullWidth
             sx={{ mt: 1, display: 'block' }}
-            id="outlined-purchase-price"
+            id="outlined-real-estate-purchase-price"
             label={'*Purchase Price'}
             {...register('purchasePrice')}
             variant="outlined"
@@ -130,7 +130,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
             type="number"
             fullWidth
             sx={{  mt: 1, display: 'block' }}
-            id="outlined-current-price"
+            id="outlined-real-estate-current-price"
             label={'*Current Price'}
             {...register('currentPrice')}
             variant="outlined"
@@ -145,9 +145,9 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
                 <Select
                   variant="outlined"
                   labelId="currency-list"
-                  id="currency-list-select"
-                  label="Currency"
-                  value="USD"
+                  id="real-estate-currency-list-select"
+                  label="*Currency"
+                  defaultValue="USD"
                   {...register('currency')}
                 >
                   {currencyList.map((item, index) => {
@@ -179,7 +179,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
             type="text"
             fullWidth
             sx={{ my: 1, display: 'block' }}
-            id="outlined-description"
+            id="outlined-real-estate-description"
             label={'Description'}
             {...register('description')}
             variant="outlined"

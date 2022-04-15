@@ -20,16 +20,16 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getSupportedCurrencyList } from 'shared/helpers';
 
 type FormValues = {
+  name: string;
   purchasePrice: number;
-  amount: number;
+  currentAmountHolding: number;
   date: Date;
-  currency?: string;
-  note?: string;
+  currencyCode: string;
+  description: string;
   brokerFeeInPercent?: number;
   brokerFee?: number;
   brokerFeeForSecurity?: number;
   incomeTax?: number;
-  inputCurrency: string;
 };
 
 interface IProps {
@@ -42,15 +42,17 @@ export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
 
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
-    dividendPerShare: Yup.number()
+    name: Yup.string().required('Name is required'),
+    purchasePrice: Yup.number()
       .required('Price is required')
       .typeError('Price must be a number')
       .positive('Price must be greater than zero'),
-    amount: Yup.number()
-      .required('Amount is required')
-      .typeError('Amount must be a number')
-      .positive('Amount must be greater than zero'),
-    inputCurrency: Yup.string().required().default('USD'),
+    currencyAmountHolding: Yup.number()
+      .required('Shares is required')
+      .typeError('Shares must be a number')
+      .positive('Shares must be greater than zero'),
+    description: Yup.string(),
+    currencycode: Yup.string().required().default('USD'),
   });
   const currencyList = getSupportedCurrencyList();
 
@@ -63,7 +65,16 @@ export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    handleFormSubmit(data);
+    handleFormSubmit({
+      name: data.name,
+      inputDay: date,
+      description: data.description,
+      currentAmountHolding: data.currentAmountHolding,
+      stockCode: '',
+      marketCode: '',
+      purchasePrice: data.purchasePrice,
+      currenyCode: data.currencyCode,
+    });
   };
 
   return (
@@ -93,10 +104,21 @@ export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
         }}
       >
         <TextField
+          type="string"
+          fullWidth
+          sx={{ mt: 1, display: 'block' }}
+          id="outlined-stock-name"
+          label={'*Name'}
+          {...register('name')}
+          variant="outlined"
+          error={typeof errors.name?.message !== 'undefined'}
+          helperText={errors.name?.message}
+        ></TextField>
+        <TextField
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-buy-price"
+          id="outlined-purchase-price"
           label={'*Purchase Price'}
           {...register('purchasePrice')}
           variant="outlined"
@@ -107,12 +129,12 @@ export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-amount"
+          id="outlined-stock-current-amount-holding"
           label={'*Shares'}
-          {...register('amount')}
+          {...register('currentAmountHolding')}
           variant="outlined"
-          error={typeof errors.amount?.message !== 'undefined'}
-          helperText={errors.amount?.message}
+          error={typeof errors.currentAmountHolding?.message !== 'undefined'}
+          helperText={errors.currentAmountHolding?.message}
         ></TextField>
         <Grid container spacing={isXs ? 1 : 2}>
           <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
@@ -121,10 +143,10 @@ export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
               <Select
                 variant="outlined"
                 labelId="currency-list"
-                id="currency-list-select"
+                id="stock-currency-list-select"
                 label="*Currency"
-                value="USD"
-                {...register('inputCurrency')}
+                defaultValue="USD"
+                {...register('currencyCode')}
               >
                 {currencyList.map((item, index) => {
                   return (
@@ -143,12 +165,14 @@ export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
                 inputFormat="dd/MM/yyyy"
                 value={date}
                 onChange={handleDateChange}
-                renderInput={(params) => <TextField sx={{ width: '100%' }} {...params} />}
+                renderInput={(params) => (
+                  <TextField sx={{ width: '100%' }} {...params} />
+                )}
               />
             </LocalizationProvider>
           </Grid>
         </Grid>
-        <TextField
+        {/* <TextField
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
@@ -156,17 +180,17 @@ export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
           label={'Fee'}
           {...register('brokerFee')}
           variant="outlined"
-        ></TextField>
+        ></TextField> */}
         <TextField
           type="text"
           fullWidth
           sx={{ my: 1, display: 'block' }}
-          id="outlined-note"
-          label={'Note'}
-          {...register('note')}
+          id="outlined-stock-description"
+          label={'Description'}
+          {...register('description')}
           variant="outlined"
-          error={typeof errors.note?.message !== 'undefined'}
-          helperText={errors.note?.message}
+          error={typeof errors.description?.message !== 'undefined'}
+          helperText={errors.description?.message}
         ></TextField>{' '}
       </Box>
 

@@ -50,6 +50,14 @@ export type NewCryptoCurrencyAsset = {
   cryptoCoinCode: string;
 };
 
+export type NewCashAsset = {
+  name: string;
+  amount: string;
+  description: string;
+  currencyCode: number;
+  inputDay: string;
+};
+
 export type NewPortfolioCustomAsset = {
   name: string;
   inputDay: string;
@@ -79,12 +87,12 @@ export type UpdatedBankSavingItem = {
   isGoingToReinState: boolean;
   description: string;
   interestRate: number;
-  changeInterestRateType:string,
+  changeInterestRateType: string;
   termRange: number;
-}
+};
 
 export type SearchingDataItem = {
-  id:string,
-  symbol:string,
-  name:string,
-}
+  id: string;
+  symbol: string;
+  name: string;
+};

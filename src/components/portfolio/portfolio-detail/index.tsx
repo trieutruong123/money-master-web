@@ -27,6 +27,7 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
       await portfolioDetailStore.fetchPortfolioDetailData();
       await portfolioDetailStore.fetchRealEstate();
       await portfolioDetailStore.fetchBankSaving();
+      await portfolioDetailStore.fetchCash();
       await portfolioDetailStore.fetchCoinData();
     };
     fetchData();
