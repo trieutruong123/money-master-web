@@ -96,3 +96,10 @@ export type SearchingDataItem = {
   symbol: string;
   name: string;
 };
+
+
+export type SankeyDataLink =  {
+  source: string;
+  target: string;
+  value: string;
+}
