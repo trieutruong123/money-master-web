@@ -1,3 +1,4 @@
+import { NewStockAsset, NewCryptoCurrencyAsset } from './../../types/portfolio-detail.model';
 import { action, makeAutoObservable, observable } from "mobx";
 import {
   PortfolioAllocation,
@@ -189,7 +190,7 @@ class PortfolioDetailStore {
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
-  async addNewCryptoCurrency(params: any) {
+  async addNewCryptoCurrency(params: NewCryptoCurrencyAsset) {
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
@@ -201,7 +202,7 @@ class PortfolioDetailStore {
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
-  async addNewStock(params: any) {
+  async addNewStock(params: NewStockAsset) {
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
@@ -256,7 +257,9 @@ class PortfolioDetailStore {
       return {
         source: `${link.sourceType}@@${link.sourceName}`,
         target: `${link.targetType}@@${link.targetName}`,
-        value: link.amount.toString(),
+        //error: type 'string' is incompatible with 'string',
+        // value: link.amount.toString(),
+        value:link.amount,
       };
     });    
   }

@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { Box, IconButton, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { BuyStockForm } from './buy-stock-form';
 import { NewStockAsset } from 'shared/types';
+import { portfolioDetailStore } from 'shared/store';
+import { BuyStockForm } from './buy-stock-form';
 
 interface IProps {
   handleClose: any;
@@ -25,7 +26,10 @@ export const AddNewStockForm = observer(({handleClose, openPreviousForm }: IProp
   const portfolioName = 'demo portoflio';
   const assetName = 'Ethereum';
 
-  const handleFormSubmit = async (data: NewStockAsset) => {};
+  const handleFormSubmit = async (data: NewStockAsset) => {
+    //portfolioDetailStore.addNewStock(data);
+    handleClose();
+  };
 
   return (
     <div style={{ height: 'inherit' }}>

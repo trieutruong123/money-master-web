@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useMeasure } from "react-use";
+import React, { useEffect, useMemo, useState } from 'react';
+import { useMeasure } from 'react-use';
 
-import { SankeyRects } from "./sankey-rect";
-import { SankeyLinks } from "./sankey-link";
-import { SankeyLabels } from "./sankey-label";
+import { SankeyRects } from './sankey-rect';
+import { SankeyLinks } from './sankey-link';
+import { SankeyLabels } from './sankey-label';
 
-import { observer } from "mobx-react-lite";
-import { portfolioDetailStore } from "shared/store";
+import { observer } from 'mobx-react-lite';
+import { portfolioDetailStore } from 'shared/store';
 
 export interface SankeyDataLink {
   source: string;
@@ -29,14 +29,14 @@ interface SankeyChartProps {
   height: number;
 }
 
-import { sankey, SankeyLayout } from "d3-sankey";
-import { scaleOrdinal, scaleSequential} from "d3-scale";
-import { schemeCategory10,interpolatePiYG } from "d3-scale-chromatic";
-import { format } from "d3-format";
+import { sankey, SankeyLayout } from 'd3-sankey';
+import { scaleOrdinal, scaleSequential } from 'd3-scale';
+import { schemeCategory10, interpolatePiYG } from 'd3-scale-chromatic';
+import { format } from 'd3-format';
 
-
-import { RectNode } from "./sankey-rect";
-import { PathLink } from "./sankey-link";
+import { RectNode } from './sankey-rect';
+import { PathLink } from './sankey-link';
+import { instanceOf } from 'prop-types';
 
 const d3Color = scaleOrdinal(schemeCategory10);
 
@@ -45,15 +45,15 @@ export const colorRectFunc = (dataPoint: RectNode) =>
 
 export const colorLinkFunc = (dataPoint: PathLink) => {
   const name =
-    typeof dataPoint.target === "object"
-      ? dataPoint.target.name
+    typeof dataPoint.target === 'object' &&
+    dataPoint.target['name'] !== undefined
+      ? dataPoint.target['name']
       : dataPoint.target;
 
   return d3Color(name);
-  
 };
 
-const d3format = format(",.0f");
+const d3format = format(',.0f');
 
 export const formatRectTitleFunc = (dataPoint: RectNode) => {
   if (!dataPoint.value) return dataPoint.name;
@@ -64,13 +64,20 @@ export const formatRectTitleFunc = (dataPoint: RectNode) => {
 export const formatLinkTitleFunc = ({
   source,
   target,
-  value
-}: PathLink): any => {  
-  const sourceName = typeof source === "object" ? source.name : source;
-  const targetName = typeof target === "object" ? target.name : target;
+  value,
+}: PathLink): any => {
+  const sourceName =
+    typeof source === 'object' && source['name'] !== undefined
+      ? source['name']
+      : source;
+  const targetName =
+    typeof target === 'object' && target['name'] !== undefined
+      ? target['name']
+      : target;
 
-  
-   return `${sourceName.split('@@')[1]} → ${targetName.split('@@')[1]}\n${d3format(value)}`;
+  return `${sourceName.split('@@')[1]} → ${
+    targetName.split('@@')[1]
+  }\n${d3format(value)}`;
 };
 
 interface MakeSankeyInput {
@@ -80,7 +87,7 @@ interface MakeSankeyInput {
 
 export const makeSankeyFunc = ({
   width,
-  height
+  height,
 }: MakeSankeyInput): SankeyLayout<
   SankeyData,
   SankeyDataNode,
@@ -92,18 +99,25 @@ export const makeSankeyFunc = ({
     .nodePadding(10)
     .extent([
       [1, 5],
-      [width - 1, height - 5]
+      [width - 1, height - 5],
     ]);
 
   return sankeyGen;
 };
 
-
-const isFullLink = (SankeyDataLink: SankeyDataLink): SankeyDataLink is Required<SankeyDataLink> => {
-  return !!(SankeyDataLink.source && SankeyDataLink.target && SankeyDataLink.value);
+const isFullLink = (
+  SankeyDataLink: SankeyDataLink,
+): SankeyDataLink is Required<SankeyDataLink> => {
+  return !!(
+    SankeyDataLink.source &&
+    SankeyDataLink.target &&
+    SankeyDataLink.value
+  );
 };
 
-const formatData = async (SankeyDataLinks:SankeyDataLink[]): Promise<SankeyData> => {
+const formatData = async (
+  SankeyDataLinks: SankeyDataLink[],
+): Promise<SankeyData> => {
   //format of input:
   // {
   //   source: <category>@@<name>
@@ -111,10 +125,12 @@ const formatData = async (SankeyDataLinks:SankeyDataLink[]): Promise<SankeyData>
   //   value: number
   // }
 
-  const links: SankeyDataLink[] = SankeyDataLinks.filter(isFullLink).map((link) => ({
-    ...link,
-    value: +link.value
-  }));
+  const links: SankeyDataLink[] = SankeyDataLinks.filter(isFullLink).map(
+    (link) => ({
+      ...link,
+      value: +link.value,
+    }),
+  );
 
   function* picker(): Generator<string> {
     for (const { source, target } of links) {
@@ -126,7 +142,7 @@ const formatData = async (SankeyDataLinks:SankeyDataLink[]): Promise<SankeyData>
   const uniqueNodeNames = new Set<string>(picker());
 
   const nodes = Array.from(uniqueNodeNames, (name) => ({
-    name:name,
+    name: name,
     category: name.split('@@')[0],
   }));
 
@@ -136,7 +152,6 @@ const formatData = async (SankeyDataLinks:SankeyDataLink[]): Promise<SankeyData>
 export const SankeyChart = ({
   width,
   height,
-
 }: SankeyChartProps): JSX.Element | null => {
   const [data, setData] = useState<SankeyData | null>(null);
 
@@ -150,7 +165,7 @@ export const SankeyChart = ({
         width,
         height,
       }),
-    [width, height]
+    [width, height],
   );
 
   const sankeyResult = useMemo(() => {
@@ -180,11 +195,11 @@ export const SankeyChart = ({
   );
 };
 
-interface ISankeyProps{
-  sankeyFlowData:SankeyDataLink[]
+interface ISankeyProps {
+  sankeyFlowData: SankeyDataLink[];
 }
 
-export const Sankey = observer((props:ISankeyProps): JSX.Element => {
+export const Sankey = observer((props: ISankeyProps): JSX.Element => {
   const [ref, measurements] = useMeasure<HTMLDivElement>();
   const { width } = measurements;
 

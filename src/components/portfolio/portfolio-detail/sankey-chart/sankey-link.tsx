@@ -52,9 +52,9 @@ export const SankeyLinks = ({
 
         const { source, target } = link;
         const key =
-          (typeof source === "object" ? source.name : source) +
+          (typeof source === 'object' && source['name'] !== undefined? source['name'] : source) +
           "--" +
-          (typeof target === "object" ? target.name : target);
+          (typeof target === 'object' && target['name'] !== undefined? target['name'] : target);
 
         return (
           <SankeyLink

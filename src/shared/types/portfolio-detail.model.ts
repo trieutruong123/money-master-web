@@ -101,5 +101,5 @@ export type SearchingDataItem = {
 export type SankeyDataLink =  {
   source: string;
   target: string;
-  value: string;
+  value: number;
 }

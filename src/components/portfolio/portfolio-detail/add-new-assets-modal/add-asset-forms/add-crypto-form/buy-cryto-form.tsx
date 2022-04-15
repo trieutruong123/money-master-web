@@ -32,11 +32,10 @@ type FormValues = {
 };
 
 interface IProps {
-  handleClose: any;
   handleFormSubmit: any;
 }
 
-export const BuyCryptoForm = ({ handleClose, handleFormSubmit }: IProps) => {
+export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 

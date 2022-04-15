@@ -1,28 +1,39 @@
-import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
-import { DashboardLayout } from "components";
-import {Sankey} from "components/portfolio/portfolio-detail/sankey-chart";
-import { useEffect } from "react";
-import { portfolioDetailStore } from "shared/store";
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import { DashboardLayout } from 'components';
+import { Sankey } from 'components/portfolio/portfolio-detail/sankey-chart';
+import { GetStaticProps, InferGetStaticPropsType } from 'next/types';
+import { useEffect } from 'react';
+import { portfolioDetailStore } from 'shared/store';
 
-const fetchData=async()=>{
-  await portfolioDetailStore.fetchSankeyFlowData();
-}
-
-const testSankey = (props: any) => {
-  useEffect(()=>{
+const TestSankey = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      await portfolioDetailStore.fetchSankeyFlowData();
+    };
     fetchData();
-  },[])
-  const sankeyFlowData=portfolioDetailStore.sankeyFlowData;
+  }, []);
+
+  const { locale, locales, defaultLocale } = props.context;
+
+  const sankeyFlowData = portfolioDetailStore.sankeyFlowData;
   return (
-    <div style={{margin:'15px'}}>
+    <div style={{ margin: '15px' }}>
       <h1>TEST SANKEY PAGE</h1>
-      <Sankey sankeyFlowData={sankeyFlowData}/>
+      <Sankey sankeyFlowData={sankeyFlowData} />
     </div>
   );
 };
 
-testSankey.getLayout = (page: ReactJSXElement) => (
+TestSankey.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
 
-export default testSankey;
+export const getStaticProps: GetStaticProps = async (context) => {
+  return {
+    props: {
+      context,
+    },
+  };
+};
+
+export default TestSankey;
