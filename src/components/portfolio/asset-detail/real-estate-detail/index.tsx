@@ -16,9 +16,12 @@ export const RealEstateDetail = observer(({ portfolioId, assetId }: IProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    realEstateDetailStore.setAssetId(assetId);
-    realEstateDetailStore.setPortfolioId(portfolioId);
-    realEstateDetailStore.fetchRealEstateDetail({ portfolioId, assetId });
+    const fetchData = async () => {
+      realEstateDetailStore.setAssetId(assetId);
+      realEstateDetailStore.setPortfolioId(portfolioId);
+      realEstateDetailStore.fetchRealEstateDetail({ portfolioId, assetId });
+    };
+    fetchData();
   }, []);
 
   const { assetDetail } = realEstateDetailStore;

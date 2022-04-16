@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import {GetStaticProps, InferGetStaticPropsType} from 'next';
 import { content } from 'i18n';
-import { DefaultNavbar, DefaultLayout, RegisterForm } from 'components';
+import { DefaultLayout, RegisterForm } from 'components';
 
 const Register = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale, locales, defaultLocale } = props.context;
@@ -15,7 +15,6 @@ const Register = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <title>{registerPage.register} | Money Master</title>
       </Head>
       <>
-        <DefaultNavbar content = {landingPage.navbar}/>
         <RegisterForm content = {registerPage}/>
       </>
     </>

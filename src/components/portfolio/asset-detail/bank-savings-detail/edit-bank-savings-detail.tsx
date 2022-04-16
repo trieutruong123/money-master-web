@@ -23,11 +23,12 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
+import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { colorScheme } from 'utils';
 import { BankSavingItem } from 'shared/models';
-import { useSnackbar } from 'notistack';
+import { rootStore } from 'shared/store';
 
 interface IProps {
   assetDetail: BankSavingItem | undefined;
@@ -62,7 +63,6 @@ export const EditBankSavingsDetail = ({
   const [isEditing, setEdit] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { enqueueSnackbar } = useSnackbar();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -106,10 +106,10 @@ export const EditBankSavingsDetail = ({
       description: data.description,
     });
     if (res.isError) {
-      enqueueSnackbar(res.data.en, { variant: 'error' });
+      toast.error(res.data.en, {onClose: ()=>{rootStore.deleteNotification()}});
     } else {
       setEdit(false);
-      enqueueSnackbar(res.data.en, { variant: 'success' });
+      toast.success(res.data.en, {onClose: ()=>{rootStore.deleteNotification()}});
     }
   }, []);
 
@@ -313,7 +313,7 @@ export const EditBankSavingsDetail = ({
                   ml: 'auto',
                   mr: '2rem',
                   px: '1.5rem',
-                  
+
                   fontSize: '1.4rem',
                   height: '3rem',
                   display: isEditing ? 'none' : 'visible',
@@ -334,7 +334,7 @@ export const EditBankSavingsDetail = ({
                   ml: 'auto',
                   mr: '2rem',
                   px: '1.5rem',
-                 
+
                   fontSize: '1.4rem',
                   height: '3rem',
                   display: isEditing ? 'visible' : 'none',

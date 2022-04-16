@@ -10,7 +10,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { Link } from 'components';
+import { Link } from 'shared/components';
 import { userService } from 'services';
 
 export default function AccountIconPopup() {

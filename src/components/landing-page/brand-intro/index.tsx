@@ -8,7 +8,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { colorScheme } from 'utils/color-scheme';
-import { Link } from 'components';
+import { Link } from 'shared/components';
 
 interface IProps {
   content: any;

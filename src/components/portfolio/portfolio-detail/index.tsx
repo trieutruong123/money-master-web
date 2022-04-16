@@ -10,11 +10,9 @@ import {
 import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { AssetAllocation } from './asset-allocation';
 import { AssetsDetail } from './assets-detail';
 import { AddNewAssetsModal } from './add-new-assets-modal';
-import { portfolioDetailStore } from 'shared/store';
-import { useSnackbar } from 'notistack';
+import { portfolioDetailStore, rootStore } from 'shared/store';
 
 interface IProps {
   portfolioId: string;
@@ -22,6 +20,7 @@ interface IProps {
 
 export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
   useEffect(() => {
+    rootStore.startLoading();
     const fetchData = async () => {
       portfolioDetailStore.setPortfolioId(portfolioId);
       await portfolioDetailStore.fetchPortfolioDetailData();
@@ -31,8 +30,8 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
       await portfolioDetailStore.fetchCoinData();
     };
     fetchData();
+    rootStore.stopLoading();
   }, []);
-  const { enqueueSnackbar } = useSnackbar();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
@@ -63,7 +62,7 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
       >
         <Box sx={{ overflow: 'auto' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-            <Grid container  display="flex" justifyContent="center">
+            <Grid container display="flex" justifyContent="center">
               <AssetsDetail
                 cryptoDetail={cryptoDetail}
                 cashDetail={cashDetail}
@@ -79,15 +78,6 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
       <Tooltip title="Add new assets">
         <IconButton
           onClick={() => {
-            // enqueueSnackbar('Notistack is great with mobx!', {
-            //   variant: 'info',
-            //   anchorOrigin: {
-            //     vertical: 'top',
-            //     horizontal: 'right',
-            //   },
-            //   autoHideDuration: 3000,
-
-            // });
             portfolioDetailStore.setOpenAddNewAssetModal(
               !isOpenAddNewAssetModal,
             );

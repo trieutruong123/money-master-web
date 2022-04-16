@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PerfrectScrollbar from 'react-perfect-scrollbar';
 import { BuyCryptoForm } from './buy-cryto-form';
 import { SellCryptoForm } from './sell-crypto-form';
 

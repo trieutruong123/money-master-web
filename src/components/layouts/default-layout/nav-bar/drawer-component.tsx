@@ -4,7 +4,7 @@ import {
   Box,
   Divider,
   IconButton,
-  SwipeableDrawer,
+  Drawer,
   ListItemButton,
   List,
   ListItem,
@@ -15,7 +15,7 @@ import {
 import { useRouter } from 'next/router';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Link } from 'components';
+import { Link } from 'shared/components';
 import { MultipleLanguage } from 'shared/components';
 
 interface IProps {
@@ -71,12 +71,12 @@ export default function DrawerComponent({
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
     >
-      <SwipeableDrawer
+      <Drawer
         anchor={anchor}
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
-        onOpen={toggleDrawer(anchor, true)}
-        sx={{ width: 200 }}
+        onClick={toggleDrawer(anchor, true)}
+        sx={{ width: 280 }}
       >
         <DrawerHeader sx={{ mt: '4rem' }}>
           <IconButton onClick={() => setOpenDrawer(false)}>
@@ -157,7 +157,7 @@ export default function DrawerComponent({
             </ListItemButton>
           </ListItem>
         </List>
-      </SwipeableDrawer>
+      </Drawer>
     </Box>
   );
 }

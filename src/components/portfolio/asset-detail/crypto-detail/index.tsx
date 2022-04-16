@@ -23,20 +23,22 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   useEffect(() => {
-    cryptoVolatilityDetailStore.setCoinId(coinCode);
-    cryptoVolatilityDetailStore.fetchData({code:coinCode});
-    cryptoVolatilityDetailStore.fetchHistoricalMarketData();
+    const fetchData = async () => {
+      cryptoVolatilityDetailStore.setCoinId(coinCode);
+      cryptoVolatilityDetailStore.fetchData({ code: coinCode });
+      cryptoVolatilityDetailStore.fetchHistoricalMarketData();
+    };
+    fetchData();
   }, [coinCode]);
-  
-  const {
-    isOpenAddNewTransactionModal,
-    coinMarketData,
-  } = cryptoVolatilityDetailStore;
+
+  const { isOpenAddNewTransactionModal, coinMarketData } =
+    cryptoVolatilityDetailStore;
   const coinDetail = cryptoVolatilityDetailStore.getAssetDetail;
-  const transactionHistoryData = cryptoVolatilityDetailStore.getTransactionHistoryData;
+  const transactionHistoryData =
+    cryptoVolatilityDetailStore.getTransactionHistoryData;
   const historicalMarketData =
     cryptoVolatilityDetailStore.historicalMarketData.slice();
-  
+
   const handleTimeIntervalChanged = useCallback((interval: number) => {
     cryptoVolatilityDetailStore.setTimeInterval(interval);
     cryptoVolatilityDetailStore.fetchHistoricalMarketData();
@@ -63,9 +65,7 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
             <Grid container display="flex" justifyContent="center">
               {coinDetail !== undefined && coinMarketData !== undefined ? (
-                <IntroSection
-                  assetDetail={coinDetail}
-                />
+                <IntroSection assetDetail={coinDetail} />
               ) : (
                 <></>
               )}

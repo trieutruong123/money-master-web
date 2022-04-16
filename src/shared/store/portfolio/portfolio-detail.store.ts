@@ -1,12 +1,20 @@
-import { NewStockAsset, NewCryptoCurrencyAsset } from './../../types/portfolio-detail.model';
-import { action, makeAutoObservable, observable } from "mobx";
+import {
+  NewStockAsset,
+  NewCryptoCurrencyAsset,
+} from '../../types/portfolio-detail.type';
+import { action, makeAutoObservable, observable } from 'mobx';
 import {
   PortfolioAllocation,
   RealEstateItem,
   BankSavingItem,
   CashItem,
 } from 'shared/models';
-import { coinGeckoService, httpService, finhubService,portfolioService } from 'services';
+import {
+  coinGeckoService,
+  httpService,
+  finhubService,
+  portfolioService,
+} from 'services';
 import { httpError } from 'shared/helpers';
 import {
   SearchingDataItem,
@@ -14,11 +22,12 @@ import {
   NewRealEstateAsset,
   NewCashAsset,
 } from 'shared/types';
-import { SankeyDataLink } from "shared/types";
+import { SankeyDataLink } from 'shared/types';
 import { portfolioData } from './portfolio-data';
+import { rootStore } from '../root.store';
 
 class PortfolioDetailStore {
-  portfolioId: string = "";
+  portfolioId: string = '';
   portfolioAllocationData: Array<PortfolioAllocation> = [];
   stockDetail: Array<Object> | undefined = undefined;
   cryptoDetail: Array<Object> = [];
@@ -28,7 +37,7 @@ class PortfolioDetailStore {
   portfolioValue: number = 0;
   todaysChange: number = 0;
   isOpenAddNewAssetModal: boolean = false;
-  currencyCode: string = "";
+  currencyCode: string = '';
   sankeyFlowData: Array<SankeyDataLink> = [];
   constructor() {
     makeAutoObservable(this, {
@@ -66,7 +75,7 @@ class PortfolioDetailStore {
   }
 
   async fetchPortfolioDetailData() {
-    this.currencyCode = "usd";
+    this.currencyCode = 'usd';
     this.portfolioAllocationData = portfolioData.portfolioAllocation;
     this.portfolioValue = portfolioData.portfolioValue;
     this.todaysChange = portfolioData.todaysChange;
@@ -77,24 +86,24 @@ class PortfolioDetailStore {
   }
 
   async fetchCoinData() {
-    const coins = this.cryptoDetail;
-    const data = await coins.map(async (coin: any) => {
-      const res: any = await this.fetchCoinInfoByCode({ code: coin.coinName });
-      if (!res.isError) {
-        const coinInfo = res.data;
-        return {
-          ...coin,
-          price: coinInfo.price,
-          priceChange: coinInfo.priceChange,
-          percentChange: coinInfo.percentChange,
-          profitLossAmount: coinInfo.priceChange * coin.quantity,
-          totalValue: coinInfo.price * coin.quantity,
-        };
-      } else return coin;
-    });
-    Promise.all(data).then((arr) => {
-      this.cryptoDetail = arr;
-    });
+    // const coins = this.cryptoDetail;
+    // const data = await coins.map(async (coin: any) => {
+    //   const res: any = await this.fetchCoinInfoByCode({ code: coin.coinName });
+    //   if (!res.isError) {
+    //     const coinInfo = res.data;
+    //     return {
+    //       ...coin,
+    //       price: coinInfo.price,
+    //       priceChange: coinInfo.priceChange,
+    //       percentChange: coinInfo.percentChange,
+    //       profitLossAmount: coinInfo.priceChange * coin.quantity,
+    //       totalValue: coinInfo.price * coin.quantity,
+    //     };
+    //   } else return coin;
+    // });
+    // Promise.all(data).then((arr) => {
+    //   this.cryptoDetail = arr;
+    // });
   }
 
   async fetchCoinInfoByCode({ code }: { code: string }) {
@@ -155,6 +164,7 @@ class PortfolioDetailStore {
   }
 
   async addNewRealEstate(params: NewRealEstateAsset) {
+    rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/realEstate`;
     const res: { isError: boolean; data: any } = await httpService.post(url, {
       name: params.name,
@@ -165,13 +175,15 @@ class PortfolioDetailStore {
       currentPrice: params.currentPrice,
       description: params.description,
     });
+    rootStore.stopLoading();
     if (!res.isError) {
       await this.fetchRealEstate();
-      return { isError: false, data: httpError.handleSuccessMessage("add") };
+      return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
   async addNewBankSaving(params: NewBanksSavingAsset) {
+    rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.post(url, {
       name: params.name,
@@ -184,39 +196,49 @@ class PortfolioDetailStore {
       description: params.description,
       termRange: params.termRange,
     });
+    rootStore.stopLoading();
     if (!res.isError) {
       await this.fetchBankSaving();
-      return { isError: false, data: httpError.handleSuccessMessage("add") };
+      return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
   async addNewCryptoCurrency(params: NewCryptoCurrencyAsset) {
+    rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      {}
+      {},
     );
+    rootStore.stopLoading();
     if (!res.isError) {
       await this.fetchBankSaving();
-      return { isError: false, data: httpError.handleSuccessMessage("add") };
+      return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
   async addNewStock(params: NewStockAsset) {
+    rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      {}
+      {},
     );
+    rootStore.stopLoading();
     if (!res.isError) {
       await this.fetchBankSaving();
-      return { isError: false, data: httpError.handleSuccessMessage("add") };
+      return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
   async addNewCash(params: NewCashAsset) {
+    rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/cash`;
-    const res: { isError: boolean; data: any } = await httpService.post(url, params);
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
     if (!res.isError) {
       await this.fetchCash();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
@@ -230,25 +252,23 @@ class PortfolioDetailStore {
     type: string;
     searchingText: string;
   }): Promise<Array<SearchingDataItem>> {
+    rootStore.startLoading();
     var res: { isError: boolean; data: any };
     switch (type) {
-      case "stocks":
+      case 'stocks':
         res = await finhubService.searchForStock(searchingText);
-        if (!res.isError) return res.data;
-        else return [];
-
-      case "crypto":
+      case 'crypto':
         res = await coinGeckoService.searchForCoin(searchingText);
-        if (!res.isError) return res.data;
-        else return [];
-
-      case "currency":
-        return [];
-      case "gold":
-        return [];
+      case 'currency':
+        res = { isError: true, data: [] };
+      case 'gold':
+        res = { isError: true, data: [] };
       default:
-        return [];
+        res = { isError: true, data: [] };
     }
+    rootStore.stopLoading();
+    if (!res.isError) return res.data;
+    else return [];
   }
 
   async fetchSankeyFlowData() {
@@ -259,9 +279,9 @@ class PortfolioDetailStore {
         target: `${link.targetType}@@${link.targetName}`,
         //error: type 'string' is incompatible with 'string',
         // value: link.amount.toString(),
-        value:link.amount,
+        value: link.amount,
       };
-    });    
+    });
   }
 }
 

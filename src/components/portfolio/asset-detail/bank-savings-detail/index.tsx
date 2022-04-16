@@ -17,9 +17,12 @@ export const BankSavingsDetail = observer(
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
-      bankSavingsDetailStore.setAssetId(assetId);
-      bankSavingsDetailStore.setPortfolioId(portfolioId);
-      bankSavingsDetailStore.fetchBankSavingsDetail({ portfolioId, assetId });
+      const fetchData = async () => {
+        bankSavingsDetailStore.setAssetId(assetId);
+        bankSavingsDetailStore.setPortfolioId(portfolioId);
+        bankSavingsDetailStore.fetchBankSavingsDetail({ portfolioId, assetId });
+      };
+      fetchData();
     }, []);
 
     const { assetDetail } = bankSavingsDetailStore;

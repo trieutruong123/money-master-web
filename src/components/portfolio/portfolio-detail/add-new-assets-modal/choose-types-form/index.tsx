@@ -9,7 +9,7 @@ import {
   ListItemIcon,
   useTheme,
 } from '@mui/material';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { v4 as uuid } from 'uuid';
 import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
@@ -43,7 +43,7 @@ export const ChooseTypesForm = ({ openNextForm }: IProps) => {
           Choose Type
         </h2>
       </div>
-      <PerfectScrollbar>
+      <Scrollbars>
         <List
           sx={{
             width: 'auto',
@@ -87,7 +87,7 @@ export const ChooseTypesForm = ({ openNextForm }: IProps) => {
             </List>
           </Collapse>
         </List>
-      </PerfectScrollbar>
+      </Scrollbars>
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { rootStore } from 'shared/store';
 import { httpError } from 'shared/helpers';
 import { action, computed, makeAutoObservable, observable } from 'mobx';
 import { httpService } from 'services';
@@ -46,6 +47,7 @@ class RealEstateDetailStore {
   }
 
   async updateAssetDetail(params: any) {
+    rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/realEstate/${this.assetId}`;
     const res: any = await httpService.put(url, {
       name: params.name,
@@ -56,6 +58,7 @@ class RealEstateDetailStore {
       description: params.description,
       currentPrice: params.currentPrice,
     });
+    rootStore.stopLoading();
     if (!res.isError) {
       this.assetDetail = res.data;
       return { isError: false, data: httpError.handleSuccessMessage('update') };

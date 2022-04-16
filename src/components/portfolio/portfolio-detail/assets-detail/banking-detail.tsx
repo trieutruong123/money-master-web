@@ -14,8 +14,7 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getCurrencyByCode } from 'shared/helpers';
@@ -119,7 +118,7 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
           <MoreHorizIcon />
         </Button>
       </Card>
-      <PerfectScrollbar>
+      <Scrollbars autoHeight>
         <Box>
           <Table>
             <TableHead>
@@ -182,7 +181,7 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
             </TableBody>
           </Table>
         </Box>
-      </PerfectScrollbar>
+      </Scrollbars>
     </Card>
   ) : (
     <></>

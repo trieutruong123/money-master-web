@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
+import React from 'react';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
@@ -69,11 +70,11 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
       type: 'datetime',
       tickAmount: 6,
       labels: {
-          formatter: function (val: any) {
-            if (timeInterval <= 1) return dayjs(val).format('MMM DD HH:mm');
-            else if (timeInterval <= 30) return dayjs(val).format('MMM DD HH:00');
-            else return dayjs(val).format('MMM DD YYYY');
-          },
+        formatter: function (val: any) {
+          if (timeInterval <= 1) return dayjs(val).format('MMM DD HH:mm');
+          else if (timeInterval <= 30) return dayjs(val).format('MMM DD HH:00');
+          else return dayjs(val).format('MMM DD YYYY');
+        },
       },
     },
     yaxis: {
@@ -83,8 +84,7 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
       tooltip: {
         enabled: true,
       },
-      decimalsInFloat:4
-
+      decimalsInFloat: 4,
     },
     tooltip: {
       x: {
@@ -102,12 +102,14 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
     },
   };
   return (
-    <ReactApexChart
-      options={areaOptions}
-      series={areaSeries}
-      type={'area'}
-      height="350"
-      width={'100%'}
-    />
+    <React.Fragment>
+      <ReactApexChart
+        options={areaOptions}
+        series={areaSeries}
+        type={'area'}
+        height="350"
+        width={'100%'}
+      />
+    </React.Fragment>
   );
 };

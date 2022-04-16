@@ -1,7 +1,6 @@
 import { Box, Grid, TableCell, Container } from '@mui/material';
 import { useRouter } from 'next/router';
 import { observer } from 'mobx-react-lite';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 import { styled } from '@mui/material/styles';
 import { BankingInvestments } from './banking-detail';
 import { CryptoInvestments } from './crypto-detail';

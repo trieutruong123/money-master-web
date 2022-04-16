@@ -5,8 +5,9 @@ import Image from 'next/image';
 import { Box, Button, Container, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { content } from 'i18n';
-import { DefaultNavbar, DefaultLayout } from 'components';
+import {  DefaultLayout } from 'components';
 import { useRouter } from 'next/router';
+import { ReactNode } from 'react';
 
 const NotFound = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;
@@ -20,7 +21,6 @@ const NotFound = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <title>{_404Page.title} | Money Master</title>
       </Head>
       <>
-        <DefaultNavbar content={landingPage.navbar} />
         <Box
           component="main"
           sx={{

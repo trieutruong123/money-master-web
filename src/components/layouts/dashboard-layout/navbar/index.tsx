@@ -10,21 +10,32 @@ import {
   Theme,
   Toolbar,
   Tooltip,
+  LinearProgress,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
+import { observer } from 'mobx-react-lite';
 import { Bell as BellIcon } from 'assets/icons/bell';
 import { UserCircle as UserCircleIcon } from 'assets/icons/user-circle';
 import { Users as UsersIcon } from 'assets/icons/users';
-import { Link,MultipleLanguage } from 'components';
+import { Link, MultipleLanguage } from 'shared/components';
+import { rootStore } from 'shared/store';
+import { useEffect } from 'react';
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }: any) => ({
   backgroundColor: theme.palette.background.paper,
   boxShadow: theme.shadows[3],
 }));
 
-export const DashboardNavbar = (props: any) => {
+export const DashboardNavbar = observer((props: any) => {
   const { onSidebarOpen, ...other } = props;
+  const { isLoading, isNotified,variant, message } = rootStore;
+
+  useEffect(() => {
+    if (isNotified) {
+     
+    }
+  }, [isNotified]);
 
   return (
     <>
@@ -91,11 +102,13 @@ export const DashboardNavbar = (props: any) => {
           </Link>
           <MultipleLanguage></MultipleLanguage>
         </Toolbar>
+        {isLoading && (
+          <LinearProgress
+            sx={{ m: 0, p: 0, color: 'appColor.main', width: '100%' }}
+          />
+        )}
       </DashboardNavbarRoot>
     </>
   );
-};
+});
 
-DashboardNavbar.propTypes = {
-  onSidebarOpen: PropTypes.func,
-};

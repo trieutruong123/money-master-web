@@ -17,6 +17,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/components/portfolio/sankey-chart.tsx",],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/containers/portfolio/sankey-chart.tsx",],
   "exclude": ["node_modules"]
 }

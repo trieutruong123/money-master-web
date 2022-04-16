@@ -19,7 +19,6 @@ import {
 } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { styled } from '@mui/material/styles';
-import PerfrectScrollbar from 'react-perfect-scrollbar';
 import { GiBuyCard, GiSellCard, GiReceiveMoney } from 'react-icons/gi';
 import { precisionRound } from 'utils/number';
 import SettingsMenuButton from './settings-menu-button';

@@ -14,7 +14,7 @@ import {
   Tab,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'components';
+import { Link } from 'shared/components';
 import { colorScheme } from 'utils/color-scheme';
 import DrawerComponent from './drawer-component';
 import styled from './style/header.module.css';

@@ -27,13 +27,16 @@ export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
   const router = useRouter();
   useEffect(() => {
     if (typeof stockId === 'undefined') router.push('/404');
-    stockVolatilityDetailStore.setStockId(stockId);
-    stockVolatilityDetailStore.fetchData({ stockId });
-    stockVolatilityDetailStore.fetchHistoricalMarketData({
-      startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
-      endDate: dayjs(Date.now()).unix(),
-      interval: 'W',
-    });
+    const fetchData = async () => {
+      stockVolatilityDetailStore.setStockId(stockId);
+      stockVolatilityDetailStore.fetchData({ stockId });
+      stockVolatilityDetailStore.fetchHistoricalMarketData({
+        startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
+        endDate: dayjs(Date.now()).unix(),
+        interval: 'W',
+      });
+    };
+    fetchData();
   }, [stockId]);
 
   const { isOpenAddNewTransactionModal, stockMarketData } =

@@ -1,6 +1,6 @@
 import classes from "./portfolio-card.module.css";
 import Button from "@mui/material/Button";
-import { Link } from "components";
+import { Link } from "shared/components";
 import * as React from "react";
 import Modal from "@mui/material/Modal";
 import UpdatePortfolio from "./modify-portfolio";

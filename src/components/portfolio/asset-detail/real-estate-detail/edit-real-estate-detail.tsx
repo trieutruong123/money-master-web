@@ -3,7 +3,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
-import { useSnackbar } from 'notistack';
 import {
   Box,
   FormControl,
@@ -23,9 +22,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import dayjs from 'dayjs';
+import { toast } from 'react-toastify';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { colorScheme } from 'utils';
 import { RealEstateItem } from 'shared/models';
+import { rootStore } from 'shared/store';
 
 interface IProps {
   assetDetail: RealEstateItem | undefined;
@@ -55,7 +56,6 @@ export const EditRealEstateDetail = ({
     dayjs(assetDetail?.inputDay).toDate(),
   );
   const [isEditing, setEdit] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -91,10 +91,18 @@ export const EditRealEstateDetail = ({
       description: data.description,
     });
     if (res.isError) {
-      enqueueSnackbar(res.data.en, { variant: 'error' });
+      toast.error(res.data.en, {
+        onClose: () => {
+          rootStore.deleteNotification();
+        },
+      });
     } else {
       setEdit(false);
-      enqueueSnackbar(res.data.en, { variant: 'success' });
+      toast.success(res.data.en, {
+        onClose: () => {
+          rootStore.deleteNotification();
+        },
+      });
     }
   };
 

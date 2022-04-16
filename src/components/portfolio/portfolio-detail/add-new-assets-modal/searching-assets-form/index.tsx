@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import PerfectScrollbar from 'react-perfect-scrollbar';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { useDebounce } from 'use-debounce';
 import {
   Box,
@@ -149,7 +149,7 @@ export const SearchingAssetsForm = observer(
             </IconButton>
           </Paper>
         </Box>
-        <PerfectScrollbar
+        <Scrollbars
           style={{
             height: getListElementHeight(),
           }}
@@ -175,7 +175,7 @@ export const SearchingAssetsForm = observer(
               );
             })}
           </List>
-        </PerfectScrollbar>
+        </Scrollbars>
       </Box>
     );
   },

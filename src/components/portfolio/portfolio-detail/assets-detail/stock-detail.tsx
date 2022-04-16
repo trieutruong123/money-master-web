@@ -15,8 +15,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { precisionRound } from 'utils';
@@ -119,7 +118,7 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
             <MoreHorizIcon />
           </Button>
         </Card>
-        <PerfectScrollbar>
+        <Scrollbars autoHeight>
           <Box>
             <Table>
               <TableHead>
@@ -183,7 +182,7 @@ export const StockInvestments = ({ stockDetail }: IProps) => {
               </TableBody>
             </Table>
           </Box>
-        </PerfectScrollbar>
+        </Scrollbars>
       </Card>
     </Grid>
   ) : (
