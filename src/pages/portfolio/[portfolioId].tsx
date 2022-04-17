@@ -11,6 +11,23 @@ import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
 import { PortfolioDetail } from 'components/portfolio/portfolio-detail';
+import { rootStore, portfolioDetailStore } from 'shared/store';
+import { useEffect } from 'react';
+
+const fetchData = async (portfolioId: string) => {
+  rootStore.startLoading();
+
+  portfolioDetailStore.setPortfolioId(portfolioId);
+
+  await portfolioDetailStore.fetchPortfolioDetailData();
+  await portfolioDetailStore.fetchRealEstate();
+  await portfolioDetailStore.fetchBankSaving();
+  await portfolioDetailStore.fetchCash();
+  await portfolioDetailStore.fetchStock();
+  await portfolioDetailStore.fetchCryptoCurrency();
+
+  rootStore.stopLoading();
+};
 
 const PortfolioDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
@@ -21,6 +38,11 @@ const PortfolioDetailPage = (
     locale,
     params: { portfolioId },
   } = props;
+
+  useEffect(() => {
+    fetchData(portfolioId);
+  },[]);
+  
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { portfolioDetailPage } = detail;
 

@@ -1,3 +1,4 @@
+import { CryptoItem, StockItem } from './../../models/portfolio-asset.model';
 import {
   NewStockAsset,
   NewCryptoCurrencyAsset,
@@ -29,18 +30,23 @@ import { rootStore } from '../root.store';
 class PortfolioDetailStore {
   portfolioId: string = '';
   portfolioAllocationData: Array<PortfolioAllocation> = [];
-  stockDetail: Array<Object> | undefined = undefined;
-  cryptoDetail: Array<Object> = [];
+  stockDetail: Array<StockItem> | undefined = undefined;
+  cryptoDetail: Array<CryptoItem> | undefined = undefined;
   cashDetail: Array<CashItem> | undefined = undefined;
   realEstateDetail: Array<RealEstateItem> | undefined = undefined;
   bankingDetail: Array<BankSavingItem> | undefined = undefined;
+  searchedStockDetail: any = undefined;
+  searchedCryptoDetail: any = undefined;
   portfolioValue: number = 0;
   todaysChange: number = 0;
   isOpenAddNewAssetModal: boolean = false;
   currencyCode: string = '';
   sankeyFlowData: Array<SankeyDataLink> = [];
+
   constructor() {
     makeAutoObservable(this, {
+      searchedStockDetail: observable,
+      searchedCryptoDetail: observable,
       portfolioId: observable,
       portfolioAllocationData: observable,
       stockDetail: observable,
@@ -55,7 +61,6 @@ class PortfolioDetailStore {
 
       setOpenAddNewAssetModal: action,
       fetchPortfolioDetailData: action,
-      fetchCoinData: action,
       setPortfolioId: action,
       fetchRealEstate: action,
       addNewBankSaving: action,
@@ -63,6 +68,8 @@ class PortfolioDetailStore {
       addNewCryptoCurrency: action,
       addNewStock: action,
       fetchSankeyFlowData: action,
+      getStockInfoById: action,
+      getCryptoInfoById: action,
     });
   }
 
@@ -77,60 +84,28 @@ class PortfolioDetailStore {
   async fetchPortfolioDetailData() {
     this.currencyCode = 'usd';
     this.portfolioAllocationData = portfolioData.portfolioAllocation;
-    this.portfolioValue = portfolioData.portfolioValue;
-    this.todaysChange = portfolioData.todaysChange;
     const portfolioDetail = portfolioData.portfolioData;
-    this.stockDetail = portfolioDetail.stocks;
-    this.cryptoDetail = portfolioDetail.crypto;
     return true;
   }
 
-  async fetchCoinData() {
-    // const coins = this.cryptoDetail;
-    // const data = await coins.map(async (coin: any) => {
-    //   const res: any = await this.fetchCoinInfoByCode({ code: coin.coinName });
-    //   if (!res.isError) {
-    //     const coinInfo = res.data;
-    //     return {
-    //       ...coin,
-    //       price: coinInfo.price,
-    //       priceChange: coinInfo.priceChange,
-    //       percentChange: coinInfo.percentChange,
-    //       profitLossAmount: coinInfo.priceChange * coin.quantity,
-    //       totalValue: coinInfo.price * coin.quantity,
-    //     };
-    //   } else return coin;
-    // });
-    // Promise.all(data).then((arr) => {
-    //   this.cryptoDetail = arr;
-    // });
+  async fetchStock() {
+    const url = `/portfolio/${this.portfolioId}/stock`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      this.stockDetail = res.data;
+    } else {
+      this.stockDetail = undefined;
+    }
   }
 
-  async fetchCoinInfoByCode({ code }: { code: string }) {
-    const res: any = await coinGeckoService.getCoinInfoByCode({
-      coinCode: code.toLowerCase(),
-      exclude: {
-        localization: true,
-        ticker: true,
-        communityData: true,
-        developerData: true,
-      },
-    });
+  async fetchCryptoCurrency() {
+    const url = `/portfolio/${this.portfolioId}/crypto`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
-      const { market_data } = res.data;
-      return {
-        isError: false,
-        data: {
-          price: market_data?.current_price[this.currencyCode],
-          priceChange:
-            market_data?.price_change_24h_in_currency[this.currencyCode],
-          percentChange:
-            market_data?.price_change_percentage_24h_in_currency[
-              this.currencyCode
-            ],
-        },
-      };
-    } else return res;
+      this.cryptoDetail = res.data;
+    } else {
+      this.cryptoDetail = undefined;
+    }
   }
 
   async fetchBankSaving() {
@@ -205,10 +180,10 @@ class PortfolioDetailStore {
 
   async addNewCryptoCurrency(params: NewCryptoCurrencyAsset) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/bankSaving`;
+    const url = `/portfolio/${this.portfolioId}/crypto`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      {},
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
@@ -219,10 +194,10 @@ class PortfolioDetailStore {
 
   async addNewStock(params: NewStockAsset) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/bankSaving`;
+    const url = `/portfolio/${this.portfolioId}/stock`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      {},
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
@@ -257,17 +232,22 @@ class PortfolioDetailStore {
     switch (type) {
       case 'stocks':
         res = await finhubService.searchForStock(searchingText);
-      case 'crypto':
+        break;
+      case 'cryptoCurrency':
         res = await coinGeckoService.searchForCoin(searchingText);
+        break;
       case 'currency':
         res = { isError: true, data: [] };
+        break;
       case 'gold':
         res = { isError: true, data: [] };
+        break;
       default:
         res = { isError: true, data: [] };
+        break;
     }
     rootStore.stopLoading();
-    if (!res.isError) return res.data;
+    if (!res.isError) return res.data.slice(0, 100);
     else return [];
   }
 
@@ -282,6 +262,34 @@ class PortfolioDetailStore {
         value: link.amount,
       };
     });
+  }
+
+  async getStockInfoById(stockId: string) {
+    rootStore.startLoading();
+    const res = await finhubService.getStockInfoByCode({
+      symbol: stockId.toUpperCase(),
+    });
+    rootStore.stopLoading();
+    if (!res.isError) {
+      this.searchedStockDetail = res.data;
+    } else this.searchedStockDetail = undefined;
+  }
+
+  async getCryptoInfoById(coinCode: string) {
+    rootStore.startLoading();
+    const res = await coinGeckoService.getCoinInfoByCode({
+      coinCode: coinCode.toLowerCase(),
+      exclude: {
+        localization: true,
+        ticker: true,
+        communityData: true,
+        developerData: true,
+      },
+    });
+    rootStore.stopLoading();
+    if (!res.isError) {
+      this.searchedCryptoDetail = res.data?.market_data?.current_price;
+    } else this.searchedCryptoDetail = undefined;
   }
 }
 

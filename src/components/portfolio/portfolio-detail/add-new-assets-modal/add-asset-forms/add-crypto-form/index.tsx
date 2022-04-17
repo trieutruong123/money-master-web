@@ -4,20 +4,24 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { NewCryptoCurrencyAsset } from 'shared/types';
-import { portfolioDetailStore } from 'shared/store';
+import { portfolioDetailStore, rootStore } from 'shared/store';
 import { BuyCryptoForm } from './buy-cryto-form';
 
 interface IProps {
+  coinCode: string;
   openPreviousForm: any;
   handleClose: any;
+  selectedCoin :{id:string,name:string,symbol:string};
 }
 
 export const AddNewCryptoForm = observer(
-  ({ openPreviousForm, handleClose }: IProps) => {
+  ({ coinCode, openPreviousForm, handleClose, selectedCoin }: IProps) => {
     const theme = useTheme();
 
     useEffect(() => {
-      const fetchAssetPrice = async () => {};
+      const fetchAssetPrice = async () => {
+        portfolioDetailStore.getCryptoInfoById(coinCode.toLowerCase());
+      };
       fetchAssetPrice();
     }, []);
 
@@ -28,11 +32,18 @@ export const AddNewCryptoForm = observer(
       });
     };
 
-    const portfolioName = 'demo portoflio';
-    const assetName = 'Ethereum';
+    const portfolioName = 'Portoflio';
+    const assetName = selectedCoin.name.toUpperCase();
+    const currentPrice =
+      portfolioDetailStore.searchedCryptoDetail?.usd;
 
     const handleFormSubmit = async (data: NewCryptoCurrencyAsset) => {
-      //portfolioDetailStore.addNewCryptoCurrency(data);
+      const res = await portfolioDetailStore.addNewCryptoCurrency(data);
+      if (res.isError) {
+        rootStore.raiseError(res.data.en);
+      } else {
+        rootStore.raiseNotification(res.data.en, 'success');
+      }
       handleClose();
     };
 
@@ -64,7 +75,7 @@ export const AddNewCryptoForm = observer(
             variant="body1"
             sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}
           >
-            {assetName}
+            {assetName}: {currentPrice ? '$' + currentPrice : ''}
           </Typography>
         </Box>
         <Box
@@ -76,7 +87,7 @@ export const AddNewCryptoForm = observer(
             },
           }}
         >
-          <BuyCryptoForm handleFormSubmit={handleFormSubmit} />
+          <BuyCryptoForm handleFormSubmit={handleFormSubmit} selectedCoin={selectedCoin}/>
         </Box>
       </Box>
     );

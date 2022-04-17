@@ -18,6 +18,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getCurrencyByCode } from 'shared/helpers';
 import SettingsMenuButton from './settings-menu-button';
 import { CashItem } from 'shared/models';
+import { roundAndAddDotAndCommaSeparator } from 'utils';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -56,7 +57,7 @@ export const CashInvestments = ({ cashDetail }: IProps) => {
   };
 
   const renderTotalCash = (num: number, code: string) => {
-    return getCurrencyByCode(code)?.symbol.toString() + num.toString();
+    return getCurrencyByCode(code)?.symbol.toString() + roundAndAddDotAndCommaSeparator(num,2);
   };
 
   const handleItemClick = (assetId: number) => {

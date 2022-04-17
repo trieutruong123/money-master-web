@@ -20,19 +20,6 @@ interface IProps {
 }
 
 export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
-  useEffect(() => {
-    rootStore.startLoading();
-    const fetchData = async () => {
-      portfolioDetailStore.setPortfolioId(portfolioId);
-      await portfolioDetailStore.fetchPortfolioDetailData();
-      await portfolioDetailStore.fetchRealEstate();
-      await portfolioDetailStore.fetchBankSaving();
-      await portfolioDetailStore.fetchCash();
-      await portfolioDetailStore.fetchCoinData();
-    };
-    fetchData();
-    rootStore.stopLoading();
-  }, []);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {

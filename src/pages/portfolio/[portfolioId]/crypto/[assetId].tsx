@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import {
   Box,
   Container,
@@ -10,19 +12,40 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
+import { rootStore ,cryptoVolatilityDetailStore} from 'shared/store';
 import { CryptoVolatilityDetail } from 'components/portfolio';
+
+
+const fetchData = async (portfolioId: string, assetId: string) => {
+  rootStore.startLoading();
+
+  cryptoVolatilityDetailStore.setCoinId(assetId);
+  await cryptoVolatilityDetailStore.fetchData({ code: assetId });
+  await cryptoVolatilityDetailStore.fetchHistoricalMarketData();
+
+  rootStore.stopLoading();
+};
 
 const AssetVolatilityDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
+
   const {
     locales,
     locale,
     defaultLocale,
     params: { portfolioId, assetId },
   } = props;
+
+  useEffect(() => {
+    if (typeof assetId === 'undefined') router.push('/404');
+
+    fetchData(portfolioId, assetId);
+  }, []);
+
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;
   return (
@@ -53,7 +76,7 @@ const AssetVolatilityDetailPage = (
   );
 };
 
-//AssetVolatilityDetailPage.requireAuth = true;
+AssetVolatilityDetailPage.requireAuth = true;
 AssetVolatilityDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );

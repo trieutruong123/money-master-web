@@ -55,21 +55,23 @@ export const AddNewAssetsModal = observer(() => {
   const { isOpenAddNewAssetModal } = portfolioDetailStore;
 
   const handleClose = useCallback(() => {
+    console.log(type);
     setType('');
     setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
     portfolioDetailStore.setOpenAddNewAssetModal(false);
   }, []);
 
   const openNextForm = (params: any) => {
+    console.log(params.selectedType);
     switch (params.curFormType) {
       case 'type':
         setType(params.selectedType);
         if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
-          openSearchingForm(params);
+          openSearchingForm({ assetType: params.selectedType });
         else if (
           ['realEstate', 'cash', 'bankSavings'].includes(params.selectedType)
         )
-          openTransactionForm(params);
+          openTransactionForm({ selectedType: params.selectedType });
         break;
       case 'search':
         openTransactionForm(params);
@@ -86,9 +88,9 @@ export const AddNewAssetsModal = observer(() => {
         setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
         break;
       case 'transaction':
-        if (['cryptoCurrency', 'stocks'].includes(type))
+        if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
           openSearchingForm(params);
-        else if (['realEstate', 'cash', 'bankSavings'].includes(type))
+        else if (['realEstate', 'cash', 'bankSavings'].includes(params.selectedType))
           openChooseTypesForm(params);
         else openChooseTypesForm(params);
         break;
@@ -99,17 +101,36 @@ export const AddNewAssetsModal = observer(() => {
   };
 
   const openTransactionForm = (params: any) => {
+    console.log(params.selectedType);
     switch (params.selectedType) {
       case 'cryptoCurrency':
-        // const assetId = params.assetId;
-        setCurrent(<AddNewCryptoForm openPreviousForm={openPreviousForm} handleClose={handleClose} />);
+        setCurrent(
+          <AddNewCryptoForm
+            coinCode={params.assetId}
+            selectedCoin = {params.selectedItem}
+            openPreviousForm={openPreviousForm}
+            handleClose={handleClose}
+          />,
+        );
         break;
       case 'stocks':
         // const assetId = params.assetId;
-        setCurrent(<AddNewStockForm openPreviousForm={openPreviousForm} handleClose={handleClose}/>);
+        setCurrent(
+          <AddNewStockForm
+            stockId={params.assetId}
+            selectedStock = {params.selectedItem}
+            openPreviousForm={openPreviousForm}
+            handleClose={handleClose}
+          />,
+        );
         break;
       case 'cash':
-        setCurrent(<AddNewCashForm openPreviousForm={openPreviousForm} handleClose={handleClose}/>);
+        setCurrent(
+          <AddNewCashForm
+            openPreviousForm={openPreviousForm}
+            handleClose={handleClose}
+          />,
+        );
         break;
       case 'realEstate':
         setCurrent(
@@ -133,6 +154,7 @@ export const AddNewAssetsModal = observer(() => {
   const openSearchingForm = (params: any) => {
     setCurrent(
       <SearchingAssetsForm
+        assetType={params.assetType}
         openNextForm={openNextForm}
         openPreviousForm={openPreviousForm}
         searchData={searchData}
@@ -144,8 +166,17 @@ export const AddNewAssetsModal = observer(() => {
     setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
   };
 
-  const searchData = async(searchingText: string) => {
-    const res = await portfolioDetailStore.searchData({type,searchingText});
+  const searchData = async ({
+    searchingText,
+    searchingType,
+  }: {
+    searchingText: string;
+    searchingType: string;
+  }) => {
+    const res = await portfolioDetailStore.searchData({
+      type: searchingType,
+      searchingText: searchingText,
+    });
     return res;
   };
 

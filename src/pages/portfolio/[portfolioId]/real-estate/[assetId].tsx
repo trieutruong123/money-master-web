@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Head from 'next/head';
 import {
   Box,
@@ -6,23 +7,44 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
+import { useRouter } from 'next/router';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
 import { RealEstateDetail } from 'components/portfolio';
+import { realEstateDetailStore, rootStore } from 'shared/store';
+
+const fetchData = async (portfolioId: string, assetId: string) => {
+  rootStore.startLoading();
+
+  realEstateDetailStore.setAssetId(assetId);
+  realEstateDetailStore.setPortfolioId(portfolioId);
+  await realEstateDetailStore.fetchRealEstateDetail({ portfolioId, assetId });
+
+  rootStore.stopLoading();
+};
 
 const AssetDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
+
   const {
     locales,
     locale,
     defaultLocale,
     params: { portfolioId, assetId },
   } = props;
+
+  useEffect(() => {
+    if (typeof assetId === 'undefined') router.push('/404');
+
+    fetchData(portfolioId, assetId);
+  }, []);
+
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;
   return (
@@ -46,14 +68,14 @@ const AssetDetailPage = (
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <RealEstateDetail portfolioId = {portfolioId} assetId = {assetId} />
+          <RealEstateDetail portfolioId={portfolioId} assetId={assetId} />
         </Container>
       </Box>
     </>
   );
 };
 
-//AssetDetailPage.requireAuth = true;
+AssetDetailPage.requireAuth = true;
 AssetDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );

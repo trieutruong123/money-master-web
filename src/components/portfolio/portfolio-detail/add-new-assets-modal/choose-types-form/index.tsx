@@ -33,6 +33,7 @@ export const ChooseTypesForm = ({ openNextForm }: IProps) => {
   };
 
   const handleSelectionClick = (type: string) => {
+    console.log(type);
     openNextForm({ curFormType: 'type', selectedType: type });
   };
 

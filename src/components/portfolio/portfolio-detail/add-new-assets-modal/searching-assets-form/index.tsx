@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useDebounce } from 'use-debounce';
+import { v4 as uuid } from 'uuid';
 import {
   Box,
   Typography,
@@ -26,32 +27,32 @@ type SearchingItemType = {
 };
 
 interface IProps {
+  assetType:string;
   openNextForm: (params: any) => void;
   openPreviousForm: (params: any) => void;
   searchData: any;
 }
 
 export const SearchingAssetsForm = observer(
-  ({ openNextForm, openPreviousForm, searchData }: IProps) => {
+  ({assetType, openNextForm, openPreviousForm, searchData }: IProps) => {
     const [searchingData, setSearchingData] =
       useState<Array<SearchingItemType>>([]);
     const [searchingText, setSearchingText] = useState<string>('');
     const [isSearching, setIsSearching] = useState(false);
-    const debouncedSearchTerm = useDebounce(searchingText, 500);
-
+    const [debouncedSearchTerm] = useDebounce(searchingText, 1000, {
+    });
     useEffect(
       () => {
         if (debouncedSearchTerm) {
           setIsSearching(true);
-          console.log('debouncedSearchTerm');
-          // searchData(debouncedSearchTerm).then(
-          //   (results: Array<SearchingItemType> | any) => {
-          //     setIsSearching(false);
-          //     setSearchingData(results);
-          //   },
-          // );
+          searchData({searchingText:debouncedSearchTerm, searchingType:assetType}).then(
+            (results: Array<SearchingItemType> | any) => {
+              setIsSearching(false);
+              setSearchingData(results);
+            },
+          );
         } else {
-          //setSearchingData(sampleData);
+          setSearchingData([]);
           setIsSearching(false);
         }
       },
@@ -64,15 +65,22 @@ export const SearchingAssetsForm = observer(
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
-        searchData(searchingText);
+        setIsSearching(true);
+        searchData({searchingText:debouncedSearchTerm, searchingType:assetType}).then(
+          (results: Array<SearchingItemType> | any) => {
+            setIsSearching(false);
+            setSearchingData(results);
+          },
+        );
       }
     };
 
-    const handleItemClick = (itemId: string) => {
+    const handleItemClick = (itemId: string,selectedItem:any) => {
       openNextForm({
         curFormType: 'search',
-        selectedType: 'cryptoCurrency',
+        selectedType: assetType,
         assetId: itemId,
+        selectedItem:selectedItem,
       });
     };
 
@@ -93,7 +101,7 @@ export const SearchingAssetsForm = observer(
         ref1 === void 0
           ? void 0
           : ref1.offsetHeight) || 0.5;
-      return h1 - h2 - 25;
+      return h1 - h2 - 30;
     };
 
     return (
@@ -160,12 +168,11 @@ export const SearchingAssetsForm = observer(
             }}
           >
             {searchingData.map((item: SearchingItemType) => {
-              console.log('searching data');
               return (
                 <ListItemButton
                   sx={{ pl: '1.4rem' }}
-                  key={item.id}
-                  onClick={() => handleItemClick(item.id)}
+                  key={uuid()}
+                  onClick={() => handleItemClick(item.id,item)}
                 >
                   <ListItemIcon>
                     <AccessTimeIcon />

@@ -44,24 +44,28 @@ export class BankSavingItem {
 
 export class StockItem {
   id: number = 0;
-  name: string = '';
+  name:string = "";
   inputDay: string = '';
-  lastChanged: string = '';
+  lastChange:string = "";
   description: string = '';
   currentAmountHolding: number = 0;
   stockCode: string = '';
   marketCode: string = '';
+  currentPrice:number = 0;
+  currencyCode: string = '';
+  purchasePrice: number = 0;
+  currentAmountInCurrency:number = 0;
 }
 
 export class CryptoItem {
   id: number = 0;
   name: string = '';
   inputDay: string = '';
-  currenctAmountHolding: number = 0;
+  currentAmountHolding: number = 0;
   lastChanged: string = '';
   portfolioId: number = 0;
   description: string = '';
-  buyPrice: number = 0;
+  purchasePrice: number = 0;
   currencyCode: string = '';
   cryptoCoinCode: string = '';
   currentPrice: number = 0;
@@ -69,14 +73,14 @@ export class CryptoItem {
 }
 
 export class CashItem {
-  id:number = 0;
-  amount:number = 0;
-  currencyCode:string = "";
-  name:string = "";
-  inputDay:string = "";
-  lastChanged:string = "";
-  portfolioId:number = 0;
-  description:string = "";
+  id: number = 0;
+  amount: number = 0;
+  currencyCode: string = '';
+  name: string = '';
+  inputDay: string = '';
+  lastChanged: string = '';
+  portfolioId: number = 0;
+  description: string = '';
 }
 
 export class SearchingStockItem {
@@ -91,7 +95,6 @@ export class SearchingCryptoItem {
   name: string = '';
   symbol: string = '';
   market_cap_rank?: number = 0;
-  thumb:string = '';
-  large:string = '';
+  thumb: string = '';
+  large: string = '';
 }
-

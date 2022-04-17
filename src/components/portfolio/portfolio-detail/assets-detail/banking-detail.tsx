@@ -20,6 +20,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getCurrencyByCode } from 'shared/helpers';
 import { BankSavingItem } from 'shared/models';
 import SettingsMenuButton from './settings-menu-button';
+import { roundAndAddDotAndCommaSeparator } from 'utils';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -62,15 +63,16 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
     const currencySymbol = getCurrencyByCode(
       code.toUpperCase(),
     )?.symbol.toString();
+    const qualifiedNum = roundAndAddDotAndCommaSeparator(num,4)
     return typeof currencySymbol !== 'undefined'
-      ? currencySymbol + num.toString()
-      : num.toString();
+      ? currencySymbol + qualifiedNum
+      : qualifiedNum;
   };
 
   const renderInterestRate = (interestRate: number) => {
-    const rate = interestRate;
+    const rate = roundAndAddDotAndCommaSeparator(interestRate,4);
     return (
-      <span style={{ color: '#0d6f3f' }}>&#43;{rate.toString() + '%'}</span>
+      <span style={{ color: '#0d6f3f' }}>&#43;{rate + '%'}</span>
     );
   };
 

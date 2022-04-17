@@ -22,14 +22,6 @@ interface IProps {
 export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  useEffect(() => {
-    const fetchData = async () => {
-      cryptoVolatilityDetailStore.setCoinId(coinCode);
-      cryptoVolatilityDetailStore.fetchData({ code: coinCode });
-      cryptoVolatilityDetailStore.fetchHistoricalMarketData();
-    };
-    fetchData();
-  }, [coinCode]);
 
   const { isOpenAddNewTransactionModal, coinMarketData } =
     cryptoVolatilityDetailStore;

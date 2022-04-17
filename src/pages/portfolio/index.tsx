@@ -26,7 +26,7 @@ export const  Portfolio =  (
   );
 };
 
-//Portfolio.requireAuth = true;
+Portfolio.requireAuth = true;
 Portfolio.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );

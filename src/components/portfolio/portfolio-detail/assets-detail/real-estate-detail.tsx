@@ -20,6 +20,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getCurrencyByCode } from 'shared/helpers';
 import { RealEstateItem } from 'shared/models';
 import SettingsMenuButton from './settings-menu-button';
+import { roundAndAddDotAndCommaSeparator } from 'utils';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -55,9 +56,10 @@ export const RealEstateInvesments = ({ realEstateDetail }: IProps) => {
     const currencySymbol = getCurrencyByCode(
       code.toUpperCase(),
     )?.symbol.toString();
+    const qualifiedNum = roundAndAddDotAndCommaSeparator(num,4);
     return typeof currencySymbol !== 'undefined'
-      ? currencySymbol + num.toString()
-      : num.toString();
+      ? currencySymbol + qualifiedNum
+      : qualifiedNum;
   };
 
   const renderDescription = (description: any) => {

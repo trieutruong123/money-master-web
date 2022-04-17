@@ -15,15 +15,6 @@ export const RealEstateDetail = observer(({ portfolioId, assetId }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  useEffect(() => {
-    const fetchData = async () => {
-      realEstateDetailStore.setAssetId(assetId);
-      realEstateDetailStore.setPortfolioId(portfolioId);
-      realEstateDetailStore.fetchRealEstateDetail({ portfolioId, assetId });
-    };
-    fetchData();
-  }, []);
-
   const { assetDetail } = realEstateDetailStore;
 
   const handleFormSubmit = async (data: UpdatedRealEstateItem) => {

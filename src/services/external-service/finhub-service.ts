@@ -70,11 +70,19 @@ async function getStockOHCL(params: any) {
 }
 
 const parseSearchingData = (searchingResult: any): Array<SearchingDataItem> => {
-  const { count, result } = searchingResult;
-  const searchingData: Array<SearchingDataItem> = result.map(
-    (item: SearchingStockItem) => {
-      return { id: item.symbol, name: item.displaySymbol, symbol: item.symbol };
-    },
-  );
-  return searchingData;
+  try {
+    const { count, result } = searchingResult;
+    const searchingData: Array<SearchingDataItem> = result.map(
+      (item: SearchingStockItem) => {
+        return {
+          id: item.symbol,
+          name: item.description,
+          symbol: item.symbol,
+        };
+      },
+    );
+    return searchingData;
+  } catch (ex: any) {
+    return [];
+  }
 };

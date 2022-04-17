@@ -26,15 +26,8 @@ export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   useEffect(() => {
-    if (typeof stockId === 'undefined') router.push('/404');
     const fetchData = async () => {
-      stockVolatilityDetailStore.setStockId(stockId);
-      stockVolatilityDetailStore.fetchData({ stockId });
-      stockVolatilityDetailStore.fetchHistoricalMarketData({
-        startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
-        endDate: dayjs(Date.now()).unix(),
-        interval: 'W',
-      });
+      
     };
     fetchData();
   }, [stockId]);

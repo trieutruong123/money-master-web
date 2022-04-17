@@ -34,9 +34,10 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: any;
+  selectedStock: { id: string; name: string; symbol: string };
 }
 
-export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
+export const BuyStockForm = ({ handleFormSubmit, selectedStock }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -65,13 +66,14 @@ export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
+    
     handleFormSubmit({
       name: data.name,
       inputDay: date,
       description: data.description,
       currentAmountHolding: data.currentAmountHolding,
-      stockCode: '',
-      marketCode: '',
+      stockCode: selectedStock.id,
+      marketCode: selectedStock.name,
       purchasePrice: data.purchasePrice,
       currenyCode: data.currencyCode,
     });
@@ -103,73 +105,75 @@ export const BuyStockForm = ({ handleFormSubmit }: IProps) => {
           },
         }}
       >
-        <TextField
-          type="string"
-          fullWidth
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-stock-name"
-          label={'*Name'}
-          {...register('name')}
-          variant="outlined"
-          error={typeof errors.name?.message !== 'undefined'}
-          helperText={errors.name?.message}
-        ></TextField>
-        <TextField
-          type="number"
-          fullWidth
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-purchase-price"
-          label={'*Purchase Price'}
-          {...register('purchasePrice')}
-          variant="outlined"
-          error={typeof errors.purchasePrice?.message !== 'undefined'}
-          helperText={errors.purchasePrice?.message}
-        ></TextField>
-        <TextField
-          type="number"
-          fullWidth
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-stock-current-amount-holding"
-          label={'*Shares'}
-          {...register('currentAmountHolding')}
-          variant="outlined"
-          error={typeof errors.currentAmountHolding?.message !== 'undefined'}
-          helperText={errors.currentAmountHolding?.message}
-        ></TextField>
-        <Grid container spacing={isXs ? 1 : 2}>
-          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
-            <FormControl fullWidth>
-              <InputLabel id="currency-list">Currency</InputLabel>
-              <Select
-                variant="outlined"
-                labelId="currency-list"
-                id="stock-currency-list-select"
-                label="*Currency"
-                defaultValue="USD"
-                {...register('currencyCode')}
-              >
-                {currencyList.map((item, index) => {
-                  return (
-                    <MenuItem key={item.code} value={item.code}>
-                      {item.code} - {item.name}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DesktopDatePicker
-                label="*Input day"
-                inputFormat="dd/MM/yyyy"
-                value={date}
-                onChange={handleDateChange}
-                renderInput={(params) => (
-                  <TextField sx={{ width: '100%' }} {...params} />
-                )}
-              />
-            </LocalizationProvider>
+        <Grid container spacing="2">
+          <TextField
+            type="string"
+            fullWidth
+            sx={{ mt: 1, display: 'block' }}
+            id="outlined-stock-name"
+            label={'*Name'}
+            {...register('name')}
+            variant="outlined"
+            error={typeof errors.name?.message !== 'undefined'}
+            helperText={errors.name?.message}
+          ></TextField>
+          <TextField
+            type="number"
+            fullWidth
+            sx={{ mt: 1, display: 'block' }}
+            id="outlined-purchase-price"
+            label={'*Purchase Price'}
+            {...register('purchasePrice')}
+            variant="outlined"
+            error={typeof errors.purchasePrice?.message !== 'undefined'}
+            helperText={errors.purchasePrice?.message}
+          ></TextField>
+          <TextField
+            type="number"
+            fullWidth
+            sx={{ mt: 1, display: 'block' }}
+            id="outlined-stock-current-amount-holding"
+            label={'*Shares'}
+            {...register('currentAmountHolding')}
+            variant="outlined"
+            error={typeof errors.currentAmountHolding?.message !== 'undefined'}
+            helperText={errors.currentAmountHolding?.message}
+          ></TextField>
+          <Grid container spacing={isXs ? 1 : 2}>
+            <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+              <FormControl fullWidth>
+                <InputLabel id="currency-list">Currency</InputLabel>
+                <Select
+                  variant="outlined"
+                  labelId="currency-list"
+                  id="stock-currency-list-select"
+                  label="*Currency"
+                  defaultValue="USD"
+                  {...register('currencyCode')}
+                >
+                  {currencyList.map((item, index) => {
+                    return (
+                      <MenuItem key={item.code} value={item.code}>
+                        {item.code} - {item.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DesktopDatePicker
+                  label="*Input day"
+                  inputFormat="dd/MM/yyyy"
+                  value={date}
+                  onChange={handleDateChange}
+                  renderInput={(params) => (
+                    <TextField sx={{ width: '100%' }} {...params} />
+                  )}
+                />
+              </LocalizationProvider>
+            </Grid>
           </Grid>
         </Grid>
         {/* <TextField

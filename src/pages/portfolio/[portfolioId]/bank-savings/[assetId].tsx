@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import {
   Box,
   Container,
@@ -11,18 +13,38 @@ import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
 import { BankSavingsDetail } from 'components/portfolio';
+import { bankSavingsDetailStore, rootStore } from 'shared/store';
+
+const fetchData = async (portfolioId: string, assetId: string) => {
+  rootStore.startLoading();
+
+  bankSavingsDetailStore.setAssetId(assetId);
+  bankSavingsDetailStore.setPortfolioId(portfolioId);
+  await bankSavingsDetailStore.fetchBankSavingsDetail({ portfolioId, assetId });
+
+  rootStore.stopLoading();
+};
 
 const AssetDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
 ) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
+
   const {
     locales,
     locale,
     defaultLocale,
     params: { portfolioId, assetId },
   } = props;
+
+  useEffect(() => {
+    if (typeof assetId === 'undefined') router.push('/404');
+
+    fetchData(portfolioId, assetId);
+  }, []);
+
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;
   return (
@@ -46,7 +68,7 @@ const AssetDetailPage = (
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <BankSavingsDetail portfolioId = {portfolioId} assetId = {assetId} />
+          <BankSavingsDetail portfolioId={portfolioId} assetId={assetId} />
         </Container>
       </Box>
     </>

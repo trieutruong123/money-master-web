@@ -33,9 +33,10 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: any;
+  selectedCoin:{id:string,name:string,symbol:string};
 }
 
-export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
+export const BuyCryptoForm = ({ handleFormSubmit,selectedCoin }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -71,7 +72,7 @@ export const BuyCryptoForm = ({ handleFormSubmit }: IProps) => {
       description:data.description,
       purchasePrice:data.purchasePrice,
       currencyCode:data.currencyCode,
-      cryptoCoinCode:"",
+      cryptoCoinCode:selectedCoin.id,
     });
   };
 

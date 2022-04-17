@@ -3,19 +3,21 @@ import { Box, IconButton, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NewStockAsset } from 'shared/types';
-import { portfolioDetailStore } from 'shared/store';
+import { portfolioDetailStore, rootStore } from 'shared/store';
 import { BuyStockForm } from './buy-stock-form';
 
 interface IProps {
+  stockId:string
   handleClose: any;
   openPreviousForm: any;
+  selectedStock:{id:string,name:string,symbol:string};
 }
 
-export const AddNewStockForm = observer(({handleClose, openPreviousForm }: IProps) => {
+export const AddNewStockForm = observer(({stockId,handleClose, openPreviousForm ,selectedStock}: IProps) => {
   const theme = useTheme();
 
   useEffect(() => {
-    const fetchAssetPrice = async () => {};
+    const fetchAssetPrice = async()=>{ portfolioDetailStore.getStockInfoById(stockId.toUpperCase()) };
     fetchAssetPrice();
   }, []);
 
@@ -23,11 +25,17 @@ export const AddNewStockForm = observer(({handleClose, openPreviousForm }: IProp
     openPreviousForm({ curFormType: 'transaction', selectedType: 'stocks' });
   };
 
-  const portfolioName = 'demo portoflio';
-  const assetName = 'Ethereum';
+  const portfolioName = 'Portoflio';
+  const assetName = selectedStock.name.toUpperCase();
+  const currenPrice = portfolioDetailStore.searchedStockDetail?.c;
 
   const handleFormSubmit = async (data: NewStockAsset) => {
-    //portfolioDetailStore.addNewStock(data);
+    const res:any = await portfolioDetailStore.addNewStock(data);
+    if (res.isError) {
+      rootStore.raiseError(res.data.en);
+    } else {
+      rootStore.raiseNotification(res.data.en, 'success');
+    }
     handleClose();
   };
 
@@ -63,7 +71,7 @@ export const AddNewStockForm = observer(({handleClose, openPreviousForm }: IProp
           {portfolioName}
         </p>
         <p style={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
-          {assetName}
+          {assetName}: ${currenPrice}
         </p>
       </div>
       <Box
@@ -75,7 +83,7 @@ export const AddNewStockForm = observer(({handleClose, openPreviousForm }: IProp
           },
         }}
       >
-        <BuyStockForm handleFormSubmit={handleFormSubmit} />
+        <BuyStockForm handleFormSubmit={handleFormSubmit} selectedStock = {selectedStock}/>
       </Box>
     </div>
   );

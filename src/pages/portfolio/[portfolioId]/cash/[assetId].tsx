@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import {
   Box,
   Container,
@@ -7,25 +8,14 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { useRouter } from 'next/router';
-import dayjs from 'dayjs';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
-import { StockVolatilityDetail } from 'components/portfolio';
-import { rootStore, stockVolatilityDetailStore } from 'shared/store';
+import { rootStore } from 'shared/store';
 
 const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();
-
-  stockVolatilityDetailStore.setStockId(assetId);
-  await stockVolatilityDetailStore.fetchData({ stockId: assetId });
-  await stockVolatilityDetailStore.fetchHistoricalMarketData({
-    startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
-    endDate: dayjs(Date.now()).unix(),
-    interval: 'W',
-  });
 
   rootStore.stopLoading();
 };
@@ -36,6 +26,7 @@ const AssetVolatilityDetailPage = (
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
+
   const {
     locales,
     locale,
@@ -54,7 +45,7 @@ const AssetVolatilityDetailPage = (
   return (
     <>
       <Head>
-        <title>Stock Detail | Money Master</title>
+        <title>Cash | Money Master</title>
       </Head>
       <Box
         component="main"
@@ -68,12 +59,13 @@ const AssetVolatilityDetailPage = (
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
           <Typography sx={{ mb: 3 }} variant="h4">
-            Stock Detail
+            Cash
           </Typography>
         </Container>
-        <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <StockVolatilityDetail stockId={assetId} />
-        </Container>
+        <Container
+          sx={{ padding: isMobile ? '0px' : 'initial' }}
+          maxWidth="lg"
+        ></Container>
       </Box>
     </>
   );

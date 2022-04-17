@@ -16,15 +16,6 @@ export const BankSavingsDetail = observer(
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-    useEffect(() => {
-      const fetchData = async () => {
-        bankSavingsDetailStore.setAssetId(assetId);
-        bankSavingsDetailStore.setPortfolioId(portfolioId);
-        bankSavingsDetailStore.fetchBankSavingsDetail({ portfolioId, assetId });
-      };
-      fetchData();
-    }, []);
-
     const { assetDetail } = bankSavingsDetailStore;
 
     const handleFormSubmit = async (data: UpdatedBankSavingItem) => {
