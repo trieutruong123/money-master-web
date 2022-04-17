@@ -3,7 +3,7 @@ import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { BuyBankSavingsForm } from './buy-bank-savings-form';
-import { portfolioDetailStore } from 'shared/store';
+import { portfolioDetailStore, rootStore } from 'shared/store';
 import { NewBanksSavingAsset, UpdatedBankSavingItem } from 'shared/types';
 
 interface IProps {
@@ -30,7 +30,12 @@ export const AddNewBankSavingsForm = observer(
     const portfolioName = 'demo portoflio';
 
     const handleFormSubmit = async (data: NewBanksSavingAsset) => {
-      portfolioDetailStore.addNewBankSaving(data);
+      const res = await portfolioDetailStore.addNewBankSaving(data);
+      if (res.isError) {
+        rootStore.raiseError(res.data.en);
+      } else {
+        rootStore.raiseNotification(res.data.en, 'success');
+      }
       handleClose();
     };
 

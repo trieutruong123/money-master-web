@@ -3,7 +3,7 @@ import { Box, IconButton, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { BuyRealEstateForm } from './buy-real-estate-form';
-import { portfolioDetailStore } from 'shared/store';
+import { portfolioDetailStore, rootStore } from 'shared/store';
 import { NewRealEstateAsset, UpdatedRealEstateItem } from 'shared/types';
 
 interface IProps {
@@ -30,7 +30,12 @@ export const AddNewRealEstateForm = observer(
     const portfolioName = 'demo portoflio';
 
     const handleFormSubmit = async (data: NewRealEstateAsset) => {
-      portfolioDetailStore.addNewRealEstate(data);
+      const res = await portfolioDetailStore.addNewRealEstate(data);
+      if (res.isError) {
+        rootStore.raiseError(res.data.en);
+      } else {
+        rootStore.raiseNotification(res.data.en, 'success');
+      }
       handleClose();
     };
 

@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { content } from 'i18n';
 import { rootStore } from 'shared/store';
 import DefaultNavbar from './nav-bar';
+import { observer } from 'mobx-react-lite';
 
 interface IProps {
   children: ReactNode;
@@ -21,16 +22,27 @@ const DefaultLayoutRoot = styled('div')(({ theme }) => ({
   },
 }));
 
-
-const DefaultLayout: React.FC<IProps> = ({ children }: IProps) => {
+const DefaultLayout: React.FC<IProps> = observer(({ children }: IProps) => {
   const router = useRouter();
   const locale = router.locale;
   const landingPage =
     locale === 'en' ? content.en.landingPage : content.vi.landingPage;
+
+  const { isNotified, message, variant } = rootStore;
+  useEffect(() => {
+    if (isNotified) {
+      toast(message, {
+        type: variant,
+        onClose: () => rootStore.deleteNotification(),
+      });
+    }
+  }, [isNotified, message, variant, rootStore, toast]);
+
   return (
     <>
       <DefaultLayoutRoot>
-        <Box id="top-of-page"
+        <Box
+          id="top-of-page"
           sx={{
             display: 'flex',
             flex: '1 1 auto',
@@ -42,20 +54,8 @@ const DefaultLayout: React.FC<IProps> = ({ children }: IProps) => {
         </Box>
       </DefaultLayoutRoot>
       <DefaultNavbar content={landingPage.navbar} />
-
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </>
   );
-};
+});
 
 export default DefaultLayout;

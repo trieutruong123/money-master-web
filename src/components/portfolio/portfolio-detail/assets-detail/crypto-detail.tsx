@@ -123,7 +123,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
             <MoreHorizIcon />
           </Button>
         </Card>
-        <Scrollbars autoHeight>
+        {/* <Scrollbars autoHeight> */}
           <Box>
             <Table sx={{ overflowY: 'auto' }}>
               <TableHead>
@@ -190,7 +190,7 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
               </TableBody>
             </Table>
           </Box>
-        </Scrollbars>
+        {/* </Scrollbars> */}
       </Card>
     </Grid>
   ) : (

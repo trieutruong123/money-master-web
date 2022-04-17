@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
+import React from 'react';
 import { precisionRound } from 'utils/number';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -44,7 +45,8 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
             return dayjs.unix(val).format('MMM DD HH:mm');
           else if (timeInterval === '60')
             return dayjs.unix(val).format('MMM DD HH:00');
-          else if (timeInterval === 'D') return dayjs.unix(val).format('MMM DD YY');
+          else if (timeInterval === 'D')
+            return dayjs.unix(val).format('MMM DD YY');
           else return dayjs.unix(val).format('MMM DD YYYY');
         },
       },
@@ -56,17 +58,19 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
       tooltip: {
         enabled: true,
       },
-      decimalsInFloat:4
-
+      decimalsInFloat: 4,
     },
   };
+  const AnyComponent = ReactApexChart as any;
   return (
-    <ReactApexChart
-      options={candleStickOptions}
-      series={candleStickSeries}
-      type={'candlestick'}
-      height="350"
-      width={'100%'}
-    />
+    <React.Fragment>
+      <AnyComponent
+        options={candleStickOptions}
+        series={candleStickSeries}
+        type={'candlestick'}
+        height="350"
+        width={'100%'}
+      />
+    </React.Fragment>
   );
 };

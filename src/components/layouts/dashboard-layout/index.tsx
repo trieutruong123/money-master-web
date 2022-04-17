@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {ToastContainer} from 'react-toastify';
 import { DashboardNavbar } from './navbar';
 import { DashboardSidebar } from './sidebar';
+import { toast } from 'react-toastify';
+import { rootStore } from 'shared/store';
+import { observer } from 'mobx-react-lite';
 
 const DashboardLayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -15,9 +17,18 @@ const DashboardLayoutRoot = styled('div')(({ theme }) => ({
   },
 }));
 
-export const DashboardLayout = (props: any) => {
+export const DashboardLayout = observer((props: any) => {
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const { isNotified, message, variant } = rootStore;
+  useEffect(() => {
+    if (isNotified) {
+      toast(message, {
+        type: variant,
+        onClose: () => rootStore.deleteNotification(),
+      });
+    }
+  }, [isNotified, message, variant, rootStore, toast]);
 
   return (
     <>
@@ -38,17 +49,6 @@ export const DashboardLayout = (props: any) => {
         onClose={() => setSidebarOpen(false)}
         open={isSidebarOpen}
       />
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </>
   );
-};
+});

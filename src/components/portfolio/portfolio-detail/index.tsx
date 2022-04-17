@@ -10,6 +10,7 @@ import {
 import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import {toast} from 'react-toastify';
 import { AssetsDetail } from './assets-detail';
 import { AddNewAssetsModal } from './add-new-assets-modal';
 import { portfolioDetailStore, rootStore } from 'shared/store';

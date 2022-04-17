@@ -41,6 +41,7 @@ class RootStore {
   }
 
   raiseError(errorMessage?: string) {
+    console.log('raise error');
     this.setNotified(true);
     this.setVariant('error');
     const message =
@@ -51,12 +52,14 @@ class RootStore {
   }
 
   raiseNotification(message: string, variant: NotificationType) {
+    console.log('raise notification');
     this.setNotified(true);
     this.setVariant(variant);
     this.setMessage(message);
   }
 
   deleteNotification() {
+    console.log('delete notification');
     this.setNotified(false);
     this.setMessage('');
   }

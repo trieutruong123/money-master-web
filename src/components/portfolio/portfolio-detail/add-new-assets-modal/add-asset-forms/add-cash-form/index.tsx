@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { BuyCashForm } from './buy-cash-form';
 import { NewCashAsset } from 'shared/types';
-import { portfolioDetailStore } from 'shared/store';
+import { portfolioDetailStore, rootStore } from 'shared/store';
 
 interface IProps {
   handleClose: any;
@@ -26,7 +26,12 @@ export const AddNewCashForm = observer(({ handleClose,openPreviousForm }: IProps
   const portfolioName = 'demo portoflio';
 
   const handleFormSubmit = async (data: NewCashAsset) => {
-    portfolioDetailStore.addNewCash(data);
+    const res = await portfolioDetailStore.addNewCash(data);
+    if (res.isError) {
+      rootStore.raiseError(res.data.en);
+    } else {
+      rootStore.raiseNotification(res.data.en, 'success');
+    }
     handleClose();
   };
 

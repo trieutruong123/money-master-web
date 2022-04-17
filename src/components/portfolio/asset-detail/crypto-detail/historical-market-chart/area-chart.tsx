@@ -101,9 +101,10 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
       },
     },
   };
+  const AnyComponent = ReactApexChart as any;
   return (
     <React.Fragment>
-      <ReactApexChart
+      <AnyComponent
         options={areaOptions}
         series={areaSeries}
         type={'area'}

@@ -7,11 +7,13 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { CssBaseline, Slide } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
+import { ToastContainer } from 'react-toastify';
 import { createEmotionCache } from 'utils/create-emotion-cache';
 import { theme } from 'shared/theme';
 import { rootStore } from 'shared/store';
 import { AuthGuard } from 'components';
 import '../styles/globals.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 export type NextApplicationPage<P = any, IP = P> = NextPage<P, IP> & {
   requireAuth?: boolean;
@@ -46,14 +48,24 @@ export default function MyApp(props: AppProps) {
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <React.StrictMode>
-              
-                {Component.requireAuth ? (
-                  <AuthGuard>
-                    {getLayout(<AnyComponent {...pageProps} />)}
-                  </AuthGuard>
-                ) : (
-                  getLayout(<AnyComponent {...pageProps} />)
-                )}
+              {Component.requireAuth ? (
+                <AuthGuard>
+                  {getLayout(<AnyComponent {...pageProps} />)}
+                </AuthGuard>
+              ) : (
+                getLayout(<AnyComponent {...pageProps} />)
+              )}
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+              />
             </React.StrictMode>
           </ThemeProvider>
         </LocalizationProvider>

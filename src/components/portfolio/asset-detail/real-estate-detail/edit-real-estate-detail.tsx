@@ -22,11 +22,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import dayjs from 'dayjs';
-import { toast } from 'react-toastify';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { colorScheme } from 'utils';
 import { RealEstateItem } from 'shared/models';
 import { rootStore } from 'shared/store';
+import { toast } from 'react-toastify';
 
 interface IProps {
   assetDetail: RealEstateItem | undefined;
@@ -91,18 +91,10 @@ export const EditRealEstateDetail = ({
       description: data.description,
     });
     if (res.isError) {
-      toast.error(res.data.en, {
-        onClose: () => {
-          rootStore.deleteNotification();
-        },
-      });
+      rootStore.raiseError(res.data.en);
     } else {
       setEdit(false);
-      toast.success(res.data.en, {
-        onClose: () => {
-          rootStore.deleteNotification();
-        },
-      });
+      rootStore.raiseNotification(res.data.en, 'success');
     }
   };
 
