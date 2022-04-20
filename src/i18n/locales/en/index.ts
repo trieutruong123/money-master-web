@@ -160,7 +160,9 @@ export const en = {
     add: 'Add new item successfully',
     default: 'Done',
   },
+
   error: {
+    failedToLoadInitialData: 'Error! Failed to load data',
     methodNotAllowed: 'Error! Method now allowed.',
     badRequest: 'Error! Bad request.',
     unauthorizedUser:

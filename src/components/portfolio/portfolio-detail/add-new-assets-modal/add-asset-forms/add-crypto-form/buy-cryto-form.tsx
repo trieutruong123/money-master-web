@@ -33,31 +33,31 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: any;
-  selectedCoin:{id:string,name:string,symbol:string};
+  selectedCoin: { id: string; name: string; symbol: string };
 }
 
-export const BuyCryptoForm = ({ handleFormSubmit,selectedCoin }: IProps) => {
+export const BuyCryptoForm = ({ handleFormSubmit, selectedCoin }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
-    name:Yup.string().required('Name is required'),
+    name: Yup.string().required('Name is required'),
     purchasePrice: Yup.number()
       .required('Purchase price is required')
       .typeError('Purchase price must be a number')
       .positive('Purchase price must be greater than zero'),
-    amount: Yup.number()
+    currentAmountHolding: Yup.number()
       .required('Amount is required')
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
     currencyCode: Yup.string().required().default('USD'),
-    description:Yup.string(),
+    description: Yup.string(),
   });
   const currencyList = getSupportedCurrencyList();
 
   const formOptions = { resolver: yupResolver(validationSchema) };
-  const { register, reset, handleSubmit, formState, getValues, setError } =
+  const { register, reset, handleSubmit, formState, getValues, setError, } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
@@ -66,13 +66,13 @@ export const BuyCryptoForm = ({ handleFormSubmit,selectedCoin }: IProps) => {
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit({
-      name:data.name,
-      inputDay:date,
-      currentAmountHolding:data.currentAmountHolding,
-      description:data.description,
-      purchasePrice:data.purchasePrice,
-      currencyCode:data.currencyCode,
-      cryptoCoinCode:selectedCoin.id,
+      name: data.name,
+      inputDay: date,
+      currentAmountHolding: data.currentAmountHolding,
+      description: data.description,
+      purchasePrice: data.purchasePrice,
+      currencyCode: data.currencyCode,
+      cryptoCoinCode: selectedCoin.id,
     });
   };
 
@@ -114,7 +114,7 @@ export const BuyCryptoForm = ({ handleFormSubmit,selectedCoin }: IProps) => {
           helperText={errors.name?.message}
         ></TextField>
         <TextField
-          type="string"
+          type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
           id="outlined-crypto-purchase-price"
@@ -190,7 +190,7 @@ export const BuyCryptoForm = ({ handleFormSubmit,selectedCoin }: IProps) => {
           variant="outlined"
           error={typeof errors.description?.message !== 'undefined'}
           helperText={errors.description?.message}
-        ></TextField>{' '}
+        ></TextField>
       </Box>
 
       <Box

@@ -1,4 +1,8 @@
-import { CryptoItem, StockItem } from './../../models/portfolio-asset.model';
+import {
+  CryptoItem,
+  PieChartItem,
+  StockItem,
+} from './../../models/portfolio-asset.model';
 import {
   NewStockAsset,
   NewCryptoCurrencyAsset,
@@ -26,6 +30,7 @@ import {
 import { SankeyDataLink } from 'shared/types';
 import { portfolioData } from './portfolio-data';
 import { rootStore } from '../root.store';
+import { content } from 'i18n';
 
 class PortfolioDetailStore {
   portfolioId: string = '';
@@ -42,6 +47,7 @@ class PortfolioDetailStore {
   isOpenAddNewAssetModal: boolean = false;
   currencyCode: string = '';
   sankeyFlowData: Array<SankeyDataLink> = [];
+  pieChartData: Array<PieChartItem> | undefined = [];
 
   constructor() {
     makeAutoObservable(this, {
@@ -81,6 +87,16 @@ class PortfolioDetailStore {
     this.portfolioId = id;
   }
 
+  async fetchInitialData() {
+    await this.fetchBankSaving();
+    await this.fetchCash();
+    await this.fetchCryptoCurrency();
+    await this.fetchStock();
+    await this.fetchRealEstate();
+    await this.fetchPieChartData();
+    await this.fetchSankeyFlowData();
+  }
+
   async fetchPortfolioDetailData() {
     this.currencyCode = 'usd';
     this.portfolioAllocationData = portfolioData.portfolioAllocation;
@@ -94,6 +110,9 @@ class PortfolioDetailStore {
     if (!res.isError) {
       this.stockDetail = res.data;
     } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
       this.stockDetail = undefined;
     }
   }
@@ -104,6 +123,9 @@ class PortfolioDetailStore {
     if (!res.isError) {
       this.cryptoDetail = res.data;
     } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
       this.cryptoDetail = undefined;
     }
   }
@@ -114,6 +136,9 @@ class PortfolioDetailStore {
     if (!res.isError) {
       this.bankingDetail = res.data;
     } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
       this.bankingDetail = undefined;
     }
   }
@@ -124,6 +149,9 @@ class PortfolioDetailStore {
     if (!res.isError) {
       this.realEstateDetail = res.data;
     } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
       this.realEstateDetail = undefined;
     }
   }
@@ -134,6 +162,9 @@ class PortfolioDetailStore {
     if (!res.isError) {
       this.cashDetail = res.data;
     } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
       this.cashDetail = undefined;
     }
   }
@@ -152,7 +183,9 @@ class PortfolioDetailStore {
     });
     rootStore.stopLoading();
     if (!res.isError) {
-      await this.fetchRealEstate();
+      const newRealEstateArray = this.realEstateDetail?.slice();
+      newRealEstateArray?.push(res.data);
+      this.realEstateDetail = newRealEstateArray;
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
@@ -173,7 +206,9 @@ class PortfolioDetailStore {
     });
     rootStore.stopLoading();
     if (!res.isError) {
-      await this.fetchBankSaving();
+      const newBankSavingArray = this.bankingDetail?.slice();
+      newBankSavingArray?.push(res.data);
+      this.bankingDetail = newBankSavingArray;
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
@@ -187,7 +222,9 @@ class PortfolioDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
-      await this.fetchBankSaving();
+      const newCryptoArray = this.cryptoDetail?.slice();
+      newCryptoArray?.push(res.data);
+      this.cryptoDetail = newCryptoArray;
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
@@ -201,7 +238,9 @@ class PortfolioDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
-      await this.fetchBankSaving();
+      const newStockArray = this.stockDetail?.slice();
+      newStockArray?.push(res.data);
+      this.stockDetail = newStockArray;
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
@@ -215,7 +254,9 @@ class PortfolioDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
-      await this.fetchCash();
+      const newCashArray = this.cashDetail?.slice();
+      newCashArray?.push(res.data);
+      this.cashDetail = newCashArray;
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
@@ -235,12 +276,6 @@ class PortfolioDetailStore {
         break;
       case 'cryptoCurrency':
         res = await coinGeckoService.searchForCoin(searchingText);
-        break;
-      case 'currency':
-        res = { isError: true, data: [] };
-        break;
-      case 'gold':
-        res = { isError: true, data: [] };
         break;
       default:
         res = { isError: true, data: [] };
@@ -262,6 +297,21 @@ class PortfolioDetailStore {
         value: link.amount,
       };
     });
+  }
+
+  async fetchPieChartData() {
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/pieChart`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    rootStore.stopLoading();
+    if (!res.isError) {
+      this.pieChartData = res.data;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+      this.pieChartData = undefined;
+    }
   }
 
   async getStockInfoById(stockId: string) {

@@ -10,10 +10,11 @@ import {
 import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
+import { portfolioDetailStore, rootStore } from 'shared/store';
+import { AssetAllocation } from './asset-allocation';
 import { AssetsDetail } from './assets-detail';
 import { AddNewAssetsModal } from './add-new-assets-modal';
-import { portfolioDetailStore, rootStore } from 'shared/store';
 
 interface IProps {
   portfolioId: string;
@@ -29,6 +30,7 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
     realEstateDetail,
     bankingDetail,
     portfolioAllocationData,
+    pieChartData,
     isOpenAddNewAssetModal,
   } = portfolioDetailStore;
   return (
@@ -51,6 +53,11 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
         <Box sx={{ overflow: 'auto' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
             <Grid container display="flex" justifyContent="center">
+              {typeof pieChartData !== 'undefined' ? (
+                <AssetAllocation pieChartData={pieChartData} />
+              ) : (
+                <></>
+              )}
               <AssetsDetail
                 cryptoDetail={cryptoDetail}
                 cashDetail={cashDetail}

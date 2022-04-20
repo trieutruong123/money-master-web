@@ -44,17 +44,17 @@ export class BankSavingItem {
 
 export class StockItem {
   id: number = 0;
-  name:string = "";
+  name: string = '';
   inputDay: string = '';
-  lastChange:string = "";
+  lastChange: string = '';
   description: string = '';
   currentAmountHolding: number = 0;
   stockCode: string = '';
   marketCode: string = '';
-  currentPrice:number = 0;
+  currentPrice: number = 0;
   currencyCode: string = '';
   purchasePrice: number = 0;
-  currentAmountInCurrency:number = 0;
+  currentAmountInCurrency: number = 0;
 }
 
 export class CryptoItem {
@@ -97,4 +97,9 @@ export class SearchingCryptoItem {
   market_cap_rank?: number = 0;
   thumb: string = '';
   large: string = '';
+}
+
+export class PieChartItem {
+  assetType: string = '';
+  sumValue: number = 0;
 }

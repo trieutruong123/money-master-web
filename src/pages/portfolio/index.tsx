@@ -6,22 +6,22 @@ import { PortfolioList } from 'components/portfolio';
 import { portfolioStore } from 'shared/store';
 import { useEffect } from 'react';
 
-const fetchData=async()=>{
+const fetchData = async () => {
   await portfolioStore.fetchPortfolioData();
-}
+};
 
-export const  Portfolio =  (
+export const Portfolio = (
   props: InferGetStaticPropsType<typeof getStaticProps>,
-) => {  
-  useEffect(()=>{
+) => {
+  useEffect(() => {
     fetchData();
-  },[])
-  return(
+  }, []);
+  return (
     <>
       <Head>
         <title>Portfolio | Money Master</title>
       </Head>
-      <PortfolioList context={props.context}/>
+      <PortfolioList context={props.context} />
     </>
   );
 };
@@ -32,14 +32,11 @@ Portfolio.getLayout = (page: ReactJSXElement) => (
 );
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  
   return {
     props: {
-      context
+      context,
     },
   };
 };
-
-
 
 export default Portfolio;

@@ -107,7 +107,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
           <TextField
             type="text"
             fullWidth
-            sx={{  mt: 1, display: 'block' }}
+            sx={{ mt: 1, display: 'block' }}
             id="outlined-real-estate-name"
             label={'*Name'}
             {...register('name')}
@@ -129,7 +129,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
           <TextField
             type="number"
             fullWidth
-            sx={{  mt: 1, display: 'block' }}
+            sx={{ mt: 1, display: 'block' }}
             id="outlined-real-estate-current-price"
             label={'*Current Price'}
             {...register('currentPrice')}
@@ -139,7 +139,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
           ></TextField>
 
           <Grid container spacing={isXs ? 1 : 2}>
-            <Grid item xs={12} sm={6} sx={{ mt: 1 ,display: 'block' }}>
+            <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
               <FormControl fullWidth>
                 <InputLabel id="currency-list">Currency</InputLabel>
                 <Select
@@ -160,7 +160,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit }: IProps) => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6} sx={{  mt: 1,display: 'block' }}>
+            <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
                   label="*Input day"

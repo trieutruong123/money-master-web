@@ -18,14 +18,8 @@ const fetchData = async (portfolioId: string) => {
   rootStore.startLoading();
 
   portfolioDetailStore.setPortfolioId(portfolioId);
-
-  await portfolioDetailStore.fetchPortfolioDetailData();
-  await portfolioDetailStore.fetchRealEstate();
-  await portfolioDetailStore.fetchBankSaving();
-  await portfolioDetailStore.fetchCash();
-  await portfolioDetailStore.fetchStock();
-  await portfolioDetailStore.fetchCryptoCurrency();
-
+  await portfolioDetailStore.fetchInitialData();
+  
   rootStore.stopLoading();
 };
 
@@ -40,9 +34,10 @@ const PortfolioDetailPage = (
   } = props;
 
   useEffect(() => {
+    if (typeof locale !== 'undefined') rootStore.setLocale(locale);
     fetchData(portfolioId);
-  },[]);
-  
+  }, []);
+
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { portfolioDetailPage } = detail;
 

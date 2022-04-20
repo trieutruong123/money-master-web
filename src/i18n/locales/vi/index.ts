@@ -140,7 +140,7 @@ export const vi = {
     },
   },
   portfolioDetailPage: {
-    title: 'PORTFOLIO DETAIL',
+    title: 'Danh mục tài sản',
   },
   settingsPage: {
     title: 'Cài đặt',
@@ -161,6 +161,7 @@ export const vi = {
     default: 'Đã hoàn thành',
   },
   error: {
+    failedToLoadInitialData: 'Lỗi! Không tải được dữ liệu',
     methodNotAllowed: 'Lỗi! Truy cập không tồn tại.',
     badRequest: 'Lỗi! Không tìm thấy nội dung.',
     unauthorizedUser: 'Lỗi! Bạn không thể truy cập tài nguyên này.',

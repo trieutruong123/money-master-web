@@ -23,9 +23,9 @@ type FormValues = {
   name: string;
   purchasePrice: number;
   currentAmountHolding: number;
-  date: Date;
   currencyCode: string;
   description: string;
+  date?: Date;
   brokerFeeInPercent?: number;
   brokerFee?: number;
   brokerFeeForSecurity?: number;
@@ -48,12 +48,13 @@ export const BuyStockForm = ({ handleFormSubmit, selectedStock }: IProps) => {
       .required('Price is required')
       .typeError('Price must be a number')
       .positive('Price must be greater than zero'),
-    currencyAmountHolding: Yup.number()
+    currentAmountHolding: Yup.number()
       .required('Shares is required')
       .typeError('Shares must be a number')
       .positive('Shares must be greater than zero'),
-    description: Yup.string(),
     currencycode: Yup.string().required().default('USD'),
+    description: Yup.string(),
+    
   });
   const currencyList = getSupportedCurrencyList();
 
@@ -66,7 +67,6 @@ export const BuyStockForm = ({ handleFormSubmit, selectedStock }: IProps) => {
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    
     handleFormSubmit({
       name: data.name,
       inputDay: date,

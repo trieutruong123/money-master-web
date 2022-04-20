@@ -1,11 +1,12 @@
 import { action, computed, makeAutoObservable, observable } from 'mobx';
-import { NotificationType } from 'shared/types';
+import { NotificationType, SupportedLanguage } from 'shared/types';
 
 class RootStore {
   isLoading: boolean = false;
   message: string = '';
   isNotified: boolean = false;
   variant: NotificationType = 'error';
+  locale: SupportedLanguage = 'en';
   constructor() {
     makeAutoObservable(this, {
       isLoading: observable,
@@ -14,7 +15,12 @@ class RootStore {
       setLoading: action,
       setMessage: action,
       setNotified: action,
+      setLocale: action,
     });
+  }
+
+  setLocale(locale: SupportedLanguage) {
+    this.locale = locale;
   }
 
   setLoading(state: boolean) {
