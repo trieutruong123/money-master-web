@@ -20,7 +20,9 @@ const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();
 
   stockVolatilityDetailStore.setStockId(assetId);
-  await stockVolatilityDetailStore.fetchData({ stockId: assetId });
+  stockVolatilityDetailStore.setPortfolioId(portfolioId);
+  
+  await stockVolatilityDetailStore.fetchStockDetail({ stockId: assetId });
   await stockVolatilityDetailStore.fetchHistoricalMarketData({
     startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
     endDate: dayjs(Date.now()).unix(),

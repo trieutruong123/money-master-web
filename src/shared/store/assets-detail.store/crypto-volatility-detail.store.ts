@@ -1,41 +1,59 @@
-import { coinGeckoService } from 'services';
+import { coinGeckoService, httpService } from 'services';
 import { action, computed, makeAutoObservable, observable } from 'mobx';
+import { content } from 'i18n';
+import { rootStore } from 'shared/store';
+import { CryptoItem } from 'shared/models';
 import { portfolioData } from '../portfolio/portfolio-data';
+
 class CryptoVolatilityDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
   //transactionHistoryData: Array<any> = [];
-  historicalMarketData: Array<any> = [];
   coinId: string = '';
-  coinMarketData: any = undefined;
-  //coinDetail: any | undefined = undefined;
+  coinCode: string = '';
+  portfolioId: string = '';
   timeInterval: number = 1;
   currencyCode: string = 'usd';
+  cryptoDetail: CryptoItem | undefined = undefined;
+  cryptoList: Array<CryptoItem> | undefined = undefined;
+  historicalMarketData: Array<any> = [];
+  coinMarketData: any = undefined;
+  //coinDetail: any | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this, {
       isOpenAddNewTransactionModal: observable,
-      historicalMarketData: observable,
       coinId: observable,
+      coinCode: observable,
+      portfolioId: observable,
+      timeInterval: observable,
+      currencyCode: observable,
+      cryptoDetail: observable,
       coinMarketData: observable,
+      historicalMarketData: observable,
 
-      setOpenAddNewTransactionModal: action,
-      fetchData: action,
-      fetchHistoricalMarketData: action,
       setCoinId: action,
-      setTimeInterval: action,
+      setCoinCode: action,
       setCurrency: action,
-
+      setOpenAddNewTransactionModal: action,
+      setTimeInterval: action,
+      setPortfolioId: action,
+      fetchCoinDetail: action,
+      fetchHistoricalMarketData: action,
       getAssetDetail: computed,
       getTransactionHistoryData: computed,
     });
   }
 
-  setOpenAddNewTransactionModal(isOpen: boolean) {
-    this.isOpenAddNewTransactionModal = isOpen;
+  setCoinId(id: string) {
+    this.coinId = id;
   }
 
-  setCoinId(code: string) {
-    this.coinId = code;
+  setCoinCode(code: string) {
+    this.coinCode = code;
+  }
+
+  setPortfolioId(portfolioId: string) {
+    this.portfolioId = portfolioId;
   }
 
   setTimeInterval(interval: number) {
@@ -46,8 +64,8 @@ class CryptoVolatilityDetailStore {
     this.currencyCode = currencyCode;
   }
 
-  async fetchData({ code }: { code: string }) {
-    this.coinMarketData = await this.fetchCoinInfoByCode({ code });
+  setOpenAddNewTransactionModal(isOpen: boolean) {
+    this.isOpenAddNewTransactionModal = isOpen;
   }
 
   async fetchCoinInfoByCode({ code }: { code: string }) {
@@ -62,19 +80,46 @@ class CryptoVolatilityDetailStore {
     });
     if (!res.isError) {
       return res.data;
-    } else return undefined;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+    }
   }
 
   async fetchHistoricalMarketData() {
     const res: any = await coinGeckoService.getCoinOHCL({
-      coinCode: this.coinId,
+      coinCode: this.coinCode,
       days: this.timeInterval,
       vsCurrency: this.currencyCode,
     });
     if (!res.isError) {
       this.historicalMarketData = res.data;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
     }
-    return true;
+  }
+
+  async fetchCoinDetail() {
+    const url = `/portfolio/${this.portfolioId}/crypto`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      this.cryptoList = res.data;
+      this.cryptoDetail = res.data.filter(
+        (item: any) => item.id === this.coinId,
+      );
+      this.coinCode = res.data.filter(
+        (item: any) => item.id === this.coinId,
+      ).cryptoCoinCode;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+      this.cryptoDetail = undefined;
+      this.cryptoList = undefined;
+    }
   }
 
   get getTransactionHistoryData() {

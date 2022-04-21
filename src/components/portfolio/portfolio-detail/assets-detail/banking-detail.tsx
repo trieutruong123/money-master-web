@@ -120,7 +120,7 @@ export const BankingInvestments = ({ bankingDetail }: IProps) => {
           <MoreHorizIcon />
         </Button>
       </Card>
-      {/* <Scrollbars autoHeight> */}
+      {/* <Scrollbars autoHide style = {{cursor:'pointer', minWidth: "100%"}}> */}
         <Box>
           <Table>
             <TableHead>

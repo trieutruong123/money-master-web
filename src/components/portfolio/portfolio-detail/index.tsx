@@ -12,7 +12,7 @@ import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { toast } from 'react-toastify';
 import { portfolioDetailStore, rootStore } from 'shared/store';
-import { AssetAllocation } from './asset-allocation';
+import { DonutChart, HorizontalBarChart } from './insight-chart';
 import { AssetsDetail } from './assets-detail';
 import { AddNewAssetsModal } from './add-new-assets-modal';
 
@@ -54,7 +54,21 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
             <Grid container display="flex" justifyContent="center">
               {typeof pieChartData !== 'undefined' ? (
-                <AssetAllocation pieChartData={pieChartData} />
+                <Grid
+                  container
+                  item
+                  spacing={2}
+                  sx={{ display: 'flex', alignItems: 'stretch' }}
+                >
+                  <Grid item lg={6} md={6} xl={6} sm={6} xs={12}>
+                    <DonutChart pieChartData={pieChartData} />
+                  </Grid>
+                  <Grid item lg={6} md={6} xl={6} sm={6} xs={12}>
+                    <HorizontalBarChart
+                      pieChartData={pieChartData}
+                    ></HorizontalBarChart>
+                  </Grid>
+                </Grid>
               ) : (
                 <></>
               )}

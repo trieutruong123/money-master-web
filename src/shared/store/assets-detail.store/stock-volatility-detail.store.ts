@@ -1,14 +1,21 @@
+import { content } from 'i18n';
 import { action, computed, makeAutoObservable, observable } from 'mobx';
-import { finhubService } from 'services';
+import { finhubService, httpService } from 'services';
+import { StockItem } from 'shared/models';
+import { rootStore } from 'shared/store';
 import { portfolioData } from 'shared/store/portfolio/portfolio-data';
 
 class StockVolatilityDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
-  historicalMarketData: Array<any> = [];
   stockId: string = '';
+  stockCode: string = '';
+  portfolioId: string = '';
   stockMarketData: any = undefined;
   currencyCode: string = 'usd';
   timeInterval: string = 'W';
+  historicalMarketData: Array<any> = [];
+  stockDetail: StockItem | undefined = undefined;
+  stockList: Array<StockItem> | undefined = undefined;
   constructor() {
     makeAutoObservable(this, {
       isOpenAddNewTransactionModal: observable,
@@ -18,7 +25,10 @@ class StockVolatilityDetailStore {
       setOpenAddNewTransactionModal: action,
       setStockId: action,
       setTimeInterval: action,
-      fetchData: action,
+      setCurrency: action,
+      setPortfolioId: action,
+      setStockCode: action,
+      fetchStockDetail: action,
       fetchHistoricalMarketData: action,
 
       getTransactionHistoryData: computed,
@@ -38,12 +48,36 @@ class StockVolatilityDetailStore {
     this.stockId = stockId;
   }
 
+  setPortfolioId(portfolioId: string) {
+    this.portfolioId = portfolioId;
+  }
+
   setCurrency(currencyCode: string) {
     this.currencyCode = currencyCode;
   }
 
-  async fetchData({ stockId }: { stockId: string }) {
-    this.stockMarketData = await this.fetchStockInfoByCode({ stockId });
+  setStockCode(stockCode: string) {
+    this.stockCode = stockCode;
+  }
+
+  async fetchStockDetail({ stockId }: { stockId: string }) {
+    const url = `/portfolio/${this.portfolioId}/stock`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      this.stockList = res.data;
+      this.stockDetail = res.data.filter(
+        (item: any) => item.id === this.stockId,
+      );
+      this.stockCode = res.data.filter(
+        (item: any) => item.id === this.stockId,
+      ).stockCode;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+      this.stockDetail = undefined;
+      this.stockList = undefined;
+    }
   }
 
   async fetchStockInfoByCode({ stockId }: { stockId: string }) {
@@ -111,7 +145,7 @@ class StockVolatilityDetailStore {
   get getStockDetail() {
     if (typeof this.stockMarketData === 'undefined') return undefined;
     const marketPrice = this.stockMarketData.c;
-    
+
     const { quantity, totalPL } = transactionHistory.reduce(
       (total: any, curr: any, index: number): any => {
         if (curr.type === 'buy')
@@ -144,8 +178,7 @@ class StockVolatilityDetailStore {
       totalPL,
       PLPercentage: totalPL / (quantity * marketPrice),
       _24HChange: this.stockMarketData.dp,
-      _24HChangePercentage:
-        this.stockMarketData.pc,
+      _24HChangePercentage: this.stockMarketData.pc,
     };
     return res;
   }
@@ -154,7 +187,6 @@ class StockVolatilityDetailStore {
 }
 
 export const stockVolatilityDetailStore = new StockVolatilityDetailStore();
-
 
 const transactionHistory = [
   {

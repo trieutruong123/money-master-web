@@ -20,7 +20,9 @@ const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();
 
   cryptoVolatilityDetailStore.setCoinId(assetId);
-  await cryptoVolatilityDetailStore.fetchData({ code: assetId });
+  cryptoVolatilityDetailStore.setPortfolioId(portfolioId);
+
+  await cryptoVolatilityDetailStore.fetchCoinDetail();
   await cryptoVolatilityDetailStore.fetchHistoricalMarketData();
 
   rootStore.stopLoading();

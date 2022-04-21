@@ -52,7 +52,7 @@ export const BuyStockForm = ({ handleFormSubmit, selectedStock }: IProps) => {
       .required('Shares is required')
       .typeError('Shares must be a number')
       .positive('Shares must be greater than zero'),
-    currencycode: Yup.string().required().default('USD'),
+    currencyCode: Yup.string().required().default('USD'),
     description: Yup.string(),
     
   });
@@ -75,7 +75,7 @@ export const BuyStockForm = ({ handleFormSubmit, selectedStock }: IProps) => {
       stockCode: selectedStock.id,
       marketCode: selectedStock.name,
       purchasePrice: data.purchasePrice,
-      currenyCode: data.currencyCode,
+      currencyCode: data.currencyCode,
     });
   };
 

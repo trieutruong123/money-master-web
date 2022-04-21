@@ -183,9 +183,8 @@ class PortfolioDetailStore {
     });
     rootStore.stopLoading();
     if (!res.isError) {
-      const newRealEstateArray = this.realEstateDetail?.slice();
-      newRealEstateArray?.push(res.data);
-      this.realEstateDetail = newRealEstateArray;
+      this.realEstateDetail?.push(res.data);
+      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
