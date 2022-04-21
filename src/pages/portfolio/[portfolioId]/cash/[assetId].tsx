@@ -12,10 +12,16 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { DashboardLayout } from 'components';
-import { rootStore } from 'shared/store';
+import { cashDetailStore, rootStore } from 'shared/store';
+import { CashDetail } from 'components/portfolio';
 
 const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();
+
+  cashDetailStore.setCashId(assetId);
+  cashDetailStore.setPortfolioId(portfolioId);
+
+  cashDetailStore.fetchCash();
 
   rootStore.stopLoading();
 };
@@ -62,10 +68,9 @@ const AssetVolatilityDetailPage = (
             Cash
           </Typography>
         </Container>
-        <Container
-          sx={{ padding: isMobile ? '0px' : 'initial' }}
-          maxWidth="lg"
-        ></Container>
+        <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
+          <CashDetail cashId={assetId} />
+        </Container>
       </Box>
     </>
   );

@@ -23,9 +23,10 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const { isOpenAddNewTransactionModal, coinMarketData } =
+  const { isOpenAddNewTransactionModal
+   } =
     cryptoVolatilityDetailStore;
-  const coinDetail = cryptoVolatilityDetailStore.getAssetDetail;
+  const coinDetail = cryptoVolatilityDetailStore.cryptoDetail;
   const transactionHistoryData =
     cryptoVolatilityDetailStore.getTransactionHistoryData;
   const historicalMarketData =
@@ -56,12 +57,12 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
         <Box sx={{ overflow: 'hidden' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
             <Grid container display="flex" justifyContent="center">
-              {coinDetail !== undefined && coinMarketData !== undefined ? (
+              {typeof coinDetail !== "undefined"? (
                 <IntroSection assetDetail={coinDetail} />
               ) : (
                 <></>
               )}
-              {historicalMarketData !== undefined ? (
+              {typeof historicalMarketData !== "undefined" ? (
                 <HistoricalMarketChart
                   data={historicalMarketData}
                   handleTimeIntervalChanged={handleTimeIntervalChanged}
@@ -69,7 +70,7 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
               ) : (
                 <></>
               )}
-              {coinDetail !== undefined && coinMarketData !== undefined ? (
+              {typeof coinDetail !== "undefined"  ? (
                 <TransactionHistory
                   transactionHistoryData={transactionHistoryData}
                 />

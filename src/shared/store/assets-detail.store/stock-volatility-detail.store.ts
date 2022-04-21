@@ -7,10 +7,9 @@ import { portfolioData } from 'shared/store/portfolio/portfolio-data';
 
 class StockVolatilityDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
-  stockId: string = '';
+  stockId: number = 0;
   stockCode: string = '';
-  portfolioId: string = '';
-  stockMarketData: any = undefined;
+  portfolioId: number = 0;
   currencyCode: string = 'usd';
   timeInterval: string = 'W';
   historicalMarketData: Array<any> = [];
@@ -32,7 +31,6 @@ class StockVolatilityDetailStore {
       fetchHistoricalMarketData: action,
 
       getTransactionHistoryData: computed,
-      getStockDetail: computed,
     });
   }
 
@@ -45,11 +43,11 @@ class StockVolatilityDetailStore {
   }
 
   setStockId(stockId: string) {
-    this.stockId = stockId;
+    this.stockId = Number.parseInt(stockId);
   }
 
   setPortfolioId(portfolioId: string) {
-    this.portfolioId = portfolioId;
+    this.portfolioId = Number.parseInt(portfolioId);
   }
 
   setCurrency(currencyCode: string) {
@@ -65,10 +63,8 @@ class StockVolatilityDetailStore {
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
       this.stockList = res.data;
-      this.stockDetail = res.data.filter(
-        (item: any) => item.id === this.stockId,
-      );
-      this.stockCode = res.data.filter(
+      this.stockDetail = res.data.find((item: any) => item.id === this.stockId);
+      this.stockCode = res.data.find(
         (item: any) => item.id === this.stockId,
       ).stockCode;
     } else {
@@ -91,7 +87,7 @@ class StockVolatilityDetailStore {
 
   async fetchHistoricalMarketData(params: any) {
     const res: any = await finhubService.getStockOHCL({
-      stockId: this.stockId,
+      stockId: this.stockCode,
       resolution: params.interval,
       startDate: params.startDate,
       endDate: params.endDate,
@@ -114,9 +110,9 @@ class StockVolatilityDetailStore {
   }
 
   get getTransactionHistoryData() {
-    if (typeof this.stockMarketData === 'undefined') return undefined;
+    if (typeof this.stockDetail === 'undefined') return undefined;
 
-    const marketPrice = this.stockMarketData.c;
+    const marketPrice = this.stockDetail?.currentPrice;
     const res = transactionHistory.map((item) => {
       const { amount, purchasePrice, fee, type } = item;
       const totalCost =
@@ -139,47 +135,6 @@ class StockVolatilityDetailStore {
         profitLossPercentage,
       };
     });
-    return res;
-  }
-
-  get getStockDetail() {
-    if (typeof this.stockMarketData === 'undefined') return undefined;
-    const marketPrice = this.stockMarketData.c;
-
-    const { quantity, totalPL } = transactionHistory.reduce(
-      (total: any, curr: any, index: number): any => {
-        if (curr.type === 'buy')
-          return {
-            quantity: total.quantity + curr.amount,
-            totalPL:
-              total.totalPL +
-              marketPrice * curr.amount -
-              (curr.amount * curr.purchasePrice + curr.fee),
-          };
-        else if (curr.type === 'sell')
-          return {
-            quantity: total.quantity - curr.amount,
-            totalPL:
-              total.totalPL +
-              (curr.amount * curr.purchasePrice - curr.fee) -
-              marketPrice * curr.amount,
-          };
-        else return total;
-      },
-      { quantity: 0, totalPL: 0 },
-    );
-    const res = {
-      stockName: portfolioData.portfolioData.stocks.find(
-        (item) => item.id === this.stockId,
-      )?.description,
-      totalPrice: quantity * marketPrice,
-      quantity,
-      marketPrice,
-      totalPL,
-      PLPercentage: totalPL / (quantity * marketPrice),
-      _24HChange: this.stockMarketData.dp,
-      _24HChangePercentage: this.stockMarketData.pc,
-    };
     return res;
   }
 

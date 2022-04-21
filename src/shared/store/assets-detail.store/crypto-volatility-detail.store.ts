@@ -8,15 +8,14 @@ import { portfolioData } from '../portfolio/portfolio-data';
 class CryptoVolatilityDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
   //transactionHistoryData: Array<any> = [];
-  coinId: string = '';
+  coinId: number = 0;
   coinCode: string = '';
-  portfolioId: string = '';
+  portfolioId: number = 0;
   timeInterval: number = 1;
   currencyCode: string = 'usd';
   cryptoDetail: CryptoItem | undefined = undefined;
   cryptoList: Array<CryptoItem> | undefined = undefined;
   historicalMarketData: Array<any> = [];
-  coinMarketData: any = undefined;
   //coinDetail: any | undefined = undefined;
 
   constructor() {
@@ -28,7 +27,6 @@ class CryptoVolatilityDetailStore {
       timeInterval: observable,
       currencyCode: observable,
       cryptoDetail: observable,
-      coinMarketData: observable,
       historicalMarketData: observable,
 
       setCoinId: action,
@@ -39,13 +37,13 @@ class CryptoVolatilityDetailStore {
       setPortfolioId: action,
       fetchCoinDetail: action,
       fetchHistoricalMarketData: action,
-      getAssetDetail: computed,
+
       getTransactionHistoryData: computed,
     });
   }
 
   setCoinId(id: string) {
-    this.coinId = id;
+    this.coinId = Number.parseInt(id);
   }
 
   setCoinCode(code: string) {
@@ -53,7 +51,7 @@ class CryptoVolatilityDetailStore {
   }
 
   setPortfolioId(portfolioId: string) {
-    this.portfolioId = portfolioId;
+    this.portfolioId = Number.parseInt(portfolioId);
   }
 
   setTimeInterval(interval: number) {
@@ -107,12 +105,11 @@ class CryptoVolatilityDetailStore {
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
       this.cryptoList = res.data;
-      this.cryptoDetail = res.data.filter(
-        (item: any) => item.id === this.coinId,
-      );
-      this.coinCode = res.data.filter(
+      this.cryptoDetail = res.data.find((item: any) => item.id === this.coinId);
+      this.coinCode = res.data.find(
         (item: any) => item.id === this.coinId,
       ).cryptoCoinCode;
+      console.log(this.cryptoDetail);
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,
@@ -123,10 +120,9 @@ class CryptoVolatilityDetailStore {
   }
 
   get getTransactionHistoryData() {
-    if (typeof this.coinMarketData === 'undefined') return undefined;
+    if (typeof this.cryptoDetail === 'undefined') return undefined;
 
-    const marketData = this.coinMarketData.market_data;
-    const currentPrice = marketData.current_price.usd;
+    const currentPrice = this.cryptoDetail?.currentPrice;
     const res = transactionHistory.map((item) => {
       const { amount, purchasePrice, fee, type } = item;
       const totalCost =
@@ -149,50 +145,6 @@ class CryptoVolatilityDetailStore {
         profitLossPercentage,
       };
     });
-    return res;
-  }
-
-  get getAssetDetail() {
-    if (typeof this.coinMarketData === 'undefined') return undefined;
-
-    const marketData = this.coinMarketData.market_data;
-    const marketPrice = marketData.current_price[this.currencyCode];
-    const { quantity, totalPL } = transactionHistory.reduce(
-      (total: any, curr: any, index: number): any => {
-        if (curr.type === 'buy')
-          return {
-            quantity: total.quantity + curr.amount,
-            totalPL:
-              total.totalPL +
-              marketPrice * curr.amount -
-              (curr.amount * curr.purchasePrice + curr.fee),
-          };
-        else if (curr.type === 'sell')
-          return {
-            quantity: total.quantity - curr.amount,
-            totalPL:
-              total.totalPL +
-              (curr.amount * curr.purchasePrice - curr.fee) -
-              marketPrice * curr.amount,
-          };
-        else return total;
-      },
-      { quantity: 0, totalPL: 0 },
-    );
-    const res = {
-      coinName: portfolioData.portfolioData.crypto.find(
-        (item) => item.id === this.coinId,
-      )?.coinName,
-      totalPrice: quantity * marketPrice,
-      quantity,
-      marketPrice,
-      totalPL,
-      PLPercentage: totalPL / (quantity * marketPrice),
-      _24HChange: this.coinMarketData.market_data.price_change_24h,
-      _24HChangePercentage:
-        this.coinMarketData.market_data.price_change_percentage_24h,
-    };
-
     return res;
   }
 

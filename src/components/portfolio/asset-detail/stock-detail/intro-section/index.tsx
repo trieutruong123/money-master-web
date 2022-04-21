@@ -1,3 +1,4 @@
+
 import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { getCurrencyByCode } from 'shared/helpers';
 import { precisionRound } from 'utils/number';
@@ -11,13 +12,16 @@ export const IntroSection = ({ assetDetail }: IProps) => {
     const priceChange24h = assetDetail._24HChange;
     const priceChangePercentage24h = assetDetail._24HChangePercentage;
     const sign = priceChange24h > 0 ? '+' : '';
-    const currencySymbol = getCurrencyByCode(assetDetail.currencyCode||'')?.symbol;
+    const currencySymbol = getCurrencyByCode(
+      assetDetail.currencyCode || '',
+    )?.symbol;
     return (
       <Typography
         variant="body1"
         color={priceChangePercentage24h < 0 ? 'error.main' : 'success.main'}
       >
-        {currencySymbol}{sign}
+        {currencySymbol}
+        {sign}
         {precisionRound(priceChange24h, 4).toString()} ({sign}
         {precisionRound(priceChangePercentage24h, 4).toString()}%)
       </Typography>
@@ -27,13 +31,16 @@ export const IntroSection = ({ assetDetail }: IProps) => {
     const totalPL = assetDetail.totalPL;
     const PLPercentage = assetDetail.PLPercentage;
     const sign = PLPercentage > 0 ? '+' : '';
-    const currencySymbol = getCurrencyByCode(assetDetail.currencyCode||'')?.symbol;
+    const currencySymbol = getCurrencyByCode(
+      assetDetail.currencyCode || '',
+    )?.symbol;
     return (
       <Typography
         variant="body1"
         color={PLPercentage < 0 ? 'error.main' : 'success.main'}
       >
-        {currencySymbol}{sign}
+        {currencySymbol}
+        {sign}
         {precisionRound(totalPL, 4).toString()} ({sign}
         {precisionRound(PLPercentage * 100, 4).toString()}
         %)
@@ -81,9 +88,10 @@ export const IntroSection = ({ assetDetail }: IProps) => {
                 </Typography>
 
                 <Typography variant="h2" fontWeight="bold">
-                  $
+                  {getCurrencyByCode(assetDetail.currencyCode || '')?.symbol}
                   {precisionRound(
-                    assetDetail?.currentAmountHolding * assetDetail?.currentPrice,
+                    assetDetail?.currentAmountHolding *
+                      assetDetail?.currentPrice,
                     4,
                   )}
                 </Typography>
@@ -99,7 +107,9 @@ export const IntroSection = ({ assetDetail }: IProps) => {
                   Open @ avg. price: &nbsp;
                 </Typography>
                 <Typography variant="body1" color={'success.main'}>
-                  {assetDetail?.currentAmountHolding} @ ${assetDetail?.currentPrice}
+                  {assetDetail?.currentAmountHolding} @{' '}
+                  {getCurrencyByCode(assetDetail.currencyCode || '')?.symbol}
+                  {assetDetail?.currentPrice}
                 </Typography>
               </Grid>
               <Grid
@@ -109,8 +119,8 @@ export const IntroSection = ({ assetDetail }: IProps) => {
                 alignItems="center"
                 justifyContent="center"
               >
-                <Typography variant="body1">24H change: &nbsp;</Typography>
-                {render24HChange()}
+                {/* <Typography variant="body1">24H change: &nbsp;</Typography>
+                {render24HChange()} */}
               </Grid>
               <Grid
                 container
@@ -119,8 +129,8 @@ export const IntroSection = ({ assetDetail }: IProps) => {
                 alignItems="center"
                 justifyContent="center"
               >
-                <Typography variant="body1">Total P/L: &nbsp;</Typography>
-                {renderTotalPL()}
+                {/* <Typography variant="body1">Total P/L: &nbsp;</Typography>
+                {renderTotalPL()} */}
               </Grid>
             </Stack>
           </CardContent>
