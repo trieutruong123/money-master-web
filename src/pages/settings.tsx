@@ -3,8 +3,9 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { Box, Container, Typography } from '@mui/material';
-import { DashboardLayout } from 'components';
-import { SettingsNotifications, SettingsPassword } from 'components/settings';
+import { DashboardLayout } from 'containers';
+import { SettingsNotifications, SettingsPassword } from 'containers/settings';
+import { BreadcrumbsLink } from 'shared/components';
 
 const Settings = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;
@@ -24,6 +25,10 @@ const Settings = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         }}
       >
         <Container maxWidth="lg">
+          <BreadcrumbsLink
+            urlArr={['/settings']}
+            displayNameArr={['Settings']}
+          />
           <Typography sx={{ mb: 3 }} variant="h4">
             {settingsPage.title}
           </Typography>
@@ -37,8 +42,7 @@ const Settings = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   );
 };
 
-//Setting.requireAuth = true;
-
+Settings.requireAuth = true;
 Settings.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );

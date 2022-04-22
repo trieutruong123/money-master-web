@@ -3,7 +3,7 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import { DashboardLayout } from 'components';
+import { DashboardLayout } from 'containers';
 import {
   TotalAssets,
   TotalProfit,
@@ -11,7 +11,8 @@ import {
   PlanProgress,
   RecentlyAdded,
   YourWallet,
-} from 'components/dashboard';
+} from 'containers/dashboard';
+import { BreadcrumbsLink } from 'shared/components';
 
 const Dashboard = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;
@@ -31,6 +32,10 @@ const Dashboard = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         }}
       >
         <Container maxWidth="lg">
+          <BreadcrumbsLink
+            urlArr={['/dashboard']}
+            displayNameArr={['Dashboard']}
+          />
           <Typography sx={{ mb: 3 }} variant="h4">
             {dashboardPage.title}
           </Typography>

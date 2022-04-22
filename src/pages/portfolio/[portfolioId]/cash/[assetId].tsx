@@ -7,13 +7,15 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
+  Breadcrumbs,
 } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
 import { cashDetailStore, rootStore } from 'shared/store';
-import { CashDetail } from 'components/portfolio';
+import { BreadcrumbsLink } from 'shared/components';
+import { CashDetail } from 'containers/portfolio';
+import { DashboardLayout } from 'containers';
 
 const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();
@@ -64,10 +66,23 @@ const AssetVolatilityDetailPage = (
           maxWidth="lg"
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
+          <BreadcrumbsLink
+            urlArr={[
+              '/portfolio',
+              `/portfolio/${portfolioId}`,
+              `/portfolio/${portfolioId}/cash/${assetId}`,
+            ]}
+            displayNameArr={[
+              'Portfolio',
+              portfolioId,
+              cashDetailStore.cashDetail?.name,
+            ]}
+          />
           <Typography sx={{ mb: 3 }} variant="h4">
             Cash
           </Typography>
         </Container>
+
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
           <CashDetail cashId={assetId} />
         </Container>

@@ -11,9 +11,10 @@ import { useRouter } from 'next/router';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
-import { RealEstateDetail } from 'components/portfolio';
 import { realEstateDetailStore, rootStore } from 'shared/store';
+import { BreadcrumbsLink } from 'shared/components';
+import { DashboardLayout } from 'containers';
+import { RealEstateDetail } from 'containers/portfolio';
 
 const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();
@@ -63,6 +64,18 @@ const AssetDetailPage = (
           maxWidth="lg"
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
+          <BreadcrumbsLink
+            urlArr={[
+              '/portfolio',
+              `/portfolio/${portfolioId}`,
+              `/portfolio/${portfolioId}/real-estate/${assetId}`,
+            ]}
+            displayNameArr={[
+              'Portfolio',
+              portfolioId,
+              realEstateDetailStore.assetDetail?.name,
+            ]}
+          />
           <Typography sx={{ mb: 3 }} variant="h4">
             Real Estate
           </Typography>

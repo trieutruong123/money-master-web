@@ -141,6 +141,152 @@ export const vi = {
   },
   portfolioDetailPage: {
     title: 'Danh mục tài sản',
+    header: 'Tổng quan',
+    assetAllocation: {
+      title: 'Phân bổ tài sản',
+      crypto: 'Tiền kỹ thuật số',
+      stock: 'Cổ phiếu',
+      cash: 'Tiền mặt',
+      bankSaving: 'Tiền gửi ngân hàng',
+      realEstate: 'Bất động sản',
+      customAsset: 'Tài sản khác',
+    },
+    cryptoTable: {
+      title: 'Tiền kỹ thuật số',
+      collumnsName: {
+        symbol: 'MÃ',
+        currentPrice: 'GIÁ HIỆN TẠI',
+        todayChange: `THAY ĐỔI TRONG NGÀY`,
+        totalPL: 'TỔNG LỜI/LỖ',
+        shares: 'SỐ LƯỢNG',
+        total: 'TỔNG CỘNG',
+      },
+      settingDropDownMenu: {
+        moveToPortfolio: 'Di chuyển đến danh mục',
+        delete: 'Xóa tài sản',
+      },
+    },
+    stockTable: {
+      title: 'Cổ phiếu',
+      collumnsName: {
+        symbol: 'MÃ',
+        currentPrice: 'GIÁ HIỆN TẠI',
+        todayChange: `THAY ĐỔI TRONG NGÀY`,
+        totalPL: 'TỔNG LỜI/LỖ',
+        shares: 'SỐ LƯỢNG',
+        total: 'TỔNG CỘNG',
+      },
+      settingDropDownMenu: {
+        moveToPortfolio: 'Di chuyển đến danh mục',
+        delete: 'Xóa tài sản',
+      },
+    },
+    bankSavingsTable: {
+      title: 'Tiền gửi ngân hàng',
+      collumnsName: {
+        name: 'TÊN',
+        deposit: 'TIỀN GỬI',
+        interestRate: `LÃI SUẤT`,
+        termRange: 'KỲ HẠN',
+        description: 'MÔ TẢ',
+      },
+      settingDropDownMenu: {
+        moveToPortfolio: 'Di chuyển đến danh mục',
+        delete: 'Xóa tài sản',
+      },
+    },
+    cashTable: {
+      title: 'Tiền tệ',
+      collumnsName: {
+        currency: 'MÃ',
+        total: 'TỔNG ',
+      },
+      settingDropDownMenu: {
+        moveToPortfolio: 'Di chuyển đến danh mục',
+        delete: 'Xóa tài sản',
+      },
+    },
+    realEstateTable: {
+      title: 'Bất động sản',
+      collumnsName: {
+        name: 'TÊN',
+        buyPrice: 'GIÁ MUA',
+        currentPrice: 'GIÁ HIỆN TẠI',
+        description: 'MÔ TẢ',
+      },
+      settingDropDownMenu: {
+        moveToPortfolio: 'Di chuyển đến danh mục',
+        delete: 'Xóa tài sản',
+      },
+    },
+    addNewAssets: {
+      buttonTooltip: 'Thêm tài sản',
+      chooseType: {
+        title: 'Chọn loại',
+        cryptoCurrency: 'Tiền kỹ thuật số',
+        stock: 'Cổ phiếu',
+        realEstate: 'Bất động sản',
+        cash: 'Tiền tệ',
+        bankSavings: 'Tiền gửi ngân hàng',
+        others: 'Khác+',
+      },
+      searchAssets: {
+        title: 'Tìm kiếm',
+        searchYourAsset: 'Tìm kiếm tài sản',
+      },
+      bankSavingsTransaction: {
+        title: 'Thêm tài sản',
+        name: 'Tên',
+        inputMoney: 'Số tiền gửi',
+        interestRate: 'Lãi suất',
+        termRange: 'Kỳ hạn',
+        months: 'tháng',
+        currency: 'Tiền tệ',
+        inputDay: 'Ngày nhập',
+        bankCode: 'Mã ngân hàng',
+        description: 'Mô tả',
+        addNew: 'Thêm mới',
+      },
+      cashTransaction: {
+        title: 'Thêm tài sản',
+        name: 'Tên',
+        amount: 'Số lượng',
+        currency: 'Tiền tệ',
+        inputDay: 'Ngày nhập',
+        description: 'Mô tả',
+        addNew: 'Thêm mới',
+      },
+      realEstateTransaction: {
+        title: 'Thêm tài sản',
+        name: 'Tên',
+        purchasePrice: 'Giá mua',
+        currentPrice: 'Giá hiện tại',
+        currency: 'Tiền tệ',
+        inputDay: 'Ngày nhập',
+        description: 'Mô tả',
+        addNew: 'Thêm mới',
+      },
+      cryptoTransaction: {
+        title: 'Thêm tài sản',
+        name: 'Tên',
+        purchasePrice: 'Giá mua',
+        amount: 'Số lượng',
+        currency: 'Tiền tệ',
+        inputDay: 'Ngày nhập',
+        description: 'Mô tả',
+        addNew: 'Thêm mới',
+      },
+      stockTransaction: {
+        title: 'Thêm tài sản',
+        name: 'Tên',
+        purchasePrice: 'Giá mua',
+        shares: 'Số lượng',
+        currency: 'Tiền tệ',
+        inputDay: 'Ngày nhập',
+        description: 'Mô tả',
+        addNew: 'Thêm mới',
+      },
+    },
   },
   settingsPage: {
     title: 'Cài đặt',
@@ -171,30 +317,30 @@ export const vi = {
     default: 'Lỗi! Thất bại.',
   },
   portfolioListPage: {
-    title: "Danh mục tài sản",
-    add:"Thêm danh mục",
-    portfolioCard:{
-      detail:"Chi tiết",
-      update:"Cập nhật",
-      delete:"Xóa"
+    title: 'Danh mục tài sản',
+    add: 'Thêm danh mục',
+    portfolioCard: {
+      detail: 'Chi tiết',
+      update: 'Cập nhật',
+      delete: 'Xóa',
     },
-    newPortfolioModal:{
-      title:"THÊM DANH MỤC TÀI SẢN",
-      name:"Tên danh mục tài sản (*)",
-      currency:"Đơn vị tiền tệ (*)",
-      submit:"Thêm"
+    newPortfolioModal: {
+      title: 'THÊM DANH MỤC TÀI SẢN',
+      name: 'Tên danh mục tài sản (*)',
+      currency: 'Đơn vị tiền tệ (*)',
+      submit: 'Thêm',
     },
-    updatePortfolioModal:{
-      title:"CẬP NHẬT DANH MỤC TÀI SẢN",
-      name:"Tên danh mục tài sản (*)",
-      currency:"Đơn vị tiền tệ (*)",
-      submit:"Cập nhật"
+    updatePortfolioModal: {
+      title: 'CẬP NHẬT DANH MỤC TÀI SẢN',
+      name: 'Tên danh mục tài sản (*)',
+      currency: 'Đơn vị tiền tệ (*)',
+      submit: 'Cập nhật',
     },
-    deletePortfolioModal:{
-      title:"XÓA DANH MỤC TÀI SẢN",
-      message:"Bạn có chắc chắn rằng muốn xóa danh mục tài sản này không?",
-      confirm:"Xóa",
-      cancel:"Trở lại"
-    }
+    deletePortfolioModal: {
+      title: 'XÓA DANH MỤC TÀI SẢN',
+      message: 'Bạn có chắc chắn rằng muốn xóa danh mục tài sản này không?',
+      confirm: 'Xóa',
+      cancel: 'Trở lại',
+    },
   },
 };

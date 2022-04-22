@@ -11,9 +11,10 @@ import {
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
-import { BankSavingsDetail } from 'components/portfolio';
+import { DashboardLayout } from 'containers';
+import { BankSavingsDetail } from 'containers/portfolio';
 import { bankSavingsDetailStore, rootStore } from 'shared/store';
+import { BreadcrumbsLink } from 'shared/components';
 
 const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();
@@ -63,6 +64,18 @@ const AssetDetailPage = (
           maxWidth="lg"
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
+          <BreadcrumbsLink
+            urlArr={[
+              '/portfolio',
+              `/portfolio/${portfolioId}`,
+              `/portfolio/${portfolioId}/bank-savings/${assetId}`,
+            ]}
+            displayNameArr={[
+              'Portfolio',
+              portfolioId,
+              bankSavingsDetailStore.assetDetail?.name,
+            ]}
+          />
           <Typography sx={{ mb: 3 }} variant="h4">
             Bank Savings
           </Typography>
@@ -75,7 +88,7 @@ const AssetDetailPage = (
   );
 };
 
-//AssetDetailPage.requireAuth = true;
+AssetDetailPage.requireAuth = true;
 AssetDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Box, Button, Container, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { content } from 'i18n';
-import {  DefaultLayout } from 'components';
+import {  DefaultLayout } from 'containers';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 

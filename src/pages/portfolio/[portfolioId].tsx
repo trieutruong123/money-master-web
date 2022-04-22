@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useEffect } from 'react';
 import {
   Box,
   Container,
@@ -9,17 +10,17 @@ import {
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
-import { PortfolioDetail } from 'components/portfolio/portfolio-detail';
 import { rootStore, portfolioDetailStore } from 'shared/store';
-import { useEffect } from 'react';
+import { BreadcrumbsLink } from 'shared/components';
+import { DashboardLayout } from 'containers';
+import { PortfolioDetail } from 'containers/portfolio/portfolio-detail';
 
 const fetchData = async (portfolioId: string) => {
   rootStore.startLoading();
 
   portfolioDetailStore.setPortfolioId(portfolioId);
   await portfolioDetailStore.fetchInitialData();
-  
+
   rootStore.stopLoading();
 };
 
@@ -42,7 +43,6 @@ const PortfolioDetailPage = (
   const { portfolioDetailPage } = detail;
 
   return (
-    // StyledEngineProvider allows CSS-in-JS to be used
     <>
       <Head>
         <title>{portfolioDetailPage.title} | Money Master</title>
@@ -55,12 +55,16 @@ const PortfolioDetailPage = (
         }}
       >
         <Container maxWidth="lg">
+          <BreadcrumbsLink
+            urlArr={['/portfolio', `/portfolio/${portfolioId}`]}
+            displayNameArr={['Portfolio', portfolioId]}
+          />
           <Typography sx={{ mb: 3 }} variant="h4">
-            Portfolio Detail
+          {portfolioDetailPage.header}
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <PortfolioDetail portfolioId={portfolioId}></PortfolioDetail>
+          <PortfolioDetail content = {portfolioDetailPage} portfolioId={portfolioId}></PortfolioDetail>
         </Container>
       </Box>
     </>
