@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CardHeader,
-  Grid,
   Table,
   TableBody,
   TableCell,
@@ -11,14 +10,17 @@ import {
   TableRow,
   Tooltip,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
+import dayjs from 'dayjs';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { getCurrencyByCode } from 'helpers';
+import { getCurrencyByCode } from 'shared/helpers';
+import { RealEstateItem } from 'shared/models';
+import SettingsMenuButton from './settings-menu-button';
+import { roundAndAddDotAndCommaSeparator } from 'utils';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -39,103 +41,126 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  realEstateDetail: Array<any>;
+  realEstateDetail: Array<RealEstateItem> | undefined;
 }
 
 export const RealEstateInvesments = ({ realEstateDetail }: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
+  const { portfolioId } = router.query;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const headings = [ 'Valuation', 'Area', 'Address'];
+  const headings = ['Buy Price', 'Current Price', 'Description', ''];
 
   const renderValuation = (num: number, code: string) => {
-    return getCurrencyByCode(code)?.symbol.toString() + num.toString();
+    const currencySymbol = getCurrencyByCode(
+      code.toUpperCase(),
+    )?.symbol.toString();
+    const qualifiedNum = roundAndAddDotAndCommaSeparator(num,4);
+    return typeof currencySymbol !== 'undefined'
+      ? currencySymbol + qualifiedNum
+      : qualifiedNum;
   };
 
-  const renderAddress = (address: any) => {
-    return address.toString().slice(0, 25) + '...';
+  const renderDescription = (description: any) => {
+    return description.toString().slice(0, 25) + '...';
   };
 
-  return realEstateDetail.length ? (
-    <Grid item xl={8} lg={8} md={8} sm={8} xs={12}  mt="1rem">
+  const handleItemClick = (assetId: number) => {
+    router.push(
+      `/portfolio/${portfolioId}/real-estate/${assetId.toString()}`,
+      `/portfolio/${portfolioId}/real-estate/${assetId.toString()}`,
+      { locale: locale },
+    );
+  };
+
+  return realEstateDetail?.length ? (
+    <Card
+      sx={{
+        height: '100%',
+        borderRadius: '12px',
+        padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
+        boxShadow: '0 0 8px rgba(0,0,0,0.11)',
+      }}
+    >
       <Card
         sx={{
-          borderRadius: '12px',
-          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
-          boxShadow: '0 0 8px rgba(0,0,0,0.11)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          height: '3rem',
+          boxShadow: 'none',
         }}
       >
-        <Card
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            height: '3rem',
-            boxShadow: 'none',
-          }}
-        >
-          <CardHeader title="Real Estate" sx={{ padding: '0px' }} />
-          <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-            <MoreHorizIcon />
-          </Button>
-        </Card>
-        <PerfectScrollbar>
-          <Box>
-            <Table>
-              <TableHead>
-                <TableRow>
-                <TableHeaderCell>Name</TableHeaderCell>
-                  {headings.map((heading, i) => (
-                    <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
-                      {heading}
-                    </TableHeaderCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {realEstateDetail.map((record, i) => {
-                  return (
-                    <TableRow
-                      onClick={() => {
-                        router.push(
-                          `/portfolio/asset-detail/test`,
-                          `/portfolio/asset-detail/test`,
-                          { locale: locale },
-                        );
-                      }}
-                      key={i}
-                      sx={{
-                        cursor: 'pointer',
-                        ':hover': {
-                          backgroundColor: '#F7F7F7',
-                        },
-                      }}
-                    >
-                      <TableBodyCellSymbol>
-                        <Box
-                          sx={{ fontWeight: 700, textTransform: 'uppercase' }}
-                        >
-                          {record.name}
-                        </Box>
-                      </TableBodyCellSymbol>
-                      <TableBodyCell>
-                        {renderValuation(record.valuation, record.currencyCode)}
-                      </TableBodyCell>
-                      <TableBodyCell>{record.area}</TableBodyCell>
-                      <Tooltip title={record.address}>
-                        <TableBodyCell>
-                          {renderAddress(record.address)}
-                        </TableBodyCell>
-                      </Tooltip>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Box>
-        </PerfectScrollbar>
+        <CardHeader title="Real Estate" sx={{ padding: '0px' }} />
+        <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
+          <MoreHorizIcon />
+        </Button>
       </Card>
-    </Grid>
+      {/* <Scrollbars autoHeight > */}
+        <Box>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Name</TableHeaderCell>
+                {headings.map((heading, i) => (
+                  <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
+                    {heading}
+                  </TableHeaderCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {realEstateDetail.map((record, i) => {
+                return (
+                  <TableRow
+                    key={i}
+                    sx={{
+                      cursor: 'pointer',
+                      ':hover': {
+                        backgroundColor: '#F7F7F7',
+                      },
+                    }}
+                  >
+                    <TableBodyCellSymbol
+                      onClick={() => handleItemClick(record.id)}
+                    >
+                      <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
+                        {record.name}
+                      </Box>
+                      <Box
+                        sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
+                      >
+                        {dayjs(record.inputDay).format('DD-MM-YYYY')}
+                      </Box>
+                    </TableBodyCellSymbol>
+                    <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                      {renderValuation(
+                        record.inputMoneyAmount,
+                        record.inputCurrency,
+                      )}
+                    </TableBodyCell>
+                    <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                      {renderValuation(
+                        record.currentPrice,
+                        record.inputCurrency,
+                      )}
+                    </TableBodyCell>
+                    <Tooltip title={record.description}>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {renderDescription(record.description)}
+                      </TableBodyCell>
+                    </Tooltip>
+                    <TableBodyCell>
+                      <SettingsMenuButton />
+                    </TableBodyCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Box>
+      {/* </Scrollbars> */}
+    </Card>
   ) : (
     <></>
   );

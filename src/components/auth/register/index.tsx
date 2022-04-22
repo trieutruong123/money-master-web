@@ -24,8 +24,8 @@ import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { colorScheme } from 'utils/color-scheme';
 import { userService, googleAuth, facebookAuth } from 'services';
-import { authStore, userStore } from 'store';
-import { httpError, previousPath } from 'helpers';
+import { authStore, rootStore, userStore} from 'shared/store';
+import { httpError, previousPath } from 'shared/helpers';
 
 type FormValues = {
   email: string;
@@ -93,12 +93,13 @@ export const RegisterForm = observer(({ content }: IProps) => {
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
-    const res = await userService.register({
+    //temporarily use startLoading here
+    const res = await authStore.ManualSignUp({
       email: getValues('email'),
       password: getValues('password'),
     });
     if (res.isError) {
-      const content = httpError.getSignUpError(res);
+      const content = res.message;
       const message = locale ==='vi'? content.vi: content.en; 
       setRegisterError(message);
     } else router.push('/', '/', { locale: locale });

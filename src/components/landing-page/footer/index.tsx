@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { v4 as uuid } from 'uuid';
-import { Link } from 'components';
+import { Link } from 'shared/components';
 import { colorScheme } from 'utils/color-scheme';
 
 interface IProps {

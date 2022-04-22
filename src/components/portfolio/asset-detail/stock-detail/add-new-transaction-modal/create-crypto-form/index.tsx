@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PerfrectScrollbar from 'react-perfect-scrollbar';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { BuyCryptoForm } from './buy-cryto-form';
 import { SellCryptoForm } from './sell-crypto-form';
 
@@ -39,7 +39,7 @@ export const CreateCryptoForm = observer(({}: IProps) => {
   };
 
   const portfolioName = 'demo portoflio';
-  const assetName = 'APPL';
+  const assetName = 'AAPL';
 
   const handleFormSubmit = async (data: any) => {};
 

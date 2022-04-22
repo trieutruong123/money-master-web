@@ -10,21 +10,17 @@ import {
 import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { AssetAllocation } from './asset-allocation';
-import { DailyReturns } from './daily-return';
+import { toast } from 'react-toastify';
+import { portfolioDetailStore, rootStore } from 'shared/store';
+import { DonutChart, HorizontalBarChart } from './insight-chart';
 import { AssetsDetail } from './assets-detail';
 import { AddNewAssetsModal } from './add-new-assets-modal';
-import { portfolioDetailStore } from 'store';
-import { PortfolioAllocation, PortfolioItem } from 'types';
 
-export const PortfolioDetail = observer(() => {
-  useEffect(() => {
-    const fetchData = async () => {
-      await portfolioDetailStore.fetchPortfolioDetailData();
-      await portfolioDetailStore.fetchCoinData();
-    };
-    fetchData();
-  }, []);
+interface IProps {
+  portfolioId: string;
+}
+
+export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
@@ -34,6 +30,7 @@ export const PortfolioDetail = observer(() => {
     realEstateDetail,
     bankingDetail,
     portfolioAllocationData,
+    pieChartData,
     isOpenAddNewAssetModal,
   } = portfolioDetailStore;
   return (
@@ -55,9 +52,26 @@ export const PortfolioDetail = observer(() => {
       >
         <Box sx={{ overflow: 'auto' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-            <Grid container spacing={3} display="fex" justifyContent="center">
-              <AssetAllocation assetAllocationData={portfolioAllocationData} />
-              {/* <DailyReturns dailyReturnsData={portfolioDetailData} /> */}
+            <Grid container display="flex" justifyContent="center">
+              {typeof pieChartData !== 'undefined' ? (
+                <Grid
+                  container
+                  item
+                  spacing={2}
+                  sx={{ display: 'flex', alignItems: 'stretch' }}
+                >
+                  <Grid item lg={6} md={6} xl={6} sm={6} xs={12}>
+                    <DonutChart pieChartData={pieChartData} />
+                  </Grid>
+                  <Grid item lg={6} md={6} xl={6} sm={6} xs={12}>
+                    <HorizontalBarChart
+                      pieChartData={pieChartData}
+                    ></HorizontalBarChart>
+                  </Grid>
+                </Grid>
+              ) : (
+                <></>
+              )}
               <AssetsDetail
                 cryptoDetail={cryptoDetail}
                 cashDetail={cashDetail}

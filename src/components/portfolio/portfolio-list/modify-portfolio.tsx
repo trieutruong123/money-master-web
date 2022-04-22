@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import classes from './modify-portfolio.module.css';
-import { currencyList } from '../../../helpers/enum';
+import { currencyList } from '../../../shared/helpers/enum';
 import React from 'react';
 
 const ModifyPortfolio = (
@@ -18,8 +18,9 @@ const ModifyPortfolio = (
     const currency = currencyRef.current.value;
 
     props.onModifyPortfolio({
-      portfolioName,
-      currency,
+      name:portfolioName,
+      initialCurrency:currency,
+      initialCash:0
     });
   }
 

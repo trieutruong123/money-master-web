@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
-import { userStore } from 'store';
+import { userStore } from 'shared/store';
 
 interface IProps{
   content:any,

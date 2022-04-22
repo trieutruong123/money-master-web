@@ -17,6 +17,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/services/index.tsssrc/theme/index.jsx.jssrc/theme/gradients.jss.js", "src/components/portfolio/portfolio-detail/portfolio-detail-data.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/containers/portfolio/sankey-chart.tsx",],
   "exclude": ["node_modules"]
 }

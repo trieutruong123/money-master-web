@@ -13,12 +13,13 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { precisionRound } from 'utils/number';
-import { getCurrencyByCode } from 'helpers';
+import { roundAndAddDotAndCommaSeparator } from 'utils/number';
+import { getCurrencyByCode } from 'shared/helpers';
+import { CryptoItem } from 'shared/models';
+import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -39,34 +40,41 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  cryptoDetail: Array<any>;
+  cryptoDetail: Array<CryptoItem> | undefined;
 }
 
 export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
+  const { portfolioId } = router.query;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [
-    'Price',
-    "Today's Price Change",
-    "Today's % Change",
-    "Today's Gain/Loss",
+    'Current Price',
+    // "Today's Change",
+    // "Today's Gain/Loss"
+    "Today's Change",
+    'Total P/L',
     'Shares',
     'Total',
+    '',
   ];
-  const renderPriceWithCommas = (price: number) => {
-    return '$' + price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const renderPriceWithCommas = (currencyCode: string, price: number) => {
+    const currencySymbol = getCurrencyByCode(currencyCode)?.symbol;
+    return (
+      currencySymbol + price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    );
   };
 
-  const renderPriceChange = (num: number) => {
+  const renderPriceChange = (currencyCode: string, num: number) => {
     let val: string = '';
+    const currencySymbol = getCurrencyByCode(currencyCode)?.symbol;
     if (typeof num !== 'undefined') {
       if (num < 0) {
-        val = `-$${precisionRound(num, 3).toString().slice(1)}`;
+        val = `-${currencySymbol}${roundAndAddDotAndCommaSeparator(num, 4).toString().slice(1)}`;
         return <span style={{ color: '#e01616' }}>{val}</span>;
       } else {
-        val = `$${precisionRound(num, 3).toString().slice(1)}`;
+        val = `+${currencySymbol}${roundAndAddDotAndCommaSeparator(num, 4).toString()}`;
         return <span style={{ color: '#0d6f3f' }}>{val}</span>;
       }
     } else return undefined;
@@ -76,28 +84,38 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
     if (typeof num !== 'undefined') {
       if (num < 0)
         return (
-          <span style={{ color: '#e01616' }}>{precisionRound(num, 3)}%</span>
+          <span style={{ color: '#e01616' }}>
+            &#40;{roundAndAddDotAndCommaSeparator(num, 4)}%&#41;
+          </span>
         );
       else
         return (
-          <span style={{ color: '#0d6f3f' }}>{precisionRound(num, 3)}%</span>
+          <span style={{ color: '#0d6f3f' }}>
+            &#40;&#43;{roundAndAddDotAndCommaSeparator(num, 4)}%&#41;
+          </span>
         );
     } else return undefined;
   };
 
-  const renderTotalValue = (num: number, code: string) => {
-    return (
-      getCurrencyByCode(code)?.symbol.toString() +
-      precisionRound(num, 3).toString()
+  const renderTotalValue = (currencyCode: string, num: number) => {
+    const currencySymbol = getCurrencyByCode(currencyCode)?.symbol;
+    return currencySymbol + roundAndAddDotAndCommaSeparator(num, 4).toString();
+  };
+
+  const handleItemClick = (assetId: string) => {
+    router.push(
+      `/portfolio/${portfolioId}/coin/${assetId.toLowerCase()}`,
+      `/portfolio/${portfolioId}/coin/${assetId.toLowerCase()}`,
+      { locale: locale },
     );
   };
 
-  return cryptoDetail.length ? (
+  return cryptoDetail?.length ? (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
+          padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -114,81 +132,100 @@ export const CryptoInvestments = ({ cryptoDetail }: IProps) => {
             <MoreHorizIcon />
           </Button>
         </Card>
-        <PerfectScrollbar>
-          <Box>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableHeaderCell>Symbol</TableHeaderCell>
-                  {headings.map((heading, i) => (
-                    <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
-                      {heading}
-                    </TableHeaderCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {cryptoDetail.map((record, i) => {
-                  return (
-                    <TableRow
-                      onClick={() => {
-                        // router.push(
-                        //   `/portfolio/asset-detail/${record.coinName}`,
-                        //   `/portfolio/asset-detail/${record.coinName}`,
-                        //   { locale: locale },
-                        // );
-                        router.push(
-                          `/portfolio/coin/test`,
-                          `/portfolio/coin/test`,
-                          { locale: locale },
-                        );
-                      }}
-                      key={i}
-                      sx={{
-                        cursor: 'pointer',
-                        ':hover': {
-                          backgroundColor: '#F7F7F7',
-                        },
-                      }}
+        {/* <Scrollbars autoHeight> */}
+        <Box>
+          <Table sx={{ overflowY: 'auto' }}>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Symbol</TableHeaderCell>
+                {headings.map((heading, i) => (
+                  <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
+                    {heading}
+                  </TableHeaderCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {cryptoDetail.map((record, i) => {
+                return (
+                  <TableRow
+                    key={i}
+                    sx={{
+                      cursor: 'pointer',
+                      ':hover': {
+                        backgroundColor: '#F7F7F7',
+                      },
+                    }}
+                  >
+                    <TableBodyCellSymbol
+                      onClick={() => handleItemClick(record.id.toString())}
                     >
-                      <TableBodyCellSymbol>
-                        <Box
-                          sx={{ fontWeight: 700, textTransform: 'uppercase' }}
-                        >
-                          {record.symbol}
-                        </Box>
-                        <Box
-                          sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
-                        >
-                          {record.description}
-                        </Box>
-                      </TableBodyCellSymbol>
-                      <TableBodyCell>
-                        {renderPriceWithCommas(record.price)}
-                      </TableBodyCell>
-                      <TableBodyCell>
-                        {renderPriceChange(record.priceChange)}
-                      </TableBodyCell>
-                      <TableBodyCell>
-                        {renderPercentage(record.percentChange)}
-                      </TableBodyCell>
-                      <TableBodyCell>
-                        {renderPriceChange(record.profitLossAmount)}
-                      </TableBodyCell>
-                      <TableBodyCell>{record.quantity}</TableBodyCell>
-                      <TableBodyCell>
-                        {renderTotalValue(
-                          record.totalValue,
-                          record.currencyCode,
-                        )}
-                      </TableBodyCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Box>
-        </PerfectScrollbar>
+                      <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
+                        {record.cryptoCoinCode}
+                      </Box>
+                      <Box
+                        sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
+                      >
+                        {record.name}
+                      </Box>
+                    </TableBodyCellSymbol>
+                    <TableBodyCell
+                      onClick={() => handleItemClick(record.id.toString())}
+                    >
+                      {renderPriceWithCommas(
+                        record.currencyCode,
+                        record.currentPrice,
+                      )}
+                    </TableBodyCell>
+                    <TableBodyCell
+                      onClick={() => handleItemClick(record.id.toString())}
+                    >
+                      {/* {renderPriceChange(record.priceChange)}&nbsp;
+                        {renderPercentage(record.percentChange)} */}
+                      {renderPriceChange(
+                        record.currencyCode,
+                        record.currentAmountHolding *
+                          (record.currentPrice - record.purchasePrice),
+                      )}
+                      &nbsp;
+                      {renderPercentage(
+                        (record.currentPrice - record.purchasePrice) /
+                          record.currentPrice,
+                      )}
+                    </TableBodyCell>
+                    <TableBodyCell
+                      onClick={() => handleItemClick(record.id.toString())}
+                    >
+                      {/* {renderPriceChange(record.profitLossAmount)} */}
+                      {renderPriceChange(
+                        record.currencyCode,
+                        record.currentAmountHolding *
+                          (record.currentPrice - record.purchasePrice),
+                      )}
+                    </TableBodyCell>
+                    <TableBodyCell
+                      onClick={() => handleItemClick(record.id.toString())}
+                    >
+                      {record.currentAmountHolding}
+                    </TableBodyCell>
+                    <TableBodyCell
+                      onClick={() => handleItemClick(record.id.toString())}
+                    >
+                      {renderTotalValue(
+                        record.currencyCode,
+                        record.currentPrice * record.currentAmountHolding,
+                      )}
+                    </TableBodyCell>
+                    <TableBodyCell>
+                      <SettingsMenuButton />
+                    </TableBodyCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Box>
+        {/* </Scrollbars> */}
       </Card>
     </Grid>
   ) : (

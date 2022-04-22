@@ -1,20 +1,23 @@
-import React from 'react';
+import React, { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
-import { AppProps } from 'next/app';
+import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, Slide } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
-import { createEmotionCache } from '../utils/create-emotion-cache';
-import { theme } from 'theme';
+import { ToastContainer } from 'react-toastify';
+import { createEmotionCache } from 'utils/create-emotion-cache';
+import { theme } from 'shared/theme';
+import { rootStore } from 'shared/store';
 import { AuthGuard } from 'components';
 import '../styles/globals.css';
+import 'react-toastify/dist/ReactToastify.css';
 
-type NextApplicationPage<P = any, IP = P> = NextPage<P, IP> & {
+export type NextApplicationPage<P = any, IP = P> = NextPage<P, IP> & {
   requireAuth?: boolean;
-  getLayout?: any;
+  getLayout?: (page: ReactElement) => ReactNode;
 };
 
 const clientSideEmotionCache = createEmotionCache();
@@ -29,6 +32,7 @@ export default function MyApp(props: AppProps) {
     emotionCache?: EmotionCache;
     pageProps: any;
   } = props;
+  const AnyComponent = Component as any;
   const getLayout = Component.getLayout ?? ((page: any) => page);
 
   return (
@@ -45,10 +49,23 @@ export default function MyApp(props: AppProps) {
             <CssBaseline />
             <React.StrictMode>
               {Component.requireAuth ? (
-                <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
+                <AuthGuard>
+                  {getLayout(<AnyComponent {...pageProps} />)}
+                </AuthGuard>
               ) : (
-                getLayout(<Component {...pageProps} />)
+                getLayout(<AnyComponent {...pageProps} />)
               )}
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+              />
             </React.StrictMode>
           </ThemeProvider>
         </LocalizationProvider>

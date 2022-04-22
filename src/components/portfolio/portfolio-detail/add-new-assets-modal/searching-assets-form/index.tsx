@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { observer } from 'mobx-react-lite';
+import { Scrollbars } from 'react-custom-scrollbars';
+import { useDebounce } from 'use-debounce';
+import { v4 as uuid } from 'uuid';
 import {
   Box,
-  Chip,
+  Typography,
   IconButton,
   InputBase,
   List,
@@ -9,90 +13,79 @@ import {
   ListItemButton,
   ListItemIcon,
   Paper,
-  Typography,
-  useTheme,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import { observer } from 'mobx-react-lite';
-import _ from 'lodash';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import { FaBitcoin, FaHome } from 'react-icons/fa';
-import { AiFillDollarCircle, AiOutlineStock } from 'react-icons/ai';
-import { v4 as uuid } from 'uuid';
-import { portfolioDetailStore } from 'store';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { portfolioDetailStore } from 'shared/store';
 import { sampleData } from '../searching-data';
 
 type SearchingItemType = {
   id: string;
+  name: string;
   symbol: string;
-  label: string;
 };
 
 interface IProps {
-  openTransactionForm: any;
+  assetType:string;
+  openNextForm: (params: any) => void;
+  openPreviousForm: (params: any) => void;
+  searchData: any;
 }
 
 export const SearchingAssetsForm = observer(
-  ({ openTransactionForm }: IProps) => {
-    const theme = useTheme();
-    const [categories, setCategories] = useState(CategoryList);
-    const [selectedArray, setSelectedArray] = useState<Array<boolean>>(
-      categories.map((item) => true),
-    );
-    const [searchingData, setSearchingData] = useState<
-      Array<SearchingItemType>
-    >([]);
+  ({assetType, openNextForm, openPreviousForm, searchData }: IProps) => {
+    const [searchingData, setSearchingData] =
+      useState<Array<SearchingItemType>>([]);
     const [searchingText, setSearchingText] = useState<string>('');
-    const ref = useRef<any>(null);
-
-    useEffect(() => {
-      //ref.current = _.debounce(searchData, 300);
-    }, []);
-
-    const handleSelectedCategoryClick = (id: string) => {
-      const newArray: Array<boolean> = categories.map((item, key) =>
-        item.id === id ? !selectedArray[key] : selectedArray[key],
-      );
-      setSelectedArray(newArray);
-    };
+    const [isSearching, setIsSearching] = useState(false);
+    const [debouncedSearchTerm] = useDebounce(searchingText, 1000, {
+    });
+    useEffect(
+      () => {
+        if (debouncedSearchTerm) {
+          setIsSearching(true);
+          searchData({searchingText:debouncedSearchTerm, searchingType:assetType}).then(
+            (results: Array<SearchingItemType> | any) => {
+              setIsSearching(false);
+              setSearchingData(results);
+            },
+          );
+        } else {
+          setSearchingData([]);
+          setIsSearching(false);
+        }
+      },
+      [debouncedSearchTerm], // Only call effect if debounced search term changes
+    );
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchingText(e.target.value);
-      //ref.current();
-      searchData();
     };
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
-        //ref.current();
-        searchData();
+        setIsSearching(true);
+        searchData({searchingText:debouncedSearchTerm, searchingType:assetType}).then(
+          (results: Array<SearchingItemType> | any) => {
+            setIsSearching(false);
+            setSearchingData(results);
+          },
+        );
       }
     };
 
-    const searchData = () => {
-      if (searchingText === '' || searchingText === null) {
-        setSearchingData([]);
-      } else {
-        const text = searchingText.toLowerCase();
-        const data = sampleData.filter((item: SearchingItemType) => {
-          if (
-            item.symbol.toLowerCase().includes(text) ||
-            item.label.toLowerCase().includes(text)
-          )
-            return item;
-          else if (
-            item.label.toLowerCase().startsWith(text) ||
-            item.label.toLowerCase().startsWith(text)
-          )
-            return item;
-        });
-        setSearchingData(data);
-      }
+    const handleItemClick = (itemId: string,selectedItem:any) => {
+      openNextForm({
+        curFormType: 'search',
+        selectedType: assetType,
+        assetId: itemId,
+        selectedItem:selectedItem,
+      });
     };
 
-    const handleItemClick = (itemId: string) => {
-      openTransactionForm(itemId);
+    const handleComeback = () => {
+      openPreviousForm({ curFormType: 'search' });
     };
 
     const getListElementHeight = (): number => {
@@ -108,20 +101,28 @@ export const SearchingAssetsForm = observer(
         ref1 === void 0
           ? void 0
           : ref1.offsetHeight) || 0.5;
-      return h1 - h2 - 25;
+      return h1 - h2 - 30;
     };
 
     return (
-      <Box height = 'inherit' id="searching-form-modal">
+      <Box id="searching-form-modal" style={{ height: 'inherit' }}>
         <Box id="header-searching-form">
-          <Typography
-            id="modal-modal-title"
-            variant="h4"
-            align="center"
-            mt="1rem"
-          >
-            Choose Assets
-          </Typography>
+          <Box style={{ marginTop: '1rem' }}>
+            <Typography
+              id="modal-modal-title"
+              style={{ textAlign: 'center', marginTop: '1rem' }}
+            >
+              Search Assets
+            </Typography>
+
+            <IconButton
+              sx={{ position: 'absolute', left: '2rem', top: '1rem' }}
+              onClick={handleComeback}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          </Box>
+
           <Paper
             component="div"
             sx={{
@@ -140,6 +141,7 @@ export const SearchingAssetsForm = observer(
               value={searchingText}
               id="searching-frame"
               type="text"
+              autoComplete="off"
               onKeyDown={handleKeyDown}
               onChange={handleChange}
               sx={{ ml: 1, flex: 1 }}
@@ -154,32 +156,8 @@ export const SearchingAssetsForm = observer(
               <SearchIcon />
             </IconButton>
           </Paper>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexWrap: 'wrap',
-              flexDirection: 'row',
-              mx: '1rem',
-              my: 0.5,
-            }}
-          >
-            {categories.map((item: any, key: number) => {
-              return (
-                <Chip
-                  key={item.id}
-                  icon={item.icon}
-                  label={item.label}
-                  id={item.id}
-                  variant={selectedArray[key] ? 'filled' : 'outlined'}
-                  onClick={() => handleSelectedCategoryClick(item.id)}
-                  sx={{ fontSize: '1rem', m: '0.2rem' }}
-                />
-              );
-            })}
-          </Box>
         </Box>
-        <PerfectScrollbar
+        <Scrollbars
           style={{
             height: getListElementHeight(),
           }}
@@ -193,27 +171,19 @@ export const SearchingAssetsForm = observer(
               return (
                 <ListItemButton
                   sx={{ pl: '1.4rem' }}
-                  key={item.id}
-                  onClick={() => handleItemClick(item.id)}
+                  key={uuid()}
+                  onClick={() => handleItemClick(item.id,item)}
                 >
                   <ListItemIcon>
                     <AccessTimeIcon />
                   </ListItemIcon>
-                  <ListItemText primary={`${item.symbol} - ${item.label}`} />
+                  <ListItemText primary={item.symbol} secondary={item.name} />
                 </ListItemButton>
               );
             })}
           </List>
-        </PerfectScrollbar>
+        </Scrollbars>
       </Box>
     );
   },
 );
-
-const CategoryList = [
-  { id: uuid(), label: 'Crypto', icon: <FaBitcoin /> },
-  { id: uuid(), label: 'Stocks', icon: <AiOutlineStock /> },
-  { id: uuid(), label: 'Real Estate', icon: <FaHome /> },
-  { id: uuid(), label: 'Cash', icon: <AiFillDollarCircle /> },
-  { id: uuid(), label: 'Others+', icon: <></> },
-];

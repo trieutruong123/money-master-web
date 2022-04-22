@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { v4 as uuid } from 'uuid';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
   Box,
   Button,
@@ -16,7 +15,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { SeverityPill } from 'components/shared';
+import { SeverityPill } from 'shared/components';
 
 const orders = [
   {
@@ -76,10 +75,10 @@ const orders = [
   },
 ];
 
-export const RecentlyAdded = (props: any) => (
-  <Card {...props}>
-    <CardHeader title="Recently Added" />
-    <PerfectScrollbar>
+export const RecentlyAdded = (props: any) => {
+  return (
+    <Card {...props}>
+      <CardHeader title="Recently Added" />
       <Box sx={{ minWidth: 800 }}>
         <Table>
           <TableHead>
@@ -125,22 +124,22 @@ export const RecentlyAdded = (props: any) => (
           </TableBody>
         </Table>
       </Box>
-    </PerfectScrollbar>
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        p: 2,
-      }}
-    >
-      <Button
-        color="primary"
-        endIcon={<ArrowRightIcon fontSize="small" />}
-        size="small"
-        variant="text"
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          p: 2,
+        }}
       >
-        View all
-      </Button>
-    </Box>
-  </Card>
-);
+        <Button
+          color="primary"
+          endIcon={<ArrowRightIcon fontSize="small" />}
+          size="small"
+          variant="text"
+        >
+          View all
+        </Button>
+      </Box>
+    </Card>
+  );
+};

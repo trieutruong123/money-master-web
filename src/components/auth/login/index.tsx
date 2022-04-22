@@ -24,8 +24,8 @@ import { VisibilityOff, Visibility } from '@mui/icons-material';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { userService } from 'services';
-import { authStore, userStore } from 'store';
-import { httpError, previousPath } from 'helpers';
+import { authStore, userStore, rootStore } from 'shared/store';
+import { httpError, previousPath } from 'shared/helpers';
 import { colorScheme } from 'utils/color-scheme';
 
 type FormValues = {
@@ -73,7 +73,13 @@ export const LoginForm = observer(({ content }: IProps) => {
         previousPath.clearRedirect();
       }
     }
-  }, [router, previousPath, authStore.isAuthenticating, userStore.user,locale]);
+  }, [
+    router,
+    previousPath,
+    authStore.isAuthenticating,
+    userStore.user,
+    locale,
+  ]);
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -86,13 +92,14 @@ export const LoginForm = observer(({ content }: IProps) => {
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
-    const res = await userService.login({
+    //temporarily use startLoading here
+    const res = await authStore.ManualSignIn({
       email: getValues('email'),
       password: getValues('password'),
     });
     if (res.isError) {
-      const content = httpError.getSignInError(res);
-      const message = locale ==='vi'? content.vi: content.en; 
+      const content = res.message;
+      const message = locale === 'vi' ? content.vi : content.en;
       setLoginError(message);
     }
   };

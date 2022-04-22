@@ -19,7 +19,6 @@ import {
 } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { styled } from '@mui/material/styles';
-import PerfrectScrollbar from 'react-perfect-scrollbar';
 import { GiBuyCard, GiSellCard, GiReceiveMoney } from 'react-icons/gi';
 import { precisionRound } from 'utils/number';
 import SettingsMenuButton from './settings-menu-button';
@@ -116,10 +115,10 @@ const columns: GridColDef[] = [
   },
   {
     field: 'settings',
-    headerName: 'Settings',
+    headerName: '',
     sortable: false,
     filterable: false,
-    width: 80,
+    width: 30,
     renderCell: (params: GridCellParams) => {
       return <SettingsMenuButton />;
     },
@@ -207,7 +206,7 @@ interface NetPLCellProps {
 function NetPLCell({ totalPL, PLPercentage }: NetPLCellProps) {
   const dollarSign = '$';
   const displayText = `${totalPL > 0 ? '+' : '-'}${dollarSign}${
-    totalPL < 0 ? totalPL.toString().slice(1) : totalPL
+    totalPL < 0 ? precisionRound(totalPL,4).toString().slice(1) : precisionRound(totalPL,4)
   } (${PLPercentage > 0 ? '+' : '-'}${
     PLPercentage < 0
       ? precisionRound(PLPercentage * 100, 4)

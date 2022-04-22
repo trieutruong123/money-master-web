@@ -1,3 +1,5 @@
+import { useCallback, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import {
   Box,
   Container,
@@ -7,10 +9,9 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { stockVolatilityDetailStore } from 'store';
+import { stockVolatilityDetailStore } from 'shared/store';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
 import { HistoricalMarketChart } from './historical-market-chart';
 import { IntroSection } from './intro-section';
@@ -23,19 +24,17 @@ interface IProps {
 export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
   useEffect(() => {
-    stockVolatilityDetailStore.setStockId(stockId);
-    stockVolatilityDetailStore.fetchData({ stockId });
-    stockVolatilityDetailStore.fetchHistoricalMarketData({
-      startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
-      endDate: dayjs(Date.now()).unix(),
-      interval: 'W',
-    });
+    const fetchData = async () => {
+      
+    };
+    fetchData();
   }, [stockId]);
 
-  const { isOpenAddNewTransactionModal, stockMarketData } =
+  const { isOpenAddNewTransactionModal } =
     stockVolatilityDetailStore;
-  const stockDetail = stockVolatilityDetailStore.getStockDetail;
+  const stockDetail = stockVolatilityDetailStore.stockDetail;
   const transactionHistoryData =
     stockVolatilityDetailStore.getTransactionHistoryData;
   const historicalMarketData =
@@ -69,12 +68,12 @@ export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
         <Box sx={{ overflow: 'hidden' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
             <Grid container display="flex" justifyContent="center">
-              {stockDetail !== undefined && stockMarketData !== undefined ? (
+              {typeof stockDetail !== "undefined" ? (
                 <IntroSection assetDetail={stockDetail} />
               ) : (
                 <></>
               )}
-              {historicalMarketData !== undefined &&
+              {typeof historicalMarketData !== "undefined" &&
               historicalMarketData !== [] ? (
                 <HistoricalMarketChart
                   data={historicalMarketData}
@@ -83,7 +82,7 @@ export const StockVolatilityDetail = observer(({ stockId }: IProps) => {
               ) : (
                 <></>
               )}
-              {stockDetail !== undefined && stockMarketData !== undefined ? (
+              {typeof stockDetail !== "undefined" ? (
                 <TransactionHistory
                   transactionHistoryData={transactionHistoryData}
                 />

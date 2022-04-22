@@ -9,7 +9,7 @@ import {
   Grid,
   TextField,
 } from '@mui/material';
-import { authStore, userStore } from 'store';
+import { authStore, userStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
 
 interface IProps{

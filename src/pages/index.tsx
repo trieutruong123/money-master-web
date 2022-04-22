@@ -19,8 +19,7 @@ const Home = (
   const { landingPage } = detail;
 
   return (
-    <Box id="top-of-page">
-      <DefaultNavbar content={landingPage.navbar} />
+    <Box >
       <BrandIntro content={landingPage.body.intro} />
       <Service content={landingPage.body.service} />
       <Footer content={landingPage.footer} />

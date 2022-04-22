@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
+import React from 'react';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
@@ -52,16 +53,19 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
       tooltip: {
         enabled: true,
       },
-      decimalsInFloat:4
+      decimalsInFloat: 4,
     },
   };
+  const AnyComponent = ReactApexChart as any;
   return (
-    <ReactApexChart
-      options={candleStickOptions}
-      series={candleStickSeries}
-      type={'candlestick'}
-      height="350"
-      width={'100%'}
-    />
+    <React.Fragment>
+      <AnyComponent
+        options={candleStickOptions}
+        series={candleStickSeries}
+        type={'candlestick'}
+        height="350"
+        width={'100%'}
+      />
+    </React.Fragment>
   );
 };

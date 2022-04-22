@@ -3,21 +3,24 @@ import {
   Button,
   Card,
   CardHeader,
-  Grid,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Tooltip,
 } from '@mui/material';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { getCurrencyByCode } from 'helpers';
+import { getCurrencyByCode } from 'shared/helpers';
+import { BankSavingItem } from 'shared/models';
+import SettingsMenuButton from './settings-menu-button';
+import { roundAndAddDotAndCommaSeparator } from 'utils';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -38,130 +41,150 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  bankingDetail: Array<any>;
+  bankingDetail: Array<BankSavingItem> | undefined;
 }
 
 export const BankingInvestments = ({ bankingDetail }: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
+  const { portfolioId } = router.query;
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [
     'Deposit',
     'Interest Rate',
     'Term Range',
-    'Sent Day',
+    'Description',
+    '',
   ];
 
   const renderDeposit = (num: number, code: string) => {
-    return getCurrencyByCode(code)?.symbol.toString() + num.toString();
+    const currencySymbol = getCurrencyByCode(
+      code.toUpperCase(),
+    )?.symbol.toString();
+    const qualifiedNum = roundAndAddDotAndCommaSeparator(num,4)
+    return typeof currencySymbol !== 'undefined'
+      ? currencySymbol + qualifiedNum
+      : qualifiedNum;
   };
 
   const renderInterestRate = (interestRate: number) => {
-    const rate = interestRate*100
+    const rate = roundAndAddDotAndCommaSeparator(interestRate,4);
     return (
-      <span style={{ color: '#0d6f3f' }}>{rate.toString() + '%'}</span>
+      <span style={{ color: '#0d6f3f' }}>&#43;{rate + '%'}</span>
     );
   };
 
   const renderTermRange = (termRange: number, unit: string) => {
-    return termRange.toString() + ' ' + unit;
+    const years = Math.floor(termRange / 12);
+    const months = termRange % 12;
+    const displayText = `${
+      years > 1 ? years + ' years ' : years === 1 ? years + ' year ' : ''
+    }${years > 0 && months !== 0 ? '& ' : ''}${
+      months > 1 ? months + ' months' : months === 1 ? '1 month' : ''
+    }`;
+    return displayText;
   };
 
-  const renderSentDay = (inputDay: string) => {
-    const timestamp = Date.parse(inputDay);
-    const todate = new Date(timestamp).getDate();
-    const tomonth = new Date(timestamp).getMonth() + 1;
-    const toyear = new Date(timestamp).getFullYear();
-    const originalDate = todate + '/' + tomonth + '/' + toyear;
-    return originalDate;
+  const renderDescription = (description: any) => {
+    return description.toString().slice(0, 25) + '...';
   };
 
-  return bankingDetail.length ? (
-    <Grid item lg={12} md={12} xl={12} xs={12}  mt="1rem">
+  const handleItemClick = (assetId: number) => {
+    router.push(
+      `/portfolio/${portfolioId}/bank-savings/${assetId.toString()}`,
+      `/portfolio/${portfolioId}/bank-savings/${assetId.toString()}`,
+      { locale: locale },
+    );
+  };
+
+  return bankingDetail?.length ? (
+    <Card
+      sx={{
+        borderRadius: '12px',
+        padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
+        boxShadow: '0 0 8px rgba(0,0,0,0.11)',
+      }}
+    >
       <Card
         sx={{
-          borderRadius: '12px',
-          padding: isMobile ? '5px 0px 0px 10px':'5px 20px 20px 20px',
-          boxShadow: '0 0 8px rgba(0,0,0,0.11)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          height: '3rem',
+          boxShadow: 'none',
         }}
       >
-        <Card
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            height: '3rem',
-            boxShadow: 'none',
-          }}
-        >
-          <CardHeader title="Banking" sx={{ padding: '0px' }} />
-          <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-            <MoreHorizIcon />
-          </Button>
-        </Card>
-        <PerfectScrollbar>
-          <Box>
-            <Table>
-              <TableHead>
-                <TableRow>
-                <TableHeaderCell>Name</TableHeaderCell>
-                  {headings.map((heading, i) => (
-                    <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
-                      {heading}
-                    </TableHeaderCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {bankingDetail.map((record, i) => {
-                  return (
-                    <TableRow
-                      onClick={() => {
-                        router.push(
-                          `/portfolio/asset-detail/test`,
-                          `/portfolio/asset-detail/test`,
-                          { locale: locale },
-                        );
-                      }}
-                      key={i}
-                      sx={{
-                        cursor: 'pointer',
-                        ':hover': {
-                          backgroundColor: '#F7F7F7',
-                        },
-                      }}
-                    >
-                      <TableBodyCellSymbol>
-                        <Box
-                          sx={{ fontWeight: 700, textTransform: 'uppercase' }}
-                        >
-                          {record.name}
-                        </Box>
-                      </TableBodyCellSymbol>
-                      <TableBodyCell>
-                        {renderDeposit(
-                          record.inputMoneyAmount,
-                          record.inputCurrency,
-                        )}
-                      </TableBodyCell>
-                      <TableBodyCell>
-                        {renderInterestRate(record.interestRate)}
-                      </TableBodyCell>
-                      <TableBodyCell>
-                        {renderTermRange(record.termRange, 'months')}
-                      </TableBodyCell>
-                      <TableBodyCell>
-                        {renderSentDay(record.inputDay)}
-                      </TableBodyCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </Box>
-        </PerfectScrollbar>
+        <CardHeader title="Bank Savings" sx={{ padding: '0px' }} />
+        <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
+          <MoreHorizIcon />
+        </Button>
       </Card>
-    </Grid>
+      {/* <Scrollbars autoHide style = {{cursor:'pointer', minWidth: "100%"}}> */}
+        <Box>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Name</TableHeaderCell>
+                {headings.map((heading, i) => (
+                  <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
+                    {heading}
+                  </TableHeaderCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {bankingDetail.map((record, i) => {
+                return (
+                  <TableRow
+                    key={i}
+                    sx={{
+                      cursor: 'pointer',
+                      ':hover': {
+                        backgroundColor: '#F7F7F7',
+                      },
+                    }}
+                  >
+                    <TableBodyCellSymbol
+                      onClick={() => handleItemClick(record.id)}
+                    >
+                      <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
+                        {record.name}
+                      </Box>
+                      <Box
+                        sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
+                      >
+                        {dayjs(record.inputDay).format('DD-MM-YYYY')}
+                      </Box>
+                    </TableBodyCellSymbol>
+                    <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                      {renderDeposit(
+                        record.inputMoneyAmount,
+                        record.inputCurrency,
+                      )}
+                    </TableBodyCell>
+                    <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                      {renderInterestRate(record.interestRate)}
+                    </TableBodyCell>
+                    <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                      {renderTermRange(record.termRange, 'months')}
+                    </TableBodyCell>
+                    <Tooltip title={record.description}>
+                      <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                        {renderDescription(record.description)}
+                      </TableBodyCell>
+                    </Tooltip>
+                    <TableBodyCell>
+                      <SettingsMenuButton />
+                    </TableBodyCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </Box>
+      {/* </Scrollbars> */}
+    </Card>
   ) : (
     <></>
   );

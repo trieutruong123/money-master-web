@@ -10,7 +10,7 @@ import {
 import { useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { cryptoVolatilityDetailStore } from 'store';
+import { cryptoVolatilityDetailStore } from 'shared/store';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
 import { HistoricalMarketChart } from './historical-market-chart';
 import { IntroSection } from './intro-section';
@@ -22,21 +22,16 @@ interface IProps {
 export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  useEffect(() => {
-    cryptoVolatilityDetailStore.setCoinId(coinCode);
-    cryptoVolatilityDetailStore.fetchData({code:coinCode});
-    cryptoVolatilityDetailStore.fetchHistoricalMarketData();
-  }, [coinCode]);
-  
-  const {
-    isOpenAddNewTransactionModal,
-    coinMarketData,
-  } = cryptoVolatilityDetailStore;
-  const coinDetail = cryptoVolatilityDetailStore.getAssetDetail;
-  const transactionHistoryData = cryptoVolatilityDetailStore.getTransactionHistoryData;
+
+  const { isOpenAddNewTransactionModal
+   } =
+    cryptoVolatilityDetailStore;
+  const coinDetail = cryptoVolatilityDetailStore.cryptoDetail;
+  const transactionHistoryData =
+    cryptoVolatilityDetailStore.getTransactionHistoryData;
   const historicalMarketData =
     cryptoVolatilityDetailStore.historicalMarketData.slice();
-  
+
   const handleTimeIntervalChanged = useCallback((interval: number) => {
     cryptoVolatilityDetailStore.setTimeInterval(interval);
     cryptoVolatilityDetailStore.fetchHistoricalMarketData();
@@ -62,14 +57,12 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
         <Box sx={{ overflow: 'hidden' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
             <Grid container display="flex" justifyContent="center">
-              {coinDetail !== undefined && coinMarketData !== undefined ? (
-                <IntroSection
-                  assetDetail={coinDetail}
-                />
+              {typeof coinDetail !== "undefined"? (
+                <IntroSection assetDetail={coinDetail} />
               ) : (
                 <></>
               )}
-              {historicalMarketData !== undefined ? (
+              {typeof historicalMarketData !== "undefined" ? (
                 <HistoricalMarketChart
                   data={historicalMarketData}
                   handleTimeIntervalChanged={handleTimeIntervalChanged}
@@ -77,7 +70,7 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
               ) : (
                 <></>
               )}
-              {coinDetail !== undefined && coinMarketData !== undefined ? (
+              {typeof coinDetail !== "undefined"  ? (
                 <TransactionHistory
                   transactionHistoryData={transactionHistoryData}
                 />

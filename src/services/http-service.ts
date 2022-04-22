@@ -1,6 +1,6 @@
 import { cryptoService } from './crypto-service';
 import axios from 'axios';
-import { mainConstant } from 'helpers';
+import { mainConstant } from 'shared/constants';
 import { storageService } from 'services';
 
 export const httpService = {
@@ -17,7 +17,6 @@ async function sendGet(url: string) {
     const response = await axios.get(`${BASE_URL}${url}`, {
       headers: getHeader(),
     });
-
     return {
       isError: false,
       data: response.data,

@@ -1,10 +1,17 @@
 import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { portfolioDetailStore } from 'store';
+import { portfolioDetailStore } from 'shared/store';
 import { SearchingAssetsForm } from './searching-assets-form';
-import { CreateCryptoForm } from './create-crypto-form';
+import { ChooseTypesForm } from './choose-types-form';
+import {
+  AddNewCryptoForm,
+  AddNewStockForm,
+  AddNewCashForm,
+  AddNewRealEstateForm,
+  AddNewBankSavingsForm,
+} from './add-asset-forms';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
   position: 'absolute',
@@ -40,29 +47,137 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
 
 export const AddNewAssetsModal = observer(() => {
   const [current, setCurrent] = useState<any>(null);
-
+  const [type, setType] = useState('');
   useEffect(() => {
-    setCurrent(
-      <SearchingAssetsForm openTransactionForm={openTransactionForm} />,
-    );
+    setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
   }, []);
 
   const { isOpenAddNewAssetModal } = portfolioDetailStore;
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
+    console.log(type);
+    setType('');
+    setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
     portfolioDetailStore.setOpenAddNewAssetModal(false);
-    returnSearchingForm();
+  }, []);
+
+  const openNextForm = (params: any) => {
+    console.log(params.selectedType);
+    switch (params.curFormType) {
+      case 'type':
+        setType(params.selectedType);
+        if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
+          openSearchingForm({ assetType: params.selectedType });
+        else if (
+          ['realEstate', 'cash', 'bankSavings'].includes(params.selectedType)
+        )
+          openTransactionForm({ selectedType: params.selectedType });
+        break;
+      case 'search':
+        openTransactionForm(params);
+        break;
+      default:
+        openChooseTypesForm(params);
+        break;
+    }
   };
 
-  const openTransactionForm = (itemId: string) => {
-    //if(itemId)
-    setCurrent(<CreateCryptoForm comeBack={returnSearchingForm} />);
+  const openPreviousForm = (params: any) => {
+    switch (params.curFormType) {
+      case 'search':
+        setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+        break;
+      case 'transaction':
+        if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
+          openSearchingForm(params);
+        else if (['realEstate', 'cash', 'bankSavings'].includes(params.selectedType))
+          openChooseTypesForm(params);
+        else openChooseTypesForm(params);
+        break;
+      default:
+        openChooseTypesForm(params);
+        break;
+    }
   };
 
-  const returnSearchingForm = () => {
+  const openTransactionForm = (params: any) => {
+    console.log(params.selectedType);
+    switch (params.selectedType) {
+      case 'cryptoCurrency':
+        setCurrent(
+          <AddNewCryptoForm
+            coinCode={params.assetId}
+            selectedCoin = {params.selectedItem}
+            openPreviousForm={openPreviousForm}
+            handleClose={handleClose}
+          />,
+        );
+        break;
+      case 'stocks':
+        // const assetId = params.assetId;
+        setCurrent(
+          <AddNewStockForm
+            stockId={params.assetId}
+            selectedStock = {params.selectedItem}
+            openPreviousForm={openPreviousForm}
+            handleClose={handleClose}
+          />,
+        );
+        break;
+      case 'cash':
+        setCurrent(
+          <AddNewCashForm
+            openPreviousForm={openPreviousForm}
+            handleClose={handleClose}
+          />,
+        );
+        break;
+      case 'realEstate':
+        setCurrent(
+          <AddNewRealEstateForm
+            handleClose={handleClose}
+            openPreviousForm={openPreviousForm}
+          />,
+        );
+        break;
+      case 'bankSavings':
+        setCurrent(
+          <AddNewBankSavingsForm
+            handleClose={handleClose}
+            openPreviousForm={openPreviousForm}
+          />,
+        );
+        break;
+    }
+  };
+
+  const openSearchingForm = (params: any) => {
     setCurrent(
-      <SearchingAssetsForm openTransactionForm={openTransactionForm} />,
+      <SearchingAssetsForm
+        assetType={params.assetType}
+        openNextForm={openNextForm}
+        openPreviousForm={openPreviousForm}
+        searchData={searchData}
+      />,
     );
+  };
+
+  const openChooseTypesForm = (params: any) => {
+    setCurrent(<ChooseTypesForm openNextForm={openNextForm} />);
+  };
+
+  const searchData = async ({
+    searchingText,
+    searchingType,
+  }: {
+    searchingText: string;
+    searchingType: string;
+  }) => {
+    const res = await portfolioDetailStore.searchData({
+      type: searchingType,
+      searchingText: searchingText,
+    });
+    return res;
   };
 
   return (

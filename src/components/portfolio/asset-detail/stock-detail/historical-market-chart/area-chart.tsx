@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import dynamic from 'next/dynamic';
+import React from 'react';
 import { precisionRound } from 'utils/number';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -75,7 +76,8 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
             return dayjs.unix(val).format('MMM DD HH:mm');
           else if (timeInterval === '60')
             return dayjs.unix(val).format('MMM DD HH:00');
-          else if (timeInterval === 'D') return dayjs.unix(val).format('MMM DD YY');
+          else if (timeInterval === 'D')
+            return dayjs.unix(val).format('MMM DD YY');
           else return dayjs.unix(val).format('MMM DD YYYY');
         },
       },
@@ -104,13 +106,16 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
       },
     },
   };
+  const AnyComponent = ReactApexChart as any;
   return (
-    <ReactApexChart
-      options={areaOptions}
-      series={areaSeries}
-      type={'area'}
-      height="350"
-      width={'100%'}
-    />
+    <React.Fragment>
+      <AnyComponent
+        options={areaOptions}
+        series={areaSeries}
+        type={'area'}
+        height="350"
+        width={'100%'}
+      />
+    </React.Fragment>
   );
 };
