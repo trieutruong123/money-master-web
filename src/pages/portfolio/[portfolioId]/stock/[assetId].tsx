@@ -12,16 +12,17 @@ import dayjs from 'dayjs';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
-import { StockVolatilityDetail } from 'components/portfolio';
 import { rootStore, stockVolatilityDetailStore } from 'shared/store';
+import { BreadcrumbsLink } from 'shared/components';
+import { DashboardLayout } from 'containers';
+import { StockVolatilityDetail } from 'containers/portfolio';
 
 const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();
 
   stockVolatilityDetailStore.setStockId(assetId);
   stockVolatilityDetailStore.setPortfolioId(portfolioId);
-  
+
   await stockVolatilityDetailStore.fetchStockDetail({ stockId: assetId });
   await stockVolatilityDetailStore.fetchHistoricalMarketData({
     startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
@@ -69,6 +70,18 @@ const AssetVolatilityDetailPage = (
           maxWidth="lg"
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
+          <BreadcrumbsLink
+            urlArr={[
+              '/portfolio',
+              `/portfolio/${portfolioId}`,
+              `/portfolio/${portfolioId}/stock/${assetId}`,
+            ]}
+            displayNameArr={[
+              'Portfolio',
+              portfolioId,
+              stockVolatilityDetailStore.stockCode,
+            ]}
+          />
           <Typography sx={{ mb: 3 }} variant="h4">
             Stock Detail
           </Typography>

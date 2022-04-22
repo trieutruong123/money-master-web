@@ -11,10 +11,10 @@ import {
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
-import { rootStore ,cryptoVolatilityDetailStore} from 'shared/store';
-import { CryptoVolatilityDetail } from 'components/portfolio';
-
+import { rootStore, cryptoVolatilityDetailStore } from 'shared/store';
+import { BreadcrumbsLink } from 'shared/components';
+import { DashboardLayout } from 'containers';
+import { CryptoVolatilityDetail } from 'containers/portfolio';
 
 const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();
@@ -66,6 +66,18 @@ const AssetVolatilityDetailPage = (
           maxWidth="lg"
           sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
+          <BreadcrumbsLink
+            urlArr={[
+              '/portfolio',
+              `/portfolio/${portfolioId}`,
+              `/portfolio/${portfolioId}/coin/${assetId}`,
+            ]}
+            displayNameArr={[
+              'Portfolio',
+              portfolioId,
+              cryptoVolatilityDetailStore.coinCode,
+            ]}
+          />
           <Typography sx={{ mb: 3 }} variant="h4">
             Crypto Currency
           </Typography>

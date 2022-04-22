@@ -3,8 +3,9 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import { DashboardLayout } from 'components';
-import { AccountProfile, AccountProfileDetails } from 'components/account';
+import { DashboardLayout } from 'containers';
+import { AccountProfile, AccountProfileDetails } from 'containers/account';
+import { BreadcrumbsLink } from 'shared/components';
 
 const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;
@@ -24,15 +25,16 @@ const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         }}
       >
         <Container maxWidth="lg">
+          <BreadcrumbsLink urlArr={['/profile']} displayNameArr={['Profile']} />
           <Typography sx={{ mb: 3 }} variant="h4">
             {profilePage.title}
           </Typography>
           <Grid container spacing={3}>
             <Grid item lg={4} md={6} xs={12}>
-              <AccountProfile content = {profilePage}/>
+              <AccountProfile content={profilePage} />
             </Grid>
             <Grid item lg={8} md={6} xs={12}>
-              <AccountProfileDetails content = {profilePage.editProfile}/>
+              <AccountProfileDetails content={profilePage.editProfile} />
             </Grid>
           </Grid>
         </Container>
@@ -41,8 +43,7 @@ const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   );
 };
 
-//Profile.requireAuth = true;
-
+Profile.requireAuth = true;
 Profile.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );

@@ -205,9 +205,8 @@ class PortfolioDetailStore {
     });
     rootStore.stopLoading();
     if (!res.isError) {
-      const newBankSavingArray = this.bankingDetail?.slice();
-      newBankSavingArray?.push(res.data);
-      this.bankingDetail = newBankSavingArray;
+      this.bankingDetail?.push(res.data);
+      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
@@ -221,9 +220,8 @@ class PortfolioDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
-      const newCryptoArray = this.cryptoDetail?.slice();
-      newCryptoArray?.push(res.data);
-      this.cryptoDetail = newCryptoArray;
+      this.cryptoDetail?.push(res.data);
+      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
@@ -237,9 +235,8 @@ class PortfolioDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
-      const newStockArray = this.stockDetail?.slice();
-      newStockArray?.push(res.data);
-      this.stockDetail = newStockArray;
+      this.stockDetail?.push(res.data);
+      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
@@ -253,9 +250,8 @@ class PortfolioDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
-      const newCashArray = this.cashDetail?.slice();
-      newCashArray?.push(res.data);
-      this.cashDetail = newCashArray;
+      this.cashDetail?.push(res.data);
+      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }

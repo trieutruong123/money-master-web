@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import {GetStaticProps, InferGetStaticPropsType} from 'next';
+import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DefaultLayout, RegisterForm } from 'components';
+import { DefaultLayout, RegisterForm } from 'containers';
 
 const Register = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale, locales, defaultLocale } = props.context;
@@ -15,7 +15,7 @@ const Register = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <title>{registerPage.register} | Money Master</title>
       </Head>
       <>
-        <RegisterForm content = {registerPage}/>
+        <RegisterForm content={registerPage} />
       </>
     </>
   );

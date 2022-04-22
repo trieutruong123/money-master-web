@@ -1,9 +1,10 @@
 import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import { DashboardLayout } from 'components';
+import { DashboardLayout } from 'containers';
 import { content } from 'i18n';
 import { Box, Container, Typography } from '@mui/material';
+import { BreadcrumbsLink } from 'shared/components';
 
 const Report = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;
@@ -23,6 +24,7 @@ const Report = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         }}
       >
         <Container maxWidth="lg">
+          <BreadcrumbsLink urlArr={['/report']} displayNameArr={['Report']} />
           <Typography sx={{ mb: 3 }} variant="h4">
             {reportPage.title}
           </Typography>
@@ -32,7 +34,7 @@ const Report = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   );
 };
 
-//Report.requireAuth = true;
+Report.requireAuth = true;
 Report.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );

@@ -1,10 +1,12 @@
 import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { DashboardLayout } from 'components/layouts';
+import { DashboardLayout } from 'containers/layouts';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import { PortfolioList } from 'components/portfolio';
-import { portfolioStore } from 'shared/store';
 import { useEffect } from 'react';
+import { Box, Container, Typography } from '@mui/material';
+import { BreadcrumbsLink } from 'shared/components';
+import { portfolioStore } from 'shared/store';
+import { PortfolioList } from 'containers/portfolio';
 
 const fetchData = async () => {
   await portfolioStore.fetchPortfolioData();
@@ -21,7 +23,18 @@ export const Portfolio = (
       <Head>
         <title>Portfolio | Money Master</title>
       </Head>
-      <PortfolioList context={props.context} />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          py: 8,
+        }}
+      >
+        <Container maxWidth="lg">
+          <BreadcrumbsLink urlArr={['/portfolio']} displayNameArr={['Portfolio']} />
+        </Container>
+        <PortfolioList context={props.context} />
+      </Box>
     </>
   );
 };
