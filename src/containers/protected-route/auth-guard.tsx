@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 import { authStore, userStore } from 'shared/store';
 import { storageService, userService } from 'services';
 import { mainConstant } from 'shared/constants';
-import { CircularLoading } from 'components';
+import { CircularLoading } from 'containers';
 
 export const AuthGuard = observer(({ children }: { children: JSX.Element }) => {
   const router = useRouter();

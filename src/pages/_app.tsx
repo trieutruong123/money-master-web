@@ -11,7 +11,7 @@ import { ToastContainer } from 'react-toastify';
 import { createEmotionCache } from 'utils/create-emotion-cache';
 import { theme } from 'shared/theme';
 import { rootStore } from 'shared/store';
-import { AuthGuard } from 'components';
+import { AuthGuard } from 'containers';
 import '../styles/globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 

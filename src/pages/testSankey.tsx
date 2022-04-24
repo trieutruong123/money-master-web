@@ -1,6 +1,6 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { DashboardLayout } from 'components';
-import { Sankey } from 'components/portfolio/portfolio-detail/sankey-chart';
+import { DashboardLayout } from 'containers';
+import { Sankey } from 'containers/portfolio/portfolio-detail/sankey-chart';
 import { GetStaticProps, InferGetStaticPropsType } from 'next/types';
 import { useEffect } from 'react';
 import { portfolioDetailStore } from 'shared/store';

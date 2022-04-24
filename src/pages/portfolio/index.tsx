@@ -1,8 +1,8 @@
 import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { DashboardLayout } from 'components/layouts';
+import { DashboardLayout } from 'containers/layouts';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import { PortfolioList } from 'components/portfolio';
+import { PortfolioList } from 'containers/portfolio';
 import { portfolioStore } from 'shared/store';
 import { useEffect } from 'react';
 

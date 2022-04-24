@@ -9,8 +9,8 @@ import {
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
-import { PortfolioDetail } from 'components/portfolio/portfolio-detail';
+import { DashboardLayout } from 'containers';
+import { PortfolioDetail } from 'containers/portfolio/portfolio-detail';
 import { rootStore, portfolioDetailStore } from 'shared/store';
 import { useEffect } from 'react';
 

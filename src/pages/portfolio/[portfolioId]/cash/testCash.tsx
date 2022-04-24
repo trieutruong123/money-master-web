@@ -4,8 +4,8 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
-import { CashDetail } from 'components/portfolio';
+import { DashboardLayout } from 'containers';
+import { CashDetail } from 'containers/portfolio';
 
 const AssetVolatilityDetailPage = (
   props: InferGetStaticPropsType<typeof getStaticProps>,

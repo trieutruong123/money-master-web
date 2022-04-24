@@ -3,8 +3,8 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { Box, Container, Grid, Typography } from '@mui/material';
-import { DashboardLayout } from 'components';
-import { AccountProfile, AccountProfileDetails } from 'components/account';
+import { DashboardLayout } from 'containers';
+import { AccountProfile, AccountProfileDetails } from 'containers/account';
 
 const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;

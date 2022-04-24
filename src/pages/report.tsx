@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import { DashboardLayout } from 'components';
+import { DashboardLayout } from 'containers';
 import { content } from 'i18n';
 import { Box, Container, Typography } from '@mui/material';
 

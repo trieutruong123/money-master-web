@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
+import { DashboardLayout } from 'containers';
 import { Box, Container, Typography } from '@mui/material';
 
 const Plan = (props: InferGetStaticPropsType<typeof getStaticProps>) => {

@@ -1,7 +1,7 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import Head from 'next/head';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import { DefaultLayout } from 'components';
+import { DefaultLayout } from 'containers';
 import { Link } from 'shared/components';
 import { content } from 'i18n';
 

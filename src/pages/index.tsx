@@ -1,12 +1,12 @@
 import { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next';
 import { Box } from '@mui/material';
-import { DefaultLayout } from 'components';
+import { DefaultLayout } from 'containers';
 import {
   BrandIntro,
   Footer,
   DefaultNavbar,
   Service,
-} from 'components/landing-page';
+} from 'containers/landing-page';
 import { content } from 'i18n';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 

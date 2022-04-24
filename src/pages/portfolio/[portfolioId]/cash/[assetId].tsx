@@ -11,7 +11,7 @@ import {
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { DashboardLayout } from 'components';
+import { DashboardLayout } from 'containers';
 import { rootStore } from 'shared/store';
 
 const fetchData = async (portfolioId: string, assetId: string) => {
