@@ -7,14 +7,23 @@ import { CryptoInvestments } from './crypto-detail';
 import { StockInvestments } from './stock-detail';
 import { RealEstateInvesments } from './real-estate-detail';
 import { CashInvestments } from './cash-detail';
-import { RealEstateItem, BankSavingItem } from 'shared/models';
+import {
+  RealEstateItem,
+  BankSavingItem,
+  CryptoItem,
+  CashItem,
+  StockItem,
+  CustomAssetItemByCategory,
+} from 'shared/models';
+import { OtherCustomAssetInvestments } from './other-custom-asset-detail';
 
 interface IProps {
-  cryptoDetail: Array<any> | undefined;
-  cashDetail: Array<any> | undefined;
-  stockDetail: Array<any> | undefined;
+  cryptoDetail: Array<CryptoItem> | undefined;
+  cashDetail: Array<CashItem> | undefined;
+  stockDetail: Array<StockItem> | undefined;
   realEstateDetail: Array<RealEstateItem> | undefined;
   bankingDetail: Array<BankSavingItem> | undefined;
+  customAssetDetail: Array<CustomAssetItemByCategory> | undefined;
   content: any;
 }
 
@@ -25,6 +34,7 @@ export const AssetsDetail = observer(
     stockDetail,
     realEstateDetail,
     bankingDetail,
+    customAssetDetail,
     content,
   }: IProps) => {
     const router = useRouter();
@@ -75,28 +85,42 @@ export const AssetsDetail = observer(
           realEstateDetail?.length ? (
             <>
               <Grid item xl={4} lg={4} md={4} sm={4} xs={12} mt="1rem">
-                <CashInvestments content = {content.cashTable} cashDetail={cashDetail}></CashInvestments>
+                <CashInvestments
+                  content={content.cashTable}
+                  cashDetail={cashDetail}
+                ></CashInvestments>
               </Grid>
               <Grid item xl={8} lg={8} md={8} sm={8} xs={12} mt="1rem">
                 <RealEstateInvesments
-                  content = {content.realEstateTable}
+                  content={content.realEstateTable}
                   realEstateDetail={realEstateDetail}
                 ></RealEstateInvesments>
               </Grid>
             </>
           ) : typeof cashDetail !== undefined && cashDetail?.length ? (
             <Grid item xs={12} mt="1rem">
-              <CashInvestments 
-              content = {content.cashTable}
-              cashDetail={cashDetail}></CashInvestments>
+              <CashInvestments
+                content={content.cashTable}
+                cashDetail={cashDetail}
+              ></CashInvestments>
             </Grid>
           ) : (
             <Grid item xs={12} mt="1rem">
               <RealEstateInvesments
-              content = {content.realEstateTable}
+                content={content.realEstateTable}
                 realEstateDetail={realEstateDetail}
               ></RealEstateInvesments>
             </Grid>
+          )}
+          {typeof bankingDetail !== undefined && bankingDetail?.length ? (
+            <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
+              <OtherCustomAssetInvestments
+                content={content.bankSavingsTable}
+                customAssetDetail={customAssetDetail}
+              ></OtherCustomAssetInvestments>
+            </Grid>
+          ) : (
+            <></>
           )}
         </Grid>
       </Grid>

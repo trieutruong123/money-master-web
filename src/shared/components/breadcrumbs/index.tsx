@@ -19,8 +19,8 @@ export const BreadcrumbsLink = ({ urlArr, displayNameArr, color }: IProps) => {
           );
       })}
       <Link
-        underline="hover"
-        color="text.primary"
+        underline="always"
+        color="appColor.blue"
         href={urlArr[len - 1]}
         aria-current="page"
       >

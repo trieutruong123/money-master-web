@@ -125,6 +125,7 @@ export const BuyStockForm = ({
             type="number"
             fullWidth
             sx={{ mt: 1, display: 'block' }}
+            inputProps={{ step: 'any' }}
             id="outlined-purchase-price"
             label={`*${content.purchasePrice}`}
             {...register('purchasePrice')}
@@ -136,6 +137,7 @@ export const BuyStockForm = ({
             type="number"
             fullWidth
             sx={{ mt: 1, display: 'block' }}
+            inputProps={{ step: 'any' }}
             id="outlined-stock-current-amount-holding"
             label={`*${content.shares}`}
             {...register('currentAmountHolding')}

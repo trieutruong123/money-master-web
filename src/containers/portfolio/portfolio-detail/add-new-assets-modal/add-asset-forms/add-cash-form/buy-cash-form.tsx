@@ -112,6 +112,7 @@ export const BuyCashForm = ({ handleFormSubmit, content }: IProps) => {
           <TextField
             type="number"
             fullWidth
+            inputProps={{ step: 'any' }}
             sx={{ mt: 1, display: 'block' }}
             id="outlined-cash-amount"
             label={`*${content.amount}`}

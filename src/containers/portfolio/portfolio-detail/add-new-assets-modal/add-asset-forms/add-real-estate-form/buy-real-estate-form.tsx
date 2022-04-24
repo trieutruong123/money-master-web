@@ -119,6 +119,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
           <TextField
             type="number"
             fullWidth
+            inputProps={{ step: 'any' }}
             sx={{ mt: 1, display: 'block' }}
             id="outlined-real-estate-purchase-price"
             label={`*${content.purchasePrice}`}
@@ -130,6 +131,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
           <TextField
             type="number"
             fullWidth
+            inputProps={{ step: 'any' }}
             sx={{ mt: 1, display: 'block' }}
             id="outlined-real-estate-current-price"
             label={`*${content.currentPrice}`}

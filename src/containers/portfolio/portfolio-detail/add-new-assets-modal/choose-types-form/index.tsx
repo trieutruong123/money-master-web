@@ -17,10 +17,10 @@ import ShowChartIcon from '@mui/icons-material/ShowChart';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { BsCashCoin } from 'react-icons/bs';
+import { BsCashCoin, BsMinecartLoaded } from 'react-icons/bs';
 import { RiPsychotherapyFill } from 'react-icons/ri';
 import { AiFillGolden } from 'react-icons/ai';
-
+import { GiMiner } from 'react-icons/gi';
 interface IProps {
   openNextForm: any;
   content: any;
@@ -55,9 +55,30 @@ export const ChooseTypesForm = ({ openNextForm, content }: IProps) => {
       label: content.bankSavings,
       icon: <AccountBalanceIcon />,
     },
+    {
+      id: uuid(),
+      type: 'other',
+      label: content.others,
+      icon: <RiPsychotherapyFill />,
+    },
   ];
 
-  const handleOpenOthersList = () => {
+  const comodityList = [
+    {
+      id: uuid(),
+      type: 'gold',
+      label: 'Gold',
+      icon: <AiFillGolden />,
+    },
+    {
+      id: uuid(),
+      type: 'silver',
+      label: 'Silver',
+      icon: <AiFillGolden />,
+    },
+  ];
+
+  const handleOpenComodityList = () => {
     setOtherCollapse(!isOtherCollapse);
   };
 
@@ -71,7 +92,7 @@ export const ChooseTypesForm = ({ openNextForm, content }: IProps) => {
       <div id="header-searching-form">
         <h2
           id="modal-modal-title"
-          style={{ textAlign: 'center', marginTop: '1rem',fontSize: '2rem', }}
+          style={{ textAlign: 'center', marginTop: '1rem', fontSize: '2rem' }}
         >
           {content.title}
         </h2>
@@ -82,6 +103,32 @@ export const ChooseTypesForm = ({ openNextForm, content }: IProps) => {
             width: 'auto',
           }}
         >
+          <ListItemButton key="comodity-type" onClick={handleOpenComodityList}>
+            <ListItemIcon>
+              <Avatar sx={{ bgcolor: 'appColor.blue' }}>
+                <GiMiner />
+              </Avatar>
+            </ListItemIcon>
+            <ListItemText primary='Comodity' />
+            {isOtherCollapse ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={isOtherCollapse} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {comodityList.map((item) => {
+                return (
+                  <ListItemButton key={item.id} sx={{ pl: 8 }}>
+                    <ListItemIcon>
+                      <Avatar sx={{ bgcolor: 'appColor.blue' }}>
+                        {item.icon}
+                      </Avatar>
+                    </ListItemIcon>
+                    <ListItemText primary={item.label} />
+                    <ChevronRightIcon />
+                  </ListItemButton>
+                );
+              })}
+            </List>
+          </Collapse>
           {CategoryList.map((item, index) => {
             return (
               <ListItemButton
@@ -96,29 +143,6 @@ export const ChooseTypesForm = ({ openNextForm, content }: IProps) => {
               </ListItemButton>
             );
           })}
-
-          <ListItemButton key="others-type" onClick={handleOpenOthersList}>
-            <ListItemIcon>
-              <Avatar sx={{ bgcolor: 'appColor.blue' }}>
-                <RiPsychotherapyFill />
-              </Avatar>
-            </ListItemIcon>
-            <ListItemText primary={content.others} />
-            {isOtherCollapse ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={isOtherCollapse} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItemButton sx={{ pl: 8 }}>
-                <ListItemIcon>
-                  <Avatar sx={{ bgcolor: 'appColor.blue' }}>
-                    <AiFillGolden />
-                  </Avatar>
-                </ListItemIcon>
-                <ListItemText primary="Gold" />
-                <ChevronRightIcon />
-              </ListItemButton>
-            </List>
-          </Collapse>
         </List>
       </Scrollbars>
     </div>

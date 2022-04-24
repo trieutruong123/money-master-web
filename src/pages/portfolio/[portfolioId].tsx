@@ -1,24 +1,29 @@
 import Head from 'next/head';
-import { useEffect } from 'react';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import {
   Box,
   Container,
   useTheme,
   useMediaQuery,
   Typography,
+  Tab,
 } from '@mui/material';
+import { TabList, TabContext } from '@mui/lab';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { rootStore, portfolioDetailStore } from 'shared/store';
-import { BreadcrumbsLink } from 'shared/components';
+import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
 import { DashboardLayout } from 'containers';
-import { PortfolioDetail } from 'containers/portfolio/portfolio-detail';
+const PortfolioDetail = lazy(
+  () => import('containers/portfolio/portfolio-detail'),
+);
 
 const fetchData = async (portfolioId: string) => {
   rootStore.startLoading();
 
   portfolioDetailStore.setPortfolioId(portfolioId);
+  portfolioDetailStore.setPortfolioName(portfolioId);
   await portfolioDetailStore.fetchInitialData();
 
   rootStore.stopLoading();
@@ -33,7 +38,7 @@ const PortfolioDetailPage = (
     locale,
     params: { portfolioId },
   } = props;
-
+  const [selectedTab, setTab] = useState<string>('holdings');
   useEffect(() => {
     if (typeof locale !== 'undefined') rootStore.setLocale(locale);
     fetchData(portfolioId);
@@ -41,6 +46,11 @@ const PortfolioDetailPage = (
 
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { portfolioDetailPage } = detail;
+  console.log(selectedTab);
+  console.log(portfolioDetailStore.realEstateDetail);
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setTab(newValue);
+  };
 
   return (
     <>
@@ -56,15 +66,63 @@ const PortfolioDetailPage = (
       >
         <Container maxWidth="lg">
           <BreadcrumbsLink
-            urlArr={['/portfolio', `/portfolio/${portfolioId}`]}
+            urlArr={[
+              '/portfolio',
+              `/portfolio/${portfolioDetailStore.portfolioName || portfolioId}`,
+            ]}
             displayNameArr={['Portfolio', portfolioId]}
           />
-          <Typography sx={{ mb: 3 }} variant="h4">
-          {portfolioDetailPage.header}
+          <Typography sx={{ mb: 1 }} variant="h4">
+            {portfolioDetailStore.portfolioName || portfolioDetailPage.header}
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <PortfolioDetail content = {portfolioDetailPage} portfolioId={portfolioId}></PortfolioDetail>
+          <TabContext value={selectedTab}>
+            <Box sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}>
+              <TabList
+                onChange={handleTabChange}
+                aria-label="basic tabs example"
+                textColor="primary"
+                indicatorColor="primary"
+              >
+                <Tab label="Holdings" value="holdings" />
+                <Tab label="Report" value="report" />
+                <Tab label="Invest Fund" value="investFund" />
+                <Tab label="Settings" value="settings" />
+              </TabList>
+            </Box>
+          </TabContext>
+          {portfolioDetailStore.pieChartData ? (
+            <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+              <Box display={selectedTab === 'holdings' ? 'block' : 'none'}>
+                <PortfolioDetail
+                  content={portfolioDetailPage}
+                  portfolioId={portfolioId}
+                ></PortfolioDetail>{' '}
+              </Box>
+            </Suspense>
+          ) : null}
+          {portfolioDetailStore.pieChartData ? (
+            <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+              <Box display={selectedTab === 'report' ? 'block' : 'none'}>
+                <div>Report</div>
+              </Box>
+            </Suspense>
+          ) : null}
+          {portfolioDetailStore.pieChartData ? (
+            <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+              <Box display={selectedTab === 'investFund' ? 'block' : 'none'}>
+                <div>Invest Fund</div>\
+              </Box>
+            </Suspense>
+          ) : null}
+          {portfolioDetailStore.pieChartData ? (
+            <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+              <Box display={selectedTab === 'settings' ? 'block' : 'none'}>
+                <div>Settings</div>\
+              </Box>
+            </Suspense>
+          ) : null}
         </Container>
       </Box>
     </>

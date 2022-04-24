@@ -123,6 +123,7 @@ export const BuyCryptoForm = ({
           fullWidth
           sx={{ mt: 1, display: 'block' }}
           id="outlined-crypto-purchase-price"
+          inputProps={{ step: 'any' }}
           label={`*${content.purchasePrice}`}
           {...register('purchasePrice')}
           variant="outlined"
@@ -133,6 +134,7 @@ export const BuyCryptoForm = ({
           type="number"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
+          inputProps={{ step: 'any' }}
           id="outlined-crypto-current-amount-holding"
           label={`*${content.amount}`}
           {...register('currentAmountHolding')}

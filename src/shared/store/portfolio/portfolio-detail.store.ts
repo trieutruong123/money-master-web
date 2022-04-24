@@ -1,51 +1,59 @@
-import {
-  CryptoItem,
-  PieChartItem,
-  StockItem,
-} from './../../models/portfolio-asset.model';
-import {
-  NewStockAsset,
-  NewCryptoCurrencyAsset,
-} from '../../types/portfolio-detail.type';
+import { NewPortfolioCustomAsset } from './../../types/portfolio-detail.type';
 import { action, makeAutoObservable, observable } from 'mobx';
-import {
-  PortfolioAllocation,
-  RealEstateItem,
-  BankSavingItem,
-  CashItem,
-} from 'shared/models';
 import {
   coinGeckoService,
   httpService,
   finhubService,
   portfolioService,
 } from 'services';
-import { httpError } from 'shared/helpers';
+import { content } from 'i18n';
 import {
+  PortfolioAllocation,
+  RealEstateItem,
+  BankSavingItem,
+  CashItem,
+  CryptoItem,
+  PieChartItem,
+  StockItem,
+  PersonalInterestCustomAssetItem,
+  CustomAssetItemByCategory,
+} from 'shared/models';
+import {
+  Portfolio,
+  NewStockAsset,
+  NewCryptoCurrencyAsset,
   SearchingDataItem,
   NewBanksSavingAsset,
   NewRealEstateAsset,
   NewCashAsset,
+  SankeyDataLink,
 } from 'shared/types';
-import { SankeyDataLink } from 'shared/types';
+import { portfolioStore, rootStore } from 'shared/store';
+import { httpError } from 'shared/helpers';
 import { portfolioData } from './portfolio-data';
-import { rootStore } from '../root.store';
-import { content } from 'i18n';
 
 class PortfolioDetailStore {
-  portfolioId: string = '';
+  portfolioId: number = 0;
+  portfolioName: string = '';
+  currencyCode: string = '';
+
   portfolioAllocationData: Array<PortfolioAllocation> = [];
+  portfolioValue: number = 0;
+  todaysChange: number = 0;
+
   stockDetail: Array<StockItem> | undefined = undefined;
   cryptoDetail: Array<CryptoItem> | undefined = undefined;
   cashDetail: Array<CashItem> | undefined = undefined;
   realEstateDetail: Array<RealEstateItem> | undefined = undefined;
   bankingDetail: Array<BankSavingItem> | undefined = undefined;
+  customAssetDetail: Array<CustomAssetItemByCategory> | undefined = undefined;
   searchedStockDetail: any = undefined;
   searchedCryptoDetail: any = undefined;
-  portfolioValue: number = 0;
-  todaysChange: number = 0;
+
   isOpenAddNewAssetModal: boolean = false;
-  currencyCode: string = '';
+  customAssetList: Array<PersonalInterestCustomAssetItem> | undefined =
+    undefined;
+
   sankeyFlowData: Array<SankeyDataLink> = [];
   pieChartData: Array<PieChartItem> | undefined = [];
 
@@ -54,6 +62,7 @@ class PortfolioDetailStore {
       searchedStockDetail: observable,
       searchedCryptoDetail: observable,
       portfolioId: observable,
+      portfolioName: observable,
       portfolioAllocationData: observable,
       stockDetail: observable,
       cryptoDetail: observable,
@@ -66,14 +75,22 @@ class PortfolioDetailStore {
       sankeyFlowData: observable,
 
       setOpenAddNewAssetModal: action,
-      fetchPortfolioDetailData: action,
       setPortfolioId: action,
+
+      fetchPortfolioDetailData: action,
       fetchRealEstate: action,
+      fetchPersonalCustomAsset: action,
+      fetchSankeyFlowData: action,
+      fetchBankSaving: action,
+      fetchCryptoCurrency: action,
+      fetchStock: action,
+      fetchCash: action,
+
       addNewBankSaving: action,
       addNewRealEstate: action,
       addNewCryptoCurrency: action,
       addNewStock: action,
-      fetchSankeyFlowData: action,
+
       getStockInfoById: action,
       getCryptoInfoById: action,
     });
@@ -84,7 +101,14 @@ class PortfolioDetailStore {
   }
 
   setPortfolioId(id: string) {
-    this.portfolioId = id;
+    this.portfolioId = Number.parseInt(id);
+  }
+
+  setPortfolioName(portfolioId: string) {
+    this.portfolioName =
+      portfolioStore.portfolio.find(
+        (item: Portfolio) => item.id === portfolioId,
+      )?.name || '';
   }
 
   async fetchInitialData() {
@@ -93,8 +117,21 @@ class PortfolioDetailStore {
     await this.fetchCryptoCurrency();
     await this.fetchStock();
     await this.fetchRealEstate();
+    await this.fetchOtherCustomAsset();
     await this.fetchPieChartData();
     await this.fetchSankeyFlowData();
+  }
+
+  async fetchPersonalCustomAsset() {
+    const url = '/personalAsset/interest/custom';
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+
+    if (!res.isError) {
+      this.customAssetList = res.data;
+    } else {
+      rootStore.raiseError(content[rootStore.locale].error.default);
+      this.customAssetList = undefined;
+    }
   }
 
   async fetchPortfolioDetailData() {
@@ -169,6 +206,18 @@ class PortfolioDetailStore {
     }
   }
 
+  async fetchOtherCustomAsset() {
+    const url = `/portfolio/${this.portfolioId}/custom`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      this.customAssetDetail = res.data;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+      this.customAssetDetail = undefined;
+    }
+  }
   async addNewRealEstate(params: NewRealEstateAsset) {
     rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/realEstate`;
@@ -256,6 +305,22 @@ class PortfolioDetailStore {
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
+  async addNewOtherCustomAsset(params: NewPortfolioCustomAsset) {
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/custom/${params.customInterestAssetInfoId}`;
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      this.customAssetDetail?.push(res.data);
+      this.fetchOtherCustomAsset();
+      this.fetchPieChartData();
+      return { isError: false, data: httpError.handleSuccessMessage('add') };
+    } else return { isError: true, data: httpError.handleErrorCode(res) };
+  }
+
   async searchData({
     type,
     searchingText,
@@ -282,7 +347,9 @@ class PortfolioDetailStore {
   }
 
   async fetchSankeyFlowData() {
-    var raw = await portfolioService.getCashFlowData(this.portfolioId);
+    var raw = await portfolioService.getCashFlowData(
+      this.portfolioId.toString(),
+    );
     this.sankeyFlowData = raw.map((link) => {
       return {
         source: `${link.sourceType}@@${link.sourceName}`,

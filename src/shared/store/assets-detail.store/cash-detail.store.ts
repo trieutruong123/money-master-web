@@ -9,12 +9,14 @@ class CashDetailStore {
   //transactionHistoryData: Array<any> = [];
   cashId: number = 0;
   portfolioId: number = 0;
+  cashName: string | undefined = '';
   currencyCode: string = 'usd';
   cashDetail: CashItem | undefined = undefined;
   cashList: Array<CashItem> | undefined = undefined;
   constructor() {
     makeAutoObservable(this, {
       isOpenAddNewTransactionModal: observable,
+      cashName: observable,
       cashId: observable,
       currencyCode: observable,
       cashDetail: observable,
@@ -44,6 +46,10 @@ class CashDetailStore {
     if (!res.isError) {
       this.cashList = res.data;
       this.cashDetail = res.data.find((item: any) => item.id === this.cashId);
+      this.cashName = res.data.find(
+        (item: any) => item.id === this.cashId,
+      )?.name;
+
       this.currencyCode = res.data.find(
         (item: any) => item.id === this.cashId,
       )?.currencyCode;

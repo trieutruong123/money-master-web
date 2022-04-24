@@ -64,7 +64,6 @@ const AssetVolatilityDetailPage = (
       >
         <Container
           maxWidth="lg"
-          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
           <BreadcrumbsLink
             urlArr={[
@@ -75,7 +74,7 @@ const AssetVolatilityDetailPage = (
             displayNameArr={[
               'Portfolio',
               portfolioId,
-              cryptoVolatilityDetailStore.coinCode,
+              cryptoVolatilityDetailStore.cryptoName,
             ]}
           />
           <Typography sx={{ mb: 3 }} variant="h4">

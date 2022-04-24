@@ -62,7 +62,6 @@ const AssetDetailPage = (
       >
         <Container
           maxWidth="lg"
-          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
         >
           <BreadcrumbsLink
             urlArr={[
@@ -73,7 +72,7 @@ const AssetDetailPage = (
             displayNameArr={[
               'Portfolio',
               portfolioId,
-              realEstateDetailStore.assetDetail?.name,
+              realEstateDetailStore.realEstateName,
             ]}
           />
           <Typography sx={{ mb: 3 }} variant="h4">

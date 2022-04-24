@@ -59,13 +59,17 @@ export type NewCashAsset = {
 };
 
 export type NewPortfolioCustomAsset = {
-  name: string;
-  inputDay: string;
-  inputMoneyAmount: number;
-  inputCurrency: string;
-  description: string;
-  interestRate: number;
-  termRange: number;
+  customInterestAssetInfoId: number;
+  portfolioId: number;
+  customInterestAssetCommand: {
+    name: string;
+    inputDay: string;
+    inputMoneyAmount: number;
+    inputCurrency: string;
+    description: string;
+    interestRate: number;
+    termRange: number;
+  };
 };
 
 export type UpdatedRealEstateItem = {
@@ -97,10 +101,8 @@ export type SearchingDataItem = {
   name: string;
 };
 
-
-export type SankeyDataLink =  {
+export type SankeyDataLink = {
   source: string;
   target: string;
-  value: number
-  ;
-}
+  value: number;
+};

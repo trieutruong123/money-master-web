@@ -21,7 +21,7 @@ interface IProps {
   content: any;
 }
 
-export const PortfolioDetail = observer(({ content, portfolioId }: IProps) => {
+const PortfolioDetail = observer(({ content, portfolioId }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const {
@@ -30,10 +30,12 @@ export const PortfolioDetail = observer(({ content, portfolioId }: IProps) => {
     stockDetail,
     realEstateDetail,
     bankingDetail,
+    customAssetDetail,
     portfolioAllocationData,
     pieChartData,
     isOpenAddNewAssetModal,
   } = portfolioDetailStore;
+
   return (
     <Box
       sx={{
@@ -61,13 +63,37 @@ export const PortfolioDetail = observer(({ content, portfolioId }: IProps) => {
                   spacing={2}
                   sx={{ display: 'flex', alignItems: 'stretch' }}
                 >
-                  <Grid item lg={6} md={6} xl={6} sm={6} xs={12}>
+                  <Grid
+                    item
+                    lg={6}
+                    md={6}
+                    xl={6}
+                    sm={6}
+                    xs={12}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
                     <DonutChart
                       content={content.assetAllocation}
                       pieChartData={pieChartData}
                     />
                   </Grid>
-                  <Grid item lg={6} md={6} xl={6} sm={6} xs={12}>
+                  <Grid
+                    item
+                    lg={6}
+                    md={6}
+                    xl={6}
+                    sm={6}
+                    xs={12}
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
                     <HorizontalBarChart
                       content={content.assetAllocation}
                       pieChartData={pieChartData}
@@ -79,6 +105,7 @@ export const PortfolioDetail = observer(({ content, portfolioId }: IProps) => {
               )}
               <AssetsDetail
                 content={content}
+                customAssetDetail={customAssetDetail}
                 cryptoDetail={cryptoDetail}
                 cashDetail={cashDetail}
                 stockDetail={stockDetail}
@@ -106,3 +133,5 @@ export const PortfolioDetail = observer(({ content, portfolioId }: IProps) => {
     </Box>
   );
 });
+
+export default PortfolioDetail;

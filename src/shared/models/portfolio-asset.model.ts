@@ -99,6 +99,20 @@ export class SearchingCryptoItem {
   large: string = '';
 }
 
+export class CustomAssetItem {
+  name: string = '';
+  inputDay: string = '';
+  inputMoneyAmount: number = 0;
+  description: string = '';
+  interestRate: number = 0;
+  inputCurrency: string = '';
+  termRange: number = 0;
+}
+export class CustomAssetItemByCategory {
+  categoryId: string = '';
+  categoryName: string = '';
+  assets: Array<CustomAssetItem> = [];
+}
 export class PieChartItem {
   assetType: string = '';
   sumValue: number = 0;

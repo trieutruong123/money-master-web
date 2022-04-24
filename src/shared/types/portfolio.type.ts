@@ -5,3 +5,7 @@ export type Portfolio = {
   initialCurrency: string;
   sum: number;
 };
+
+export type NewPeronsalCustomAsset = {
+  name: string;
+};

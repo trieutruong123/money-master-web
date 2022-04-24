@@ -18,15 +18,17 @@ import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getSupportedCurrencyList } from 'shared/helpers';
+import { PersonalInterestCustomAssetItem } from 'shared/models';
 
 type FormValues = {
   name: string;
   inputMoneyAmount: number;
-  interestRate: number;
-  termRange: number;
   inputCurrency: string;
+  customInterestAssetInfoId: number;
+  inputDay: string;
+  interestRate?: number;
+  termRange?: number;
   description?: string;
-  bankCode?: string;
   brokerFee?: number;
   brokerFeeInPercent?: number;
   brokerFeeForSecurity?: number;
@@ -34,13 +36,18 @@ type FormValues = {
 };
 
 interface IProps {
+  customAssetList: Array<PersonalInterestCustomAssetItem> | undefined;
   handleFormSubmit: any;
   content: any;
 }
 
-export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
+export const BuyOtherAssetForm = ({
+  customAssetList,
+  handleFormSubmit,
+  content,
+}: IProps) => {
   const theme = useTheme();
-  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSm = useMediaQuery(theme.breakpoints.down('md'));
 
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
@@ -49,15 +56,17 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
       .required('Input money is required')
       .typeError('Input money must be a number')
       .positive('Input money must be greater than zero'),
-    interestRate: Yup.number()
-      .required('Interest rate is required')
-      .typeError('Interest rate must be a number')
-      .positive('Interest rate must be greater than zero'),
-    termRange: Yup.number()
-      .required('Term range is required')
-      .typeError('Term range must be a number')
-      .positive('Term range must be greater than zero'),
     inputCurrency: Yup.string().required().default('USD'),
+    customInterestAssetInfoId: Yup.number(),
+    interestRate: Yup.number()
+      .nullable(true)
+      .transform((_, val) => (val === Number(val) ? val : 0))
+      .default(0),
+    termRange: Yup.number()
+      .nullable(true)
+      .transform((_, val) => (val === Number(val) ? val : 0))
+      .default(0),
+    description: Yup.string(),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -72,15 +81,16 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit({
-      name: data.name,
-      bankCode: data.bankCode,
-      inputCurrency: data.inputCurrency,
-      inputDay: date,
-      inputMoneyAmount: data.inputMoneyAmount,
-      isGoingReinState: true,
-      interestRate: data.interestRate,
-      termRange: data.termRange,
-      description: 'description',
+      customInterestAssetInfoId: data.customInterestAssetInfoId,
+      customInterestAssetCommand: {
+        name: data.name,
+        inputCurrency: data.inputCurrency,
+        inputDay: date,
+        inputMoneyAmount: data.inputMoneyAmount,
+        interestRate: data.interestRate,
+        termRange: data.termRange,
+        description: data.description,
+      },
     });
   };
 
@@ -94,7 +104,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
       }}
     >
       <Box
-        id="buy-bank-savings-form"
+        id="buy-other-custom-asset-form"
         component="form"
         autoComplete="off"
         onSubmit={handleSubmit(onSubmit)}
@@ -114,7 +124,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
           type="text"
           fullWidth
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-bank-savings-name"
+          id="outlined-other-name"
           label={`*${content.name}`}
           {...register('name')}
           variant="outlined"
@@ -124,47 +134,52 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
         <TextField
           type="number"
           fullWidth
-          inputProps={{ step: 'any' }}
+          inputProps={{
+            step: 'any',
+          }}
           sx={{ mt: 1, display: 'block' }}
-          id="outlined-bank-saving-input-money"
+          id="outlined-other-input-money"
           label={`*${content.inputMoney}`}
           {...register('inputMoneyAmount')}
           variant="outlined"
           error={typeof errors.inputMoneyAmount?.message !== 'undefined'}
           helperText={errors.inputMoneyAmount?.message}
         ></TextField>
-        <TextField
-          type="number"
-          fullWidth
-          inputProps={{ step: 'any' }}
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-bank-savings-interest-rate"
-          label={`*${content.interestRate}`}
-          {...register('interestRate')}
-          variant="outlined"
-          error={typeof errors.interestRate?.message !== 'undefined'}
-          helperText={errors.interestRate?.message}
-        ></TextField>
-        <TextField
-          type="number"
-          fullWidth
-          inputProps={{ step: 'any' }}
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-bank-savings-term-range"
-          label={`*${content.termRange} (${content.months})`}
-          {...register('termRange')}
-          variant="outlined"
-          error={typeof errors.termRange?.message !== 'undefined'}
-          helperText={errors.termRange?.message}
-        ></TextField>
-        <Grid container spacing={isXs ? 1 : 2}>
+        {typeof customAssetList !== 'undefined' ? (
+          <FormControl
+            sx={{ mt: 1, display: 'block', width: '100%' }}
+            fullWidth
+          >
+            <InputLabel id="personal-custom-asset-type" sx={{ width: '100%' }}>
+              *Asset Type
+            </InputLabel>
+            <Select
+              sx={{ width: '100%' }}
+              variant="outlined"
+              labelId="personal-custom-asset-type"
+              id="other-custom-asset-select"
+              label={`*Asset Type`}
+              {...register('customInterestAssetInfoId')}
+            >
+              {customAssetList.map((item, index) => {
+                return (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        ) : null}
+
+        <Grid container spacing={isSm ? 1 : 1}>
           <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
             <FormControl fullWidth>
               <InputLabel id="currency-list">{content.currency}</InputLabel>
               <Select
                 variant="outlined"
                 labelId="currency-list"
-                id="bank-savings-currency-list-select"
+                id="other-currency-list-select"
                 label={`*${content.currency}`}
                 defaultValue="USD"
                 {...register('inputCurrency')}
@@ -194,17 +209,36 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
           </Grid>
         </Grid>
 
-        <TextField
-          type="text"
-          fullWidth
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-bank-savings-bank-code"
-          label={content.bankCode}
-          {...register('bankCode')}
-          variant="outlined"
-          error={typeof errors.bankCode?.message !== 'undefined'}
-          helperText={errors.bankCode?.message}
-        ></TextField>
+        <Grid container spacing={isSm ? 1 : 1}>
+          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+            <TextField
+              type="number"
+              fullWidth
+              id="outlined-other-interest-rate"
+              inputProps={{ step: 'any' }}
+              label={`${content.interestRate}`}
+              {...register('interestRate')}
+              variant="outlined"
+              defaultValue={0}
+              error={typeof errors.interestRate?.message !== 'undefined'}
+              helperText={errors.interestRate?.message}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
+            <TextField
+              type="number"
+              fullWidth
+              id="outlined-other-term-range"
+              inputProps={{ step: 'any' }}
+              label={`${content.termRange} (${content.months})`}
+              {...register('termRange')}
+              variant="outlined"
+              defaultValue={0}
+              error={typeof errors.termRange?.message !== 'undefined'}
+              helperText={errors.termRange?.message}
+            ></TextField>
+          </Grid>
+        </Grid>
         {/* <TextField
           type="number"
           fullWidth
@@ -238,7 +272,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
       >
         <Button
           type="submit"
-          form="buy-bank-savings-form"
+          form="buy-other-custom-asset-form"
           variant="contained"
           sx={{
             bg: colorScheme.theme,

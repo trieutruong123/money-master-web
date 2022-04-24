@@ -2,7 +2,7 @@ import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { styled } from '@mui/material/styles';
-import { portfolioDetailStore } from 'shared/store';
+import { portfolioDetailStore, rootStore } from 'shared/store';
 import { SearchingAssetsForm } from './searching-assets-form';
 import { ChooseTypesForm } from './choose-types-form';
 import {
@@ -11,6 +11,7 @@ import {
   AddNewCashForm,
   AddNewRealEstateForm,
   AddNewBankSavingsForm,
+  AddOtherAssetForm,
 } from './add-asset-forms';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
@@ -49,6 +50,14 @@ interface IProps {
   content: any;
 }
 
+const fetchData = async () => {
+  rootStore.startLoading();
+
+  await portfolioDetailStore.fetchPersonalCustomAsset();
+
+  rootStore.stopLoading();
+};
+
 export const AddNewAssetsModal = observer(({ content }: IProps) => {
   const [current, setCurrent] = useState<any>(null);
   const [type, setType] = useState('');
@@ -59,6 +68,8 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
         openNextForm={openNextForm}
       />,
     );
+    if (typeof portfolioDetailStore.customAssetList === 'undefined')
+      fetchData();
   }, []);
 
   const { isOpenAddNewAssetModal } = portfolioDetailStore;
@@ -83,7 +94,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
         if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
           openSearchingForm({ assetType: params.selectedType });
         else if (
-          ['realEstate', 'cash', 'bankSavings'].includes(params.selectedType)
+          ['realEstate', 'cash', 'bankSavings','other'].includes(params.selectedType)
         )
           openTransactionForm({ selectedType: params.selectedType });
         break;
@@ -110,7 +121,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
         if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
           openSearchingForm(params);
         else if (
-          ['realEstate', 'cash', 'bankSavings'].includes(params.selectedType)
+          ['realEstate', 'cash', 'bankSavings','other'].includes(params.selectedType)
         )
           openChooseTypesForm(params);
         else openChooseTypesForm(params);
@@ -174,6 +185,15 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           />,
         );
         break;
+      case 'other':
+        setCurrent(
+          <AddOtherAssetForm
+            customAssetList={portfolioDetailStore.customAssetList}
+            content={content.bankSavingsTransaction}
+            handleClose={handleClose}
+            openPreviousForm={openPreviousForm}
+          />,
+        );
     }
   };
 
