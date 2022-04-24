@@ -1,6 +1,6 @@
 import { fcsapiService } from '../../../services';
 import { action, makeAutoObservable, observable } from 'mobx';
-import { portfolioData } from '../../store/portfolio/portfolio-detail.store';
+import { portfolioData } from 'shared/store/portfolio/portfolio-data';
 
 class CashDetailStore {
   isOpenAddNewTransactionModal: boolean = false;

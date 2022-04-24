@@ -9,7 +9,7 @@ import {
 import { useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { cashDetailStore } from '../../../../shared/store';
+import { cashDetailStore } from 'shared/store';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
 import { HistoricalMarketChart } from './historical-market-chart';
 import { IntroSection } from './intro-section';
@@ -74,11 +74,11 @@ export const CashDetail = observer(({ currencyCode }: IProps) => {
               ) : (
                 <></>
               )}
-              {forexDetail !== undefined && forexMarketData !== undefined ? (
+              {/* {forexDetail !== undefined && forexMarketData !== undefined ? (
                 <TransactionHistory assetMarketData={forexMarketData} />
               ) : (
                 <></>
-              )}
+              )} */}
             </Grid>
           </Container>
         </Box>
