@@ -19,7 +19,7 @@ const ExchangeRateInfo=observer((props:IProps) => {
         cashDetailStore.fetchHistoricalMarketData();
       }, []);
       const {
-        isOpenAddNewTransactionModal,
+        
         historicalMarketData,
         forexDetail,
         forexMarketData,
