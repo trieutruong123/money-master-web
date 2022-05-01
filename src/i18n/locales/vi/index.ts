@@ -247,6 +247,20 @@ export const vi = {
         description: 'Mô tả',
         addNew: 'Thêm mới',
       },
+
+      otherCustomAssetTransaction: {
+        title: 'Thêm tài sản',
+        name: 'Tên',
+        assetType: 'Loại tài sản',
+        inputMoney: 'Số tiền gửi',
+        interestRate: 'Lãi suất',
+        termRange: 'Kỳ hạn',
+        months: 'tháng',
+        currency: 'Tiền tệ',
+        inputDay: 'Ngày nhập',
+        description: 'Mô tả',
+        addNew: 'Thêm mới',
+      },
       cashTransaction: {
         title: 'Thêm tài sản',
         name: 'Tên',

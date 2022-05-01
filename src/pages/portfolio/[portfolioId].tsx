@@ -12,9 +12,11 @@ import { TabList, TabContext } from '@mui/lab';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
+import { DashboardLayout } from 'containers';
 import { rootStore, portfolioDetailStore } from 'shared/store';
 import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
-import { DashboardLayout } from 'containers';
+import { PDBreadcrumbTabs } from 'shared/constants';
+
 const PortfolioDetail = lazy(
   () => import('containers/portfolio/portfolio-detail'),
 );
@@ -24,7 +26,6 @@ const fetchData = async (portfolioId: string) => {
 
   portfolioDetailStore.setPortfolioId(portfolioId);
   portfolioDetailStore.setPortfolioName(portfolioId);
-  await portfolioDetailStore.fetchInitialData();
 
   rootStore.stopLoading();
 };
@@ -46,10 +47,9 @@ const PortfolioDetailPage = (
 
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { portfolioDetailPage } = detail;
-  console.log(selectedTab);
-  console.log(portfolioDetailStore.realEstateDetail);
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     setTab(newValue);
+    portfolioDetailStore.setSelectedTabs(newValue);
   };
 
   return (
@@ -85,44 +85,19 @@ const PortfolioDetailPage = (
                 textColor="primary"
                 indicatorColor="primary"
               >
-                <Tab label="Holdings" value="holdings" />
-                <Tab label="Report" value="report" />
-                <Tab label="Invest Fund" value="investFund" />
-                <Tab label="Settings" value="settings" />
+                <Tab label="Holdings" value={PDBreadcrumbTabs.holdings} />
+                <Tab label="Report" value={PDBreadcrumbTabs.report} />
+                <Tab label="Invest Fund" value={PDBreadcrumbTabs.investFund} />
+                <Tab label="Settings" value={PDBreadcrumbTabs.settings} />
               </TabList>
             </Box>
           </TabContext>
-          {portfolioDetailStore.pieChartData ? (
-            <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-              <Box display={selectedTab === 'holdings' ? 'block' : 'none'}>
-                <PortfolioDetail
-                  content={portfolioDetailPage}
-                  portfolioId={portfolioId}
-                ></PortfolioDetail>{' '}
-              </Box>
-            </Suspense>
-          ) : null}
-          {portfolioDetailStore.pieChartData ? (
-            <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-              <Box display={selectedTab === 'report' ? 'block' : 'none'}>
-                <div>Report</div>
-              </Box>
-            </Suspense>
-          ) : null}
-          {portfolioDetailStore.pieChartData ? (
-            <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-              <Box display={selectedTab === 'investFund' ? 'block' : 'none'}>
-                <div>Invest Fund</div>\
-              </Box>
-            </Suspense>
-          ) : null}
-          {portfolioDetailStore.pieChartData ? (
-            <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-              <Box display={selectedTab === 'settings' ? 'block' : 'none'}>
-                <div>Settings</div>\
-              </Box>
-            </Suspense>
-          ) : null}
+          <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+            <PortfolioDetail
+              content={portfolioDetailPage}
+              portfolioId={portfolioId}
+            ></PortfolioDetail>
+          </Suspense>
         </Container>
       </Box>
     </>

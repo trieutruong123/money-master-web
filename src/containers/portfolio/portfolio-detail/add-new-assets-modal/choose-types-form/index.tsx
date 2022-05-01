@@ -21,8 +21,10 @@ import { BsCashCoin, BsMinecartLoaded } from 'react-icons/bs';
 import { RiPsychotherapyFill } from 'react-icons/ri';
 import { AiFillGolden } from 'react-icons/ai';
 import { GiMiner } from 'react-icons/gi';
+import { AssetTypeName } from 'shared/constants';
+
 interface IProps {
-  openNextForm: any;
+  openNextForm: (params:any)=>void;
   content: any;
 }
 
@@ -32,32 +34,37 @@ export const ChooseTypesForm = ({ openNextForm, content }: IProps) => {
   const CategoryList = [
     {
       id: uuid(),
-      type: 'cryptoCurrency',
+      type: AssetTypeName.cryptoCurrency,
       label: content.cryptoCurrency,
       icon: <CurrencyBitcoinIcon />,
     },
     {
       id: uuid(),
-      type: 'stocks',
+      type: AssetTypeName.stock,
       label: content.stock,
       icon: <ShowChartIcon />,
     },
     {
       id: uuid(),
-      type: 'realEstate',
+      type: AssetTypeName.realEstate,
       label: content.realEstate,
       icon: <MapsHomeWorkIcon />,
     },
-    { id: uuid(), type: 'cash', label: 'Cash', icon: <BsCashCoin /> },
     {
       id: uuid(),
-      type: 'bankSavings',
+      type: AssetTypeName.cash,
+      label: content.cash,
+      icon: <BsCashCoin />,
+    },
+    {
+      id: uuid(),
+      type: AssetTypeName.bankSaving,
       label: content.bankSavings,
       icon: <AccountBalanceIcon />,
     },
     {
       id: uuid(),
-      type: 'other',
+      type: AssetTypeName.other,
       label: content.others,
       icon: <RiPsychotherapyFill />,
     },
@@ -77,13 +84,11 @@ export const ChooseTypesForm = ({ openNextForm, content }: IProps) => {
       icon: <AiFillGolden />,
     },
   ];
-
   const handleOpenComodityList = () => {
     setOtherCollapse(!isOtherCollapse);
   };
 
   const handleSelectionClick = (type: string) => {
-    console.log(type);
     openNextForm({ curFormType: 'type', selectedType: type });
   };
 
@@ -109,7 +114,7 @@ export const ChooseTypesForm = ({ openNextForm, content }: IProps) => {
                 <GiMiner />
               </Avatar>
             </ListItemIcon>
-            <ListItemText primary='Comodity' />
+            <ListItemText primary="Comodity" />
             {isOtherCollapse ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={isOtherCollapse} timeout="auto" unmountOnExit>

@@ -13,12 +13,13 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { useRouter } from 'next/router';
-import { Scrollbars } from 'react-custom-scrollbars';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { roundAndAddDotAndCommaSeparator } from 'utils/number';
+import { roundAndAddDotAndCommaSeparator } from 'utils';
 import { getCurrencyByCode } from 'shared/helpers';
 import { CryptoItem } from 'shared/models';
+import { AssetType } from 'shared/types';
+import { AssetTypeName } from 'shared/constants';
 import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`
@@ -42,15 +43,30 @@ const TableBodyCell = styled(TableCell)`
 interface IProps {
   cryptoDetail: Array<CryptoItem> | undefined;
   content: any;
+  deleteAsset: (
+    assetType: AssetType,
+    assetId: string,
+    portfolioId: string,
+  ) => void;
+  transferAssetToInvestFund: (
+    assetType: AssetType,
+    assetId: string,
+    portfolioId: string,
+  ) => void;
 }
 
-export const CryptoInvestments = ({ cryptoDetail, content }: IProps) => {
+export const CryptoInvestments = ({
+  cryptoDetail,
+  content,
+  deleteAsset,
+  transferAssetToInvestFund,
+}: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
   const { portfolioId } = router.query;
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const {collumnsName, settingDropDownMenu} = content;
+  const { collumnsName, settingDropDownMenu } = content;
   const headings = [
     collumnsName.currentPrice,
     // "Today's Change",
@@ -118,7 +134,7 @@ export const CryptoInvestments = ({ cryptoDetail, content }: IProps) => {
   };
 
   return cryptoDetail?.length ? (
-    <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
+    <Grid item lg={12} md={12} xl={12} xs={12}>
       <Card
         sx={{
           borderRadius: '12px',
@@ -224,7 +240,18 @@ export const CryptoInvestments = ({ cryptoDetail, content }: IProps) => {
                       )}
                     </TableBodyCell>
                     <TableBodyCell>
-                      <SettingsMenuButton content = {settingDropDownMenu}/>
+                      <SettingsMenuButton
+                        assetType={AssetTypeName.cryptoCurrency}
+                        assetId={record.id.toString()}
+                        portfolioId={
+                          Array.isArray(portfolioId)
+                            ? portfolioId[0]
+                            : portfolioId || ''
+                        }
+                        content={settingDropDownMenu}
+                        deleteAsset={deleteAsset}
+                        transferAssetToInvestFund={transferAssetToInvestFund}
+                      />
                     </TableBodyCell>
                   </TableRow>
                 );

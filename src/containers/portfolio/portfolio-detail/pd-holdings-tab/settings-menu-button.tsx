@@ -14,19 +14,32 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
+import { AssetType } from 'shared/types';
 
 interface IProps {
-  assetId?: string;
-  portfolioId?: string;
-  transactionId?: string;
+  assetType: AssetType;
+  assetId: string;
+  portfolioId: string;
   content: any;
+  deleteAsset: (
+    assetType: AssetType,
+    assetId: string,
+    portfolioId: string,
+  ) => void;
+  transferAssetToInvestFund: (
+    assetType: AssetType,
+    assetId: string,
+    portfolioId: string,
+  ) => void;
 }
 
 export default function SettingsMenuButton({
+  assetType,
   assetId,
   portfolioId,
-  transactionId,
   content,
+  deleteAsset,
+  transferAssetToInvestFund,
 }: IProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -35,6 +48,16 @@ export default function SettingsMenuButton({
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleTransferAssetToInvestFund = () => {
+    transferAssetToInvestFund(assetType, assetId, portfolioId);
+    handleClose();
+  };
+
+  const handleDeleteAsset = () => {
+    deleteAsset(assetType, assetId, portfolioId);
+    handleClose();
   };
 
   return (
@@ -79,14 +102,14 @@ export default function SettingsMenuButton({
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem>
+        <MenuItem onClick={handleTransferAssetToInvestFund}>
           <ListItemIcon>
             <ShowChartIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>{content.moveToPortfolio}</ListItemText>
         </MenuItem>
         <Divider />
-        <MenuItem>
+        <MenuItem onClick={handleDeleteAsset}>
           <ListItemIcon>
             <DeleteForeverIcon fontSize="small" />
           </ListItemIcon>

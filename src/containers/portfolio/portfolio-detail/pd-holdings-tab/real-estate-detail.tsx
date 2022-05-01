@@ -8,19 +8,21 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tooltip,
   useTheme,
   useMediaQuery,
-  Tooltip,
 } from '@mui/material';
-import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
+import dayjs from 'dayjs';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { getCurrencyByCode } from 'shared/helpers';
-import { BankSavingItem } from 'shared/models';
-import SettingsMenuButton from './settings-menu-button';
 import { roundAndAddDotAndCommaSeparator } from 'utils';
+import { getCurrencyByCode } from 'shared/helpers';
+import { RealEstateItem } from 'shared/models';
+import { AssetType } from 'shared/types';
+import { AssetTypeName } from 'shared/constants';
+import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -41,27 +43,40 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  bankingDetail: Array<BankSavingItem> | undefined;
+  realEstateDetail: Array<RealEstateItem> | undefined;
   content: any;
+  deleteAsset: (
+    assetType: AssetType,
+    assetId: string,
+    portfolioId: string,
+  ) => void;
+  transferAssetToInvestFund: (
+    assetType: AssetType,
+    assetId: string,
+    portfolioId: string,
+  ) => void;
 }
 
-export const BankingInvestments = ({ bankingDetail, content }: IProps) => {
+export const RealEstateInvesments = ({
+  realEstateDetail,
+  content,
+  deleteAsset,
+  transferAssetToInvestFund,
+}: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
   const { portfolioId } = router.query;
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { collumnsName, settingDropDownMenu } = content;
   const headings = [
-    collumnsName.deposit,
-    collumnsName.interestRate,
-    collumnsName.termRange,
+    collumnsName.buyPrice,
+    collumnsName.currentPrice,
     collumnsName.description,
     '',
   ];
 
-  const renderDeposit = (num: number, code: string) => {
+  const renderValuation = (num: number, code: string) => {
     const currencySymbol = getCurrencyByCode(
       code.toUpperCase(),
     )?.symbol.toString();
@@ -71,37 +86,22 @@ export const BankingInvestments = ({ bankingDetail, content }: IProps) => {
       : qualifiedNum;
   };
 
-  const renderInterestRate = (interestRate: number) => {
-    const rate = roundAndAddDotAndCommaSeparator(interestRate, 4);
-    return <span style={{ color: '#0d6f3f' }}>&#43;{rate + '%'}</span>;
-  };
-
-  const renderTermRange = (termRange: number, unit: string) => {
-    const years = Math.floor(termRange / 12);
-    const months = termRange % 12;
-    const displayText = `${
-      years > 1 ? years + ' years ' : years === 1 ? years + ' year ' : ''
-    }${years > 0 && months !== 0 ? '& ' : ''}${
-      months > 1 ? months + ' months' : months === 1 ? '1 month' : ''
-    }`;
-    return displayText;
-  };
-
   const renderDescription = (description: any) => {
     return description.toString().slice(0, 25) + '...';
   };
 
   const handleItemClick = (assetId: number) => {
     router.push(
-      `/portfolio/${portfolioId}/bank-savings/${assetId.toString()}`,
-      `/portfolio/${portfolioId}/bank-savings/${assetId.toString()}`,
+      `/portfolio/${portfolioId}/real-estate/${assetId.toString()}`,
+      `/portfolio/${portfolioId}/real-estate/${assetId.toString()}`,
       { locale: locale },
     );
   };
 
-  return bankingDetail?.length ? (
+  return realEstateDetail?.length ? (
     <Card
       sx={{
+        height: '100%',
         borderRadius: '12px',
         padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
         boxShadow: '0 0 8px rgba(0,0,0,0.11)',
@@ -115,12 +115,12 @@ export const BankingInvestments = ({ bankingDetail, content }: IProps) => {
           boxShadow: 'none',
         }}
       >
-        <CardHeader title="Bank Savings" sx={{ padding: '0px' }} />
+        <CardHeader title={content.title} sx={{ padding: '0px' }} />
         <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
           <MoreHorizIcon />
         </Button>
       </Card>
-      {/* <Scrollbars autoHide style = {{cursor:'pointer', minWidth: "100%"}}> */}
+      {/* <Scrollbars autoHeight > */}
       <Box>
         <Table>
           <TableHead>
@@ -134,7 +134,7 @@ export const BankingInvestments = ({ bankingDetail, content }: IProps) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {bankingDetail.map((record, i) => {
+            {realEstateDetail.map((record, i) => {
               return (
                 <TableRow
                   key={i}
@@ -156,16 +156,13 @@ export const BankingInvestments = ({ bankingDetail, content }: IProps) => {
                     </Box>
                   </TableBodyCellSymbol>
                   <TableBodyCell onClick={() => handleItemClick(record.id)}>
-                    {renderDeposit(
+                    {renderValuation(
                       record.inputMoneyAmount,
                       record.inputCurrency,
                     )}
                   </TableBodyCell>
                   <TableBodyCell onClick={() => handleItemClick(record.id)}>
-                    {renderInterestRate(record.interestRate)}
-                  </TableBodyCell>
-                  <TableBodyCell onClick={() => handleItemClick(record.id)}>
-                    {renderTermRange(record.termRange, 'months')}
+                    {renderValuation(record.currentPrice, record.inputCurrency)}
                   </TableBodyCell>
                   <Tooltip title={record.description}>
                     <TableBodyCell onClick={() => handleItemClick(record.id)}>
@@ -173,7 +170,18 @@ export const BankingInvestments = ({ bankingDetail, content }: IProps) => {
                     </TableBodyCell>
                   </Tooltip>
                   <TableBodyCell>
-                    <SettingsMenuButton content={settingDropDownMenu} />
+                    <SettingsMenuButton
+                      assetType={AssetTypeName.realEstate}
+                      assetId={record.id.toString()}
+                      portfolioId={
+                        Array.isArray(portfolioId)
+                          ? portfolioId[0]
+                          : portfolioId || ''
+                      }
+                      content={settingDropDownMenu}
+                      deleteAsset={deleteAsset}
+                      transferAssetToInvestFund={transferAssetToInvestFund}
+                    />
                   </TableBodyCell>
                 </TableRow>
               );

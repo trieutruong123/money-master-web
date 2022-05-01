@@ -13,6 +13,8 @@ import {
   AddNewBankSavingsForm,
   AddOtherAssetForm,
 } from './add-asset-forms';
+import { AssetTypeName } from 'shared/constants';
+import { AssetType } from 'shared/types';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
   position: 'absolute',
@@ -75,7 +77,6 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
   const { isOpenAddNewAssetModal } = portfolioDetailStore;
 
   const handleClose = useCallback(() => {
-    console.log(type);
     setType('');
     setCurrent(
       <ChooseTypesForm
@@ -87,14 +88,22 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
   }, []);
 
   const openNextForm = (params: any) => {
-    console.log(params.selectedType);
     switch (params.curFormType) {
       case 'type':
         setType(params.selectedType);
-        if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
+        if (
+          [AssetTypeName.stock, AssetTypeName.cryptoCurrency].includes(
+            params.selectedType,
+          )
+        )
           openSearchingForm({ assetType: params.selectedType });
         else if (
-          ['realEstate', 'cash', 'bankSavings','other'].includes(params.selectedType)
+          [
+            AssetTypeName.realEstate,
+            AssetTypeName.bankSaving,
+            AssetTypeName.other,
+            AssetTypeName.cash,
+          ].includes(params.selectedType)
         )
           openTransactionForm({ selectedType: params.selectedType });
         break;
@@ -118,10 +127,19 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
         );
         break;
       case 'transaction':
-        if (['cryptoCurrency', 'stocks'].includes(params.selectedType))
+        if (
+          [AssetTypeName.stock, AssetTypeName.crypoCurrency].includes(
+            params.selectedType,
+          )
+        )
           openSearchingForm(params);
         else if (
-          ['realEstate', 'cash', 'bankSavings','other'].includes(params.selectedType)
+          [
+            AssetTypeName.realEstate,
+            AssetTypeName.bankSaving,
+            AssetTypeName.other,
+            AssetTypeName.cash,
+          ].includes(params.selectedType)
         )
           openChooseTypesForm(params);
         else openChooseTypesForm(params);
@@ -133,9 +151,8 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
   };
 
   const openTransactionForm = (params: any) => {
-    console.log(params.selectedType);
     switch (params.selectedType) {
-      case 'cryptoCurrency':
+      case AssetTypeName.cryptoCurrency:
         setCurrent(
           <AddNewCryptoForm
             content={content.cryptoTransaction}
@@ -146,7 +163,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           />,
         );
         break;
-      case 'stocks':
+      case AssetTypeName.stock:
         // const assetId = params.assetId;
         setCurrent(
           <AddNewStockForm
@@ -158,7 +175,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           />,
         );
         break;
-      case 'cash':
+      case AssetTypeName.cash:
         setCurrent(
           <AddNewCashForm
             content={content.cashTransaction}
@@ -167,7 +184,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           />,
         );
         break;
-      case 'realEstate':
+      case AssetTypeName.realEstate:
         setCurrent(
           <AddNewRealEstateForm
             content={content.realEstateTransaction}
@@ -176,7 +193,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           />,
         );
         break;
-      case 'bankSavings':
+      case AssetTypeName.bankSaving:
         setCurrent(
           <AddNewBankSavingsForm
             content={content.bankSavingsTransaction}
@@ -185,11 +202,11 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           />,
         );
         break;
-      case 'other':
+      case AssetTypeName.other:
         setCurrent(
           <AddOtherAssetForm
             customAssetList={portfolioDetailStore.customAssetList}
-            content={content.bankSavingsTransaction}
+            content={content.otherCustomAssetTransaction}
             handleClose={handleClose}
             openPreviousForm={openPreviousForm}
           />,
@@ -223,7 +240,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
     searchingType,
   }: {
     searchingText: string;
-    searchingType: string;
+    searchingType: AssetType;
   }) => {
     const res = await portfolioDetailStore.searchData({
       type: searchingType,

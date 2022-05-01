@@ -20,8 +20,10 @@ import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { roundAndAddDotAndCommaSeparator } from 'utils';
 import { StockItem } from 'shared/models';
-import SettingsMenuButton from './settings-menu-button';
 import { getCurrencyByCode } from 'shared/helpers';
+import { AssetType } from 'shared/types';
+import { AssetTypeName } from 'shared/constants';
+import SettingsMenuButton from './settings-menu-button';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -44,9 +46,24 @@ const TableBodyCell = styled(TableCell)`
 interface IProps {
   stockDetail: Array<StockItem> | undefined;
   content: any;
+  deleteAsset: (
+    assetType: AssetType,
+    assetId: string,
+    portfolioId: string,
+  ) => void;
+  transferAssetToInvestFund: (
+    assetType: AssetType,
+    assetId: string,
+    portfolioId: string,
+  ) => void;
 }
 
-export const StockInvestments = ({ stockDetail, content }: IProps) => {
+export const StockInvestments = ({
+  stockDetail,
+  content,
+  deleteAsset,
+  transferAssetToInvestFund,
+}: IProps) => {
   const router = useRouter();
   const { locale } = useRouter();
   const { portfolioId } = router.query;
@@ -114,7 +131,7 @@ export const StockInvestments = ({ stockDetail, content }: IProps) => {
   };
 
   return stockDetail?.length ? (
-    <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
+    <Grid item lg={12} md={12} xl={12} xs={12}>
       <Card
         sx={{
           borderRadius: '12px',
@@ -221,7 +238,18 @@ export const StockInvestments = ({ stockDetail, content }: IProps) => {
                       )}
                     </TableBodyCell>
                     <TableBodyCell>
-                      <SettingsMenuButton content={settingDropDownMenu} />
+                      <SettingsMenuButton
+                        assetType={AssetTypeName.stock}
+                        assetId={record.id.toString()}
+                        portfolioId={
+                          Array.isArray(portfolioId)
+                            ? portfolioId[0]
+                            : portfolioId || ''
+                        }
+                        content={settingDropDownMenu}
+                        deleteAsset={deleteAsset}
+                        transferAssetToInvestFund={transferAssetToInvestFund}
+                      />
                     </TableBodyCell>
                   </TableRow>
                 );

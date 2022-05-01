@@ -5,12 +5,13 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { BuyOtherAssetForm } from './buy-other-asset-form';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { NewBanksSavingAsset, UpdatedBankSavingItem } from 'shared/types';
+import { AssetTypeName } from 'shared/constants';
 import { PersonalInterestCustomAssetItem } from 'shared/models';
 
 interface IProps {
   customAssetList: Array<PersonalInterestCustomAssetItem> | undefined;
-  handleClose: any;
-  openPreviousForm: any;
+  handleClose: ()=>void;
+  openPreviousForm: (params:any)=>void;
   content: any;
 }
 
@@ -26,7 +27,7 @@ export const AddOtherAssetForm = observer(
     const handleComeback = () => {
       openPreviousForm({
         curFormType: 'transaction',
-        selectedType: 'others',
+        selectedType: AssetTypeName.other,
       });
     };
 

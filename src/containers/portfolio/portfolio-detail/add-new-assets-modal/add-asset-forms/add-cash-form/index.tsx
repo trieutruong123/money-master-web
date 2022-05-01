@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { Box, IconButton, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { BuyCashForm } from './buy-cash-form';
 import { NewCashAsset } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
+import { AssetTypeName } from 'shared/constants';
+import { BuyCashForm } from './buy-cash-form';
 
 interface IProps {
-  handleClose: any;
-  openPreviousForm: any;
+  openPreviousForm: (params:any)=>void;
+  handleClose: ()=>void;
   content: any;
 }
 
@@ -22,7 +23,10 @@ export const AddNewCashForm = observer(
     }, []);
 
     const handleComeback = () => {
-      openPreviousForm({ curFormType: 'transaction', selectedType: 'cash' });
+      openPreviousForm({
+        curFormType: 'transaction',
+        selectedType: AssetTypeName.cash,
+      });
     };
 
     const portfolioName = 'demo portoflio';

@@ -26,6 +26,7 @@ export class RealEstateItem {
   description: string = '';
   buyPrice: number = 0;
   currentPrice: number = 0;
+  isDeleted: number = 0;
 }
 
 export class BankSavingItem {
@@ -40,6 +41,7 @@ export class BankSavingItem {
   interestRate: number = 0;
   termRange: number = 0;
   isGoingToReinState: boolean = false;
+  isDeleted: number = 0;
 }
 
 export class StockItem {
@@ -55,6 +57,7 @@ export class StockItem {
   currencyCode: string = '';
   purchasePrice: number = 0;
   currentAmountInCurrency: number = 0;
+  isDeleted: number = 0;
 }
 
 export class CryptoItem {
@@ -70,6 +73,7 @@ export class CryptoItem {
   cryptoCoinCode: string = '';
   currentPrice: number = 0;
   currentAmountInCurrency: number = 0;
+  isDeleted: number = 0;
 }
 
 export class CashItem {
@@ -81,6 +85,7 @@ export class CashItem {
   lastChanged: string = '';
   portfolioId: number = 0;
   description: string = '';
+  isDeleted: number = 0;
 }
 
 export class SearchingStockItem {
@@ -100,13 +105,15 @@ export class SearchingCryptoItem {
 }
 
 export class CustomAssetItem {
+  id: number = 0;
   name: string = '';
   inputDay: string = '';
   inputMoneyAmount: number = 0;
-  description: string = '';
-  interestRate: number = 0;
   inputCurrency: string = '';
+  interestRate: number = 0;
   termRange: number = 0;
+  description: string = '';
+  isDeleted: number = 0;
 }
 export class CustomAssetItemByCategory {
   categoryId: string = '';

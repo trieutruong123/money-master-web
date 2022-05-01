@@ -151,14 +151,14 @@ export const BuyOtherAssetForm = ({
             fullWidth
           >
             <InputLabel id="personal-custom-asset-type" sx={{ width: '100%' }}>
-              *Asset Type
+              *{content.assetType}
             </InputLabel>
             <Select
               sx={{ width: '100%' }}
               variant="outlined"
               labelId="personal-custom-asset-type"
               id="other-custom-asset-select"
-              label={`*Asset Type`}
+              label={`*${content.assetType}`}
               {...register('customInterestAssetInfoId')}
             >
               {customAssetList.map((item, index) => {

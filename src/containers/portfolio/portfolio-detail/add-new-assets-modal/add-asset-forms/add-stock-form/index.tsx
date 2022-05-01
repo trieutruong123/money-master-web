@@ -4,12 +4,13 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NewStockAsset } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
+import { AssetTypeName } from 'shared/constants';
 import { BuyStockForm } from './buy-stock-form';
 
 interface IProps {
   stockId: string;
-  handleClose: any;
-  openPreviousForm: any;
+  openPreviousForm: (params:any)=>void;
+  handleClose: ()=>void;
   selectedStock: { id: string; name: string; symbol: string };
   content: any;
 }
@@ -32,7 +33,7 @@ export const AddNewStockForm = observer(
     }, []);
 
     const handleComeback = () => {
-      openPreviousForm({ curFormType: 'transaction', selectedType: 'stocks' });
+      openPreviousForm({ curFormType: 'transaction', selectedType: AssetTypeName.stock });
     };
 
     const portfolioName = 'Portoflio';

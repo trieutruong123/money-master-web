@@ -5,12 +5,13 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { NewCryptoCurrencyAsset } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
+import { AssetTypeName } from 'shared/constants';
 import { BuyCryptoForm } from './buy-cryto-form';
 
 interface IProps {
   coinCode: string;
-  openPreviousForm: any;
-  handleClose: any;
+  openPreviousForm: (params:any)=>void;
+  handleClose: ()=>void;
   selectedCoin: { id: string; name: string; symbol: string };
   content: any;
 }
@@ -35,7 +36,7 @@ export const AddNewCryptoForm = observer(
     const handleComeback = () => {
       openPreviousForm({
         curFormType: 'transaction',
-        selectedType: 'cryptoCurrency',
+        selectedType: AssetTypeName.cryptoCurrency,
       });
     };
 

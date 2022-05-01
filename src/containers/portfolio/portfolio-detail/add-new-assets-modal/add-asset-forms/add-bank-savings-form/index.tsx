@@ -5,10 +5,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { BuyBankSavingsForm } from './buy-bank-savings-form';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { NewBanksSavingAsset, UpdatedBankSavingItem } from 'shared/types';
+import { AssetTypeName } from 'shared/constants';
 
 interface IProps {
-  handleClose: any;
-  openPreviousForm: any;
+  openPreviousForm: (params: any) => void;
+  handleClose: () => void;
   content: any;
 }
 
@@ -24,7 +25,7 @@ export const AddNewBankSavingsForm = observer(
     const handleComeback = () => {
       openPreviousForm({
         curFormType: 'transaction',
-        selectedType: 'bankSavings',
+        selectedType: AssetTypeName.bankSaving,
       });
     };
 
@@ -81,7 +82,10 @@ export const AddNewBankSavingsForm = observer(
             },
           }}
         >
-          <BuyBankSavingsForm content = {content} handleFormSubmit={handleFormSubmit} />
+          <BuyBankSavingsForm
+            content={content}
+            handleFormSubmit={handleFormSubmit}
+          />
         </Box>
       </div>
     );

@@ -13,7 +13,7 @@ export const BreadcrumbsLink = ({ urlArr, displayNameArr, color }: IProps) => {
       {urlArr.map((item: string, index: number) => {
         if (index !== len - 1)
           return (
-            <Link key={item} underline="hover" color="inherit" href="/">
+            <Link key={item} underline="hover" color="inherit" href={item}>
               {displayNameArr[index]}
             </Link>
           );

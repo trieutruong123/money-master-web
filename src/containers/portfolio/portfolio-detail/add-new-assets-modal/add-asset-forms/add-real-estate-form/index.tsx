@@ -2,13 +2,13 @@ import { useEffect } from 'react';
 import { Box, IconButton, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { BuyRealEstateForm } from './buy-real-estate-form';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { NewRealEstateAsset, UpdatedRealEstateItem } from 'shared/types';
-
+import { AssetTypeName } from 'shared/constants';
+import { BuyRealEstateForm } from './buy-real-estate-form';
 interface IProps {
-  handleClose: any;
-  openPreviousForm: any;
+  openPreviousForm: (params:any)=>void;
+  handleClose: ()=>void;
   content: any;
 }
 
@@ -24,7 +24,7 @@ export const AddNewRealEstateForm = observer(
     const handleComeback = () => {
       openPreviousForm({
         curFormType: 'transaction',
-        selectedType: 'realEstate',
+        selectedType: AssetTypeName.realEstate,
       });
     };
 
