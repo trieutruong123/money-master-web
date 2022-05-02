@@ -26,19 +26,18 @@ const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.stopLoading();
 };
 
-const AssetDetailPage = (
-  props: InferGetStaticPropsType<typeof getStaticProps>,
-) => {
+const AssetDetailPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
 
-  const {
-    locales,
-    locale,
-    defaultLocale,
-    params: { portfolioId, assetId },
-  } = props;
+  const { locale, query } = router;
+  const portfolioId = Array.isArray(query['portfolioId'])
+    ? query['portfolioId'][0]
+    : query['portfolioId'] || '';
+  const assetId = Array.isArray(query['assetId'])
+    ? query['assetId'][0]
+    : query['assetId'] || '';
 
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
@@ -60,9 +59,7 @@ const AssetDetailPage = (
           py: 8,
         }}
       >
-        <Container
-          maxWidth="lg"
-        >
+        <Container maxWidth="lg">
           <BreadcrumbsLink
             urlArr={[
               '/portfolio',
@@ -72,7 +69,7 @@ const AssetDetailPage = (
             displayNameArr={[
               'Portfolio',
               portfolioId,
-              realEstateDetailStore.realEstateName,
+              realEstateDetailStore.realEstateName || assetId.toString(),
             ]}
           />
           <Typography sx={{ mb: 3 }} variant="h4">
@@ -91,28 +88,5 @@ AssetDetailPage.requireAuth = true;
 AssetDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
-
-export const getStaticPaths: GetStaticPaths<{
-  portoflioId: string;
-  assetId: string;
-}> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking', //indicates the type of fallback
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const { params, locales, locale, defaultLocale } = context;
-  return {
-    props: {
-      context,
-      params,
-      locales,
-      locale,
-      defaultLocale,
-    },
-  };
-};
 
 export default AssetDetailPage;
