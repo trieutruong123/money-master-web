@@ -181,12 +181,14 @@ class PortfolioDetailStore {
   async fetchInitialData() {
     this.currencyCode = 'usd';
 
-    await this.fetchBankSaving();
-    await this.fetchCash();
-    await this.fetchCryptoCurrency();
-    await this.fetchStock();
-    await this.fetchRealEstate();
-    await this.fetchOtherCustomAsset();
+    Promise.all([
+      await this.fetchBankSaving(),
+      await this.fetchCash(),
+      await this.fetchCryptoCurrency(),
+      await this.fetchStock(),
+      await this.fetchRealEstate(),
+      await this.fetchOtherCustomAsset(),
+    ]);
   }
 
   async fetchPersonalCustomAsset() {

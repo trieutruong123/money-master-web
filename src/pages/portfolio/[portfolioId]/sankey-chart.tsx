@@ -16,7 +16,7 @@ import {
 import { portfolioDetailStore } from 'shared/store';
 import { BreadcrumbsLink } from 'shared/components';
 import { DashboardLayout } from 'containers';
-import { Sankey } from 'containers/portfolio/portfolio-detail/insight-chart/sankey-chart';
+import { Sankey } from 'containers/portfolio/portfolio-detail/pd-insight-chart/sankey-chart';
 
 const TestSankey = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const theme = useTheme();
