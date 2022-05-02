@@ -3,7 +3,7 @@
 import { observer } from 'mobx-react-lite';
 import { Grid } from '@mui/material';
 import { portfolioDetailStore, rootStore } from 'shared/store';
-import { DonutChart, HorizontalBarChart } from '../insight-chart';
+import { DonutChart, HorizontalBarChart } from '../pd-insight-chart';
 import { useEffect } from 'react';
 
 interface IProps {
@@ -27,8 +27,8 @@ const PDReportTab = observer(({ content }: IProps) => {
     <Grid
       container
       item
-      spacing={2}
-      sx={{ display: 'flex', alignItems: 'stretch' }}
+      spacing={2} 
+      sx={{width:'inherit', display: 'flex', alignItems: 'stretch',justifyContent:"center" }}
     >
       <Grid
         item

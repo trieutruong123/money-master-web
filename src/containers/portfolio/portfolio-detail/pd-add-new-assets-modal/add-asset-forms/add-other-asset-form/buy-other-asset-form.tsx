@@ -19,6 +19,7 @@ import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { PersonalInterestCustomAssetItem } from 'shared/models';
+import { portfolioDetailStore } from 'shared/store';
 
 type FormValues = {
   name: string;
@@ -80,17 +81,14 @@ export const BuyOtherAssetForm = ({
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    handleFormSubmit({
-      customInterestAssetInfoId: data.customInterestAssetInfoId,
-      customInterestAssetCommand: {
-        name: data.name,
-        inputCurrency: data.inputCurrency,
-        inputDay: date,
-        inputMoneyAmount: data.inputMoneyAmount,
-        interestRate: data.interestRate,
-        termRange: data.termRange,
-        description: data.description,
-      },
+    handleFormSubmit(data.customInterestAssetInfoId, {
+      name: data.name,
+      inputCurrency: data.inputCurrency,
+      inputDay: date,
+      inputMoneyAmount: data.inputMoneyAmount,
+      interestRate: data.interestRate,
+      termRange: data.termRange,
+      description: data.description,
     });
   };
 
@@ -158,6 +156,7 @@ export const BuyOtherAssetForm = ({
               variant="outlined"
               labelId="personal-custom-asset-type"
               id="other-custom-asset-select"
+              defaultValue={portfolioDetailStore.selectedCustomAssetId}
               label={`*${content.assetType}`}
               {...register('customInterestAssetInfoId')}
             >

@@ -43,7 +43,7 @@ const HypnosisLoading: React.FC<
         <div className={[styled.cssfxHypnosisInner].join(' ')}></div>
       </div>
       <br />
-      <h4 style={{ display: 'block' }}>Loading...</h4>
+      <h3 style={{ paddingLeft: '1rem',display: 'block' }}>Loading...</h3>
     </div>
   );
 };

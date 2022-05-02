@@ -1,3 +1,4 @@
+import { observer } from 'mobx-react-lite';
 import {
   Box,
   Typography,
@@ -10,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 import { FcDeleteRow } from 'react-icons/fc';
 import { portfolioDetailStore } from 'shared/store';
+import { AssetTypeName } from 'shared/constants';
 
 const CancelButton = styled(Button)<ButtonProps>(({ theme }) => ({
   color: 'ffffff',
@@ -19,10 +21,14 @@ const CancelButton = styled(Button)<ButtonProps>(({ theme }) => ({
   },
 }));
 
-export const DeleteAssetForm = () => {
+export const DeleteAssetForm = observer(() => {
   const theme = useTheme();
 
-  const deletedAssetDetail = portfolioDetailStore.getDeletedAssetDetail;
+  const { deletedAssetInfo } = portfolioDetailStore;
+  const deletedAssetDetail = portfolioDetailStore.findAssetByIdAndType(
+    deletedAssetInfo?.assetType || AssetTypeName.others,
+    deletedAssetInfo?.assetId || -1,
+  );
 
   const handleCloseModal = () => {
     portfolioDetailStore.setOpenDeleteAssetModal(false);
@@ -35,7 +41,7 @@ export const DeleteAssetForm = () => {
 
   return (
     <Box
-      id="buy-stocks-"
+      id="delete-asset-form"
       sx={{
         width: '100%',
         display: 'flex',
@@ -93,4 +99,4 @@ export const DeleteAssetForm = () => {
       </Box>
     </Box>
   );
-};
+});

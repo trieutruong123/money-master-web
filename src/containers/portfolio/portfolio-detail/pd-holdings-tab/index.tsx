@@ -34,7 +34,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
       rootStore.stopLoading();
     };
     if (portfolioDetailStore.isMissingHoldingsData) fetchData();
-  },[]);
+  }, []);
 
   const {
     cryptoDetail,
@@ -58,7 +58,14 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
-  ) => {};
+  ) => {
+    portfolioDetailStore.setOpenTransferToInvestFundModal(true);
+    portfolioDetailStore.setTransferedAssetInfo(
+      assetType,
+      assetId,
+      portfolioId,
+    );
+  };
 
   return (
     <Grid container item display="flex" justifyContent="center">

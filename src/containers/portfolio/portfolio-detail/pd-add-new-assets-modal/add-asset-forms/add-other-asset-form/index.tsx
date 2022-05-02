@@ -4,14 +4,18 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { BuyOtherAssetForm } from './buy-other-asset-form';
 import { portfolioDetailStore, rootStore } from 'shared/store';
-import { NewBanksSavingAsset, UpdatedBankSavingItem } from 'shared/types';
+import {
+  NewBanksSavingAsset,
+  NewPortfolioCustomAsset,
+  UpdatedBankSavingItem,
+} from 'shared/types';
 import { AssetTypeName } from 'shared/constants';
 import { PersonalInterestCustomAssetItem } from 'shared/models';
 
 interface IProps {
   customAssetList: Array<PersonalInterestCustomAssetItem> | undefined;
-  handleClose: ()=>void;
-  openPreviousForm: (params:any)=>void;
+  handleClose: () => void;
+  openPreviousForm: (params: any) => void;
   content: any;
 }
 
@@ -27,21 +31,21 @@ export const AddOtherAssetForm = observer(
     const handleComeback = () => {
       openPreviousForm({
         curFormType: 'transaction',
-        selectedType: AssetTypeName.other,
+        selectedType: AssetTypeName.others,
       });
     };
 
     const portfolioName = 'demo portoflio';
 
-    const handleFormSubmit = async (data: {
-      customInterestAssetInfoId: number;
-      customInterestAssetCommand: any;
-    }) => {
-      const res = await portfolioDetailStore.addNewOtherCustomAsset({
-        portfolioId: portfolioDetailStore.portfolioId,
-        ...data,
-      });
-      console.log(data);
+    const handleFormSubmit = async (
+      customInterestAssetInfoId: number,
+      data: NewPortfolioCustomAsset,
+    ) => {
+      const res = await portfolioDetailStore.addNewOtherCustomAsset(
+        customInterestAssetInfoId,
+        data,
+      );
+
       if (res.isError) {
         rootStore.raiseError(res.data.en);
       } else {

@@ -106,7 +106,7 @@ export default function SettingsMenuButton({
           <ListItemIcon>
             <ShowChartIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>{content.moveToPortfolio}</ListItemText>
+          <ListItemText>{content.transferToInvestFund}</ListItemText>
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleDeleteAsset}>

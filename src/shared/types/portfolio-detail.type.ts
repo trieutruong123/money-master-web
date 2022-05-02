@@ -4,7 +4,7 @@ export type NewPortfolioItem = {
   initialCurrency: string;
 };
 
-export type NewPersonalInterestCustomAsset = {
+export type NewPersonalAssetType = {
   name: string;
 };
 
@@ -59,17 +59,13 @@ export type NewCashAsset = {
 };
 
 export type NewPortfolioCustomAsset = {
-  customInterestAssetInfoId: number;
-  portfolioId: number;
-  customInterestAssetCommand: {
-    name: string;
-    inputDay: string;
-    inputMoneyAmount: number;
-    inputCurrency: string;
-    description: string;
-    interestRate: number;
-    termRange: number;
-  };
+  name: string;
+  inputDay: string;
+  inputMoneyAmount: number;
+  inputCurrency: string;
+  description: string;
+  interestRate: number;
+  termRange: number;
 };
 
 export type UpdatedRealEstateItem = {
@@ -93,6 +89,14 @@ export type UpdatedBankSavingItem = {
   interestRate: number;
   changeInterestRateType: string;
   termRange: number;
+};
+
+export type TransferToInvestFundType = {
+  referentialAssetId: number;
+  referentialAssetType: string;
+  amount: number;
+  currencyCode: string;
+  isTransferringAll: boolean;
 };
 
 export type SearchingDataItem = {

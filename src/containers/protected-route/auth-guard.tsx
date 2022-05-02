@@ -28,7 +28,7 @@ export const AuthGuard = observer(({ children }: { children: JSX.Element }) => {
         // remember the page that user tried to access
         storageService.setSessionStorage(
           mainConstant.REDIRECT_KEY,
-          router.route,
+          router.asPath,
         );
         router.push('/sign-in');
       }

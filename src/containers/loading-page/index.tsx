@@ -16,7 +16,7 @@ export const CircularLoading = ({ isLoading }: IProps) => {
           <Stack sx={{ color: 'grey.500' }} spacing={2} direction="row">
             <CircularProgress color="primary" />
           </Stack>
-          <h5 style ={{display:'block'}}>Loading...</h5>
+          <h3 style={{ paddingLeft: '1rem', display: 'block' }}>Loading...</h3>
         </div>
       ) : (
         <></>

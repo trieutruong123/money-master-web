@@ -13,9 +13,10 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { HypnosisLoading } from 'shared/components';
 import { PDBreadcrumbTabs } from 'shared/constants';
-import { AddNewAssetsModal } from './add-new-assets-modal';
-import { DeleteAssetModal } from './delete-asset-modal';
-import { DonutChart, HorizontalBarChart } from './insight-chart';
+import { AddNewAssetsModal } from './pd-add-new-assets-modal';
+import { DeleteAssetModal } from './pd-delete-asset-modal';
+import { DonutChart, HorizontalBarChart } from './pd-insight-chart';
+import { TransferAssetToInvestFund } from './pd-transfer-to-invest-fund-modal';
 
 const PDReportTab = lazy(() => import('./pd-report-tab'));
 const PDHoldingsTab = lazy(() => import('./pd-holdings-tab'));
@@ -49,66 +50,30 @@ const PortfolioDetail = observer(({ content, portfolioId }: IProps) => {
           overflow: 'hidden',
         }}
       >
-        <Box sx={{ overflow: 'auto' }}>
+        <Box sx={{ overflow: 'auto', width: '100%' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-            <Grid container display="flex" justifyContent="center">
+            <Grid container display="flex" justifyContent="center" width="100%">
               {portfolioDetailStore.selectedTabs ===
               PDBreadcrumbTabs.holdings ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                  <Box
-                    display={
-                      portfolioDetailStore.selectedTabs ===
-                      PDBreadcrumbTabs.holdings
-                        ? 'block'
-                        : 'none'
-                    }
-                  >
-                    <PDHoldingsTab content={content} />
-                  </Box>
+                  <PDHoldingsTab content={content} />
                 </Suspense>
               ) : null}
               {portfolioDetailStore.selectedTabs === PDBreadcrumbTabs.report ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                  <Box
-                    display={
-                      portfolioDetailStore.selectedTabs ===
-                      PDBreadcrumbTabs.report
-                        ? 'block'
-                        : 'none'
-                    }
-                  >
-                    <PDReportTab content={content} />
-                  </Box>
+                  <PDReportTab content={content} />
                 </Suspense>
               ) : null}
               {portfolioDetailStore.selectedTabs ===
               PDBreadcrumbTabs.investFund ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                  <Box
-                    display={
-                      portfolioDetailStore.selectedTabs ===
-                      PDBreadcrumbTabs.investFund
-                        ? 'block'
-                        : 'none'
-                    }
-                  >
-                    <PDInvestFundTab />
-                  </Box>
+                  <PDInvestFundTab />
                 </Suspense>
               ) : null}
               {portfolioDetailStore.selectedTabs ===
               PDBreadcrumbTabs.settings ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                  <Box
-                    display={
-                      portfolioDetailStore.selectedTabs ===
-                      PDBreadcrumbTabs.settings
-                        ? 'block'
-                        : 'none'
-                    }
-                  >
-                    <PDSettingsTab />
-                  </Box>
+                  <PDSettingsTab />
                 </Suspense>
               ) : null}
             </Grid>
@@ -117,6 +82,7 @@ const PortfolioDetail = observer(({ content, portfolioId }: IProps) => {
       </Box>
       <AddNewAssetsModal content={content.addNewAssets} />
       <DeleteAssetModal />
+      <TransferAssetToInvestFund/>
       <Tooltip title="Add new asset">
         <IconButton
           onClick={() => {

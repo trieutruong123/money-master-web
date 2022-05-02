@@ -28,6 +28,8 @@ import {
   SankeyDataLink,
   NewPortfolioCustomAsset,
   AssetType,
+  NewPersonalAssetType,
+  TransferToInvestFundType,
 } from 'shared/types';
 import { AssetTypeName } from 'shared/constants';
 import { portfolioStore, rootStore } from 'shared/store';
@@ -55,6 +57,12 @@ class PortfolioDetailStore {
   isOpenAddNewAssetModal: boolean = false;
   searchedStockDetail: any = undefined;
   searchedCryptoDetail: any = undefined;
+  selectedCustomAssetId: number = 0;
+
+  isOpenTransferToInvestFundModal: boolean = false;
+  transferedAssetInfo:
+    | { assetType: AssetType; assetId: number; portfolioId: number }
+    | undefined = undefined;
 
   isOpenDeleteAssetModal: boolean = false;
   deletedAssetInfo:
@@ -81,6 +89,7 @@ class PortfolioDetailStore {
       isOpenAddNewAssetModal: observable,
       searchedStockDetail: observable,
       searchedCryptoDetail: observable,
+      selectedCustomAssetId: observable,
 
       isOpenDeleteAssetModal: observable,
       deletedAssetInfo: observable,
@@ -91,6 +100,7 @@ class PortfolioDetailStore {
       setOpenAddNewAssetModal: action,
       setOpenDeleteAssetModal: action,
       setPortfolioId: action,
+      setSelectedCustomAssetId: action,
 
       fetchRealEstate: action,
       fetchPersonalCustomAsset: action,
@@ -108,26 +118,13 @@ class PortfolioDetailStore {
       getStockInfoById: action,
       getCryptoInfoById: action,
 
-      getDeletedAssetDetail: computed,
       isMissingHoldingsData: computed,
       isMissingReportData: computed,
     });
   }
 
-  setOpenAddNewAssetModal(isOpen: boolean) {
-    this.isOpenAddNewAssetModal = isOpen;
-  }
-
-  setOpenDeleteAssetModal(isOpen: boolean) {
-    this.isOpenDeleteAssetModal = isOpen;
-  }
-
   setPortfolioId(id: string) {
     this.portfolioId = Number.parseInt(id);
-  }
-
-  setSelectedTabs(newTab: string) {
-    this.selectedTabs = newTab;
   }
 
   setPortfolioName(portfolioId: string) {
@@ -135,6 +132,38 @@ class PortfolioDetailStore {
       portfolioStore.portfolio.find(
         (item: Portfolio) => item.id === portfolioId,
       )?.name || '';
+  }
+
+  setSelectedTabs(newTab: string) {
+    this.selectedTabs = newTab;
+  }
+
+  setOpenAddNewAssetModal(isOpen: boolean) {
+    this.isOpenAddNewAssetModal = isOpen;
+  }
+
+  setSelectedCustomAssetId(id: number) {
+    this.selectedCustomAssetId = id;
+  }
+
+  setOpenTransferToInvestFundModal(isOpen: boolean) {
+    this.isOpenTransferToInvestFundModal = isOpen;
+  }
+
+  setTransferedAssetInfo(
+    assetType: AssetType,
+    assetId: string,
+    portfolioId: string,
+  ) {
+    this.transferedAssetInfo = {
+      assetType: assetType,
+      assetId: Number.parseInt(assetId),
+      portfolioId: Number.parseInt(portfolioId),
+    };
+  }
+
+  setOpenDeleteAssetModal(isOpen: boolean) {
+    this.isOpenDeleteAssetModal = isOpen;
   }
 
   setDeletedAssetInfo(
@@ -149,40 +178,9 @@ class PortfolioDetailStore {
     };
   }
 
-  get getDeletedAssetDetail() {
-    switch (this.deletedAssetInfo?.assetType) {
-      case AssetTypeName.cryptoCurrency:
-        var crypto = this.cryptoDetail?.find(
-          (item) => item.id === this.deletedAssetInfo?.assetId,
-        );
-        return crypto;
-      case AssetTypeName.cash:
-        var cash = this.cashDetail?.find(
-          (item) => item.id === this.deletedAssetInfo?.assetId,
-        );
-        return cash;
-      case AssetTypeName.stock:
-        var stock = this.stockDetail?.find(
-          (item) => item.id === this.deletedAssetInfo?.assetId,
-        );
-        return stock;
-      case AssetTypeName.bankSavings:
-        var bankSaving = this.bankingDetail?.find(
-          (item) => item.id === this.deletedAssetInfo?.assetId,
-        );
-        return bankSaving;
-      case AssetTypeName.realEstate:
-        var realEstate = this.realEstateDetail?.find(
-          (item) => item.id === this.deletedAssetInfo?.assetId,
-        );
-        return realEstate;
-      default:
-        return undefined;
-    }
-  }
-
   async fetchInitialData() {
     this.currencyCode = 'usd';
+
     await this.fetchBankSaving();
     await this.fetchCash();
     await this.fetchCryptoCurrency();
@@ -367,9 +365,12 @@ class PortfolioDetailStore {
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
-  async addNewOtherCustomAsset(params: NewPortfolioCustomAsset) {
+  async addNewOtherCustomAsset(
+    customInterestAssetId: number,
+    params: NewPortfolioCustomAsset,
+  ) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/custom/${params.customInterestAssetInfoId}`;
+    const url = `/portfolio/${this.portfolioId}/custom/${customInterestAssetId}`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
       params,
@@ -379,6 +380,20 @@ class PortfolioDetailStore {
       this.customAssetDetail?.push(res.data);
       this.fetchOtherCustomAsset();
       this.fetchPieChartData();
+      return { isError: false, data: httpError.handleSuccessMessage('add') };
+    } else return { isError: true, data: httpError.handleErrorCode(res) };
+  }
+
+  async addNewCustomAsseType(params: NewPersonalAssetType) {
+    rootStore.startLoading();
+    const url = `/personalAsset/interest/custom`;
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      this.customAssetList?.push(res.data);
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
@@ -497,6 +512,50 @@ class PortfolioDetailStore {
       }
     }
   }
+
+  async transferAssetToInvestFund(params: TransferToInvestFundType) {
+    if (this.transferedAssetInfo !== undefined) {
+      rootStore.startLoading();
+      const url = `/portfolio/${this.portfolioId}/fund`;
+      console.log(params);
+      const res: { isError: boolean; data: any } = await httpService.post(
+        url,
+        params,
+      );
+      if (!res.isError) {
+        rootStore.raiseNotification(
+          content[rootStore.locale].success.transfer,
+          'success',
+        );
+        switch (this.transferedAssetInfo.assetType) {
+          case AssetTypeName.cryptoCurrency:
+            this.fetchCryptoCurrency();
+            break;
+          case AssetTypeName.stock:
+            this.fetchStock();
+            break;
+          case AssetTypeName.bankSaving:
+            this.fetchBankSaving();
+            break;
+          case AssetTypeName.realEstate:
+            this.fetchRealEstate();
+            break;
+          case AssetTypeName.cash:
+            this.fetchCash();
+            break;
+          case AssetTypeName.other:
+            this.fetchOtherCustomAsset();
+            break;
+          default:
+            break;
+        }
+      } else {
+        rootStore.raiseError(content[rootStore.locale].error.default);
+      }
+      rootStore.stopLoading();
+    }
+  }
+
   async getStockInfoById(stockId: string) {
     rootStore.startLoading();
     const res = await finhubService.getStockInfoByCode({
@@ -539,6 +598,32 @@ class PortfolioDetailStore {
 
   get isMissingReportData(): boolean {
     return this.pieChartData === undefined;
+  }
+
+  findAssetByIdAndType(assetType: AssetType, assetId: number) {
+    switch (assetType) {
+      case AssetTypeName.cryptoCurrency:
+        var crypto = this.cryptoDetail?.find((item) => item.id === assetId);
+        return crypto;
+      case AssetTypeName.cash:
+        var cash = this.cashDetail?.find((item) => item.id === assetId);
+        return cash;
+      case AssetTypeName.stock:
+        var stock = this.stockDetail?.find((item) => item.id === assetId);
+        return stock;
+      case AssetTypeName.bankSavings:
+        var bankSaving = this.bankingDetail?.find(
+          (item) => item.id === assetId,
+        );
+        return bankSaving;
+      case AssetTypeName.realEstate:
+        var realEstate = this.realEstateDetail?.find(
+          (item) => item.id === assetId,
+        );
+        return realEstate;
+      default:
+        return undefined;
+    }
   }
 }
 

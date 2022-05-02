@@ -162,7 +162,7 @@ export const vi = {
         total: 'TỔNG CỘNG',
       },
       settingDropDownMenu: {
-        moveToPortfolio: 'Di chuyển đến danh mục',
+        transferToInvestFund: 'Chuyển vào quỹ đầu tư',
         delete: 'Xóa tài sản',
       },
     },
@@ -177,7 +177,7 @@ export const vi = {
         total: 'TỔNG CỘNG',
       },
       settingDropDownMenu: {
-        moveToPortfolio: 'Di chuyển đến danh mục',
+        transferToInvestFund: 'Chuyển vào quỹ đầu tư',
         delete: 'Xóa tài sản',
       },
     },
@@ -191,7 +191,7 @@ export const vi = {
         description: 'MÔ TẢ',
       },
       settingDropDownMenu: {
-        moveToPortfolio: 'Di chuyển đến danh mục',
+        transferToInvestFund: 'Chuyển vào quỹ đầu tư',
         delete: 'Xóa tài sản',
       },
     },
@@ -202,7 +202,7 @@ export const vi = {
         total: 'TỔNG ',
       },
       settingDropDownMenu: {
-        moveToPortfolio: 'Di chuyển đến danh mục',
+        transferToInvestFund: 'Chuyển vào quỹ đầu tư',
         delete: 'Xóa tài sản',
       },
     },
@@ -215,7 +215,7 @@ export const vi = {
         description: 'MÔ TẢ',
       },
       settingDropDownMenu: {
-        moveToPortfolio: 'Di chuyển đến danh mục',
+        transferToInvestFund: 'Chuyển vào quỹ đầu tư',
         delete: 'Xóa tài sản',
       },
     },
@@ -229,6 +229,7 @@ export const vi = {
         cash: 'Tiền tệ',
         bankSavings: 'Tiền gửi ngân hàng',
         others: 'Khác+',
+        comodity: 'Vàng, bạc, đá quý',
       },
       searchAssets: {
         title: 'Tìm kiếm',
@@ -318,6 +319,7 @@ export const vi = {
     delete: 'Xóa thành công',
     create: 'Tạo mới thành công',
     add: 'Thêm mới thành công',
+    transfer: 'Chuyển thành công',
     default: 'Đã hoàn thành',
   },
   error: {

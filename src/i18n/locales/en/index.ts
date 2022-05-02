@@ -163,6 +163,7 @@ export const en = {
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -178,6 +179,7 @@ export const en = {
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -192,6 +194,7 @@ export const en = {
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -203,6 +206,7 @@ export const en = {
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -216,6 +220,7 @@ export const en = {
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -229,6 +234,7 @@ export const en = {
         cash: 'Cash',
         bankSavings: 'Bank Savings',
         others: 'Others+',
+        comodity: 'Comodity',
       },
       searchAssets: {
         title: 'Search Assets',
@@ -317,6 +323,7 @@ export const en = {
     delete: 'Delete item successfully',
     create: 'Create new item successfully',
     add: 'Add new item successfully',
+    transfer: 'Transfer item successfully',
     default: 'Done',
   },
 

@@ -64,12 +64,14 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
   const [current, setCurrent] = useState<any>(null);
   const [type, setType] = useState('');
   useEffect(() => {
+    //set initial form
     setCurrent(
       <ChooseTypesForm
         content={content.chooseType}
         openNextForm={openNextForm}
       />,
     );
+    //fetch personal custom asset list
     if (typeof portfolioDetailStore.customAssetList === 'undefined')
       fetchData();
   }, []);
@@ -101,7 +103,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           [
             AssetTypeName.realEstate,
             AssetTypeName.bankSaving,
-            AssetTypeName.other,
+            AssetTypeName.others,
             AssetTypeName.cash,
           ].includes(params.selectedType)
         )
@@ -137,7 +139,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           [
             AssetTypeName.realEstate,
             AssetTypeName.bankSaving,
-            AssetTypeName.other,
+            AssetTypeName.others,
             AssetTypeName.cash,
           ].includes(params.selectedType)
         )
@@ -202,7 +204,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           />,
         );
         break;
-      case AssetTypeName.other:
+      case AssetTypeName.others:
         setCurrent(
           <AddOtherAssetForm
             customAssetList={portfolioDetailStore.customAssetList}
