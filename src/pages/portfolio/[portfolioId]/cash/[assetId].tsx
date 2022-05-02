@@ -28,19 +28,18 @@ const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.stopLoading();
 };
 
-const AssetVolatilityDetailPage = (
-  props: InferGetStaticPropsType<typeof getStaticProps>,
-) => {
+const AssetVolatilityDetailPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
 
-  const {
-    locales,
-    locale,
-    defaultLocale,
-    params: { portfolioId, assetId },
-  } = props;
+  const { locale, query } = router;
+  const portfolioId = Array.isArray(query['portfolioId'])
+    ? query['portfolioId'][0]
+    : query['portfolioId'] || '';
+  const assetId = Array.isArray(query['assetId'])
+    ? query['assetId'][0]
+    : query['assetId'] || '';
 
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
@@ -62,10 +61,7 @@ const AssetVolatilityDetailPage = (
           py: 8,
         }}
       >
-        <Container
-          maxWidth="lg"
-          sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
-        >
+        <Container maxWidth="lg">
           <BreadcrumbsLink
             urlArr={[
               '/portfolio',
@@ -75,7 +71,7 @@ const AssetVolatilityDetailPage = (
             displayNameArr={[
               'Portfolio',
               portfolioId,
-              cashDetailStore.cashDetail?.name,
+              cashDetailStore.cashName || assetId.toString(),
             ]}
           />
           <Typography sx={{ mb: 3 }} variant="h4">
@@ -95,28 +91,5 @@ AssetVolatilityDetailPage.requireAuth = true;
 AssetVolatilityDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
-
-export const getStaticPaths: GetStaticPaths<{
-  portoflioId: string;
-  assetId: string;
-}> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking', //indicates the type of fallback
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const { params, locales, locale, defaultLocale } = context;
-  return {
-    props: {
-      context,
-      params,
-      locales,
-      locale,
-      defaultLocale,
-    },
-  };
-};
 
 export default AssetVolatilityDetailPage;

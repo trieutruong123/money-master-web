@@ -11,6 +11,7 @@ class CryptoVolatilityDetailStore {
   coinId: number = 0;
   coinCode: string = '';
   portfolioId: number = 0;
+  cryptoName: string | undefined = '';
   timeInterval: number = 1;
   currencyCode: string = 'usd';
   cryptoDetail: CryptoItem | undefined = undefined;
@@ -24,6 +25,7 @@ class CryptoVolatilityDetailStore {
       coinId: observable,
       coinCode: observable,
       portfolioId: observable,
+      cryptoName: observable,
       timeInterval: observable,
       currencyCode: observable,
       cryptoDetail: observable,
@@ -106,10 +108,12 @@ class CryptoVolatilityDetailStore {
     if (!res.isError) {
       this.cryptoList = res.data;
       this.cryptoDetail = res.data.find((item: any) => item.id === this.coinId);
+      this.cryptoName = res.data.find(
+        (item: any) => item.id === this.coinId,
+      )?.name;
       this.coinCode = res.data.find(
         (item: any) => item.id === this.coinId,
       ).cryptoCoinCode;
-      console.log(this.cryptoDetail);
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,

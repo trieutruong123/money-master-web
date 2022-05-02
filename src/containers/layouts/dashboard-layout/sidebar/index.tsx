@@ -39,11 +39,6 @@ const items = [
     title: 'Report',
   },
   {
-    href: '/plan',
-    icon: <RiTodoFill fontSize="small" />,
-    title: 'Plan',
-  },
-  {
     href: '/profile',
     icon: <UserIcon fontSize="small" />,
     title: 'Profile',

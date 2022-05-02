@@ -10,6 +10,7 @@ class StockVolatilityDetailStore {
   stockId: number = 0;
   stockCode: string = '';
   portfolioId: number = 0;
+  stockName: string | undefined = '';
   currencyCode: string = 'usd';
   timeInterval: string = 'W';
   historicalMarketData: Array<any> = [];
@@ -20,6 +21,7 @@ class StockVolatilityDetailStore {
       isOpenAddNewTransactionModal: observable,
       historicalMarketData: observable,
       timeInterval: observable,
+      stockName: observable,
 
       setOpenAddNewTransactionModal: action,
       setStockId: action,
@@ -64,6 +66,9 @@ class StockVolatilityDetailStore {
     if (!res.isError) {
       this.stockList = res.data;
       this.stockDetail = res.data.find((item: any) => item.id === this.stockId);
+      this.stockName = res.data.find(
+        (item: any) => item.id === this.stockId,
+      )?.name;
       this.stockCode = res.data.find(
         (item: any) => item.id === this.stockId,
       ).stockCode;

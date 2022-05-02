@@ -4,7 +4,7 @@ export type NewPortfolioItem = {
   initialCurrency: string;
 };
 
-export type NewPersonalInterestCustomAsset = {
+export type NewPersonalAssetType = {
   name: string;
 };
 
@@ -91,16 +91,34 @@ export type UpdatedBankSavingItem = {
   termRange: number;
 };
 
+export type TransferToInvestFundType = {
+  referentialAssetId: number;
+  referentialAssetType: string;
+  amount: number;
+  currencyCode: string;
+  isTransferringAll: boolean;
+};
+
 export type SearchingDataItem = {
   id: string;
   symbol: string;
   name: string;
 };
 
-
-export type SankeyDataLink =  {
+export type SankeyDataLink = {
   source: string;
   target: string;
-  value: number
-  ;
-}
+  value: number;
+};
+
+export type AssetType =
+  | 'crypto'
+  | 'stock'
+  | 'cash'
+  | 'bankSaving'
+  | 'realEstate'
+  | 'comodity'
+  | 'custom';
+
+//Type for portfolio detail tabs
+//export type PDTabsType = 'holdings' | 'report' | 'investFund' | 'settings';

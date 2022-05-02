@@ -71,7 +71,7 @@ Dashboard.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
 
-//Dashboard.requireAuth = true;
+Dashboard.requireAuth = true;
 
 export const getStaticProps: GetStaticProps = async (context) => {
   return {

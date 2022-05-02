@@ -1,6 +1,6 @@
 import Router from 'next/router';
 import { httpError } from 'shared/helpers';
-import {mainConstant} from 'shared/constants';
+import { mainConstant } from 'shared/constants';
 import { cryptoService, httpService, storageService } from 'services';
 import { userStore, authStore } from 'shared/store';
 import { facebookAuth, googleAuth } from 'services';
@@ -37,7 +37,6 @@ async function register(params: { email: string; password: string }) {
   if (!res.isError) {
     storageService.setLocalStorage(mainConstant.TOKEN_KEY, res.data.token);
   }
-  console.log(res);
   return res;
 }
 
@@ -54,7 +53,6 @@ async function login(params: { email: string; password: string }) {
     storageService.setLocalStorage(mainConstant.TOKEN_KEY, encryptedToken);
     userStore.updateUser({ ...res.data });
   }
-  console.log(res);
   authStore.setAuthenticating(false);
   return res;
 }

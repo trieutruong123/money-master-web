@@ -3,14 +3,17 @@ import { httpService } from 'services';
 import { BankSavingItem } from 'shared/models';
 import { httpError } from 'shared/helpers';
 import { rootStore } from 'shared/store';
+import { content } from 'i18n';
 class BankSavingsDetailStore {
   portfolioId: string = '';
+  bankSavingsName: string | undefined = '';
   assetId: string = '';
   assetDetail: BankSavingItem | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this, {
       portfolioId: observable,
+      bankSavingsName: observable,
       assetId: observable,
       assetDetail: observable,
 
@@ -40,7 +43,13 @@ class BankSavingsDetailStore {
     const res: any = await httpService.get(url);
     if (!res.isError) {
       this.assetDetail = res.data.find((item: any) => item.id == assetId);
+      this.bankSavingsName = res.data.find(
+        (item: any) => item.id == assetId,
+      )?.name;
     } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
       this.assetDetail = undefined;
     }
   }
