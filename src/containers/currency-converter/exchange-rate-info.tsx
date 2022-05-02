@@ -13,10 +13,6 @@ interface IProps {
 
 const ExchangeRateInfo = observer((props: IProps) => {
   const { cashDetailStore, sourceAmount, targetAmount } = props;
-  // useEffect(() => {
-  //     cashDetailStore.fetchData();
-  //     cashDetailStore.fetchHistoricalMarketData();
-  //   }, []);
   const { historicalMarketData, forexMarketData } = cashDetailStore;
 
   const handleTimeIntervalChanged = useCallback((interval: number) => {

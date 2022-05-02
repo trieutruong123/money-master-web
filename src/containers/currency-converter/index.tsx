@@ -113,7 +113,7 @@ const CurrencyConverter = observer(({ context }: IProps) => {
 
   const handleSourceCurrencyChange = async (symbol: string) => {
     cashDetailStore.setCurrencyId(symbol);
-    await cashDetailStore.fetchForexInfoByCode(cashDetailStore.currencyId);
+    cashDetailStore.forexMarketData=await cashDetailStore.fetchForexInfoByCode(cashDetailStore.currencyId);
     await cashDetailStore.fetchHistoricalMarketData();
     setTargetAmount(
       parseFloat(
@@ -126,7 +126,7 @@ const CurrencyConverter = observer(({ context }: IProps) => {
 
   const handleTargetCurrencyChange = async (symbol: string) => {
     cashDetailStore.setBaseCurrency(symbol);
-    await cashDetailStore.fetchForexInfoByCode(cashDetailStore.currencyId);
+    cashDetailStore.forexMarketData=await cashDetailStore.fetchForexInfoByCode(cashDetailStore.currencyId);
     await cashDetailStore.fetchHistoricalMarketData();
     setTargetAmount(
       parseFloat(
@@ -138,7 +138,6 @@ const CurrencyConverter = observer(({ context }: IProps) => {
   };
 
   const handleSourceValueChange = (value: number) => {
-    console.log("Source value changed to", value);
     setSourceAmount(value);
     setTargetAmount(
       parseFloat(
@@ -224,15 +223,15 @@ const CurrencyConverter = observer(({ context }: IProps) => {
                 onChange={handleTabChange}
                 aria-label="basic tabs example"
               >
-                <Tab label="USD Profile Detail" {...a11yProps(0)} />
-                <Tab label="EUR Profile Detail" {...a11yProps(1)} />
+                <Tab label={`${cashDetailStore.currencyId} Profile Detail`} {...a11yProps(0)} />
+                <Tab label={`${cashDetailStore.baseCurrencyCode} Profile Detail`} {...a11yProps(1)} />
               </Tabs>
             </Box>
             <TabPanel value={tabValue} index={0}>
-              <CurrencyProfile />
+              <CurrencyProfile currencyCode={cashDetailStore.currencyId}/>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
-              <CurrencyProfile />
+              <CurrencyProfile currencyCode={cashDetailStore.baseCurrencyCode}/>
             </TabPanel>
           </AccordionDetails>
         </Accordion>

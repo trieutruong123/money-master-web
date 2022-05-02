@@ -86,6 +86,5 @@ async function addNewPortfolio(data: any) {
   if (!res.isError) {
     return res.data;
   }
-  console.log(res);
   return res;
 }
