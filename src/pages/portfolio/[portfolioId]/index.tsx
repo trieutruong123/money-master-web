@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useEffect, useState, Suspense, lazy } from 'react';
 import {
   Box,
@@ -30,18 +31,19 @@ const fetchData = async (portfolioId: string) => {
   rootStore.stopLoading();
 };
 
-const PortfolioDetailPage = (
-  props: InferGetStaticPropsType<typeof getStaticProps>,
-) => {
+const PortfolioDetailPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const {
-    locale,
-    params: { portfolioId },
-  } = props;
+  const router = useRouter();
+
+  const { locale, query } = router;
+  const portfolioId = Array.isArray(query['portfolioId'])
+    ? query['portfolioId'][0]
+    : query['portfolioId'] || '';
+
   const [selectedTab, setTab] = useState<string>('holdings');
   useEffect(() => {
-    if (typeof locale !== 'undefined') rootStore.setLocale(locale);
+    if (typeof locale !== 'undefined') rootStore.setLocale(locale as any);
     fetchData(portfolioId);
   }, []);
 
@@ -108,42 +110,5 @@ PortfolioDetailPage.requireAuth = true;
 PortfolioDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
-
-export const getStaticPaths: GetStaticPaths<{
-  portoflioId: string;
-}> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking', //indicates the type of fallback
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const { params, locales, locale, defaultLocale } = context;
-  return {
-    props: {
-      context,
-      params,
-      locales,
-      locale,
-      defaultLocale,
-    },
-  };
-};
-
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const { query, params, locales, locale, defaultLocale, resolvedUrl } =
-//     context;
-//   return {
-//     props: {
-//       query,
-//       params,
-//       locales,
-//       locale,
-//       defaultLocale,
-//       resolvedUrl,
-//     },
-//   };
-// };
 
 export default PortfolioDetailPage;
