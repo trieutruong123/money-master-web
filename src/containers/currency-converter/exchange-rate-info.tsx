@@ -1,5 +1,5 @@
 import classes from "./exchange-rate-info.module.css";
-import { HistoricalMarketChart } from "containers/portfolio/asset-detail/cash-detail/historical-market-chart";
+import  HistoricalMarketChart  from "containers/portfolio/asset-detail/cash-detail/historical-market-chart";
 import { observer } from "mobx-react-lite";
 import { useCallback, useEffect } from "react";
 
