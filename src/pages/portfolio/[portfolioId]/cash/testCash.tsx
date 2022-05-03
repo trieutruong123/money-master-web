@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { Box, Container, Typography,useTheme } from '@mui/material';
+import { Box, Container, Typography, useTheme } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
@@ -16,7 +16,7 @@ const AssetVolatilityDetailPage = (
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;
-  const currencyCode = 'eur';
+
   return (
     <>
       <Head>
@@ -38,7 +38,7 @@ const AssetVolatilityDetailPage = (
           </Typography>
         </Container>
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <CashDetail currencyCode={currencyCode} />
+          <CashDetail />
         </Container>
       </Box>
     </>

@@ -11,7 +11,7 @@ interface IProps {
 
 export const AreaChart = ({ timeInterval, data }: IProps) => {
   const areaData = Object.values(data).map((item: any) => {
-    return [item.t*1000,item.c]
+    return [item.t * 1000, item.c];
   });
   const areaSeries = [{ name: 'Price', data: areaData }];
   const areaOptions: any = {
@@ -24,7 +24,7 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
       },
     },
     title: {
-      text: 'Bitcoin',
+      text: '',
       align: 'left',
     },
     annotations: {
@@ -102,8 +102,11 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
       },
     },
   };
+
+  const AnyComponent = ReactApexChart as any;
+
   return (
-    <ReactApexChart
+    <AnyComponent
       options={areaOptions}
       series={areaSeries}
       type={'area'}

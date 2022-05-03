@@ -7,26 +7,34 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { useCallback, useEffect } from 'react';
+import { lazy, Suspense, useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { cashDetailStore } from 'shared/store';
+import { HypnosisLoading } from 'shared/components';
 import { AddNewTransactionModal } from './add-new-transaction-modal';
-import { HistoricalMarketChart } from './historical-market-chart';
-import { IntroSection } from './intro-section';
-import { TransactionHistory } from './transaction-history';
-interface IProps {
-  currencyCode: string;
-}
 
-export const CashDetail = observer(({ currencyCode }: IProps) => {
+const IntroSection = lazy(() => import('./intro-section'));
+const HistoricalMarketChart = lazy(() => import('./historical-market-chart'));
+const TransactionHistory = lazy(() => import('./transaction-history'));
+
+interface IProps {}
+
+export const CashDetail = observer(({}: IProps) => {
   const theme = useTheme();
   const isMobile = theme.breakpoints.down('sm');
   useEffect(() => {
-    cashDetailStore.setCurrencyId(currencyCode);
-    cashDetailStore.fetchData();
-    cashDetailStore.fetchHistoricalMarketData();
-  }, []);
+    const fetchData = async () => {
+      await cashDetailStore.fetchCashDetail();
+      //currencyCode được gán từ fetchCashDetail rồi nha
+      Promise.all([
+        cashDetailStore.fetchData(),
+        cashDetailStore.fetchHistoricalMarketData(),
+      ]);
+    };
+    if (cashDetailStore.cashId && cashDetailStore.portfolioId) fetchData();
+  }, [cashDetailStore.cashId, cashDetailStore.portfolioId]);
+
   const {
     isOpenAddNewTransactionModal,
     historicalMarketData,
@@ -58,25 +66,32 @@ export const CashDetail = observer(({ currencyCode }: IProps) => {
       >
         <Box sx={{ overflow: 'hidden' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-            <Grid container display="fex" justifyContent="center">
+            <Grid container display="flex" justifyContent="center">
               {forexDetail !== undefined && forexMarketData !== undefined ? (
-                <IntroSection
-                  assetDetail={forexDetail}
-                  assetMarketData={forexMarketData}
-                />
+                <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                  <IntroSection
+                    assetDetail={forexDetail}
+                    assetMarketData={forexMarketData}
+                  />
+                </Suspense>
               ) : (
                 <></>
               )}
               {historicalMarketData !== undefined ? (
-                <HistoricalMarketChart
-                  data={historicalMarketData}
-                  handleTimeIntervalChanged={handleTimeIntervalChanged}
-                />
+                <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                  <HistoricalMarketChart
+                    data={historicalMarketData}
+                    handleTimeIntervalChanged={handleTimeIntervalChanged}
+                  />
+                </Suspense>
               ) : (
                 <></>
               )}
               {/* {forexDetail !== undefined && forexMarketData !== undefined ? (
-                <TransactionHistory assetMarketData={forexMarketData} />
+                <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                  <TransactionHistory assetMarketData={forexMarketData} />
+                <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+
               ) : (
                 <></>
               )} */}

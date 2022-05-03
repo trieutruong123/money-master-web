@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { fcsapiService } from "services/fcsapi-service";
-import classes from "./currency-profile.module.css";
+import { useEffect, useState } from 'react';
+import { fcsapiService } from 'services/fcsapi-service';
+import classes from './currency-profile.module.css';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
-import MonetizationOnIcon from '@mui/icons-material/MonetizationOn'
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import Link from '@mui/material/Link';
 
-import { width } from "@mui/system";
+import { width } from '@mui/system';
 interface IProps {
   currencyCode: string;
 }
@@ -29,7 +29,10 @@ function CurrencyProfile(props: IProps) {
   return currencyInfo ? (
     //####################################################################
     <div className={classes.tab_content}>
-      <div className={classes.horizontal_display} style={{justifyContent:"center"}}>
+      <div
+        className={classes.horizontal_display}
+        style={{ justifyContent: 'center' }}
+      >
         <h1>{currencyInfo.name}</h1>
         <div className={classes.currency_icon}>{currencyInfo.symbol}</div>
       </div>
@@ -38,28 +41,37 @@ function CurrencyProfile(props: IProps) {
         <h4>Country: {currencyInfo.country}</h4>
       </div>
       <div className={classes.horizontal_display}>
-        <AccountBalanceIcon/>
-        <h4>Bank: <Link href={`http://${currencyInfo.website}`}>{currencyInfo.bank}</Link></h4>
+        <AccountBalanceIcon />
+        <h4>
+          Bank:{' '}
+          <Link href={`http://${currencyInfo.website}`}>
+            {currencyInfo.bank}
+          </Link>
+        </h4>
       </div>
       <div className={classes.horizontal_display}>
-        <LocalAtmIcon/>
+        <LocalAtmIcon />
         <h4>Bank note: </h4>
-          {(currencyInfo.banknotes.split(',')).map((note:any)=><div className={classes.banknote}>{note}</div>)}
+        {currencyInfo.banknotes.split(',').map((note: any, index: number) => (
+          <div key={index.toString()} className={classes.banknote}>
+            {note}
+          </div>
+        ))}
       </div>
       <div className={classes.horizontal_display}>
-        <MonetizationOnIcon/>
+        <MonetizationOnIcon />
         <h4>Coins: </h4>
-          {(currencyInfo.coins.split(',')).map((note:any)=><div className={classes.coin}>{note}</div>)}
+        {currencyInfo.coins.split(',').map((note: any, index: number) => (
+          <div key={index.toString()} className={classes.coin}>
+            {note}
+          </div>
+        ))}
       </div>
-      <div className={classes.horizontal_display}>
-      
-      </div>
-      <div className={classes.horizontal_display}>
-        
-      </div>
+      <div className={classes.horizontal_display}></div>
+      <div className={classes.horizontal_display}></div>
     </div>
-    //####################################################################
   ) : (
+    //####################################################################
     <div>LOADING...</div>
   );
 }

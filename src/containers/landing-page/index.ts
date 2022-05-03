@@ -1,6 +1,5 @@
-import Service from './features';
-import BrandIntro from './brand-intro';
-import Footer from './footer';
-import DefaultNavbar from '../layouts/default-layout/nav-bar';
+import LandingBrandIntro from './brand-intro';
+import LandingFooter from './footer';
+import LandingFeatures from './features';
 
-export { DefaultNavbar, Footer, BrandIntro, Service };
+export { LandingFooter, LandingFeatures, LandingBrandIntro };

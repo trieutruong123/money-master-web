@@ -2,14 +2,11 @@ import { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next';
 import { Box } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { content } from 'i18n';
+import { DefaultLayout } from 'containers';
 import {
-  DefaultLayout,
-} from 'containers';
-import {
-  BrandIntro,
-  Footer,
-  DefaultNavbar,
-  Service,
+  LandingBrandIntro,
+  LandingFooter,
+  LandingFeatures,
 } from 'containers/landing-page';
 
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {

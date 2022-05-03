@@ -26,7 +26,7 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
       },
     },
     title: {
-      text: 'Bitcoin',
+      text: '',
 
       align: 'left',
       margin: 10,
@@ -54,8 +54,9 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
       },
     },
   };
+  const AnyComponent = ReactApexChart as any;
   return (
-    <ReactApexChart
+    <AnyComponent
       options={candleStickOptions}
       series={candleStickSeries}
       type={'candlestick'}

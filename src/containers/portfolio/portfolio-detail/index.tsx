@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import {
   Box,
   Container,
@@ -7,30 +8,31 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import {toast} from 'react-toastify';
-import { AssetsDetail } from './assets-detail';
-import { AddNewAssetsModal } from './add-new-assets-modal';
 import { portfolioDetailStore, rootStore } from 'shared/store';
+import { HypnosisLoading } from 'shared/components';
+import { PDBreadcrumbTabs } from 'shared/constants';
+import { AddNewAssetsModal } from './pd-add-new-assets-modal';
+import { DeleteAssetModal } from './pd-delete-asset-modal';
+import { DonutChart, HorizontalBarChart } from './pd-insight-chart';
+import { TransferAssetToInvestFund } from './pd-transfer-to-invest-fund-modal';
+
+const PDReportTab = lazy(() => import('./pd-report-tab'));
+const PDHoldingsTab = lazy(() => import('./pd-holdings-tab'));
+const PDInvestFundTab = lazy(() => import('./pd-invest-fund-tab'));
+const PDSettingsTab = lazy(() => import('./pd-settings-tab'));
 
 interface IProps {
   portfolioId: string;
+  content: any;
 }
 
-export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
+const PortfolioDetail = observer(({ content, portfolioId }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const {
-    cryptoDetail,
-    cashDetail,
-    stockDetail,
-    realEstateDetail,
-    bankingDetail,
-    portfolioAllocationData,
-    isOpenAddNewAssetModal,
-  } = portfolioDetailStore;
+  const { isOpenAddNewAssetModal } = portfolioDetailStore;
+
   return (
     <Box
       sx={{
@@ -48,22 +50,40 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
           overflow: 'hidden',
         }}
       >
-        <Box sx={{ overflow: 'auto' }}>
+        <Box sx={{ overflow: 'auto', width: '100%' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-            <Grid container display="flex" justifyContent="center">
-              <AssetsDetail
-                cryptoDetail={cryptoDetail}
-                cashDetail={cashDetail}
-                stockDetail={stockDetail}
-                realEstateDetail={realEstateDetail}
-                bankingDetail={bankingDetail}
-              />
+            <Grid container display="flex" justifyContent="center" width="100%">
+              {portfolioDetailStore.selectedTabs ===
+              PDBreadcrumbTabs.holdings ? (
+                <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                  <PDHoldingsTab content={content} />
+                </Suspense>
+              ) : null}
+              {portfolioDetailStore.selectedTabs === PDBreadcrumbTabs.report ? (
+                <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                  <PDReportTab content={content} />
+                </Suspense>
+              ) : null}
+              {portfolioDetailStore.selectedTabs ===
+              PDBreadcrumbTabs.investFund ? (
+                <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                  <PDInvestFundTab />
+                </Suspense>
+              ) : null}
+              {portfolioDetailStore.selectedTabs ===
+              PDBreadcrumbTabs.settings ? (
+                <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                  <PDSettingsTab />
+                </Suspense>
+              ) : null}
             </Grid>
           </Container>
         </Box>
       </Box>
-      <AddNewAssetsModal />
-      <Tooltip title="Add new assets">
+      <AddNewAssetsModal content={content.addNewAssets} />
+      <DeleteAssetModal />
+      <TransferAssetToInvestFund/>
+      <Tooltip title="Add new asset">
         <IconButton
           onClick={() => {
             portfolioDetailStore.setOpenAddNewAssetModal(
@@ -79,3 +99,5 @@ export const PortfolioDetail = observer(({ portfolioId }: IProps) => {
     </Box>
   );
 });
+
+export default PortfolioDetail;

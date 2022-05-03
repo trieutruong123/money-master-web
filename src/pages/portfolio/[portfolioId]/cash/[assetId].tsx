@@ -23,8 +23,6 @@ const fetchData = async (portfolioId: string, assetId: string) => {
   cashDetailStore.setCashId(assetId);
   cashDetailStore.setPortfolioId(portfolioId);
 
-  cashDetailStore.fetchCash();
-
   rootStore.stopLoading();
 };
 
@@ -43,9 +41,8 @@ const AssetVolatilityDetailPage = () => {
 
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
-
-    fetchData(portfolioId, assetId);
-  }, []);
+    if (assetId && portfolioId) fetchData(portfolioId, assetId);
+  }, [assetId, portfolioId]);
 
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;
@@ -71,7 +68,7 @@ const AssetVolatilityDetailPage = () => {
             displayNameArr={[
               'Portfolio',
               portfolioId,
-              cashDetailStore.cashName || assetId.toString(),
+              cashDetailStore.currencyName || assetId.toString(),
             ]}
           />
           <Typography sx={{ mb: 3 }} variant="h4">
@@ -80,7 +77,7 @@ const AssetVolatilityDetailPage = () => {
         </Container>
 
         <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <CashDetail cashId={assetId} />
+          <CashDetail />
         </Container>
       </Box>
     </>

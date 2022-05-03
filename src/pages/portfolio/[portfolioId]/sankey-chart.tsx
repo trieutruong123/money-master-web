@@ -34,7 +34,7 @@ const TestSankey = () => {
       await portfolioDetailStore.fetchSankeyFlowData();
     };
     fetchData();
-  }, []);
+  }, [portfolioId]);
 
   const sankeyFlowData = portfolioDetailStore.sankeyFlowData;
   return (

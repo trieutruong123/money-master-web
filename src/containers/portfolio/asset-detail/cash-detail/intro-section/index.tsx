@@ -6,7 +6,7 @@ interface IProps {
   assetDetail: any;
 }
 
-export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
+const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
   const marketData = assetMarketData.response[0];
   const currentPrice=marketData.c;
   
@@ -126,3 +126,6 @@ export const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
     </Grid>
   );
 };
+
+
+export default IntroSection;

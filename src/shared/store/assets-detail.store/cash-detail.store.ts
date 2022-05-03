@@ -1,12 +1,22 @@
-import { fcsapiService } from '../../../services';
+import { fcsapiService, httpService } from 'services';
 import { action, makeAutoObservable, observable } from 'mobx';
 import { portfolioData } from 'shared/store/portfolio/portfolio-data';
+import { CashItem } from 'shared/models';
+import { rootStore } from 'shared/store';
+import { content } from 'i18n';
 
 class CashDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
+  currencyId: string = '';
+  cashId: number = 0;
+  portfolioId: number = 0;
+  currencyName: string | undefined = '';
+  currencyCode: string = 'usd';
+  cashDetail: CashItem | undefined = undefined;
+  cashList: Array<CashItem> | undefined = undefined;
+
   transactionHistoryData: Array<any> = [];
   historicalMarketData: Array<any> = [];
-  currencyId: string = '';
   forexMarketData: any = undefined;
   forexDetail: any = undefined;
   timeInterval: number = 1;
@@ -16,17 +26,28 @@ class CashDetailStore {
   constructor() {
     makeAutoObservable(this, {
       isOpenAddNewTransactionModal: observable,
+      currencyId: observable,
+      cashId: observable,
+      portfolioId: observable,
+      currencyName: observable,
+      cashDetail: observable,
+
       transactionHistoryData: observable,
       historicalMarketData: observable,
-      currencyId: observable,
       forexDetail: observable,
       timeFrame: observable,
-      setOpenAddNewTransactionModal: action,
-      fetchData: action,
+
       fetchHistoricalMarketData: action,
+      fetchForexInfoByCode: action,
+
+      setOpenAddNewTransactionModal: action,
+      setCashId: action,
+      setPortfolioId: action,
       setCurrencyId: action,
+      setCurrencyCode: action,
       setTimeInterval: action,
       setBaseCurrency: action,
+      setForexDetail: action,
     });
   }
 
@@ -36,6 +57,18 @@ class CashDetailStore {
 
   setCurrencyId(code: string) {
     this.currencyId = code;
+  }
+
+  setCashId(id: string) {
+    this.cashId = Number.parseInt(id);
+  }
+
+  setPortfolioId(id: string) {
+    this.portfolioId = Number.parseInt(id);
+  }
+
+  setCurrencyCode(currencyCode: string) {
+    this.currencyCode = currencyCode.toLowerCase();
   }
 
   setTimeInterval(interval: number) {
@@ -49,12 +82,39 @@ class CashDetailStore {
   setBaseCurrency(baseCurrencyCode: string) {
     this.baseCurrencyCode = baseCurrencyCode;
   }
+
+  setForexDetail(data: any) {
+    this.forexDetail = data;
+  }
+
   async fetchData() {
-    this.forexDetail = portfolioData.portfolioData.cash.find(
+    const forexDetail = portfolioData.portfolioData.cash.find(
       (item) => item.id === this.currencyId,
     );
-    this.forexMarketData = await this.fetchForexInfoByCode(this.currencyId);
+    this.setForexDetail(forexDetail);
+    Promise.all([this.fetchForexInfoByCode(this.currencyId)]);
     return true;
+  }
+
+  async fetchCashDetail() {
+    const url = `/portfolio/${this.portfolioId}/cash`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      this.cashList = res.data;
+      this.cashDetail = res.data.find((item: any) => item.id === this.cashId);
+      this.currencyName = res.data.find(
+        (item: any) => item.id === this.cashId,
+      )?.name;
+
+      this.currencyId = res.data
+        .find((item: any) => item.id === this.cashId)
+        ?.currencyCode.toLowerCase();
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+      this.cashDetail = undefined;
+    }
   }
 
   async fetchHistoricalMarketData() {
@@ -78,8 +138,10 @@ class CashDetailStore {
       const res: any = await fcsapiService.getForexInfoByCode({
         symbol,
       });
-      if (!res.isError) return res.data;
-      else return undefined;
+      if (!res.isError) {
+        this.forexMarketData = res.data;
+        return res.data;
+      } else return undefined;
     }
   }
 

@@ -519,7 +519,6 @@ class PortfolioDetailStore {
     if (this.transferedAssetInfo !== undefined) {
       rootStore.startLoading();
       const url = `/portfolio/${this.portfolioId}/fund`;
-      console.log(params);
       const res: { isError: boolean; data: any } = await httpService.post(
         url,
         params,

@@ -68,6 +68,7 @@ function AmountConvert(props: IProps) {
         >
           {Object.keys(currencyList).map((currency, index) => (
             <MenuItem
+            key = {index}
               value={currency}
             >{`${currencyList[currency]} (${currency})`}</MenuItem>
           ))}
@@ -98,6 +99,7 @@ function AmountConvert(props: IProps) {
         >
           {Object.keys(currencyList).map((currency, index) => (
             <MenuItem
+              key= {index.toString()}
               value={currency}
             >{`${currencyList[currency]} (${currency})`}</MenuItem>
           ))}

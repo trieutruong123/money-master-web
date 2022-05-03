@@ -26,7 +26,7 @@ interface IProps {
   handleTimeIntervalChanged: any;
 }
 
-export const HistoricalMarketChart = ({
+const HistoricalMarketChart = ({
   data,
   handleTimeIntervalChanged,
 }: IProps) => {
@@ -165,3 +165,5 @@ export const HistoricalMarketChart = ({
     </Grid>
   );
 };
+
+export default HistoricalMarketChart;

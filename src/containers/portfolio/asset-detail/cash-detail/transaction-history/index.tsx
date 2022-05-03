@@ -16,7 +16,6 @@ import {
 } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { styled } from '@mui/material/styles';
-import PerfrectScrollbar from 'react-perfect-scrollbar';
 import { GiBuyCard, GiSellCard, GiReceiveMoney } from 'react-icons/gi';
 import { precisionRound } from 'utils/number';
 import SettingsMenuButton from './settings-menu-button';
@@ -189,7 +188,7 @@ interface IProps {
   assetMarketData: any;
 }
 
-export const TransactionHistory = ({ assetMarketData }: IProps) => {
+const TransactionHistory = ({ assetMarketData }: IProps) => {
   const theme = useTheme();
   const isMobile = theme.breakpoints.down('sm');
   const marketData = assetMarketData.market_data;
@@ -249,13 +248,13 @@ function NetPLCell({ firstValue, secondValue }: NetPLCellProps) {
   return (
     <Typography
       variant="body1"
-      color={profitLoss < 0 ? 'error.main' : 'success.main'}
+      color={weight < 0 ? 'error.main' : 'success.main'}
     >
-      {profitLoss > 0 ? '+' : '-'}
+      {weight > 0 ? '+' : '-'}
       {dollarSign}
       {weight < 0 ? weight.toString().slice(1) : weight} (
-      {profitLoss > 0 ? '+' : ''}
-      {precisionRound(profitLoss, 4)}%)
+      {weight > 0 ? '+' : ''}
+      {profitLoss}%)
     </Typography>
   );
 }
@@ -306,3 +305,5 @@ function CustomNoRowsOverlay() {
     </StyledGridOverlay>
   );
 }
+
+export default TransactionHistory;
