@@ -3,11 +3,14 @@ import { Box } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { content } from 'i18n';
 import {
-  LandingBrandIntro,
-  LandingFooter,
-  LandingFeatures,
   DefaultLayout,
 } from 'containers';
+import {
+  BrandIntro,
+  Footer,
+  DefaultNavbar,
+  Service,
+} from 'containers/landing-page';
 
 const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;

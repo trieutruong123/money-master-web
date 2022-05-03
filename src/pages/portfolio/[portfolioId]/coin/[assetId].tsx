@@ -11,10 +11,11 @@ import {
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { rootStore, cryptoVolatilityDetailStore } from 'shared/store';
 import { BreadcrumbsLink } from 'shared/components';
 import { DashboardLayout } from 'containers';
 import { CryptoVolatilityDetail } from 'containers/portfolio';
+import { rootStore ,cryptoVolatilityDetailStore} from 'shared/store';
+
 
 const fetchData = async (portfolioId: string, assetId: string) => {
   rootStore.startLoading();

@@ -11,20 +11,34 @@ import { useCallback, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { cashDetailStore } from 'shared/store';
+import { AddNewTransactionModal } from './add-new-transaction-modal';
+import { HistoricalMarketChart } from './historical-market-chart';
 import { IntroSection } from './intro-section';
-import { FloatingMenuButton } from './floating-menu-button';
+import { TransactionHistory } from './transaction-history';
 interface IProps {
-  cashId: string;
+  currencyCode: string;
 }
 
-export const CashDetail = observer(({ cashId }: IProps) => {
+export const CashDetail = observer(({ currencyCode }: IProps) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = theme.breakpoints.down('sm');
+  useEffect(() => {
+    cashDetailStore.setCurrencyId(currencyCode);
+    cashDetailStore.fetchData();
+    cashDetailStore.fetchHistoricalMarketData();
+  }, []);
+  const {
+    isOpenAddNewTransactionModal,
+    historicalMarketData,
+    forexDetail,
+    forexMarketData,
+  } = cashDetailStore;
 
-  const { isOpenAddNewTransactionModal, currencyCode, cashDetail } =
-    cashDetailStore;
+  const handleTimeIntervalChanged = useCallback((interval: number) => {
+    cashDetailStore.setTimeInterval(interval);
+    cashDetailStore.fetchHistoricalMarketData();
+  }, []);
 
-  const handleOpenModal = () => {};
   return (
     <Box
       sx={{
@@ -44,17 +58,48 @@ export const CashDetail = observer(({ cashId }: IProps) => {
       >
         <Box sx={{ overflow: 'hidden' }}>
           <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-            <Grid container display="flex" justifyContent="center">
-              {typeof cashDetail !== 'undefined' ? (
-                <IntroSection assetDetail={cashDetail} />
+            <Grid container display="fex" justifyContent="center">
+              {forexDetail !== undefined && forexMarketData !== undefined ? (
+                <IntroSection
+                  assetDetail={forexDetail}
+                  assetMarketData={forexMarketData}
+                />
               ) : (
                 <></>
               )}
+              {historicalMarketData !== undefined ? (
+                <HistoricalMarketChart
+                  data={historicalMarketData}
+                  handleTimeIntervalChanged={handleTimeIntervalChanged}
+                />
+              ) : (
+                <></>
+              )}
+              {/* {forexDetail !== undefined && forexMarketData !== undefined ? (
+                <TransactionHistory assetMarketData={forexMarketData} />
+              ) : (
+                <></>
+              )} */}
             </Grid>
           </Container>
         </Box>
-        <FloatingMenuButton event="hover" handleOnClick={handleOpenModal} />
       </Box>
+      <Box>
+        <AddNewTransactionModal />
+      </Box>
+      <Tooltip title="Add new transaction">
+        <IconButton
+          onClick={() => {
+            cashDetailStore.setOpenAddNewTransactionModal(
+              !isOpenAddNewTransactionModal,
+            );
+          }}
+          color="success"
+          sx={{ position: 'absolute', right: '6vw', bottom: '6vh' }}
+        >
+          <AddCircleIcon sx={{ width: '4rem', height: '4rem' }} />
+        </IconButton>
+      </Tooltip>
     </Box>
   );
 });

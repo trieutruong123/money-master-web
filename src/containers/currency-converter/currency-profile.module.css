@@ -1,0 +1,55 @@
+.tab_content h4{
+    padding:10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.horizontal_display{
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+}
+
+.currency_icon{
+    border-radius: 50%;
+    height: 40px;
+    width: 40px;
+    line-height: 40px;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 10px;
+    color: white;
+    background-color: yellowgreen;
+    text-align: center;
+    align-items: center;
+}
+
+.flag{
+    width: 50px;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.banknote{
+    padding: 5px 10px;
+    min-width: 70px;
+    text-align: center;
+    color: white;
+    font-weight: 600;
+    background-color: #16c784;
+    border-radius: 5px;
+    margin: 0 5px;
+    font-size: 1rem;
+}
+
+.coin{
+    padding: 5px 10px;
+    min-width: 70px;
+    text-align: center;
+    color: white;
+    font-weight: 600;
+    background-color: #f5a341;
+    border-radius: 5px;
+    margin: 0 5px;
+    font-size: 1rem;
+}

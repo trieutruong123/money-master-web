@@ -35,7 +35,7 @@ interface IProps {
 export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
   const [isAddingNewAssetType, setOpenNewAssetType] = useState<boolean>(false);
   const [newAssetType, setAssetType] = useState<string>('');
-
+  const [errorMessage,setErrorMessage] = useState<string> ("");
   const CategoryList = [
     {
       id: uuid(),
@@ -80,7 +80,7 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
     selectedCustomAssetId?: number,
   ) => {
     if (assetType === AssetTypeName.others)
-      portfolioDetailStore.setSelectedCustomAssetId(selectedCustomAssetId||0);
+      portfolioDetailStore.setSelectedCustomAssetId(selectedCustomAssetId || 0);
     openNextForm({ curFormType: 'type', selectedType: assetType });
   };
 
@@ -98,11 +98,16 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
     }
   };
   const handleCreateNewAssetType = () => {
-    portfolioDetailStore.addNewCustomAsseType({ name: newAssetType });
-    setAssetType('');
-    setOpenNewAssetType(false);
+    if (typeof newAssetType !== 'undefined' && newAssetType.length > 0) {
+      portfolioDetailStore.addNewCustomAsseType({ name: newAssetType });
+      setAssetType('');
+      setOpenNewAssetType(false);
+      setErrorMessage('');
+    }
+    else{
+      setErrorMessage('Type name is required');
+    }
   };
-
 
   return (
     <div id="choose-type-form-modal" style={{ height: 'inherit' }}>
@@ -186,6 +191,8 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               sx={{ width: '90%', ml: '1.5rem' }}
+              error={errorMessage?.length>0}
+              helperText = {errorMessage}
               required
             ></TextField>
             <IconButton

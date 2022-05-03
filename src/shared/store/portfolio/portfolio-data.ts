@@ -2,6 +2,12 @@
 export const portfolioData = {
     portfolioData: {
       cash: [
+        {
+          id: 'eur',
+          currencyCode: 'EUR',
+          currencyName:'Euro',
+          quantity: '100',
+        },
       ],
       crypto: [
         {

@@ -1,0 +1,110 @@
+// import {
+//   Box,
+//   Card,
+//   CardContent,
+//   CardHeader,
+//   Grid,
+//   useTheme,
+//   useMediaQuery,
+// } from '@mui/material';
+// import { Doughnut } from 'react-chartjs-2';
+// import chroma from 'chroma-js';
+// import { PortfolioAllocation } from 'shared/models';
+// interface IProps {
+//   assetAllocationData: Array<PortfolioAllocation>;
+// }
+
+// export const AssetAllocation = ({ assetAllocationData }: IProps) => {
+//   const theme = useTheme();
+//   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+//   const chartLabels = assetAllocationData.map((data) => data.symbol);
+//   const dataSet = assetAllocationData.map(
+//     (data) => parseFloat(data.portfolioAllocation) * 100,
+//   );
+//   const colors = chroma
+//     .scale(['#313bf0', '#96ffea', '#008080'])
+//     .mode('lrgb')
+//     .colors(dataSet.length);
+
+//   const data: any = (canvas: any) => {
+//     return {
+//       labels: chartLabels,
+//       datasets: [
+//         {
+//           data: dataSet,
+//           backgroundColor: colors,
+//           hoverOffset: 4,
+//         },
+//       ],
+//     };
+//   };
+
+//   const options: any = {
+//     plugins: {
+//       tooltip: {
+//         callbacks: {
+//           label: function (context: any) {
+//             return ` ${context.label}: ${context.dataset.data[
+//               context.dataIndex
+//             ].toFixed(2)}%`;
+//           },
+//         },
+//       },
+//       legend: {
+//         position: 'bottom',
+//         labels: {
+//           boxWidth: 8,
+//           usePointStyle: true,
+//           pointStyle: 'circle',
+//           color: '#4c4c4c',
+//           padding: 15,
+//           font: {
+//             family: 'Lato, sans-serif',
+//             size: 13,
+//           },
+//         },
+//         title: {
+//           display: true,
+//           padding: 10,
+//           text: '',
+//         },
+//       },
+//     },
+//     cutout: '55%',
+//     layout: { padding: 0 },
+//     maintainAspectRatio: true,
+//     responsive: true,
+//   };
+
+//   return (
+//     <Grid item lg={6} md={6} xl={6} sm={8} xs={12}>
+//       <Card
+//         sx={{
+//           borderRadius: '12px',
+//           padding: isMobile ? '5px 0px 0px 10px' : '5px 20px 20px 20px',
+//           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
+//         }}
+//       >
+//         <CardHeader
+//           title="Asset Allocation"
+//           sx={{ height: '3rem', padding: '0px' }}
+//         />
+
+//         <CardContent>
+//           <div
+//             style={{
+//               width: '100%',
+//               height: 'auto',
+//             }}
+//           >
+//             <Doughnut data={data} width="100%" height={140} options={options} />
+//           </div>
+//         </CardContent>
+//       </Card>
+//     </Grid>
+//   );
+// };
+
+export const AssetAllocation = ()=>{
+  return <></>
+}
