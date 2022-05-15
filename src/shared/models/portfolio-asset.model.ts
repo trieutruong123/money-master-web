@@ -120,7 +120,3 @@ export class CustomAssetItemByCategory {
   categoryName: string = '';
   assets: Array<CustomAssetItem> = [];
 }
-export class PieChartItem {
-  assetType: string = '';
-  sumValue: number = 0;
-}

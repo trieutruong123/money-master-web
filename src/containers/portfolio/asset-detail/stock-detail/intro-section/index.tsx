@@ -1,19 +1,22 @@
 
 import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { getCurrencyByCode } from 'shared/helpers';
+import { StockItem } from 'shared/models';
 import { precisionRound } from 'utils/number';
 
 interface IProps {
-  assetDetail: any | undefined;
+  assetDetail: StockItem | undefined;
 }
 
 export const IntroSection = ({ assetDetail }: IProps) => {
   const render24HChange = () => {
-    const priceChange24h = assetDetail._24HChange;
-    const priceChangePercentage24h = assetDetail._24HChangePercentage;
+    //const priceChange24h = assetDetail?._24HChange;
+    //const priceChangePercentage24h = assetDetail?._24HChangePercentage;
+    const priceChange24h = 0;
+    const priceChangePercentage24h = 0;
     const sign = priceChange24h > 0 ? '+' : '';
     const currencySymbol = getCurrencyByCode(
-      assetDetail.currencyCode || '',
+      assetDetail?.currencyCode || '',
     )?.symbol;
     return (
       <Typography
@@ -27,12 +30,15 @@ export const IntroSection = ({ assetDetail }: IProps) => {
       </Typography>
     );
   };
+
   const renderTotalPL = () => {
-    const totalPL = assetDetail.totalPL;
-    const PLPercentage = assetDetail.PLPercentage;
+    //const totalPL = assetDetail?.totalPL;
+    //const PLPercentage = assetDetail?.PLPercentage;
+    const totalPL = 0;
+    const PLPercentage = 0;
     const sign = PLPercentage > 0 ? '+' : '';
     const currencySymbol = getCurrencyByCode(
-      assetDetail.currencyCode || '',
+      assetDetail?.currencyCode || '',
     )?.symbol;
     return (
       <Typography
@@ -46,7 +52,7 @@ export const IntroSection = ({ assetDetail }: IProps) => {
         %)
       </Typography>
     );
-  };
+  };  
   return (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
@@ -88,10 +94,10 @@ export const IntroSection = ({ assetDetail }: IProps) => {
                 </Typography>
 
                 <Typography variant="h2" fontWeight="bold">
-                  {getCurrencyByCode(assetDetail.currencyCode || '')?.symbol}
+                  {getCurrencyByCode(assetDetail?.currencyCode || '')?.symbol}
                   {precisionRound(
-                    assetDetail?.currentAmountHolding *
-                      assetDetail?.currentPrice,
+                    (assetDetail?.currentAmountHolding ||0)*
+                    (assetDetail?.currentPrice||0),
                     4,
                   )}
                 </Typography>
@@ -108,7 +114,7 @@ export const IntroSection = ({ assetDetail }: IProps) => {
                 </Typography>
                 <Typography variant="body1" color={'success.main'}>
                   {assetDetail?.currentAmountHolding} @{' '}
-                  {getCurrencyByCode(assetDetail.currencyCode || '')?.symbol}
+                  {getCurrencyByCode(assetDetail?.currencyCode || '')?.symbol}
                   {assetDetail?.currentPrice}
                 </Typography>
               </Grid>

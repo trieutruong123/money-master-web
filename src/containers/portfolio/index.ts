@@ -12,7 +12,7 @@ import {
   PortfolioCard,
   PortfolioList,
 } from './portfolio-list';
-import PortfolioDetail from './portfolio-detail';
+import PortfolioDetail from './portfolio-detail/pd-portfolio-detail';
 
 export {
   CryptoVolatilityDetail,

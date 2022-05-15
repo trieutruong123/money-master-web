@@ -12,7 +12,7 @@ export const httpService = {
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-async function sendGet(url: string) {
+async function sendGet(url: string, body?: object) {
   try {
     const response = await axios.get(`${BASE_URL}${url}`, {
       headers: getHeader(),

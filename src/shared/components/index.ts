@@ -1,3 +1,4 @@
+import { TransactionTypeIcon } from './transaction-type-icon/index';
 import { Link } from './link';
 import { MultipleLanguage } from './multiple-languages';
 import { SeverityPill } from './severity-pill';
@@ -18,4 +19,5 @@ export {
   BarWaveLoading,
   CircularLoading,
   FadingBallsLoading,
+  TransactionTypeIcon
 };

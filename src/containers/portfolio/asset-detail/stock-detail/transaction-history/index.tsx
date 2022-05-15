@@ -19,55 +19,132 @@ import {
 } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { styled } from '@mui/material/styles';
-import { Scrollbars } from 'react-custom-scrollbars';
-import { GiBuyCard, GiSellCard, GiReceiveMoney } from 'react-icons/gi';
 import { precisionRound } from 'utils/number';
 import SettingsMenuButton from './settings-menu-button';
+import { TransactionItemType } from 'shared/constants';
+import { TransactionTypeIcon } from 'shared/components';
+import { getCurrencyByCode } from 'shared/helpers';
+import { StockTransactionList } from 'shared/models';
 
 const columns: GridColDef[] = [
   {
-    field: 'time',
-    headerName: 'Purchase Date',
-    width: 140,
+    field: 'createAt',
+    headerName: 'Date',
+    width: 120,
     valueGetter: (params: GridValueGetterParams) =>
-      `${dayjs(params.id).format('MMM DD YYYY HH:mm')}`,
+      `${dayjs(params.row.createdAt).format('MMM DD YYYY HH:mm')}`,
   },
   {
-    field: 'type',
+    field: 'singleAssetTransactionType',
     headerName: 'Transaction',
     sortable: false,
     filterable: false,
-    width: 120,
+    width: 140,
     editable: true,
     renderCell: (params: GridCellParams) => {
-      switch (params.row.type) {
-        case 'buy':
+      switch (params.row.singleAssetTransactionType) {
+        case TransactionItemType.AddValue:
           return (
             <Chip
               label="BUY"
               variant="filled"
-              avatar={<GiBuyCard color="white" />}
-              sx={{ backgroundColor: 'success.light' }}
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.AddValue}
+                  color="white"
+                  style={{ width: '25%', height: '80%', py: '0.2rem' }}
+                />
+              }
+              sx={{
+                backgroundColor: 'main.light',
+                width: '100%',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+              }}
             />
           );
-        case 'sell':
+        case TransactionItemType.SellAsset:
           return (
             <Chip
               label="SELL"
               variant="filled"
-              avatar={<GiSellCard color="white" />}
-              sx={{ backgroundColor: 'error.light' }}
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.SellAsset}
+                  color="white"
+                  style={{ width: '25%', height: '80%', py: '0.2rem' }}
+                />
+              }
+              sx={{
+                backgroundColor: 'main.light',
+                width: '100%',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+              }}
             />
           );
-        case 'dividend':
+        case TransactionItemType.MoveToFund:
           return (
             <Chip
-              label="DIVIDEND"
+              label="MOVE TO FUND"
               variant="filled"
-              avatar={<GiReceiveMoney color="white" />}
-              sx={{ backgroundColor: 'warning.light' }}
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.MoveToFund}
+                  color="white"
+                  style={{ width: '25%', height: '80%', py: '0.2rem' }}
+                />
+              }
+              sx={{
+                backgroundColor: 'main.light',
+                width: '100%',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+              }}
             />
           );
+        case TransactionItemType.NewAsset:
+          return (
+            <Chip
+              label="Create"
+              variant="filled"
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.NewAsset}
+                  color="black"
+                  style={{ width: '25%', height: '80%', py: '0.2rem' }}
+                />
+              }
+              sx={{
+                backgroundColor: 'main.light',
+                width: '100%',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+              }}
+            />
+          );
+        case TransactionItemType.WithdrawValue:
+          return (
+            <Chip
+              label="Withdraw"
+              variant="filled"
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.WithdrawValue}
+                  color="black"
+                  style={{ width: '25%', height: '80%', py: '0.2rem' }}
+                />
+              }
+              sx={{
+                backgroundColor: 'main.light',
+                width: '100%',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+              }}
+            />
+          );
+        default:
+          return <></>;
       }
     },
   },
@@ -78,19 +155,24 @@ const columns: GridColDef[] = [
     editable: false,
   },
   {
-    field: 'purchasePrice',
+    field: 'amount',
     headerName: 'Purchase Price',
     width: 115,
     editable: false,
     valueGetter: (params: GridValueGetterParams) =>
-      `$${params.row.purchasePrice}`,
+      `${getCurrencyByCode(params.row.currencyCode)?.symbol || ''}${
+        params.row.amount
+      }`,
   },
   {
-    field: 'fee',
+    field: 'amount',
     headerName: 'Fee',
     width: 80,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) => `$${params.row.fee}`,
+    valueGetter: (params: GridValueGetterParams) =>
+      `${getCurrencyByCode(params.row.currencyCode)?.symbol || ''}${
+        params.row.amount
+      }`,
   },
   {
     field: 'totalCost',
@@ -98,7 +180,9 @@ const columns: GridColDef[] = [
     width: 100,
     editable: false,
     valueGetter: (params: GridValueGetterParams) =>
-      `$${precisionRound(params.row.totalCost, 4)}`,
+      `${
+        getCurrencyByCode(params.row.currencyCode)?.symbol || ''
+      }${precisionRound(params.row.amount, 4)}`,
   },
   {
     field: 'totalPL',
@@ -106,13 +190,8 @@ const columns: GridColDef[] = [
     width: 160,
     editable: false,
     renderCell: (params: GridCellParams) => {
-      const { totalProfitLoss, profitLossPercentage, type } = params.row;
-      return (
-        <NetPLCell
-          totalPL={totalProfitLoss}
-          PLPercentage={profitLossPercentage}
-        />
-      );
+      const { amount } = params.row;
+      return <NetPLCell totalPL={amount} PLPercentage={amount * 1.1} />;
     },
   },
   {
@@ -152,7 +231,7 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
   },
 }));
 interface IProps {
-  transactionHistoryData: Array<any> | undefined;
+  transactionHistoryData: StockTransactionList | undefined;
 }
 
 export const TransactionHistory = ({ transactionHistoryData }: IProps) => {

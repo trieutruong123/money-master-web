@@ -15,8 +15,16 @@ export const AssetTypeName: IAssetType = {
 };
 
 export const PDBreadcrumbTabs = {
-  holdings: 'holdings',
-  report: 'report',
-  investFund: 'investFund',
-  settings: 'settings',
+  holdings: 'Holdings',
+  report: 'Report',
+  investFund: 'InvestFund',
+  settings: 'Settings',
 };
+
+export enum TransactionItemType {
+  NewAsset = 'newAsset',
+  AddValue = 'addValue',
+  WithdrawValue = 'withdrawValue',
+  SellAsset = 'sellAsset',
+  MoveToFund = 'moveToFund',
+}

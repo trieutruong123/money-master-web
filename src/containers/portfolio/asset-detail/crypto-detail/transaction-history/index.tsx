@@ -22,17 +22,20 @@ import { styled } from '@mui/material/styles';
 import { GiBuyCard, GiSellCard, GiReceiveMoney } from 'react-icons/gi';
 import { precisionRound } from 'utils/number';
 import SettingsMenuButton from './settings-menu-button';
+import { TransactionTypeIcon } from 'shared/components';
+import { TransactionItemType } from 'shared/constants';
+import { getCurrencyByCode } from 'shared/helpers';
 
 const columns: GridColDef[] = [
   {
-    field: 'time',
-    headerName: 'Purchase Date',
+    field: 'createAt',
+    headerName: 'Date',
     width: 140,
     valueGetter: (params: GridValueGetterParams) =>
-      `${dayjs(params.id).format('MMM DD YYYY HH:mm')}`,
+      `${dayjs(params.row.createdAt).format('MMM DD YYYY HH:mm')}`,
   },
   {
-    field: 'type',
+    field: 'singleAssetTransactionType',
     headerName: 'Transaction',
     sortable: false,
     filterable: false,
@@ -40,33 +43,78 @@ const columns: GridColDef[] = [
     editable: true,
     renderCell: (params: GridCellParams) => {
       switch (params.row.type) {
-        case 'buy':
+        case TransactionItemType.AddValue:
           return (
             <Chip
               label="BUY"
               variant="filled"
-              avatar={<GiBuyCard color="white" />}
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.AddValue}
+                  color="white"
+                />
+              }
               sx={{ backgroundColor: 'success.light' }}
             />
           );
-        case 'sell':
+        case TransactionItemType.SellAsset:
           return (
             <Chip
               label="SELL"
               variant="filled"
-              avatar={<GiSellCard color="white" />}
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.SellAsset}
+                  color="white"
+                />
+              }
               sx={{ backgroundColor: 'error.light' }}
             />
           );
-        case 'dividend':
+        case TransactionItemType.MoveToFund:
           return (
             <Chip
-              label="DIVIDEND"
+              label="MOVE TO FUND"
               variant="filled"
-              avatar={<GiReceiveMoney color="white" />}
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.MoveToFund}
+                  color="white"
+                />
+              }
               sx={{ backgroundColor: 'warning.light' }}
             />
           );
+        case TransactionItemType.NewAsset:
+          return (
+            <Chip
+              label="Create"
+              variant="filled"
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.NewAsset}
+                  color="white"
+                />
+              }
+              sx={{ backgroundColor: 'main.light' }}
+            />
+          );
+        case TransactionItemType.WithdrawValue:
+          return (
+            <Chip
+              label="Create"
+              variant="filled"
+              avatar={
+                <TransactionTypeIcon
+                  transactionType={TransactionItemType.WithdrawValue}
+                  color="white"
+                />
+              }
+              sx={{ backgroundColor: 'main.light' }}
+            />
+          );
+        default:
+          return <></>;
       }
     },
   },
@@ -77,26 +125,34 @@ const columns: GridColDef[] = [
     editable: false,
   },
   {
-    field: 'purchasePrice',
+    field: 'amount',
     headerName: 'Purchase Price',
     width: 115,
     editable: false,
     valueGetter: (params: GridValueGetterParams) =>
-      `$${params.row.purchasePrice}`,
+      `${getCurrencyByCode(params.row.currencyCode)?.symbol || ''}${
+        params.row.purchasePrice
+      }`,
   },
   {
-    field: 'fee',
+    field: 'amount',
     headerName: 'Fee',
     width: 80,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) => `$${params.row.fee}`,
+    valueGetter: (params: GridValueGetterParams) =>
+      `${getCurrencyByCode(params.row.currencyCode)?.symbol || ''}${
+        params.row.fee
+      }`,
   },
   {
     field: 'totalCost',
     headerName: 'Total Cost',
     width: 100,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) => `$${precisionRound(params.row.totalCost,4)}`,
+    valueGetter: (params: GridValueGetterParams) =>
+      `${
+        getCurrencyByCode(params.row.currencyCode)?.symbol || ''
+      }${precisionRound(params.row.totalCost, 4)}`,
   },
   {
     field: 'totalPL',
@@ -104,13 +160,8 @@ const columns: GridColDef[] = [
     width: 160,
     editable: false,
     renderCell: (params: GridCellParams) => {
-      const { totalProfitLoss, profitLossPercentage, type } = params.row;
-      return (
-        <NetPLCell
-          totalPL={totalProfitLoss}
-          PLPercentage={profitLossPercentage}
-        />
-      );
+      const { amount } = params.row;
+      return <NetPLCell totalPL={amount} PLPercentage={amount * 1.1} />;
     },
   },
   {
@@ -118,7 +169,7 @@ const columns: GridColDef[] = [
     headerName: '',
     sortable: false,
     filterable: false,
-    width: 30,
+    width: 80,
     renderCell: (params: GridCellParams) => {
       return <SettingsMenuButton />;
     },
@@ -206,7 +257,9 @@ interface NetPLCellProps {
 function NetPLCell({ totalPL, PLPercentage }: NetPLCellProps) {
   const dollarSign = '$';
   const displayText = `${totalPL > 0 ? '+' : '-'}${dollarSign}${
-    totalPL < 0 ? precisionRound(totalPL,4).toString().slice(1) : precisionRound(totalPL,4)
+    totalPL < 0
+      ? precisionRound(totalPL, 4).toString().slice(1)
+      : precisionRound(totalPL, 4)
   } (${PLPercentage > 0 ? '+' : '-'}${
     PLPercentage < 0
       ? precisionRound(PLPercentage * 100, 4)

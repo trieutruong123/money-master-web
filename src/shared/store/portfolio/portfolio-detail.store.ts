@@ -38,7 +38,7 @@ import { portfolioData } from './portfolio-data';
 
 class PortfolioDetailStore {
   portfolioId: number = 0;
-  portfolioName: string = '';
+  portfolioInfo: Portfolio | undefined = undefined;
   currencyCode: string = '';
   selectedTabs: string = 'holdings';
 
@@ -75,7 +75,7 @@ class PortfolioDetailStore {
   constructor() {
     makeAutoObservable(this, {
       portfolioId: observable,
-      portfolioName: observable,
+      portfolioInfo: observable,
       currencyCode: observable,
       selectedTabs: observable,
 
@@ -109,6 +109,7 @@ class PortfolioDetailStore {
       fetchCryptoCurrency: action,
       fetchStock: action,
       fetchCash: action,
+      fetchPortfolioInfo: action,
 
       addNewBankSaving: action,
       addNewRealEstate: action,
@@ -125,13 +126,6 @@ class PortfolioDetailStore {
 
   setPortfolioId(id: string) {
     this.portfolioId = Number.parseInt(id);
-  }
-
-  setPortfolioName(portfolioId: string) {
-    this.portfolioName =
-      portfolioStore.portfolio.find(
-        (item: Portfolio) => item.id === portfolioId,
-      )?.name || '';
   }
 
   setSelectedTabs(newTab: string) {
@@ -182,6 +176,7 @@ class PortfolioDetailStore {
     this.currencyCode = 'usd';
 
     Promise.all([
+      await this.fetchPortfolioInfo(),
       await this.fetchBankSaving(),
       await this.fetchCash(),
       await this.fetchCryptoCurrency(),
@@ -189,6 +184,20 @@ class PortfolioDetailStore {
       await this.fetchRealEstate(),
       await this.fetchOtherCustomAsset(),
     ]);
+  }
+
+  async fetchPortfolioInfo() {
+    const url = `/portfolio`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+
+    if (!res.isError) {
+      const currentPortfolio = res.data.map(
+        (item: Portfolio) => item.id === this.portfolioId.toString(),
+      );
+      this.portfolioInfo = currentPortfolio;
+      this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
+    } else {
+    }
   }
 
   async fetchPersonalCustomAsset() {

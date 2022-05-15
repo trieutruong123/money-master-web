@@ -91,14 +91,6 @@ export type UpdatedBankSavingItem = {
   termRange: number;
 };
 
-export type TransferToInvestFundType = {
-  referentialAssetId: number;
-  referentialAssetType: string;
-  amount: number;
-  currencyCode: string;
-  isTransferringAll: boolean;
-};
-
 export type SearchingDataItem = {
   id: string;
   symbol: string;

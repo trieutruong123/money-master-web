@@ -73,7 +73,7 @@ export const CryptoInvestments = ({
     // "Today's Gain/Loss"
     collumnsName.todayChange,
     collumnsName.totalPL,
-    collumnsName.shares,
+    collumnsName.amount,
     collumnsName.total,
     '',
   ];
