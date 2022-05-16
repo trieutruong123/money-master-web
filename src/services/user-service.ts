@@ -62,15 +62,22 @@ async function googleAuthentication() {
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
   await googleAuth
     .googleLogin()
-    .then((data: any) => {
-      /*const url = "/authentication/google";
-      const res: any = await httpService.post(url, { token: data?.token });
+    .then(async (data: any) => {
+      console.log(data);
+      const url = '/authentication/google';
+      const res: any = await httpService.post(url, {
+        externalToken: data?.token,
+        provider: 'google',
+      });
       if (!res?.isError) {
         storageService.setLocalStorage(mainConstant.TOKEN_KEY, res.data.token);
-      }*/
+        userStore.updateUser({ ...res.data });
+      }
+      authStore.setAuthenticating(false);
       return data;
     })
     .catch((error) => {
+      authStore.setAuthenticating(false);
       return error;
     });
 }
@@ -80,15 +87,21 @@ async function facebookAuthentication() {
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
   await facebookAuth
     .facebookLogin()
-    .then((data: any) => {
-      /*const url = "/authentication/google";
-      const res: any = await httpService.post(url, { token: data?.token });
+    .then(async (data: any) => {
+      const url = '/authentication/facebook';
+      const res: any = await httpService.post(url, {
+        externalToken: data?.token,
+        provider: 'facebook',
+      });
       if (!res?.isError) {
         storageService.setLocalStorage(mainConstant.TOKEN_KEY, res.data.token);
-      }*/
+        userStore.updateUser({ ...res.data });
+      }
+      authStore.setAuthenticating(false);
       return data;
     })
     .catch((error) => {
+      authStore.setAuthenticating(false);
       return error;
     });
 }
