@@ -30,6 +30,7 @@ export const CashDetail = observer(({}: IProps) => {
       Promise.all([
         cashDetailStore.fetchData(),
         cashDetailStore.fetchHistoricalMarketData(),
+        cashDetailStore.updateTransactionHistoryData()
       ]);
     };
     if (cashDetailStore.cashId && cashDetailStore.portfolioId) fetchData();
@@ -40,6 +41,7 @@ export const CashDetail = observer(({}: IProps) => {
     historicalMarketData,
     forexDetail,
     forexMarketData,
+    transactionHistoryData
   } = cashDetailStore;
 
   const handleTimeIntervalChanged = useCallback((interval: number) => {
@@ -87,14 +89,14 @@ export const CashDetail = observer(({}: IProps) => {
               ) : (
                 <></>
               )}
-              {/* {forexDetail !== undefined && forexMarketData !== undefined ? (
+              {forexDetail !== undefined && forexMarketData !== undefined ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                  <TransactionHistory assetMarketData={forexMarketData} />
-                <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                  <TransactionHistory assetMarketData={forexMarketData} transactionHistoryData={transactionHistoryData}/>
+                </Suspense>
 
               ) : (
                 <></>
-              )} */}
+              )}
             </Grid>
           </Container>
         </Box>

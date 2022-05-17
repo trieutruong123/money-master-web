@@ -26,95 +26,113 @@ const columns: GridColDef[] = [
     headerName: 'Purchase Date',
     width: 160,
     valueGetter: (params: GridValueGetterParams) =>
-      `${dayjs(params.id).format('MMM DD YYYY HH:mm')}`,
+      `${dayjs(params.value).format('MMM DD YYYY HH:mm')}`,
   },
-  {
-    field: 'type',
-    headerName: 'Transaction',
-    sortable: false,
-    filterable: false,
-    width: 120,
-    editable: true,
-    renderCell: (params: GridCellParams) => {
-      switch (params.row.type) {
-        case 'buy':
-          return (
-            <Chip
-              label="BUY"
-              variant="filled"
-              avatar={<GiBuyCard color="white" />}
-              sx={{ backgroundColor: 'success.light' }}
-            />
-          );
-        case 'sell':
-          return (
-            <Chip
-              label="SELL"
-              variant="filled"
-              avatar={<GiSellCard color="white" />}
-              sx={{ backgroundColor: 'error.light' }}
-            />
-          );
-      }
-    },
-  },
+  // {
+  //   field: 'type',
+  //   headerName: 'Transaction',
+  //   sortable: false,
+  //   filterable: false,
+  //   width: 120,
+  //   editable: true,
+  //   renderCell: (params: GridCellParams) => {
+  //     switch (params.row.type) {
+  //       case 'buy':
+  //         return (
+  //           <Chip
+  //             label="BUY"
+  //             variant="filled"
+  //             avatar={<GiBuyCard color="white" />}
+  //             sx={{ backgroundColor: 'success.light' }}
+  //           />
+  //         );
+  //       case 'sell':
+  //         return (
+  //           <Chip
+  //             label="SELL"
+  //             variant="filled"
+  //             avatar={<GiSellCard color="white" />}
+  //             sx={{ backgroundColor: 'error.light' }}
+  //           />
+  //         );
+  //     }
+  //   },
+  // },
   {
     field: 'amount',
     headerName: 'Amount',
-    width: 70,
+    width: 130,
     editable: false,
   },
   {
-    field: 'price',
-    headerName: 'Price',
-    width: 90,
+    field: 'desId',
+    headerName: 'Destination Id',
+    width: 130,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) => `$${params.row.price}`,
   },
   {
-    field: 'fee',
-    headerName: 'Fee',
-    width: 80,
+    field: 'desType',
+    headerName: 'Destination Type',
+    width: 130,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) => `$${params.row.fee}`,
   },
   {
-    field: 'totalCost',
-    headerName: 'Total Cost',
-    width: 100,
+    field: 'currencyCode',
+    headerName: 'Currency',
+    width: 130,
     editable: false,
-    valueGetter: (params: GridValueGetterParams) =>
-      `$${params.row.amount * params.row.price - params.row.fee}`,
   },
-  {
-    field: 'netValue',
-    headerName: 'Net Value',
-    width: 90,
-    editable: false,
-    valueGetter: (params: GridValueGetterParams) =>
-      `$${params.row.netValue * params.row.amount}`,
-  },
-  {
-    field: 'netPL',
-    headerName: 'Net P/L',
-    width: 160,
-    editable: false,
-    renderCell: (params: GridCellParams) => {
-      const netValue = params.row.netValue * params.row.amount;
-      const purchasePrice =
-        params.row.amount * params.row.price - params.row.fee;
-      switch (params.row.type) {
-        case 'buy':
-          return (
-            <NetPLCell firstValue={purchasePrice} secondValue={netValue} />
-          );
-        case 'sell':
-          return (
-            <NetPLCell firstValue={netValue} secondValue={purchasePrice} />
-          );
-      }
-    },
-  },
+  // {
+  //   field: 'price',
+  //   headerName: 'Price',
+  //   width: 90,
+  //   editable: false,
+  //   valueGetter: (params: GridValueGetterParams) => `$${params.row.price}`,
+  // },
+  // {
+  //   field: 'fee',
+  //   headerName: 'Fee',
+  //   width: 80,
+  //   editable: false,
+  //   valueGetter: (params: GridValueGetterParams) => `$${params.row.fee}`,
+  // },
+  // {
+  //   field: 'totalCost',
+  //   headerName: 'Total Cost',
+  //   width: 100,
+  //   editable: false,
+  //   valueGetter: (params: GridValueGetterParams) =>
+  //     `$${params.row.amount * params.row.price - params.row.fee}`,
+  // },
+  // {
+  //   field: 'netValue',
+  //   headerName: 'Net Value',
+  //   width: 90,
+  //   editable: false,
+  //   valueGetter: (params: GridValueGetterParams) =>
+  //     `$${params.row.netValue * params.row.amount}`,
+  // },
+  // {
+  //   field: 'netPL',
+  //   headerName: 'Net P/L',
+  //   width: 160,
+  //   editable: false,
+  //   renderCell: (params: GridCellParams) => {
+  //     const netValue = params.row.netValue * params.row.amount;
+  //     const purchasePrice =
+  //       params.row.amount * params.row.price - params.row.fee;
+  //     switch (params.row.type) {
+  //       case 'buy':
+  //         return (
+  //           <NetPLCell firstValue={purchasePrice} secondValue={netValue} />
+  //         );
+  //       case 'sell':
+  //         return (
+  //           <NetPLCell firstValue={netValue} secondValue={purchasePrice} />
+  //         );
+  //     }
+  //   },
+  // },
   {
     field: 'settings',
     headerName: 'Settings',
@@ -186,14 +204,22 @@ const StyledGridOverlay = styled('div')(({ theme }) => ({
 }));
 interface IProps {
   assetMarketData: any;
+  transactionHistoryData:any
 }
 
-const TransactionHistory = ({ assetMarketData }: IProps) => {
+const TransactionHistory = ({ assetMarketData,transactionHistoryData}: IProps) => {
   const theme = useTheme();
   const isMobile = theme.breakpoints.down('sm');
   const marketData = assetMarketData.market_data;
-  const customizedRow = rows.map((item) => {
-    return { ...item, netValue: marketData.current_price.usd };
+  const customizedRow = transactionHistoryData.map((transaction:any) => {
+    return { 
+      id:transaction.id,
+      time:transaction.createdAt,
+      amount:transaction.amount,
+      desId:transaction.destinationAssetId,
+      desType:transaction.destinationAssetType,
+      currencyCode:  transaction.currencyCode
+    };
   });
   return (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">

@@ -145,8 +145,16 @@ class CashDetailStore {
     }
   }
 
-  updateTransactionHistoryData() {
-    return true;
+  async updateTransactionHistoryData() {
+    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      this.transactionHistoryData = res.data;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+    }
   }
 }
 
