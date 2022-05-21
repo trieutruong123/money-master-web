@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -6,14 +6,19 @@ import {
   IconButton,
   Typography,
   useTheme,
-} from '@mui/material';
-import { observer } from 'mobx-react-lite';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { BuyCashForm } from './buy-cash-form';
-import { SellCashForm } from './sell-cash-form';
+} from "@mui/material";
+import { observer } from "mobx-react-lite";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { BuyCashForm } from "./buy-cash-form";
+import { SellCashForm } from "./sell-cash-form";
+import { TransferCashForm } from "./transfer-cash-form";
+import {
+  cashDetailStore,
+  ITransactionPayload,
+  portfolioDetailStore,
+} from "shared/store";
 
-interface IProps {
-} 
+interface IProps {}
 
 export const CreateCashForm = observer(({}: IProps) => {
   const theme = useTheme();
@@ -27,35 +32,60 @@ export const CreateCashForm = observer(({}: IProps) => {
     setSelectedForm(<BuyCashForm key={focusedButtonKey} handleFormSubmit />);
   }, []);
 
-  const buttonLabels = ['Buy', 'Sell'];
+  async function makeTransferAction(data: any) {
+    const { currencyCode, destinationAssetId, amount } = data;
+    const payload: ITransactionPayload = {
+      currencyCode,
+      destinationAssetId,
+      amount,
+      transactionType:"withdrawValue",
+      destinationAssetType: "cash",
+      isTransferringAll: false
+    };
+    await cashDetailStore.makeTransaction(payload);
+  }
+
+  async function makeBuyAction(data: any) {
+    console.log(" BUY ACTIONN");
+  }
+
+  async function makeSellAction(data: any) {
+    console.log("SELL ACTIONN");
+  }
+
+  const buttonLabels = ["Buy", "Sell", "Transfer"];
   const formArray = [
-    <BuyCashForm key={focusedButtonKey} handleFormSubmit />,
-    <SellCashForm key={focusedButtonKey} handleFormSubmit />,
+    <BuyCashForm key={focusedButtonKey} handleFormSubmit={makeBuyAction} />,
+    <SellCashForm key={focusedButtonKey} handleFormSubmit={makeSellAction} />,
+    <TransferCashForm
+      key={focusedButtonKey}
+      handleFormSubmit={makeTransferAction}
+    />,
   ];
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
     setSelectedForm(formArray[key]);
   };
 
-  const portfolioName = 'demo portoflio';
-  const assetName = 'Ethereum';
+  const { portfolioName } = portfolioDetailStore;
+  const assetName = cashDetailStore.currencyName;
 
   const handleFormSubmit = async (data: any) => {};
 
   return (
-    <Box sx={{ height: 'inherit' }}>
-      <Box sx={{ mt: '1rem' }}>
+    <Box sx={{ height: "inherit" }}>
+      <Box sx={{ mt: "1rem" }}>
         <Typography align="center" id="modal-modal-title" variant="h4">
           Transaction
         </Typography>
       </Box>
-      <Box sx={{ ml: '3rem', mt: '1rem' }}>
+      <Box sx={{ ml: "3rem", mt: "1rem" }}>
         <ButtonGroup aria-label="outlined primary button group">
           {buttonLabels.map((item: string, key: number) => {
             return (
               <Button
                 key={key.toString()}
-                variant={key === focusedButtonKey ? 'contained' : 'outlined'}
+                variant={key === focusedButtonKey ? "contained" : "outlined"}
                 onClick={() => handleSelectionChanged(key)}
               >
                 {item}
@@ -66,26 +96,26 @@ export const CreateCashForm = observer(({}: IProps) => {
         <Typography
           variant="body1"
           sx={{
-            mt: '0.4rem',
-            textTransform: 'uppercase',
-            fontWeight: 'bold',
+            mt: "0.4rem",
+            textTransform: "uppercase",
+            fontWeight: "bold",
           }}
         >
           {portfolioName}
         </Typography>
         <Typography
           variant="body1"
-          sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}
+          sx={{ textTransform: "uppercase", fontWeight: "bold" }}
         >
           {assetName}
         </Typography>
       </Box>
       <Box
         sx={{
-          [theme.breakpoints.down('sm')]: { height: '410px' },
+          [theme.breakpoints.down("sm")]: { height: "410px" },
 
-          [theme.breakpoints.up('sm')]: {
-            height: '480px',
+          [theme.breakpoints.up("sm")]: {
+            height: "480px",
           },
         }}
       >

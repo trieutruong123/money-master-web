@@ -5,6 +5,14 @@ import { CashItem } from 'shared/models';
 import { rootStore } from 'shared/store';
 import { content } from 'i18n';
 
+export interface ITransactionPayload{
+  amount:number,
+  currencyCode:string,
+  transactionType:string,
+  destinationAssetId:number,
+  destinationAssetType:string,
+  isTransferringAll:boolean
+}
 class CashDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
   currencyId: string = '';
@@ -48,6 +56,7 @@ class CashDetailStore {
       setTimeInterval: action,
       setBaseCurrency: action,
       setForexDetail: action,
+      makeTransaction: action
     });
   }
 
@@ -150,6 +159,18 @@ class CashDetailStore {
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
       this.transactionHistoryData = res.data;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+    }
+  }
+
+  async makeTransaction(payload:ITransactionPayload){
+    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transaction`;
+    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    if (!res.isError) {
+      await this.updateTransactionHistoryData();
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,

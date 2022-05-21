@@ -117,6 +117,7 @@ class PortfolioDetailStore {
 
       getStockInfoById: action,
       getCryptoInfoById: action,
+      getCashAssetById:action,
 
       isMissingHoldingsData: computed,
       isMissingReportData: computed,
@@ -583,6 +584,12 @@ class PortfolioDetailStore {
     if (!res.isError) {
       this.searchedCryptoDetail = res.data?.market_data?.current_price;
     } else this.searchedCryptoDetail = undefined;
+  }
+
+  getCashAssetById(cashId:number){
+    return this.cashDetail?.find(asset=>
+      asset.id==cashId
+    )
   }
 
   get isMissingHoldingsData(): boolean {
