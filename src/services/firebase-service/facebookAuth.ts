@@ -10,7 +10,7 @@ const facebookProvider = new FacebookAuthProvider();
 facebookProvider.addScope('email');
 
 async function facebookLogin() {
-  signInWithPopup(auth, facebookProvider)
+  const response: any = await signInWithPopup(auth, facebookProvider)
     .then((result) => {
       // The signed-in user info.
       const user = result.user;
@@ -18,11 +18,7 @@ async function facebookLogin() {
       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
       const credential = FacebookAuthProvider.credentialFromResult(result);
       const accessToken = credential?.accessToken;
-      console.log('successfull!');
-      console.log(user);
-      console.log(credential);
-      console.log(accessToken);
-      return { user, credential, accessToken };
+      return { isError: true, data: { user, credential, accessToken } };
     })
     .catch((error) => {
       // Handle Errors here.
@@ -32,14 +28,12 @@ async function facebookLogin() {
       const email = error.email;
       // The AuthCredential type that was used.
       const credential = FacebookAuthProvider.credentialFromError(error);
-      console.log('failed');
-      console.log(errorCode);
-      console.log(errorMessage);
-      console.log(email);
-      console.log(credential);
-
-      throw { errorCode, errorMessage, email, credential };
+      return {
+        isError: false,
+        data: { errorCode, errorMessage, email, credential },
+      };
     });
+  return response;
 }
 
 function signOut() {
