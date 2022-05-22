@@ -1,5 +1,6 @@
 import { action, makeAutoObservable, observable } from 'mobx';
 import { UserInfo } from 'shared/models';
+import { getRandomAvatarColor } from 'utils';
 
 class UserStore {
   user: UserInfo | null = null;
@@ -10,12 +11,17 @@ class UserStore {
     });
   }
 
-  getUser(): UserInfo|null {
+  getUser(): UserInfo | null {
     return this.user;
   }
 
   updateUser(newUser: UserInfo) {
     this.user = new UserInfo(newUser);
+    this.user.backgroundColor = getRandomAvatarColor();
+  }
+
+  deleteUser() {
+    this.user = null;
   }
 }
 

@@ -60,56 +60,52 @@ async function login(params: { email: string; password: string }) {
 async function googleAuthentication() {
   authStore.setAuthenticating(true);
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
-  await googleAuth
-    .googleLogin()
-    .then(async (data: any) => {
-      console.log(data);
-      const url = '/authentication/google';
-      const res: any = await httpService.post(url, {
-        externalToken: data?.token,
-        provider: 'google',
-      });
-      if (!res?.isError) {
-        storageService.setLocalStorage(mainConstant.TOKEN_KEY, res.data.token);
-        userStore.updateUser({ ...res.data });
-      }
-      authStore.setAuthenticating(false);
-      return data;
-    })
-    .catch((error) => {
-      authStore.setAuthenticating(false);
-      return error;
+  const res: any = await googleAuth.googleLogin();
+  console.log(res);
+  if (res.isError) {
+    const url = '/authentication/google';
+    const res2: any = await httpService.post(url, {
+      externalToken: res.data?.token,
+      provider: 'google',
     });
+    if (!res2?.isError) {
+      storageService.setLocalStorage(mainConstant.TOKEN_KEY, res2.data.token);
+      userStore.updateUser({ ...res2.data });
+    }
+    authStore.setAuthenticating(false);
+    return res2;
+  } else {
+    authStore.setAuthenticating(false);
+    return res;
+  }
 }
 
 async function facebookAuthentication() {
   authStore.setAuthenticating(true);
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
-  await facebookAuth
-    .facebookLogin()
-    .then(async (data: any) => {
-      const url = '/authentication/facebook';
-      const res: any = await httpService.post(url, {
-        externalToken: data?.token,
-        provider: 'facebook',
-      });
-      if (!res?.isError) {
-        storageService.setLocalStorage(mainConstant.TOKEN_KEY, res.data.token);
-        userStore.updateUser({ ...res.data });
-      }
-      authStore.setAuthenticating(false);
-      return data;
-    })
-    .catch((error) => {
-      authStore.setAuthenticating(false);
-      return error;
+  const res: any = await facebookAuth.facebookLogin();
+  if (res.isError) {
+    const url = '/authentication/facebook';
+    const res2: any = await httpService.post(url, {
+      externalToken: res.data?.token,
+      provider: 'facebook',
     });
+    if (!res2?.isError) {
+      storageService.setLocalStorage(mainConstant.TOKEN_KEY, res2.data.token);
+      userStore.updateUser({ ...res2.data });
+    }
+    authStore.setAuthenticating(false);
+    return res2;
+  } else {
+    authStore.setAuthenticating(false);
+    return res;
+  }
 }
 
 async function logout() {
   googleAuth.signOut();
+  facebookAuth.signOut();
   storageService.deleteLocalStorage(mainConstant.TOKEN_KEY);
-  Router.push('/login');
 }
 
 async function fetchUserInfo() {

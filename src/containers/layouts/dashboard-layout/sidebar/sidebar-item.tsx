@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Box, Button, ListItem } from '@mui/material';
 
-export const NavItem = (props: any) => {
+export const SidebarItem = (props: any) => {
   const { href, icon, title, ...others } = props;
   const router = useRouter();
   const active = href ? router.pathname === href : false;
@@ -49,7 +49,7 @@ export const NavItem = (props: any) => {
   );
 };
 
-NavItem.propTypes = {
+SidebarItem.propTypes = {
   href: PropTypes.string,
   icon: PropTypes.node,
   title: PropTypes.string,

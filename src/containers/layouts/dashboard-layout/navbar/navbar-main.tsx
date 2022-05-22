@@ -1,26 +1,21 @@
-import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
-import { makeStyles } from '@mui/styles';
 import {
   AppBar,
-  Avatar,
   Badge,
   Box,
   IconButton,
-  Theme,
   Toolbar,
   Tooltip,
   LinearProgress,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
 import { observer } from 'mobx-react-lite';
 import { Bell as BellIcon } from 'assets/icons/bell';
-import { UserCircle as UserCircleIcon } from 'assets/icons/user-circle';
 import { Users as UsersIcon } from 'assets/icons/users';
-import { Link, MultipleLanguage } from 'shared/components';
+import { MultipleLanguage } from 'shared/components';
 import { rootStore } from 'shared/store';
 import { useEffect } from 'react';
+import AccountMenu from './account-menu';
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }: any) => ({
   backgroundColor: theme.palette.background.paper,
@@ -29,11 +24,10 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }: any) => ({
 
 export const DashboardNavbar = observer((props: any) => {
   const { onSidebarOpen, ...other } = props;
-  const { isLoading, isNotified,variant, message } = rootStore;
+  const { isLoading, isNotified, variant, message } = rootStore;
 
   useEffect(() => {
     if (isNotified) {
-     
     }
   }, [isNotified]);
 
@@ -69,11 +63,6 @@ export const DashboardNavbar = observer((props: any) => {
           >
             <MenuIcon fontSize="small" />
           </IconButton>
-          <Tooltip title="Search">
-            <IconButton sx={{ ml: 1 }}>
-              <SearchIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
           <Box sx={{ flexGrow: 1 }} />
           <Tooltip title="Contacts">
             <IconButton sx={{ ml: 1 }}>
@@ -87,19 +76,7 @@ export const DashboardNavbar = observer((props: any) => {
               </Badge>
             </IconButton>
           </Tooltip>
-
-          <Link href="/profile">
-            <Avatar
-              sx={{
-                height: 40,
-                width: 40,
-                mx: 1,
-              }}
-              src="/images/avatar_1.png"
-            >
-              <UserCircleIcon fontSize="small" />
-            </Avatar>
-          </Link>
+          <AccountMenu />
           <MultipleLanguage></MultipleLanguage>
         </Toolbar>
         {isLoading && (
@@ -111,4 +88,3 @@ export const DashboardNavbar = observer((props: any) => {
     </>
   );
 });
-
