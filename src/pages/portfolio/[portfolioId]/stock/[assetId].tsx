@@ -50,7 +50,7 @@ const AssetVolatilityDetailPage = () => {
     if (typeof assetId === 'undefined') router.push('/404');
 
     fetchData(portfolioId, assetId);
-  }, []);
+  }, [assetId, portfolioId, router]);
 
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;

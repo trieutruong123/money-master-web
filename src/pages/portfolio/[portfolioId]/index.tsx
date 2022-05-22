@@ -45,7 +45,7 @@ const PortfolioDetailPage = () => {
   useEffect(() => {
     if (typeof locale !== 'undefined') rootStore.setLocale(locale as any);
     fetchData(portfolioId);
-  }, [portfolioId]);
+  }, [portfolioId,locale]);
 
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   const { portfolioDetailPage } = detail;

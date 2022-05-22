@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { userInfo } from 'os';
 import { Link } from 'shared/components';
 import { authStore, userStore } from 'shared/store';
+import { colorScheme } from 'utils';
 
 interface IProps {
   open: boolean;
@@ -61,7 +62,7 @@ const AccountMenuDropdown = observer(
           <MenuItem>
             <Avatar
               sx={{
-                backgroundColor: userStore.user?.backgroundColor,
+                backgroundColor: userStore.user?.backgroundColor||colorScheme.gray200,
                 color: 'white',
                 fontSize: '1.4rem',
               }}

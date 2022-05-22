@@ -39,11 +39,12 @@ const AssetDetailPage = () => {
     ? query['assetId'][0]
     : query['assetId'] || '';
 
+  
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
 
     fetchData(portfolioId, assetId);
-  }, []);
+  }, [assetId, portfolioId, router]);
 
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;

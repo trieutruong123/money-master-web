@@ -10,6 +10,7 @@ import { UserCircle as UserCircleIcon } from 'assets/icons/user-circle';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { userStore } from 'shared/store';
+import { colorScheme } from 'utils';
 
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -42,12 +43,13 @@ const AccountMenu = () => {
           sx={{
             height: 32,
             width: 32,
-            ml:'1rem',
+            ml: '1rem',
           }}
         >
           <Avatar
             sx={{
-              backgroundColor: userStore.user?.backgroundColor,
+              backgroundColor:
+                userStore.user?.backgroundColor || colorScheme.gray200,
               color: 'white',
               fontSize: '1.4rem',
               height: 32,

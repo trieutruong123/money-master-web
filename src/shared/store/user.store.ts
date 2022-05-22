@@ -3,7 +3,7 @@ import { UserInfo } from 'shared/models';
 import { getRandomAvatarColor } from 'utils';
 
 class UserStore {
-  user: UserInfo | null = null;
+  user: UserInfo | undefined = undefined;
   constructor() {
     makeAutoObservable(this, {
       user: observable,
@@ -11,7 +11,7 @@ class UserStore {
     });
   }
 
-  getUser(): UserInfo | null {
+  getUser(): UserInfo | undefined {
     return this.user;
   }
 
@@ -21,7 +21,7 @@ class UserStore {
   }
 
   deleteUser() {
-    this.user = null;
+    this.user = undefined;
   }
 }
 

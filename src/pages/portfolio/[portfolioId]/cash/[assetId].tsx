@@ -42,7 +42,7 @@ const AssetVolatilityDetailPage = () => {
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
     if (assetId && portfolioId) fetchData(portfolioId, assetId);
-  }, [assetId, portfolioId]);
+  }, [assetId, portfolioId, router]);
 
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;
