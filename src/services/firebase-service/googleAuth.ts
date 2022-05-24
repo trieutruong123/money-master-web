@@ -13,19 +13,20 @@ async function googleLogin() {
   const respnose: any = await signInWithPopup(auth, googleProvider)
     .then((result: any) => {
       const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential?.accessToken;
+      const token = credential?.idToken;
       const user = result.user;
 
       // The signed-in user info.
-      console.log(credential);
-      console.log(result);
       return {
-        username: user.displayName,
-        email: user.email,
-        firstName: result._tokenResponse.firstName,
-        lastName: result._tokenResponse.lastName,
-        profilePictureUrl: user.photoURL,
-        token: token,
+        isError: true,
+        data: {
+          username: user.displayName,
+          email: user.email,
+          firstName: result._tokenResponse.firstName,
+          lastName: result._tokenResponse.lastName,
+          profilePictureUrl: user.photoURL,
+          token: token,
+        },
       };
     })
     .catch((error: any) => {
@@ -33,13 +34,12 @@ async function googleLogin() {
       const errorMessage = error.message;
       const email = error.email;
       const credential = GoogleAuthProvider.credentialFromError(error);
-      console.log('failed');
-      console.log(errorCode);
-      console.log(errorMessage);
-      console.log(email);
-      console.log(credential);
-      throw { errorCode, errorMessage, email, credential };
+      return {
+        isError: false,
+        data: { errorCode, errorMessage, email, credential },
+      };
     });
+  return respnose;
 }
 
 function signOut() {

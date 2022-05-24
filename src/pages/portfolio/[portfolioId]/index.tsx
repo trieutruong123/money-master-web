@@ -5,9 +5,7 @@ import { Box, Container, useTheme, useMediaQuery } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { content } from 'i18n';
 import { DashboardLayout } from 'containers';
-import { rootStore, portfolioDetailStore } from 'shared/store';
 import { HypnosisLoading } from 'shared/components';
-import { PDBreadcrumbTabs } from 'shared/constants';
 
 const PortfolioDetail = lazy(
   () => import('containers/portfolio/portfolio-detail/pd-portfolio-detail'),
@@ -16,7 +14,6 @@ const PortfolioDetail = lazy(
 
 const PortfolioDetailPage = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
 
   const { locale } = router;

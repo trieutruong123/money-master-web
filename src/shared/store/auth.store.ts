@@ -1,7 +1,7 @@
 import { action, computed, makeAutoObservable, observable } from 'mobx';
 import { userService } from 'services';
 import { httpError } from 'shared/helpers';
-import { rootStore } from 'shared/store';
+import { rootStore, userStore } from 'shared/store';
 
 class AuthStore {
   isAuthenticating: boolean = false;
@@ -76,6 +76,11 @@ class AuthStore {
     rootStore.stopLoading();
 
     return res;
+  }
+
+  logout() {
+    userService.logout();
+    userStore.deleteUser();
   }
 }
 

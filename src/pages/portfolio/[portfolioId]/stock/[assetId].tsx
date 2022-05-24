@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense } from 'react';
 import Head from 'next/head';
 import {
   Box,
@@ -9,21 +9,13 @@ import {
 import { useRouter } from 'next/router';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { content } from 'i18n';
-import {
-  rootStore,
-  stockVolatilityDetailStore,
-} from 'shared/store';
 import {  HypnosisLoading } from 'shared/components';
 import { DashboardLayout } from 'containers';
-import { PAStockBreadcrumbTabs } from 'shared/constants';
 
 const StockVolatilityDetail = lazy(()=>
   import ('containers/portfolio/asset-detail/stock-detail/pd-stock-detail'),
 );
 
-const fetchData = async (portfolioId: string, assetId: string) => {
-  
-};
 
 const AssetVolatilityDetailPage = () => {
   const theme = useTheme();
