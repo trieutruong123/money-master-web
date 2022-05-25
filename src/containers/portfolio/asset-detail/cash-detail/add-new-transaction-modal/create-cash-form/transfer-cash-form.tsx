@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/lab";
-import { Box, Button,  TextField, useTheme } from "@mui/material";
-import {  SubmitHandler, useForm } from "react-hook-form";
+import { Box, Button, TextField, useTheme } from "@mui/material";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { colorScheme } from "utils/color-scheme";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -17,7 +17,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 type FormValues = {
   destinationAssetId: number;
   amount: number;
-  currencyCode:string;
+  currencyCode: string;
 };
 
 interface IProps {
@@ -32,9 +32,9 @@ export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
       .required("Amount is required")
       .typeError("Amount must be a number")
       .positive("Amount must be greater than zero"),
-      destinationAssetId:Yup.number()
+    destinationAssetId: Yup.number()
       .required("Destination asset is required"),
-      currencyCode:Yup.string()
+    currencyCode: Yup.string()
       .required("Currency code is required")
   });
 
@@ -51,7 +51,7 @@ export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
     cashDetailStore.setOpenAddNewTransactionModal(false);
   };
 
-  
+
 
   const [destinationAssetId, setDestinationAssetId] = React.useState('');
   const [currencyCode, setCurrencyCode] = React.useState('');
@@ -82,7 +82,7 @@ export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
     >
       <InputLabel id="destination-asset-select">Destination asset</InputLabel>
       <Select
-       {...register("destinationAssetId")}
+        {...register("destinationAssetId")}
         type="number"
         labelId="destination-asset-select"
         id="destination-asset-select"
@@ -91,17 +91,17 @@ export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
         onChange={handleChangeDestinationAssetId}
         error={typeof errors.destinationAssetId?.message !== "undefined"}
       >
-        {portfolioDetailStore.cashDetail?.map(asset=>{
-          if (asset.id!=cashDetailStore.cashId)
-          return(
-            <MenuItem key={asset.id} value={asset.id}>{asset.name} (cash)</MenuItem>
-          )
+        {portfolioDetailStore.cashDetail?.map(asset => {
+          if (asset.id != cashDetailStore.cashId)
+            return (
+              <MenuItem key={asset.id} value={asset.id}>{asset.name} (cash)</MenuItem>
+            )
         })}
       </Select>
       <TextField
         type="number"
         inputProps={{
-          step: "0.0000001"   // to accept float number in MUI text field
+          step: "0.0000001"
         }}
         fullWidth
         sx={{ my: 1, display: "block" }}
@@ -114,8 +114,8 @@ export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
       ></TextField>
       <InputLabel id="currency-code-select">Currency code</InputLabel>
       <Select
-      sx={{mb:3}}
-       {...register("currencyCode")}
+        sx={{ mb: 3 }}
+        {...register("currencyCode")}
         type="string"
         labelId="currency-code-select"
         id="currency-code-select"
@@ -125,8 +125,8 @@ export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
         error={typeof errors.currencyCode?.message !== "undefined"}
       >
         {Object.keys(currencyList).map((currency, index) =>
-            <MenuItem key={index} value={currency}>{`${currencyList[currency]} (${currency})`}</MenuItem>
-          )
+          <MenuItem key={index} value={currency}>{`${currencyList[currency]} (${currency})`}</MenuItem>
+        )
         })
       </Select>
       <Button

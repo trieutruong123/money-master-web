@@ -12,7 +12,7 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { cashDetailStore } from "shared/store";
-import { HypnosisLoading } from "shared/components";
+import { HypnosisLoading, TabPanel } from "shared/components";
 import { AddNewTransactionModal } from "./add-new-transaction-modal";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -22,33 +22,8 @@ const IntroSection = lazy(() => import("./intro-section"));
 const HistoricalMarketChart = lazy(() => import("./historical-market-chart"));
 const TransactionHistory = lazy(() => import("./transaction-history"));
 
-interface IProps {}
+interface IProps { }
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
 
 function a11yProps(index: number) {
   return {
@@ -57,7 +32,7 @@ function a11yProps(index: number) {
   };
 }
 
-export const CashDetail = observer(({}: IProps) => {
+export const CashDetail = observer(({ }: IProps) => {
   const theme = useTheme();
   const isMobile = theme.breakpoints.down("sm");
   useEffect(() => {
@@ -112,55 +87,55 @@ export const CashDetail = observer(({}: IProps) => {
         <Box sx={{ overflow: "hidden" }}>
           <Container sx={{ padding: isMobile ? "0px" : "initial" }}>
             <Grid container display="flex" justifyContent="center">
-            <Box sx={{ width: '100vw' }}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Tabs
-                  value={value}
-                  onChange={handleTabChange}
-                  aria-label="basic tabs example"
-                >
-                  <Tab label={PACashBreadcrumbTabs.overview} {...a11yProps(0)} />
-                  <Tab label={PACashBreadcrumbTabs.insight} {...a11yProps(1)} />
-                  <Tab label={PACashBreadcrumbTabs.settings} {...a11yProps(2)} />
-                </Tabs>
-              </Box>
-              <TabPanel value={value} index={0}>
-                {forexDetail !== undefined && forexMarketData !== undefined ? (
-                  <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                    <IntroSection
-                      assetDetail={forexDetail}
-                      assetMarketData={forexMarketData}
-                    />
-                  </Suspense>
-                ) : (
-                  <></>
-                )}
-                {forexDetail !== undefined && forexMarketData !== undefined ? (
-                  <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                    <TransactionHistory
-                      assetMarketData={forexMarketData}
-                      transactionHistoryData={transactionHistoryData}
-                    />
-                  </Suspense>
-                ) : (
-                  <></>
-                )}
-              </TabPanel>
-              <TabPanel value={value} index={1}>
-                {historicalMarketData !== undefined ? (
-                  <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                    <HistoricalMarketChart
-                      data={historicalMarketData}
-                      handleTimeIntervalChanged={handleTimeIntervalChanged}
-                    />
-                  </Suspense>
-                ) : (
-                  <></>
-                )}
-              </TabPanel>
-              <TabPanel value={value} index={2}>
-                Item Three
-              </TabPanel>
+              <Box sx={{ width: '100vw' }}>
+                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                  <Tabs
+                    value={value}
+                    onChange={handleTabChange}
+                    aria-label="basic tabs example"
+                  >
+                    <Tab label={PACashBreadcrumbTabs.overview} {...a11yProps(0)} />
+                    <Tab label={PACashBreadcrumbTabs.insight} {...a11yProps(1)} />
+                    <Tab label={PACashBreadcrumbTabs.settings} {...a11yProps(2)} />
+                  </Tabs>
+                </Box>
+                <TabPanel value={value} index={0}>
+                  {forexDetail !== undefined && forexMarketData !== undefined ? (
+                    <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                      <IntroSection
+                        assetDetail={forexDetail}
+                        assetMarketData={forexMarketData}
+                      />
+                    </Suspense>
+                  ) : (
+                    <></>
+                  )}
+                  {forexDetail !== undefined && forexMarketData !== undefined ? (
+                    <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                      <TransactionHistory
+                        assetMarketData={forexMarketData}
+                        transactionHistoryData={transactionHistoryData}
+                      />
+                    </Suspense>
+                  ) : (
+                    <></>
+                  )}
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                  {historicalMarketData !== undefined ? (
+                    <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
+                      <HistoricalMarketChart
+                        data={historicalMarketData}
+                        handleTimeIntervalChanged={handleTimeIntervalChanged}
+                      />
+                    </Suspense>
+                  ) : (
+                    <></>
+                  )}
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                  Item Three
+                </TabPanel>
               </Box>
             </Grid>
           </Container>
