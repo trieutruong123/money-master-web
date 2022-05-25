@@ -16,7 +16,7 @@ import {
 } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { styled } from '@mui/material/styles';
-import { GiBuyCard, GiSellCard, GiReceiveMoney } from 'react-icons/gi';
+import { GiBuyCard, GiSellCard, GiReceiveMoney,GiTransform } from 'react-icons/gi';
 import { precisionRound } from 'utils/number';
 import SettingsMenuButton from './settings-menu-button';
 
@@ -28,36 +28,47 @@ const columns: GridColDef[] = [
     valueGetter: (params: GridValueGetterParams) =>
       `${dayjs(params.value).format('MMM DD YYYY HH:mm')}`,
   },
-  // {
-  //   field: 'type',
-  //   headerName: 'Transaction',
-  //   sortable: false,
-  //   filterable: false,
-  //   width: 120,
-  //   editable: true,
-  //   renderCell: (params: GridCellParams) => {
-  //     switch (params.row.type) {
-  //       case 'buy':
-  //         return (
-  //           <Chip
-  //             label="BUY"
-  //             variant="filled"
-  //             avatar={<GiBuyCard color="white" />}
-  //             sx={{ backgroundColor: 'success.light' }}
-  //           />
-  //         );
-  //       case 'sell':
-  //         return (
-  //           <Chip
-  //             label="SELL"
-  //             variant="filled"
-  //             avatar={<GiSellCard color="white" />}
-  //             sx={{ backgroundColor: 'error.light' }}
-  //           />
-  //         );
-  //     }
-  //   },
-  // },
+  {
+    field: 'type',
+    headerName: 'Transaction',
+    sortable: false,
+    filterable: false,
+    width: 140,
+    editable: true,
+    renderCell: (params: GridCellParams) => {
+      switch (params.row.type) {
+        case 'newAsset':
+        case 'buy':
+          return (
+            <Chip
+              label="BUY"
+              variant="filled"
+              avatar={<GiBuyCard color="white" />}
+              sx={{ backgroundColor: 'success.light' }}
+            />
+          );
+        case 'moveToFund':
+          return (
+            <Chip
+              label="SELL"
+              variant="filled"
+              avatar={<GiSellCard color="white" />}
+              sx={{ backgroundColor: 'error.light' }}
+            />
+          );
+
+        case 'withdrawValue':
+          return (
+            <Chip
+              label="TRANSFER"
+              variant="filled"
+              avatar={<GiTransform color="white" />}
+              sx={{ backgroundColor: 'warning.light' }}
+            />
+          );  
+      }
+    },
+  },
   {
     field: 'amount',
     headerName: 'Amount',
@@ -65,16 +76,28 @@ const columns: GridColDef[] = [
     editable: false,
   },
   {
-    field: 'desId',
-    headerName: 'Destination Id',
+    field: 'desName',
+    headerName: 'Transaction To',
     width: 130,
     editable: false,
+    renderCell: (params: GridCellParams) => {
+      switch (params.row.desName) {
+        case null:
+          return "N/A"
+      }
+    }
   },
   {
     field: 'desType',
     headerName: 'Destination Type',
     width: 130,
     editable: false,
+    renderCell: (params: GridCellParams) => {
+      switch (params.row.desType) {
+        case null:
+          return "N/A"
+      }
+    }
   },
   {
     field: 'currencyCode',
@@ -217,8 +240,10 @@ const TransactionHistory = ({ assetMarketData,transactionHistoryData}: IProps) =
       time:transaction.createdAt,
       amount:transaction.amount,
       desId:transaction.destinationAssetId,
+      desName:transaction.destinationAssetName,
       desType:transaction.destinationAssetType,
-      currencyCode:  transaction.currencyCode
+      currencyCode:  transaction.currencyCode,
+      type:transaction.singleAssetTransactionType
     };
   });
   return (

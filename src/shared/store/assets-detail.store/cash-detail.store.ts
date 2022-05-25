@@ -13,6 +13,12 @@ export interface ITransactionPayload{
   destinationAssetType:string,
   isTransferringAll:boolean
 }
+
+export interface IMoveToFundPayload{
+  amount:number,
+  currencyCode:string,
+  isTransferringAll:boolean
+}
 class CashDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
   currencyId: string = '';
@@ -168,6 +174,18 @@ class CashDetailStore {
 
   async makeTransaction(payload:ITransactionPayload){
     const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transaction`;
+    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    if (!res.isError) {
+      await this.updateTransactionHistoryData();
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+    }
+  }
+
+  async moveToFund(payload:IMoveToFundPayload){
+    const url = `/portfolio/${this.portfolioId}/fund`;
     const res: { isError: boolean; data: any } = await httpService.post(url,payload);
     if (!res.isError) {
       await this.updateTransactionHistoryData();

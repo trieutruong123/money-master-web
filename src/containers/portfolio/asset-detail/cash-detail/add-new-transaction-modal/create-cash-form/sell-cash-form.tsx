@@ -1,40 +1,41 @@
-import { useState } from 'react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
-import { Box, Button, TextField, useTheme } from '@mui/material';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import * as Yup from 'yup';
-import { colorScheme } from 'utils/color-scheme';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { useState } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/lab";
+import { Box, Button,  TextField, useTheme } from "@mui/material";
+import {  SubmitHandler, useForm } from "react-hook-form";
+import * as Yup from "yup";
+import { colorScheme } from "utils/color-scheme";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import { observer } from "mobx-react-lite";
+import React from "react";
+import MenuItem from '@mui/material/MenuItem';
+import { cashDetailStore, portfolioDetailStore } from "shared/store";
+import { currencyList } from "shared/helpers";
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 type FormValues = {
-  sellPrice: number;
+  destinationAssetId: number;
   amount: number;
-  date: Date;
-  currency?: string;
-  note?: string;
-  brokerFeeInPercent?: number;
-  brokerFee?: number;
-  brokerFeeForSecurity?: number;
-  incomeTax?: number;
+  currencyCode:string;
 };
 
 interface IProps {
   handleFormSubmit: any;
 }
 
-export const SellCashForm = ({ handleFormSubmit }: IProps) => {
+export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
-    sellPrice: Yup.number()
-      .required('Price is required')
-      .typeError('Price must be a number')
-      .positive('Price must be greater than zero'),
     amount: Yup.number()
-      .required('Amount is required')
-      .typeError('Amount must be a number')
-      .positive('Amount must be greater than zero'),
+      .required("Amount is required")
+      .typeError("Amount must be a number")
+      .positive("Amount must be greater than zero"),
+      destinationAssetId:Yup.number()
+      .required("Destination asset is required"),
+      currencyCode:Yup.string()
+      .required("Currency code is required")
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -47,6 +48,18 @@ export const SellCashForm = ({ handleFormSubmit }: IProps) => {
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit(data);
+    cashDetailStore.setOpenAddNewTransactionModal(false);
+  };
+
+  
+
+  const [destinationAssetId, setDestinationAssetId] = React.useState('');
+  const [currencyCode, setCurrencyCode] = React.useState('');
+  const handleChangeDestinationAssetId = (event: SelectChangeEvent) => {
+    setDestinationAssetId(event.target.value as string);
+  };
+  const handleChangeCurrencyCode = (event: SelectChangeEvent) => {
+    setCurrencyCode(event.target.value as string);
   };
 
   return (
@@ -55,90 +68,80 @@ export const SellCashForm = ({ handleFormSubmit }: IProps) => {
       autoComplete="off"
       onSubmit={handleSubmit(onSubmit)}
       sx={{
-        height: 'inherit',
-        justifyContent: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        mx: '3rem',
-        [theme.breakpoints.down('xs')]: {
-          mx: '2rem',
+        height: "inherit",
+        overflow: "auto",
+        justifyContent: "center",
+        display: "flex",
+        alignItems: "stretch",
+        flexDirection: "column",
+        mx: "3rem",
+        [theme.breakpoints.down("xs")]: {
+          mx: "2rem",
         },
       }}
     >
+      <InputLabel id="destination-asset-select">Destination asset</InputLabel>
+      <Select
+       {...register("destinationAssetId")}
+        type="number"
+        labelId="destination-asset-select"
+        id="destination-asset-select"
+        value={destinationAssetId}
+        label="Destination asset"
+        onChange={handleChangeDestinationAssetId}
+        error={typeof errors.destinationAssetId?.message !== "undefined"}
+      >
+        {portfolioDetailStore.cashDetail?.map(asset=>{
+          if (asset.id!=cashDetailStore.cashId)
+          return(
+            <MenuItem key={asset.id} value={asset.id}>{asset.name} (cash)</MenuItem>
+          )
+        })}
+      </Select>
       <TextField
         type="number"
+        inputProps={{
+          step: "0.0000001"   // to accept float number in MUI text field
+        }}
         fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-sell-price"
-        label={'*Sell Price'}
-        {...register('sellPrice')}
-        variant="outlined"
-        error={typeof errors.sellPrice?.message !== 'undefined'}
-        helperText={errors.sellPrice?.message}
-      ></TextField>
-      <TextField
-        type="number"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
+        sx={{ my: 1, display: "block" }}
         id="outlined-amount"
-        label={'*Amount'}
-        {...register('amount')}
+        label={"*Amount"}
+        {...register("amount")}
         variant="outlined"
-        error={typeof errors.amount?.message !== 'undefined'}
+        error={typeof errors.amount?.message !== "undefined"}
         helperText={errors.amount?.message}
       ></TextField>
-      <LocalizationProvider
-        sx={{
-          my: 1,
-          display: 'block',
-          width: 'inherit',
-          
-        }}
-        dateAdapter={AdapterDateFns}
+      <InputLabel id="currency-code-select">Currency code</InputLabel>
+      <Select
+      sx={{mb:3}}
+       {...register("currencyCode")}
+        type="string"
+        labelId="currency-code-select"
+        id="currency-code-select"
+        value={currencyCode}
+        label="Currency code"
+        onChange={handleChangeCurrencyCode}
+        error={typeof errors.currencyCode?.message !== "undefined"}
       >
-        <DesktopDatePicker
-          label="*Date desktop"
-          inputFormat="dd/MM/yyyy"
-          value={date}
-          onChange={handleDateChange}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </LocalizationProvider>
-      <TextField
-        type="number"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-broker-fee"
-        label={'Broker fee'}
-        {...register('brokerFee')}
-        variant="outlined"
-      ></TextField>
-      <TextField
-        type="text"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-note"
-        label={'Note'}
-        {...register('note')}
-        variant="outlined"
-        error={typeof errors.note?.message !== 'undefined'}
-        helperText={errors.note?.message}
-      ></TextField>
-
-      <Button 
+        {Object.keys(currencyList).map((currency, index) =>
+            <MenuItem key={index} value={currency}>{`${currencyList[currency]} (${currency})`}</MenuItem>
+          )
+        })
+      </Select>
+      <Button
         type="submit"
         variant="contained"
         sx={{
-          mt: 'auto',
+          mt: "auto",
           bg: colorScheme.theme,
-          width: '100%',
-          fontSize: '1.4rem',
-          height: '2.5rem',
+          width: "100%",
+          fontSize: "1.4rem",
+          height: "2.5rem",
         }}
       >
         ADD
       </Button>
     </Box>
   );
-};
+});

@@ -14,6 +14,7 @@ import { SellCashForm } from "./sell-cash-form";
 import { TransferCashForm } from "./transfer-cash-form";
 import {
   cashDetailStore,
+  IMoveToFundPayload,
   ITransactionPayload,
   portfolioDetailStore,
 } from "shared/store";
@@ -50,7 +51,13 @@ export const CreateCashForm = observer(({}: IProps) => {
   }
 
   async function makeSellAction(data: any) {
-    console.log("SELL ACTIONN");
+    const { currencyCode, amount } = data;
+    const payload: IMoveToFundPayload = {
+      amount,
+      currencyCode,
+      isTransferringAll: false
+    };
+    await cashDetailStore.moveToFund(payload);
   }
 
   const buttonLabels = ["Buy", "Sell", "Transfer"];
