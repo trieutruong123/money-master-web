@@ -15,6 +15,8 @@ export interface ITransactionPayload{
 }
 
 export interface IMoveToFundPayload{
+  referentialAssetId:number,
+  referentialAssetType:string,
   amount:number,
   currencyCode:string,
   isTransferringAll:boolean

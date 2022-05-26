@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/lab";
-import { Box, Button,  TextField, useTheme } from "@mui/material";
+import { Box, Button,  FormControlLabel,  FormLabel,  Radio,  RadioGroup,  TextField, useTheme } from "@mui/material";
 import {  SubmitHandler, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { colorScheme } from "utils/color-scheme";
@@ -15,9 +15,9 @@ import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 type FormValues = {
-  destinationAssetId: number;
   amount: number;
   currencyCode:string;
+  sellingDestination:string;
 };
 
 interface IProps {
@@ -32,8 +32,6 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
       .required("Amount is required")
       .typeError("Amount must be a number")
       .positive("Amount must be greater than zero"),
-      destinationAssetId:Yup.number()
-      .required("Destination asset is required"),
       currencyCode:Yup.string()
       .required("Currency code is required")
   });
@@ -52,12 +50,8 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
   };
 
   
-
-  const [destinationAssetId, setDestinationAssetId] = React.useState('');
   const [currencyCode, setCurrencyCode] = React.useState('');
-  const handleChangeDestinationAssetId = (event: SelectChangeEvent) => {
-    setDestinationAssetId(event.target.value as string);
-  };
+  
   const handleChangeCurrencyCode = (event: SelectChangeEvent) => {
     setCurrencyCode(event.target.value as string);
   };
@@ -80,24 +74,7 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
         },
       }}
     >
-      <InputLabel id="destination-asset-select">Destination asset</InputLabel>
-      <Select
-       {...register("destinationAssetId")}
-        type="number"
-        labelId="destination-asset-select"
-        id="destination-asset-select"
-        value={destinationAssetId}
-        label="Destination asset"
-        onChange={handleChangeDestinationAssetId}
-        error={typeof errors.destinationAssetId?.message !== "undefined"}
-      >
-        {portfolioDetailStore.cashDetail?.map(asset=>{
-          if (asset.id!=cashDetailStore.cashId)
-          return(
-            <MenuItem key={asset.id} value={asset.id}>{asset.name} (cash)</MenuItem>
-          )
-        })}
-      </Select>
+      
       <TextField
         type="number"
         inputProps={{
@@ -129,6 +106,16 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
           )
         })
       </Select>
+
+      <RadioGroup
+        row
+        {...register("sellingDestination")}
+
+      >
+        <FormControlLabel value="toFund" control={<Radio />} label="Sell to fund" />
+        <FormControlLabel value="toOutside" control={<Radio />} label="Sell to outside" />
+      </RadioGroup>
+      
       <Button
         type="submit"
         variant="contained"

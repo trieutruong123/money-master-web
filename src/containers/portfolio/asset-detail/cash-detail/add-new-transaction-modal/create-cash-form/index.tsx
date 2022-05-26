@@ -48,16 +48,31 @@ export const CreateCashForm = observer(({}: IProps) => {
 
   async function makeBuyAction(data: any) {
     console.log(" BUY ACTIONN");
+    console.log(data);
   }
 
   async function makeSellAction(data: any) {
-    const { currencyCode, amount } = data;
-    const payload: IMoveToFundPayload = {
-      amount,
-      currencyCode,
-      isTransferringAll: false
-    };
-    await cashDetailStore.moveToFund(payload);
+
+   
+     const { currencyCode, amount ,sellingDestination} = data;
+     switch(sellingDestination){
+       case 'toFund':{
+        const payload= {
+          referentialAssetId:cashDetailStore.cashId,
+          referentialAssetType:'cash',
+          amount,
+          currencyCode,
+          isTransferringAll: false
+        };
+        await cashDetailStore.moveToFund(payload);
+        break;
+       }
+       case 'toOutside':{
+
+        break;
+       }
+     }
+    
   }
 
   const buttonLabels = ["Buy", "Sell", "Transfer"];
