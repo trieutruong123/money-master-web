@@ -18,7 +18,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { portfolioDetailStore } from 'shared/store';
-import { sampleData } from '../searching-data';
+import { AssetTypeName } from 'shared/constants';
+import { sampleSearchingData } from './sample-search-data';
 
 type SearchingItemType = {
   id: string;
@@ -48,6 +49,10 @@ export const SearchingAssetsForm = observer(
     const [searchingText, setSearchingText] = useState<string>('');
     const [isSearching, setIsSearching] = useState(false);
     const [debouncedSearchTerm] = useDebounce(searchingText, 1000, {});
+    useEffect(() => {
+      setSearchingData(AssetTypeName.cryptoCurrency === assetType ? sampleSearchingData.crypto : sampleSearchingData.stock)
+    }, [])
+
     useEffect(
       () => {
         if (debouncedSearchTerm) {
@@ -60,7 +65,7 @@ export const SearchingAssetsForm = observer(
             setSearchingData(results);
           });
         } else {
-          setSearchingData([]);
+          setSearchingData(AssetTypeName.cryptoCurrency === assetType ? sampleSearchingData.crypto : sampleSearchingData.stock);
           setIsSearching(false);
         }
       },
@@ -73,14 +78,20 @@ export const SearchingAssetsForm = observer(
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
-        setIsSearching(true);
-        searchData({
-          searchingText: debouncedSearchTerm,
-          searchingType: assetType,
-        }).then((results: Array<SearchingItemType> | any) => {
+        if (debouncedSearchTerm) {
+          setIsSearching(true);
+          searchData({
+            searchingText: debouncedSearchTerm,
+            searchingType: assetType,
+          }).then((results: Array<SearchingItemType> | any) => {
+            setIsSearching(false);
+            setSearchingData(results);
+          });
+        }
+        else {
+          setSearchingData(AssetTypeName.cryptoCurrency === assetType ? sampleSearchingData.crypto : sampleSearchingData.stock);
           setIsSearching(false);
-          setSearchingData(results);
-        });
+        }
       }
     };
 
@@ -102,12 +113,12 @@ export const SearchingAssetsForm = observer(
 
       const h1 =
         ((ref = document.getElementById('searching-form-modal')) === null ||
-        ref === void 0
+          ref === void 0
           ? void 0
           : ref.offsetHeight) || 0.5;
       const h2 =
         ((ref1 = document.getElementById('header-searching-form')) === null ||
-        ref1 === void 0
+          ref1 === void 0
           ? void 0
           : ref1.offsetHeight) || 0.5;
       return h1 - h2 - 30;

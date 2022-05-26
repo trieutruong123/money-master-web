@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Tooltip,
   useTheme,
   useMediaQuery,
 } from '@mui/material';
@@ -66,7 +67,7 @@ export const CashInvestments = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { collumnsName, settingDropDownMenu } = content;
-  const headings = [collumnsName.total, ''];
+  const headings = [collumnsName.total, 'Description'];
 
   const renderCurrencyName = (code: string) => {
     if (code) {
@@ -87,6 +88,10 @@ export const CashInvestments = ({
       `/portfolio/${portfolioId}/cash/${assetId.toString()}`,
       { locale: locale },
     );
+  };
+
+  const renderDescription = (description: any) => {
+    return description.toString().slice(0, 25) + '...';
   };
 
   return cashDetail?.length ? (
@@ -149,6 +154,11 @@ export const CashInvestments = ({
                   <TableBodyCell onClick={() => handleItemClick(record.id)}>
                     {renderTotalCash(record.amount, record.currencyCode)}
                   </TableBodyCell>
+                  <Tooltip title={record.description}>
+                    <TableBodyCell onClick={() => handleItemClick(record.id)}>
+                      {renderDescription(record.description)}
+                    </TableBodyCell>
+                  </Tooltip>
                   <TableBodyCell>
                     <SettingsMenuButton
                       assetType={AssetTypeName.cash}

@@ -92,7 +92,7 @@ export const TransferToInvestFundForm = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        px: '3rem',
+        px: '1rem',
         py: '1rem',
         [theme.breakpoints.down('xs')]: {
           px: '2rem',
@@ -110,6 +110,7 @@ export const TransferToInvestFundForm = () => {
           display: 'flex',
           alignItems: 'stretch',
           flexDirection: 'column',
+          width: '100%'
         }}
       >
         <Grid container spacing="2">
@@ -152,7 +153,7 @@ export const TransferToInvestFundForm = () => {
         sx={{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'center',
+          justifyContent: 'end',
           pt: '1rem',
           width: '100%',
         }}
@@ -162,6 +163,7 @@ export const TransferToInvestFundForm = () => {
           onClick={handleCloseModal}
           color="warning"
           sx={{
+            mr: '2rem',
             bg: 'appColor.theme',
             fontSize: '1.4rem',
             height: '2.5rem',
@@ -169,13 +171,13 @@ export const TransferToInvestFundForm = () => {
         >
           Cancel
         </CancelButton>
-        <Box sx={{ flexGrow: '0.5' }} />
         <Button
           type="submit"
           variant="contained"
           form="transfer-asset-to-invest-fund"
           color="success"
           sx={{
+            mr: '2rem',
             fontSize: '1.4rem',
             height: '2.5rem',
           }}

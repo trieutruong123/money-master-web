@@ -18,6 +18,7 @@ import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getSupportedCurrencyList } from 'shared/helpers';
+import CheckBoxButton from 'shared/components/checkbox';
 
 type FormValues = {
   name: string;
@@ -26,7 +27,7 @@ type FormValues = {
   termRange: number;
   inputCurrency: string;
   description?: string;
-  bankCode?: string;
+  bankCode: string;
   brokerFee?: number;
   brokerFeeInPercent?: number;
   brokerFeeForSecurity?: number;
@@ -42,6 +43,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [checked, setChecked] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -58,6 +60,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
       .typeError('Term range must be a number')
       .positive('Term range must be greater than zero'),
     inputCurrency: Yup.string().required().default('USD'),
+    bankCode: Yup.string().required('Bank code is required')
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -80,9 +83,14 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
       isGoingReinState: true,
       interestRate: data.interestRate,
       termRange: data.termRange,
-      description: 'description',
+      description: data?.description || '',
+      isUsingInvestFund: checked,
     });
   };
+
+  const handleChangeCheckBox = (isCheck: boolean) => {
+    setChecked(isCheck);
+  }
 
   return (
     <div
@@ -124,7 +132,9 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
         <TextField
           type="number"
           fullWidth
-          inputProps={{ step: 'any' }}
+          inputProps={{
+            step: "0.0000001"
+          }}
           sx={{ mt: 1, display: 'block' }}
           id="outlined-bank-saving-input-money"
           label={`*${content.inputMoney}`}
@@ -136,7 +146,9 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
         <TextField
           type="number"
           fullWidth
-          inputProps={{ step: 'any' }}
+          inputProps={{
+            step: "0.0000001"
+          }}
           sx={{ mt: 1, display: 'block' }}
           id="outlined-bank-savings-interest-rate"
           label={`*${content.interestRate}`}
@@ -148,7 +160,9 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
         <TextField
           type="number"
           fullWidth
-          inputProps={{ step: 'any' }}
+          inputProps={{
+            step: "0.0000001"
+          }}
           sx={{ mt: 1, display: 'block' }}
           id="outlined-bank-savings-term-range"
           label={`*${content.termRange} (${content.months})`}
@@ -156,6 +170,17 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
           variant="outlined"
           error={typeof errors.termRange?.message !== 'undefined'}
           helperText={errors.termRange?.message}
+        ></TextField>
+        <TextField
+          type="text"
+          fullWidth
+          sx={{ mt: 1, display: 'block' }}
+          id="outlined-bank-savings-bank-code"
+          label={`*${content.bankCode}`}
+          {...register('bankCode')}
+          variant="outlined"
+          error={typeof errors.bankCode?.message !== 'undefined'}
+          helperText={errors.bankCode?.message}
         ></TextField>
         <Grid container spacing={isXs ? 1 : 2}>
           <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
@@ -193,18 +218,6 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
             </LocalizationProvider>
           </Grid>
         </Grid>
-
-        <TextField
-          type="text"
-          fullWidth
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-bank-savings-bank-code"
-          label={content.bankCode}
-          {...register('bankCode')}
-          variant="outlined"
-          error={typeof errors.bankCode?.message !== 'undefined'}
-          helperText={errors.bankCode?.message}
-        ></TextField>
         {/* <TextField
           type="number"
           fullWidth
@@ -225,6 +238,10 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
           error={typeof errors.description?.message !== 'undefined'}
           helperText={errors.description?.message}
         ></TextField>
+        <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ my: 1 }}>
+          <CheckBoxButton color='primary' onChange={handleChangeCheckBox} />
+          <h4>Is money from invest fund?</h4>
+        </Box>
       </Box>
       <Box
         sx={{

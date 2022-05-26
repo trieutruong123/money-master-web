@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { Box, IconButton, useTheme } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { portfolioDetailStore, rootStore } from 'shared/store';
@@ -7,17 +7,18 @@ import { NewRealEstateAsset, UpdatedRealEstateItem } from 'shared/types';
 import { AssetTypeName } from 'shared/constants';
 import { BuyRealEstateForm } from './buy-real-estate-form';
 interface IProps {
-  openPreviousForm: (params:any)=>void;
-  handleClose: ()=>void;
+  openPreviousForm: (params: any) => void;
+  handleClose: () => void;
   content: any;
 }
 
 export const AddNewRealEstateForm = observer(
   ({ handleClose, openPreviousForm, content }: IProps) => {
+    const [errorMessage, setErrorMessage] = useState<string>('');
     const theme = useTheme();
 
     useEffect(() => {
-      const fetchAssetPrice = async () => {};
+      const fetchAssetPrice = async () => { };
       fetchAssetPrice();
     }, []);
 
@@ -28,16 +29,23 @@ export const AddNewRealEstateForm = observer(
       });
     };
 
-    const portfolioName = 'demo portoflio';
+    const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
 
     const handleFormSubmit = async (data: NewRealEstateAsset) => {
+      console.log(data);
       const res = await portfolioDetailStore.addNewRealEstate(data);
       if (res.isError) {
-        rootStore.raiseError(res.data.en);
+        if (data.isUsingInvestFund) {
+          setErrorMessage(res.data);
+        }
+        else {
+          rootStore.raiseError(res?.data.en);
+          handleClose();
+        }
       } else {
         rootStore.raiseNotification(res.data.en, 'success');
+        handleClose();
       }
-      handleClose();
     };
 
     return (
@@ -72,6 +80,7 @@ export const AddNewRealEstateForm = observer(
             {portfolioName}
           </p>
         </div>
+        <Typography variant='body1' color='error'>{errorMessage}</Typography>
         <Box
           sx={{
             [theme.breakpoints.down('sm')]: { height: '470px' },
@@ -81,7 +90,7 @@ export const AddNewRealEstateForm = observer(
             },
           }}
         >
-          <BuyRealEstateForm content = {content} handleFormSubmit={handleFormSubmit} />
+          <BuyRealEstateForm content={content} handleFormSubmit={handleFormSubmit} />
         </Box>
       </div>
     );

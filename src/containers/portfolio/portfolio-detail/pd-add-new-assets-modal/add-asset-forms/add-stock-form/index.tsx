@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { Box, IconButton, useTheme } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NewStockAsset } from 'shared/types';
@@ -9,8 +9,8 @@ import { BuyStockForm } from './buy-stock-form';
 
 interface IProps {
   stockId: string;
-  openPreviousForm: (params:any)=>void;
-  handleClose: ()=>void;
+  openPreviousForm: (params: any) => void;
+  handleClose: () => void;
   selectedStock: { id: string; name: string; symbol: string };
   content: any;
 }
@@ -23,6 +23,7 @@ export const AddNewStockForm = observer(
     selectedStock,
     content,
   }: IProps) => {
+    const [errorMessage, setErrorMessage] = useState<string>('');
     const theme = useTheme();
 
     useEffect(() => {
@@ -36,18 +37,24 @@ export const AddNewStockForm = observer(
       openPreviousForm({ curFormType: 'transaction', selectedType: AssetTypeName.stock });
     };
 
-    const portfolioName = 'Portoflio';
+    const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
     const assetName = selectedStock.name.toUpperCase();
     const currenPrice = portfolioDetailStore.searchedStockDetail?.c;
 
     const handleFormSubmit = async (data: NewStockAsset) => {
       const res: any = await portfolioDetailStore.addNewStock(data);
       if (res.isError) {
-        rootStore.raiseError(res.data.en);
+        if (data.isUsingInvestFund) {
+          setErrorMessage(res.data);
+        }
+        else {
+          rootStore.raiseError(res?.data.en);
+          handleClose();
+        }
       } else {
         rootStore.raiseNotification(res.data.en, 'success');
+        handleClose();
       }
-      handleClose();
     };
 
     return (
@@ -85,6 +92,7 @@ export const AddNewStockForm = observer(
             {assetName}: ${currenPrice}
           </p>
         </div>
+        <Typography variant='body1' color='error'>{errorMessage}</Typography>
         <Box
           sx={{
             [theme.breakpoints.down('sm')]: { height: '450px' },

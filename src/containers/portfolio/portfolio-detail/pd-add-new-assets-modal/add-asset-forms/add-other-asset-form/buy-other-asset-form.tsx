@@ -20,6 +20,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { PersonalInterestCustomAssetItem } from 'shared/models';
 import { portfolioDetailStore } from 'shared/store';
+import CheckBoxButton from 'shared/components/checkbox';
 
 type FormValues = {
   name: string;
@@ -50,6 +51,7 @@ export const BuyOtherAssetForm = ({
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down('md'));
 
+  const [checked, setChecked] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -89,8 +91,13 @@ export const BuyOtherAssetForm = ({
       interestRate: data.interestRate,
       termRange: data.termRange,
       description: data.description,
+      isUsingInvestFund: checked,
     });
   };
+
+  const handleChangeCheckBox = (isCheck: boolean) => {
+    setChecked(isCheck);
+  }
 
   return (
     <div
@@ -258,6 +265,10 @@ export const BuyOtherAssetForm = ({
           error={typeof errors.description?.message !== 'undefined'}
           helperText={errors.description?.message}
         ></TextField>
+        <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ my: 1 }}>
+          <CheckBoxButton color='primary' onChange={handleChangeCheckBox} />
+          <h4>Is money from invest fund?</h4>
+        </Box>
       </Box>
       <Box
         sx={{

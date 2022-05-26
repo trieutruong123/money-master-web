@@ -112,29 +112,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
         spacing={2}
         sx={{ display: 'flex', alignItems: 'stretch' }}
       >
-        {typeof cashDetail !== undefined &&
-        cashDetail?.length &&
-        typeof realEstateDetail !== undefined &&
-        realEstateDetail?.length ? (
-          <>
-            <Grid item xl={4} lg={4} md={4} sm={4} xs={12} mt="1rem">
-              <CashInvestments
-                content={content.cashTable}
-                cashDetail={cashDetail}
-                deleteAsset={deleteAsset}
-                transferAssetToInvestFund={transferAssetToInvestFund}
-              ></CashInvestments>
-            </Grid>
-            <Grid item xl={8} lg={8} md={8} sm={8} xs={12} mt="1rem">
-              <RealEstateInvesments
-                content={content.realEstateTable}
-                realEstateDetail={realEstateDetail}
-                deleteAsset={deleteAsset}
-                transferAssetToInvestFund={transferAssetToInvestFund}
-              ></RealEstateInvesments>
-            </Grid>
-          </>
-        ) : typeof cashDetail !== undefined && cashDetail?.length ? (
+        {typeof cashDetail !== undefined && cashDetail?.length ? (
           <Grid item xs={12} mt="1rem">
             <CashInvestments
               content={content.cashTable}
@@ -143,7 +121,9 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
               transferAssetToInvestFund={transferAssetToInvestFund}
             ></CashInvestments>
           </Grid>
-        ) : (
+        ) : null
+        }
+        {typeof realEstateDetail !== undefined && realEstateDetail?.length ? (
           <Grid item xs={12} mt="1rem">
             <RealEstateInvesments
               content={content.realEstateTable}
@@ -152,7 +132,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
               transferAssetToInvestFund={transferAssetToInvestFund}
             ></RealEstateInvesments>
           </Grid>
-        )}
+        ) : null}
         {typeof bankingDetail !== undefined && bankingDetail?.length ? (
           <Grid item lg={12} md={12} xl={12} xs={12}>
             <OtherCustomAssetInvestments

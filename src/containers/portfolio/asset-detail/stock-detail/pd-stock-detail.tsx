@@ -23,9 +23,9 @@ import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
 import { PAStockBreadcrumbTabs } from 'shared/constants/portfolio-asset';
 import { TabContext, TabList } from '@mui/lab';
 
-interface IProps {}
+interface IProps { }
 
-const StockVolatilityDetail = observer(({}: IProps) => {
+const StockVolatilityDetail = observer(({ }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
@@ -53,7 +53,6 @@ const StockVolatilityDetail = observer(({}: IProps) => {
     };
     rootStore.startLoading();
     if (portfolioId && stockId) {
-      console.log('fetch data ');
       fetchData();
     }
     rootStore.stopLoading();
@@ -103,9 +102,9 @@ const StockVolatilityDetail = observer(({}: IProps) => {
               displayNameArr={[
                 'Portfolio',
                 stockVolatilityDetailStore.portfolioInfo?.name ||
-                  stockVolatilityDetailStore.portfolioId.toString(),
+                stockVolatilityDetailStore.portfolioId.toString(),
                 stockVolatilityDetailStore.stockDetail?.stockCode ||
-                  stockVolatilityDetailStore.stockId.toString(),
+                stockVolatilityDetailStore.stockId.toString(),
               ]}
             />
             <Typography sx={{ mb: 3 }} variant="h4">
@@ -143,7 +142,7 @@ const StockVolatilityDetail = observer(({}: IProps) => {
           </Container>
           <Box sx={{ overflow: 'hidden' }}>
             <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-              <Grid  display="flex" justifyContent="center" flexDirection = 'column' >
+              <Grid display="flex" justifyContent="center" flexDirection='column' >
                 {stockVolatilityDetailStore.selectedTab ===
                   PAStockBreadcrumbTabs.overview ? (
                   <Suspense fallback={<HypnosisLoading />}>
@@ -156,7 +155,7 @@ const StockVolatilityDetail = observer(({}: IProps) => {
                       }
                     />
                   </Suspense>
-                ):null}
+                ) : null}
                 {stockVolatilityDetailStore.selectedTab ===
                   PAStockBreadcrumbTabs.insight ? (
                   <Suspense fallback={<HypnosisLoading />}>
@@ -165,13 +164,13 @@ const StockVolatilityDetail = observer(({}: IProps) => {
                       handleDateSelectionChanged={handleDateSelectionChanged}
                     />
                   </Suspense>
-                ):null}
+                ) : null}
                 {stockVolatilityDetailStore.selectedTab ===
                   PAStockBreadcrumbTabs.settings ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <h1>You are in setting tab</h1>
                   </Suspense>
-                ):null}
+                ) : null}
               </Grid>
             </Container>
           </Box>

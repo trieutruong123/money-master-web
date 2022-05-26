@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, IconButton, useTheme } from '@mui/material';
+import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NewCashAsset } from 'shared/types';
@@ -8,17 +8,18 @@ import { AssetTypeName } from 'shared/constants';
 import { BuyCashForm } from './buy-cash-form';
 
 interface IProps {
-  openPreviousForm: (params:any)=>void;
-  handleClose: ()=>void;
+  openPreviousForm: (params: any) => void;
+  handleClose: () => void;
   content: any;
 }
 
 export const AddNewCashForm = observer(
   ({ handleClose, openPreviousForm, content }: IProps) => {
+    const [errorMessage, setErrorMessage] = useState<string>('');
     const theme = useTheme();
 
     useEffect(() => {
-      const fetchAssetPrice = async () => {};
+      const fetchAssetPrice = async () => { };
       fetchAssetPrice();
     }, []);
 
@@ -29,16 +30,22 @@ export const AddNewCashForm = observer(
       });
     };
 
-    const portfolioName = 'demo portoflio';
+    const portfolioName = portfolioDetailStore.portfolioInfo?.name || "";
 
     const handleFormSubmit = async (data: NewCashAsset) => {
       const res = await portfolioDetailStore.addNewCash(data);
       if (res.isError) {
-        rootStore.raiseError(res.data.en);
+        if (data.isUsingInvestFund) {
+          setErrorMessage(res.data);
+        }
+        else {
+          rootStore.raiseError(res?.data.en);
+          handleClose();
+        }
       } else {
         rootStore.raiseNotification(res.data.en, 'success');
+        handleClose();
       }
-      handleClose();
     };
 
     return (
@@ -73,6 +80,7 @@ export const AddNewCashForm = observer(
             {portfolioName}
           </p>
         </div>
+        <Typography variant='body1' color='error'>{errorMessage}</Typography>
         <Box
           sx={{
             [theme.breakpoints.down('sm')]: { height: '470px' },

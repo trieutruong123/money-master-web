@@ -18,6 +18,7 @@ import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getSupportedCurrencyList } from 'shared/helpers';
+import CheckBoxButton from 'shared/components/checkbox';
 
 type FormValues = {
   purchasePrice: number;
@@ -41,6 +42,7 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [checked, setChecked] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(new Date());
 
   const validationSchema = Yup.object().shape({
@@ -75,8 +77,13 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
       currentPrice: data.currentPrice,
       name: data.name,
       description: data.description,
+      isUsingInvestFund: checked,
     });
   };
+
+  const handleChangeCheckBox = (isCheck: boolean) => {
+    setChecked(isCheck);
+  }
 
   return (
     <Box
@@ -189,6 +196,10 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
             error={typeof errors.description?.message !== 'undefined'}
             helperText={errors.description?.message}
           ></TextField>
+          <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ my: 1 }}>
+            <CheckBoxButton color='primary' onChange={handleChangeCheckBox} />
+            <h4>Is money from invest fund?</h4>
+          </Box>
         </Grid>
       </Box>
       <Box

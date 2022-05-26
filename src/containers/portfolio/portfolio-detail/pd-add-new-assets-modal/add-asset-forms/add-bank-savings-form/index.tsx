@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -15,10 +15,10 @@ interface IProps {
 
 export const AddNewBankSavingsForm = observer(
   ({ handleClose, openPreviousForm, content }: IProps) => {
+    const [errorMessage, setErrorMessage] = useState<string>('')
     const theme = useTheme();
-
     useEffect(() => {
-      const fetchAssetPrice = async () => {};
+      const fetchAssetPrice = async () => { };
       fetchAssetPrice();
     }, []);
 
@@ -29,16 +29,23 @@ export const AddNewBankSavingsForm = observer(
       });
     };
 
-    const portfolioName = 'demo portoflio';
+    const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
 
     const handleFormSubmit = async (data: NewBanksSavingAsset) => {
       const res = await portfolioDetailStore.addNewBankSaving(data);
+      console.log(data);
       if (res.isError) {
-        rootStore.raiseError(res.data.en);
+        if (data.isUsingInvestFund) {
+          setErrorMessage(res.data);
+        }
+        else {
+          rootStore.raiseError(res?.data.en);
+          handleClose();
+        }
       } else {
         rootStore.raiseNotification(res.data.en, 'success');
+        handleClose();
       }
-      handleClose();
     };
 
     return (
@@ -73,6 +80,7 @@ export const AddNewBankSavingsForm = observer(
             {portfolioName}
           </p>
         </div>
+        <Typography variant='body1' color='error'>{errorMessage}</Typography>
         <Box
           sx={{
             [theme.breakpoints.down('sm')]: { height: '470px' },
