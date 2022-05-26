@@ -17,15 +17,14 @@ import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
 import { PDBreadcrumbTabs } from 'shared/constants';
 import { AddNewAssetsModal } from './pd-add-new-assets-modal';
 import { DeleteAssetModal } from './pd-delete-asset-modal';
-import { DonutChart, HorizontalBarChart } from './pd-insight-chart';
-import { TransferAssetToInvestFund } from './pd-transfer-to-invest-fund-modal';
+import { PDTransferToInvestFundForm } from './pd-transfer-to-invest-fund-modal/pd-transfer-to-invest-fund-form';
 import { TabContext, TabList } from '@mui/lab';
 import { useRouter } from 'next/router';
 
-const PDReportTab = lazy(() => import('./pd-report-tab'));
+const PDReportTab = lazy(() => import('./pd-report-tab/pd-report-tab-main'));
 const PDHoldingsTab = lazy(() => import('./pd-holdings-tab'));
-const PDInvestFundTab = lazy(() => import('./pd-invest-fund-tab'));
-const PDSettingsTab = lazy(() => import('./pd-settings-tab'));
+const PDInvestFundTab = lazy(() => import('./pd-invest-fund-tab/pd-invest-fund-main'));
+const PDSettingsTab = lazy(() => import('./pd-settings-tab/pd-settings-tab-main'));
 
 interface IProps {
   content: any;
@@ -150,7 +149,7 @@ const PortfolioDetail = observer(({ content }: IProps) => {
       </Box>
       <AddNewAssetsModal content={content.addNewAssets} />
       <DeleteAssetModal />
-      <TransferAssetToInvestFund />
+      <PDTransferToInvestFundForm />
       <Tooltip title="Add new asset">
         <IconButton
           onClick={() => {

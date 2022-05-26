@@ -2,7 +2,7 @@ import { Box, Modal } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { observer } from 'mobx-react-lite';
 import { portfolioDetailStore } from 'shared/store';
-import { TransferToInvestFundForm } from './transfer-to-invest-fund-form';
+import { PDTransferToInvestFundForm } from './pd-transfer-to-invest-fund-form';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
   position: 'absolute',
@@ -25,7 +25,7 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
   },
 }));
 
-export const TransferAssetToInvestFund = observer(() => {
+export const PDTransferAssetToInvestFundModal = observer(() => {
   const { isOpenTransferToInvestFundModal } = portfolioDetailStore;
 
   const handleClose = () => {
@@ -41,7 +41,7 @@ export const TransferAssetToInvestFund = observer(() => {
         aria-describedby="modal-modal-delete-asset-modal"
       >
         <StyledModal>
-          <TransferToInvestFundForm />
+          <PDTransferToInvestFundForm />
         </StyledModal>
       </Modal>
     </Box>

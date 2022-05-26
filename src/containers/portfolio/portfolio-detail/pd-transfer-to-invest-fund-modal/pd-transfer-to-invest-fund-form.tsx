@@ -34,7 +34,7 @@ interface FormValues {
   amount: number;
 }
 
-export const TransferToInvestFundForm = () => {
+export const PDTransferToInvestFundForm = () => {
   const theme = useTheme();
   const { transferedAssetInfo } = portfolioDetailStore;
   const transferedAssetDetail = portfolioDetailStore.findAssetByIdAndType(
