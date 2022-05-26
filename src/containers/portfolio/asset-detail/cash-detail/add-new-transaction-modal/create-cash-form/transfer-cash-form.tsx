@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/lab";
 import { Box, Button, TextField, useTheme } from "@mui/material";
@@ -10,9 +10,10 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import MenuItem from '@mui/material/MenuItem';
 import { cashDetailStore, portfolioDetailStore } from "shared/store";
-import { currencyList } from "shared/helpers";
+import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { ConstructionOutlined } from "@mui/icons-material";
 
 type FormValues = {
   destinationAssetId: number;
@@ -51,7 +52,12 @@ export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
     cashDetailStore.setOpenAddNewTransactionModal(false);
   };
 
-
+  const [currencyList,setCurrencyList]=React.useState<any>({});
+  useEffect(()=>{
+    getSupportedCurrencyList().forEach(currency=>{
+      setCurrencyList((prevState:any)=>({...prevState,[currency.code]:currency.name})
+    )})
+  },[])
 
   const [destinationAssetId, setDestinationAssetId] = React.useState('');
   const [currencyCode, setCurrencyCode] = React.useState('');

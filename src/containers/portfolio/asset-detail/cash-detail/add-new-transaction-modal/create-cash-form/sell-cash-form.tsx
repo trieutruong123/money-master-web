@@ -10,7 +10,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import MenuItem from '@mui/material/MenuItem';
 import { cashDetailStore, portfolioDetailStore } from "shared/store";
-import { currencyList } from "shared/helpers";
+import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
@@ -49,7 +49,13 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
     cashDetailStore.setOpenAddNewTransactionModal(false);
   };
 
-  
+  const [currencyList,setCurrencyList]=React.useState<any>({});
+  React.useEffect(()=>{
+    getSupportedCurrencyList().forEach(currency=>{
+      setCurrencyList((prevState:any)=>({...prevState,[currency.code]:currency.name})
+    )})
+  },[])
+
   const [currencyCode, setCurrencyCode] = React.useState('');
   
   const handleChangeCurrencyCode = (event: SelectChangeEvent) => {
