@@ -17,9 +17,9 @@ import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
 import { PDBreadcrumbTabs } from 'shared/constants';
 import { AddNewAssetsModal } from './pd-add-new-assets-modal';
 import { DeleteAssetModal } from './pd-delete-asset-modal';
-import { PDTransferToInvestFundForm } from './pd-transfer-to-invest-fund-modal/pd-transfer-to-invest-fund-form';
 import { TabContext, TabList } from '@mui/lab';
 import { useRouter } from 'next/router';
+import { PDTransferAssetToInvestFundModal } from './pd-transfer-to-invest-fund-modal/pd-transfer-to-invest-fund-modal';
 
 const PDReportTab = lazy(() => import('./pd-report-tab/pd-report-tab-main'));
 const PDHoldingsTab = lazy(() => import('./pd-holdings-tab'));
@@ -149,7 +149,7 @@ const PortfolioDetail = observer(({ content }: IProps) => {
       </Box>
       <AddNewAssetsModal content={content.addNewAssets} />
       <DeleteAssetModal />
-      <PDTransferToInvestFundForm />
+      <PDTransferAssetToInvestFundModal />
       <Tooltip title="Add new asset">
         <IconButton
           onClick={() => {

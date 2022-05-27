@@ -35,7 +35,7 @@ interface IProps {
 export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
   const [isAddingNewAssetType, setOpenNewAssetType] = useState<boolean>(false);
   const [newAssetType, setAssetType] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const CategoryList = [
     {
       id: uuid(),
@@ -85,7 +85,11 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (
+      event.key === 'Enter' &&
+      typeof newAssetType !== 'undefined' &&
+      newAssetType.length > 0
+    ) {
       portfolioDetailStore.addNewCustomAsseType({ name: newAssetType });
       setAssetType('');
       setOpenNewAssetType(false);
@@ -98,8 +102,7 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
       setAssetType('');
       setOpenNewAssetType(false);
       setErrorMessage('');
-    }
-    else {
+    } else {
       setErrorMessage('Type name is required');
     }
   };

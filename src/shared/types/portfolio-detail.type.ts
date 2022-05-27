@@ -110,13 +110,14 @@ export type SankeyDataLink = {
 };
 
 export type AssetType =
-  | "crypto"
-  | "stock"
-  | "cash"
-  | "bankSaving"
-  | "realEstate"
-  | "comodity"
-  | "custom";
+  | 'crypto'
+  | 'stock'
+  | 'cash'
+  | 'bankSaving'
+  | 'realEstate'
+  | 'custom'
+  | 'fund'
+  | '';
 
 //Type for portfolio detail tabs
 //export type PDTabsType = 'holdings' | 'report' | 'investFund' | 'settings';
