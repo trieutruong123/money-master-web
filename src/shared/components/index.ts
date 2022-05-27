@@ -9,6 +9,8 @@ import {
   CircularLoading,
   FadingBallsLoading,
 } from './loading';
+import CustomNoRowsOverlay from './custom-no-rows-overlay';
+import TabPanel from './tab-panel';
 
 export {
   Link,
@@ -19,5 +21,7 @@ export {
   BarWaveLoading,
   CircularLoading,
   FadingBallsLoading,
-  TransactionTypeIcon
+  TransactionTypeIcon,
+  CustomNoRowsOverlay,
+  TabPanel,
 };

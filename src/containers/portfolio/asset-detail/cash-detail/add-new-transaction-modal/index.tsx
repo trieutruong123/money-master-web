@@ -1,7 +1,7 @@
 import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { styled } from '@mui/material/styles';
-import { cryptoVolatilityDetailStore, portfolioDetailStore } from 'shared/store';
+import { cashDetailStore, portfolioDetailStore } from 'shared/store';
 import { CreateCashForm } from './create-cash-form';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
@@ -37,10 +37,10 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
 }));
 
 export const AddNewTransactionModal = observer(() => {
-  const { isOpenAddNewTransactionModal } = cryptoVolatilityDetailStore;
+  const { isOpenAddNewTransactionModal } = cashDetailStore;
 
   const handleClose = () => {
-    cryptoVolatilityDetailStore.setOpenAddNewTransactionModal(false);
+    cashDetailStore.setOpenAddNewTransactionModal(false);
   };
 
   return (

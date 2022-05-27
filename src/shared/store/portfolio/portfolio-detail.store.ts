@@ -128,6 +128,7 @@ class PortfolioDetailStore {
 
       getStockInfoById: action,
       getCryptoInfoById: action,
+      getCashAssetById: action,
 
       isMissingHoldingsData: computed,
       isMissingReportData: computed,
@@ -669,6 +670,10 @@ class PortfolioDetailStore {
       this.investFundTransactionHistory === undefined &&
       this.investFundDetail === undefined
     );
+  }
+
+  getCashAssetById(cashId: number) {
+    return this.cashDetail?.find((asset) => asset.id == cashId);
   }
 
   get isMissingHoldingsData(): boolean {
