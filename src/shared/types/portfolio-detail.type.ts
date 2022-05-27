@@ -110,7 +110,7 @@ export type SankeyDataLink = {
 };
 
 export type AssetType =
-  | 'crypto'
+  | 'cryptoCurrency'
   | 'stock'
   | 'cash'
   | 'bankSaving'

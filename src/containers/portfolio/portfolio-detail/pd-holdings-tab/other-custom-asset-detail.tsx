@@ -201,7 +201,7 @@ export const OtherCustomAssetInvestments = ({
                     </Tooltip>
                     <TableBodyCell>
                       <SettingsMenuButton
-                        assetType={AssetTypeName.others}
+                        assetType={AssetTypeName.custom}
                         assetId={item.id.toString()}
                         portfolioId={
                           Array.isArray(portfolioId)

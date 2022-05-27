@@ -69,7 +69,7 @@ export const DonutChart = ({ pieChartData, content }: IProps) => {
     colors: colors,
     legend: {
       formatter: function (val: string, opts: any) {
-        return val + ' - ' + opts.w.globals.series[opts.seriesIndex] + '%';
+        return `${val} - ${opts.w.globals.series[opts.seriesIndex]||0}%`;
       },
       title: {
         display: true,

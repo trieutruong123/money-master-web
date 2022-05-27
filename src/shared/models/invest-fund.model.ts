@@ -4,6 +4,7 @@ export class InvestFundTransactionItem {
   id: number = 0;
   referentialAssetId: number = 0;
   referentialAssetType: AssetType | undefined = undefined;
+  referentialAssetName: string = '';
   amount: number = 0;
   currencyCode: string = '';
   createdAt: string = '';

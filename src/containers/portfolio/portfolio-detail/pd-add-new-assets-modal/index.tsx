@@ -103,7 +103,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           [
             AssetTypeName.realEstate,
             AssetTypeName.bankSaving,
-            AssetTypeName.others,
+            AssetTypeName.custom,
             AssetTypeName.cash,
           ].includes(params.selectedType)
         )
@@ -130,7 +130,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
         break;
       case 'transaction':
         if (
-          [AssetTypeName.stock, AssetTypeName.crypoCurrency].includes(
+          [AssetTypeName.stock, AssetTypeName.cryptoCurrency].includes(
             params.selectedType,
           )
         )
@@ -139,7 +139,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           [
             AssetTypeName.realEstate,
             AssetTypeName.bankSaving,
-            AssetTypeName.others,
+            AssetTypeName.custom,
             AssetTypeName.cash,
           ].includes(params.selectedType)
         )
@@ -204,7 +204,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
           />,
         );
         break;
-      case AssetTypeName.others:
+      case AssetTypeName.custom:
         setCurrent(
           <AddOtherAssetForm
             customAssetList={portfolioDetailStore.customAssetList}

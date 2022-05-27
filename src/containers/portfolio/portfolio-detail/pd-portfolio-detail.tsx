@@ -22,9 +22,13 @@ import { useRouter } from 'next/router';
 import { PDTransferAssetToInvestFundModal } from './pd-transfer-to-invest-fund-modal/pd-transfer-to-invest-fund-modal';
 
 const PDReportTab = lazy(() => import('./pd-report-tab/pd-report-tab-main'));
-const PDHoldingsTab = lazy(() => import('./pd-holdings-tab'));
-const PDInvestFundTab = lazy(() => import('./pd-invest-fund-tab/pd-invest-fund-main'));
-const PDSettingsTab = lazy(() => import('./pd-settings-tab/pd-settings-tab-main'));
+const PDHoldingsTab = lazy(() => import('./pd-holdings-tab/pd-holdings-tab-main'));
+const PDInvestFundTab = lazy(
+  () => import('./pd-invest-fund-tab/pd-invest-fund-main'),
+);
+const PDSettingsTab = lazy(
+  () => import('./pd-settings-tab/pd-settings-tab-main'),
+);
 
 interface IProps {
   content: any;
@@ -48,19 +52,8 @@ const PortfolioDetail = observer(({ content }: IProps) => {
     portfolioDetailStore.setPortfolioId(portfolioId);
 
     rootStore.stopLoading();
-  }, [rootStore, portfolioDetailStore, portfolioId]);
-
-  useEffect(() => {
-    const { portfolioId } = portfolioDetailStore;
-    const fetchData = async () => {
-      await portfolioDetailStore.fetchInitialData();
-    };
-    rootStore.startLoading();
-    if (portfolioId) {
-      fetchData();
-    }
-    rootStore.stopLoading();
-  }, [portfolioDetailStore.portfolioId, rootStore]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [portfolioId]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     portfolioDetailStore.setSelectedTabs(newValue);
@@ -93,7 +86,7 @@ const PortfolioDetail = observer(({ content }: IProps) => {
               displayNameArr={[
                 'Portfolio',
                 portfolioDetailStore.portfolioInfo?.name ||
-                portfolioDetailStore.portfolioId.toString(),
+                  portfolioDetailStore.portfolioId.toString(),
               ]}
             />
             <Typography sx={{ mb: 1 }} variant="h4">
@@ -121,7 +114,7 @@ const PortfolioDetail = observer(({ content }: IProps) => {
             </TabContext>
             <Grid container display="flex" justifyContent="center" width="100%">
               {portfolioDetailStore.selectedTabs ===
-                PDBreadcrumbTabs.holdings ? (
+              PDBreadcrumbTabs.holdings ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
                   <PDHoldingsTab content={content} />
                 </Suspense>
@@ -132,13 +125,13 @@ const PortfolioDetail = observer(({ content }: IProps) => {
                 </Suspense>
               ) : null}
               {portfolioDetailStore.selectedTabs ===
-                PDBreadcrumbTabs.investFund ? (
+              PDBreadcrumbTabs.investFund ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
                   <PDInvestFundTab />
                 </Suspense>
               ) : null}
               {portfolioDetailStore.selectedTabs ===
-                PDBreadcrumbTabs.settings ? (
+              PDBreadcrumbTabs.settings ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
                   <PDSettingsTab />
                 </Suspense>

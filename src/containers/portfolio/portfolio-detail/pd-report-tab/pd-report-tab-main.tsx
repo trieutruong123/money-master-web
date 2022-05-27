@@ -14,12 +14,17 @@ const PDReportTab = observer(({ content }: IProps) => {
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
-      await portfolioDetailStore.fetchPieChartData();
-      await portfolioDetailStore.fetchSankeyFlowData();
+      await portfolioDetailStore.fetchReportData();
       rootStore.stopLoading();
     };
-    if (portfolioDetailStore.isMissingReportData ) fetchData();
-  }, []);
+    if (
+      portfolioDetailStore.isMissingReportData ||
+      portfolioDetailStore.needUpdatedReportData
+    )
+      fetchData();
+      portfolioDetailStore.setUpdateReport(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [portfolioDetailStore.needUpdatedReportData]);
 
   const { pieChartData } = portfolioDetailStore;
 
@@ -27,8 +32,13 @@ const PDReportTab = observer(({ content }: IProps) => {
     <Grid
       container
       item
-      spacing={2} 
-      sx={{width:'inherit', display: 'flex', alignItems: 'stretch',justifyContent:"center" }}
+      spacing={2}
+      sx={{
+        width: 'inherit',
+        display: 'flex',
+        alignItems: 'stretch',
+        justifyContent: 'center',
+      }}
     >
       <Grid
         item

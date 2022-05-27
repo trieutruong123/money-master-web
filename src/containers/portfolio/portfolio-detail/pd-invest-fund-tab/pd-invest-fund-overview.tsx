@@ -1,11 +1,13 @@
 import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
+import { getCurrencyByCode } from 'shared/helpers';
 import { InvestFundResponse } from 'shared/models';
+import { roundAndAddDotAndCommaSeparator } from 'utils';
 
-interface IProps{
-    investFundDetail: InvestFundResponse,
+interface IProps {
+  investFundDetail: InvestFundResponse;
 }
 
-const PDInvestFundOverview = ({investFundDetail}:IProps) => {
+const PDInvestFundOverview = ({ investFundDetail }: IProps) => {
   return (
     <Card
       sx={{
@@ -41,55 +43,17 @@ const PDInvestFundOverview = ({investFundDetail}:IProps) => {
               alignItems="center"
               justifyContent="center"
             >
-              <Typography
-                variant="h5"
-                fontWeight="bold"
-                textTransform="uppercase"
-              >
-                {assetDetail?.cryptoCoinCode} &nbsp;
-              </Typography>
 
-              <Typography variant="h2" fontWeight="bold">
-                {getCurrencyByCode(assetDetail.currencyCode || '')?.symbol}
-                {precisionRound(
-                  assetDetail?.currentAmountHolding * assetDetail?.currentPrice,
+              <Typography variant="h3" fontWeight="bold">
+                {
+                  getCurrencyByCode(investFundDetail.initialCurrency || '')
+                    ?.symbol
+                }
+                {roundAndAddDotAndCommaSeparator(
+                  investFundDetail?.currentAmount,
                   4,
                 )}
               </Typography>
-            </Grid>
-            <Grid
-              container
-              direction="row"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Typography variant="body1">Open @ avg. price: &nbsp;</Typography>
-              <Typography variant="body1" color={'success.main'}>
-                {assetDetail?.currentAmountHolding} @{' '}
-                {getCurrencyByCode(assetDetail.currencyCode || '')?.symbol}
-                {assetDetail?.currentPrice}
-              </Typography>
-            </Grid>
-            <Grid
-              container
-              direction="row"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              {/* <Typography variant="body1">24H change: &nbsp;</Typography>
-            {render24HChange()} */}
-            </Grid>
-            <Grid
-              container
-              direction="row"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              {/* <Typography variant="body1">Total P/L: &nbsp;</Typography>
-            {renderTotalPL()} */}
             </Grid>
           </Stack>
         </CardContent>

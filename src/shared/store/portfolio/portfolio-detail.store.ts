@@ -1,5 +1,12 @@
+import { CustomAssetItem } from './../../models/portfolio-asset.model';
 import { InvestFundResponse } from './../../models/portfolio.model';
-import { action, computed, makeAutoObservable, observable } from 'mobx';
+import {
+  action,
+  computed,
+  makeAutoObservable,
+  observable,
+  runInAction,
+} from 'mobx';
 import {
   coinGeckoService,
   httpService,
@@ -8,7 +15,6 @@ import {
 } from 'services';
 import { content } from 'i18n';
 import {
-  PortfolioAllocation,
   RealEstateItem,
   BankSavingItem,
   CashItem,
@@ -60,9 +66,14 @@ class PortfolioDetailStore {
   searchedCryptoDetail: any = undefined;
   selectedCustomAssetId: number = 0;
 
+  needUpdatedInvestFundData: boolean = false;
   investFundDetail: InvestFundResponse | undefined = undefined;
   investFundTransactionHistory: Array<InvestFundTransactionItem> | undefined =
     undefined;
+
+  needUpdatedReportData: boolean = false;
+  sankeyFlowData: Array<SankeyDataLink> = [];
+  pieChartData: Array<PieChartItem> | undefined = undefined;
 
   isOpenTransferToInvestFundModal: boolean = false;
   transferedAssetInfo:
@@ -73,9 +84,6 @@ class PortfolioDetailStore {
   deletedAssetInfo:
     | { assetType: AssetType; assetId: number; portfolioId: number }
     | undefined = undefined;
-
-  sankeyFlowData: Array<SankeyDataLink> = [];
-  pieChartData: Array<PieChartItem> | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this, {
@@ -91,6 +99,11 @@ class PortfolioDetailStore {
       bankingDetail: observable,
       customAssetDetail: observable,
 
+      needUpdatedReportData: observable,
+      sankeyFlowData: observable,
+      pieChartData: observable,
+
+      needUpdatedInvestFundData: observable,
       investFundDetail: observable,
       investFundTransactionHistory: observable,
 
@@ -102,13 +115,14 @@ class PortfolioDetailStore {
       isOpenDeleteAssetModal: observable,
       deletedAssetInfo: observable,
 
-      sankeyFlowData: observable,
-      pieChartData: observable,
-
       setOpenAddNewAssetModal: action,
       setOpenDeleteAssetModal: action,
       setPortfolioId: action,
       setSelectedCustomAssetId: action,
+      setTransferedAssetInfo: action,
+      setOpenTransferToInvestFundModal: action,
+      setUpdateInvestFund: action,
+      setUpdateReport: action,
 
       fetchRealEstate: action,
       fetchPersonalCustomAsset: action,
@@ -118,8 +132,9 @@ class PortfolioDetailStore {
       fetchStock: action,
       fetchCash: action,
       fetchPortfolioInfo: action,
-      fetchInvestFundData: action,
+      fetchInvestFundInfo: action,
       fetchInvestFundTransactionHistory: action,
+      fetchPieChartData: action,
 
       addNewBankSaving: action,
       addNewRealEstate: action,
@@ -184,6 +199,14 @@ class PortfolioDetailStore {
     };
   }
 
+  setUpdateReport(isNeedUpdated: boolean) {
+    this.needUpdatedReportData = isNeedUpdated;
+  }
+
+  setUpdateInvestFund(isNeedUpdated: boolean) {
+    this.needUpdatedInvestFundData = isNeedUpdated;
+  }
+
   async fetchInitialData() {
     this.currencyCode = 'usd';
 
@@ -195,7 +218,6 @@ class PortfolioDetailStore {
       await this.fetchStock(),
       await this.fetchRealEstate(),
       await this.fetchOtherCustomAsset(),
-      await this.fetchInvestFundData(),
     ]);
   }
 
@@ -207,10 +229,14 @@ class PortfolioDetailStore {
       const currentPortfolio = res.data.find(
         (item: Portfolio) => item.id == this.portfolioId,
       );
-      this.portfolioInfo = currentPortfolio;
-      this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
+      runInAction(() => {
+        this.portfolioInfo = currentPortfolio;
+        this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
+      });
     } else {
-      this.portfolioInfo = undefined;
+      runInAction(() => {
+        this.portfolioInfo = undefined;
+      });
     }
   }
 
@@ -219,10 +245,14 @@ class PortfolioDetailStore {
     const res: { isError: boolean; data: any } = await httpService.get(url);
 
     if (!res.isError) {
-      this.customAssetList = res.data;
+      runInAction(() => {
+        this.customAssetList = res.data;
+      });
     } else {
       rootStore.raiseError(content[rootStore.locale].error.default);
-      this.customAssetList = undefined;
+      runInAction(() => {
+        this.customAssetList = undefined;
+      });
     }
   }
 
@@ -230,12 +260,16 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/stock`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
-      this.stockDetail = res.data;
+      runInAction(() => {
+        this.stockDetail = res.data;
+      });
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,
       );
-      this.stockDetail = undefined;
+      runInAction(() => {
+        this.stockDetail = undefined;
+      });
     }
   }
 
@@ -243,12 +277,16 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/crypto`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
-      this.cryptoDetail = res.data;
+      runInAction(() => {
+        this.cryptoDetail = res.data;
+      });
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,
       );
-      this.cryptoDetail = undefined;
+      runInAction(() => {
+        this.cryptoDetail = undefined;
+      });
     }
   }
 
@@ -256,12 +294,16 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
-      this.bankingDetail = res.data;
+      runInAction(() => {
+        this.bankingDetail = res.data;
+      });
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,
       );
-      this.bankingDetail = undefined;
+      runInAction(() => {
+        this.bankingDetail = undefined;
+      });
     }
   }
 
@@ -269,12 +311,16 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/realEstate`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
-      this.realEstateDetail = res.data;
+      runInAction(() => {
+        this.realEstateDetail = res.data;
+      });
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,
       );
-      this.realEstateDetail = undefined;
+      runInAction(() => {
+        this.realEstateDetail = undefined;
+      });
     }
   }
 
@@ -282,12 +328,16 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/cash`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
-      this.cashDetail = res.data;
+      runInAction(() => {
+        this.cashDetail = res.data;
+      });
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,
       );
-      this.cashDetail = undefined;
+      runInAction(() => {
+        this.cashDetail = undefined;
+      });
     }
   }
 
@@ -295,17 +345,21 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/custom`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
-      this.customAssetDetail = res.data;
+      runInAction(() => {
+        this.customAssetDetail = res.data;
+      });
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,
       );
-      this.customAssetDetail = undefined;
+      runInAction(() => {
+        this.customAssetDetail = undefined;
+      });
     }
   }
+
   async addNewRealEstate(params: NewRealEstateAsset) {
     rootStore.startLoading();
-    console.log(params);
     const url = `/portfolio/${this.portfolioId}/realEstate`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
@@ -314,11 +368,10 @@ class PortfolioDetailStore {
     rootStore.stopLoading();
     if (!res.isError) {
       this.realEstateDetail?.push(res.data);
-      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else {
       if (params.isUsingInvestFund) {
-        return { isError: true, data: res.data };
+        return { isError: true, data: res.data.data };
       }
       return {
         isError: true,
@@ -337,11 +390,10 @@ class PortfolioDetailStore {
     rootStore.stopLoading();
     if (!res.isError) {
       this.bankingDetail?.push(res.data);
-      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else {
       if (params.isUsingInvestFund) {
-        return { isError: true, data: res.data };
+        return { isError: true, data: res.data.data };
       }
       return {
         isError: true,
@@ -360,11 +412,10 @@ class PortfolioDetailStore {
     rootStore.stopLoading();
     if (!res.isError) {
       this.cryptoDetail?.push(res.data);
-      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else {
       if (params.isUsingInvestFund) {
-        return { isError: true, data: res.data };
+        return { isError: true, data: res.data.data };
       }
       return {
         isError: true,
@@ -383,11 +434,10 @@ class PortfolioDetailStore {
     rootStore.stopLoading();
     if (!res.isError) {
       this.stockDetail?.push(res.data);
-      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else {
       if (params.isUsingInvestFund) {
-        return { isError: true, data: res.data };
+        return { isError: true, data: res.data.data };
       }
       return {
         isError: true,
@@ -406,11 +456,10 @@ class PortfolioDetailStore {
     rootStore.stopLoading();
     if (!res.isError) {
       this.cashDetail?.push(res.data);
-      this.fetchPieChartData();
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else {
       if (params.isUsingInvestFund) {
-        return { isError: true, data: res.data };
+        return { isError: true, data: res.data.data };
       }
       return {
         isError: true,
@@ -431,13 +480,11 @@ class PortfolioDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
-      this.customAssetDetail?.push(res.data);
-      this.fetchOtherCustomAsset();
-      this.fetchPieChartData();
+      Promise.all([this.fetchOtherCustomAsset()]);
       return { isError: false, data: httpError.handleSuccessMessage('add') };
     } else {
       if (params.isUsingInvestFund) {
-        return { isError: true, data: res.data };
+        return { isError: true, data: res.data.data };
       }
       return {
         isError: true,
@@ -445,6 +492,7 @@ class PortfolioDetailStore {
       };
     }
   }
+
   async addNewCustomAsseType(params: NewPersonalAssetType) {
     rootStore.startLoading();
     const url = `/personalAsset/interest/custom`;
@@ -484,38 +532,8 @@ class PortfolioDetailStore {
     else return [];
   }
 
-  async fetchSankeyFlowData() {
-    var raw = await portfolioService.getCashFlowData(
-      this.portfolioId.toString(),
-    );
-    this.sankeyFlowData = raw.map((link) => {
-      return {
-        source: `${link.sourceType}@@${link.sourceName}`,
-        target: `${link.targetType}@@${link.targetName}`,
-        //error: type 'string' is incompatible with 'string',
-        // value: link.amount.toString(),
-        value: link.amount,
-      };
-    });
-  }
-
-  async fetchPieChartData() {
-    rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/pieChart`;
-    const res: { isError: boolean; data: any } = await httpService.get(url);
-    rootStore.stopLoading();
-    if (!res.isError) {
-      this.pieChartData = res.data;
-    } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
-      );
-      this.pieChartData = undefined;
-    }
-  }
-
   async deleteAsset() {
-    if (this.deletedAssetInfo !== undefined) {
+    if (this.deletedAssetInfo != undefined) {
       rootStore.startLoading();
       const url = `/portfolio/${this.portfolioId}/${this.deletedAssetInfo.assetType}/${this.deletedAssetInfo.assetId}`;
       const res: { isError: boolean; data: any } = await httpService.delete(
@@ -529,90 +547,160 @@ class PortfolioDetailStore {
         );
         switch (this.deletedAssetInfo.assetType) {
           case AssetTypeName.cryptoCurrency:
-            this.cryptoDetail = this.cryptoDetail?.filter(
-              (item) => item.id !== res.data.id,
-            );
+            runInAction(() => {
+              this.cryptoDetail = this.cryptoDetail?.filter(
+                (item) => item.id !== res.data.id,
+              );
+            });
             break;
           case AssetTypeName.stock:
-            this.stockDetail = this.stockDetail?.filter(
-              (item) => item.id !== res.data.id,
-            );
+            runInAction(() => {
+              this.stockDetail = this.stockDetail?.filter(
+                (item) => item.id !== res.data.id,
+              );
+            });
             break;
           case AssetTypeName.bankSaving:
-            this.bankingDetail = this.bankingDetail?.filter(
-              (item) => item.id !== res.data.id,
-            );
+            runInAction(() => {
+              this.bankingDetail = this.bankingDetail?.filter(
+                (item) => item.id !== res.data.id,
+              );
+            });
             break;
           case AssetTypeName.realEstate:
-            this.realEstateDetail = this.realEstateDetail?.filter(
-              (item) => item.id !== res.data.id,
-            );
+            runInAction(() => {
+              this.realEstateDetail = this.realEstateDetail?.filter(
+                (item) => item.id !== res.data.id,
+              );
+            });
             break;
           case AssetTypeName.cash:
-            this.cashDetail = this.cashDetail?.filter(
-              (item) => item.id !== res.data.id,
-            );
-            break;
-          case AssetTypeName.other:
-            this.customAssetDetail = this.customAssetDetail?.map((item) => {
-              const assetList = item.assets.filter(
-                (cur) => cur.id !== res.data.id,
+            runInAction(() => {
+              this.cashDetail = this.cashDetail?.filter(
+                (item) => item.id !== res.data.id,
               );
-              return {
-                ...item,
-                assets: assetList,
-              };
+            });
+            break;
+          case AssetTypeName.custom:
+            runInAction(() => {
+              this.customAssetDetail = this.customAssetDetail?.map((item) => {
+                const assetList = item.assets.filter(
+                  (cur) => cur.id !== res.data.id,
+                );
+                return {
+                  ...item,
+                  assets: assetList,
+                };
+              });
             });
             break;
           default:
             break;
         }
-        this.fetchPieChartData();
+        return res;
       } else {
         rootStore.raiseError(content[rootStore.locale].error.default);
+        return res;
       }
     }
+    return {
+      isError: true,
+      data: '',
+    };
   }
 
   async transferAssetToInvestFund(params: TransferToInvestFundType) {
-    if (this.transferedAssetInfo !== undefined) {
-      rootStore.startLoading();
-      const url = `/portfolio/${this.portfolioId}/fund`;
-      const res: { isError: boolean; data: any } = await httpService.post(
-        url,
-        params,
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/fund`;
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      rootStore.raiseNotification(
+        content[rootStore.locale].success.transfer,
+        'success',
       );
-      if (!res.isError) {
-        rootStore.raiseNotification(
-          content[rootStore.locale].success.transfer,
-          'success',
-        );
-        switch (this.transferedAssetInfo.assetType) {
-          case AssetTypeName.cryptoCurrency:
-            this.fetchCryptoCurrency();
-            break;
-          case AssetTypeName.stock:
-            this.fetchStock();
-            break;
-          case AssetTypeName.bankSaving:
-            this.fetchBankSaving();
-            break;
-          case AssetTypeName.realEstate:
-            this.fetchRealEstate();
-            break;
-          case AssetTypeName.cash:
-            this.fetchCash();
-            break;
-          case AssetTypeName.other:
-            this.fetchOtherCustomAsset();
-            break;
-          default:
-            break;
-        }
-      } else {
-        rootStore.raiseError(content[rootStore.locale].error.default);
-      }
-      rootStore.stopLoading();
+      this.fetchDataAfterTransferringToInvestFund();
+      return res;
+    } else {
+      rootStore.raiseError(content[rootStore.locale].error.default);
+      return res;
+    }
+  }
+
+  async fetchReportData() {
+    Promise.all([this.fetchSankeyFlowData(), this.fetchPieChartData()]);
+  }
+
+  async fetchSankeyFlowData() {
+    var raw = await portfolioService.getCashFlowData(
+      this.portfolioId.toString(),
+    );
+    runInAction(() => {
+      this.sankeyFlowData = raw.map((link) => {
+        return {
+          source: `${link.sourceType}@@${link.sourceName}`,
+          target: `${link.targetType}@@${link.targetName}`,
+          //error: type 'string' is incompatible with 'string',
+          // value: link.amount.toString(),
+          value: link.amount,
+        };
+      });
+    });
+  }
+
+  async fetchPieChartData() {
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/pieChart`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.pieChartData = res.data;
+      });
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+      this.pieChartData = undefined;
+    }
+  }
+
+  async fetchInvestFundData() {
+    Promise.all([
+      this.fetchInvestFundInfo(),
+      this.fetchInvestFundTransactionHistory(),
+    ]);
+  }
+
+  async fetchInvestFundInfo() {
+    const url = `/portfolio/${this.portfolioId}/fund`;
+    const res = await httpService.get(url);
+
+    if (!res.isError) {
+      runInAction(() => {
+        this.investFundDetail = res.data;
+      });
+    } else {
+      runInAction(() => {
+        this.investFundDetail = undefined;
+      });
+    }
+  }
+
+  async fetchInvestFundTransactionHistory() {
+    const url = `/portfolio/${this.portfolioId}/investFund/transactions`;
+    const res = await httpService.get(url);
+    if (!res.isError) {
+      runInAction(() => {
+        this.investFundTransactionHistory = res.data;
+      });
+    } else {
+      runInAction(() => {
+        this.investFundTransactionHistory = undefined;
+      });
     }
   }
 
@@ -623,7 +711,9 @@ class PortfolioDetailStore {
     });
     rootStore.stopLoading();
     if (!res.isError) {
-      this.searchedStockDetail = res.data;
+      runInAction(() => {
+        this.searchedStockDetail = res.data;
+      });
     } else this.searchedStockDetail = undefined;
   }
 
@@ -640,34 +730,15 @@ class PortfolioDetailStore {
     });
     rootStore.stopLoading();
     if (!res.isError) {
-      this.searchedCryptoDetail = res.data?.market_data?.current_price;
+      runInAction(() => {
+        this.searchedCryptoDetail = res.data?.market_data?.current_price;
+      });
     } else this.searchedCryptoDetail = undefined;
-  }
-
-  async fetchInvestFundData() {
-    const url = `/portfolio/${this.portfolioId}/fund`;
-    const res = await httpService.get(url);
-
-    if (res.isError) {
-      this.investFundDetail = res.data;
-    } else {
-    }
-  }
-
-  async fetchInvestFundTransactionHistory() {
-    const url = `/portfolio/${this.portfolioId}/investFund/transactions`;
-    const res = await httpService.get(url);
-
-    if (res.isError) {
-      this.investFundTransactionHistory = res.data;
-    } else {
-      this.investFundTransactionHistory = undefined;
-    }
   }
 
   get isMissingInvestFundData() {
     return (
-      this.investFundTransactionHistory === undefined &&
+      this.investFundTransactionHistory === undefined ||
       this.investFundDetail === undefined
     );
   }
@@ -703,7 +774,7 @@ class PortfolioDetailStore {
       case AssetTypeName.stock:
         var stock = this.stockDetail?.find((item) => item.id === assetId);
         return stock;
-      case AssetTypeName.bankSavings:
+      case AssetTypeName.bankSaving:
         var bankSaving = this.bankingDetail?.find(
           (item) => item.id === assetId,
         );
@@ -713,8 +784,43 @@ class PortfolioDetailStore {
           (item) => item.id === assetId,
         );
         return realEstate;
+      case AssetTypeName.custom:
+        var category = this.customAssetDetail?.find(
+          (category: CustomAssetItemByCategory) => {
+            return category.assets.some(
+              (item: CustomAssetItem) => item.id === assetId,
+            );
+          },
+        );
+        var otherAsset = category?.assets.find((item) => item.id === assetId);
+        return otherAsset;
       default:
         return undefined;
+    }
+  }
+
+  async fetchDataAfterTransferringToInvestFund() {
+    switch (this.transferedAssetInfo?.assetType) {
+      case AssetTypeName.cryptoCurrency:
+        Promise.all([this.fetchCryptoCurrency()]);
+        break;
+      case AssetTypeName.stock:
+        Promise.all([this.fetchStock()]);
+        break;
+      case AssetTypeName.bankSaving:
+        Promise.all([this.fetchBankSaving()]);
+        break;
+      case AssetTypeName.realEstate:
+        Promise.all([this.fetchRealEstate()]);
+        break;
+      case AssetTypeName.cash:
+        Promise.all([this.fetchCash()]);
+        break;
+      case AssetTypeName.custom:
+        Promise.all([this.fetchOtherCustomAsset()]);
+        break;
+      default:
+        break;
     }
   }
 }

@@ -14,6 +14,7 @@ export const colorScheme = {
   purple600: '#D41789',
   facebook: '#4267B2',
   gray200: '#e0e0e0',
+  green400: '#66BB6A',
 };
 
 export const getRandomPallete = () => {

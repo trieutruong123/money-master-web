@@ -25,14 +25,14 @@ export const AddOtherAssetForm = observer(
     const theme = useTheme();
 
     useEffect(() => {
-      const fetchAssetPrice = async () => { };
+      const fetchAssetPrice = async () => {};
       fetchAssetPrice();
     }, []);
 
     const handleComeback = () => {
       openPreviousForm({
         curFormType: 'transaction',
-        selectedType: AssetTypeName.others,
+        selectedType: AssetTypeName.custom,
       });
     };
 
@@ -50,13 +50,16 @@ export const AddOtherAssetForm = observer(
       if (res.isError) {
         if (data.isUsingInvestFund) {
           setErrorMessage(res.data);
-        }
-        else {
+        } else {
           rootStore.raiseError(res?.data.en);
           handleClose();
         }
       } else {
         rootStore.raiseNotification(res.data.en, 'success');
+        if (data.isUsingInvestFund) {
+          portfolioDetailStore.setUpdateInvestFund(true);
+        }
+        portfolioDetailStore.setUpdateReport(true);
         handleClose();
       }
     };
@@ -93,13 +96,20 @@ export const AddOtherAssetForm = observer(
             {portfolioName}
           </p>
         </div>
-        <Typography variant='body1' color='error'>{errorMessage}</Typography>
+        <Typography
+          variant="body1"
+          color="error"
+          align="center"
+          height="1.5rem"
+        >
+          {errorMessage}
+        </Typography>
         <Box
           sx={{
-            [theme.breakpoints.down('sm')]: { height: '470px' },
+            [theme.breakpoints.down('sm')]: { height: '450px' },
 
             [theme.breakpoints.up('sm')]: {
-              height: '550px',
+              height: '520px',
             },
           }}
         >

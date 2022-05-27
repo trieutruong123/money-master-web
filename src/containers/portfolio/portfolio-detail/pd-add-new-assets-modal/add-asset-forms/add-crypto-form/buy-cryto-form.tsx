@@ -205,7 +205,7 @@ export const BuyCryptoForm = ({
           error={typeof errors.description?.message !== 'undefined'}
           helperText={errors.description?.message}
         ></TextField>
-        <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ my: 1 }}>
+        <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ mb: 1 }}>
           <CheckBoxButton color='primary' onChange={handleChangeCheckBox} />
           <h4>Is money from invest fund?</h4>
         </Box>

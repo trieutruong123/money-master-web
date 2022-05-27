@@ -49,13 +49,16 @@ export const AddNewCryptoForm = observer(
       if (res.isError) {
         if (data.isUsingInvestFund) {
           setErrorMessage(res.data);
-        }
-        else {
+        } else {
           rootStore.raiseError(res?.data.en);
           handleClose();
         }
       } else {
         rootStore.raiseNotification(res.data.en, 'success');
+        if (data.isUsingInvestFund) {
+          portfolioDetailStore.setUpdateInvestFund(true);
+        }
+        portfolioDetailStore.setUpdateReport(true);
         handleClose();
       }
     };
@@ -91,13 +94,20 @@ export const AddNewCryptoForm = observer(
             {assetName}: {currentPrice ? '$' + currentPrice : ''}
           </Typography>
         </Box>
-        <Typography variant='body1' color='error'>{errorMessage}</Typography>
+        <Typography
+          variant="body1"
+          color="error"
+          align="center"
+          height="1.5rem"
+        >
+          {errorMessage}
+        </Typography>
         <Box
           sx={{
             [theme.breakpoints.down('sm')]: { height: '450px' },
 
             [theme.breakpoints.up('sm')]: {
-              height: '530px',
+              height: '510px',
             },
           }}
         >

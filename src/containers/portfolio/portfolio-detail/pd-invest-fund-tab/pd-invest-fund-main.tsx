@@ -10,11 +10,17 @@ const PDInvestFundTab = observer(() => {
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
-      Promise.all([portfolioDetailStore.fetchInvestFundTransactionHistory()]);
+      Promise.all([portfolioDetailStore.fetchInvestFundData()]);
       rootStore.stopLoading();
     };
-    if (portfolioDetailStore.isMissingInvestFundData) fetchData();
-  }, []);
+    if (
+      portfolioDetailStore.isMissingInvestFundData ||
+      portfolioDetailStore.needUpdatedInvestFundData
+    )
+      fetchData();
+      portfolioDetailStore.setUpdateInvestFund(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [portfolioDetailStore.needUpdatedInvestFundData]);
 
   const { investFundDetail, investFundTransactionHistory } =
     portfolioDetailStore;
@@ -34,7 +40,7 @@ const PDInvestFundTab = observer(() => {
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         {typeof investFundDetail !== 'undefined' ? (
           <Suspense fallback={<></>}>
-            <PDInvestFundOverview investFundDetail ={investFundDetail}/>
+            <PDInvestFundOverview investFundDetail={investFundDetail} />
           </Suspense>
         ) : null}
       </Grid>
@@ -42,7 +48,11 @@ const PDInvestFundTab = observer(() => {
         {typeof investFundTransactionHistory !== 'undefined' &&
         investFundTransactionHistory?.length > 0 ? (
           <Suspense fallback={<></>}>
-            <PDTransactionHistory />
+            <PDTransactionHistory
+              transactionHistory={
+                portfolioDetailStore.investFundTransactionHistory
+              }
+            />
           </Suspense>
         ) : null}
       </Grid>

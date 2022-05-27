@@ -23,7 +23,6 @@ import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import SaveIcon from '@mui/icons-material/Save';
 import { BsCashCoin } from 'react-icons/bs';
 import { RiPsychotherapyFill } from 'react-icons/ri';
-import { AiFillGolden } from 'react-icons/ai';
 import { AssetTypeName } from 'shared/constants';
 import { portfolioDetailStore } from 'shared/store';
 
@@ -73,7 +72,7 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
     assetType: string,
     selectedCustomAssetId?: number,
   ) => {
-    if (assetType === AssetTypeName.others)
+    if (assetType === AssetTypeName.custom)
       portfolioDetailStore.setSelectedCustomAssetId(selectedCustomAssetId || 0);
     openNextForm({ curFormType: 'type', selectedType: assetType });
   };
@@ -143,7 +142,7 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
             <ListItemButton
               key={item.id}
               onClick={() =>
-                handleSelectionClick(AssetTypeName.others, item.id)
+                handleSelectionClick(AssetTypeName.custom, item.id)
               }
             >
               <ListItemIcon>
