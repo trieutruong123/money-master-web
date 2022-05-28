@@ -19,7 +19,6 @@ const StockVolatilityDetail = lazy(()=>
 
 const AssetVolatilityDetailPage = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const {locale} = router;
   const detail = locale === 'vi' ? content['vi'] : content['en'];
