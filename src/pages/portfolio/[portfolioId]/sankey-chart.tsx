@@ -16,22 +16,25 @@ import {
 import { portfolioDetailStore } from 'shared/store';
 import { BreadcrumbsLink } from 'shared/components';
 import { DashboardLayout } from 'containers';
-import { Sankey } from 'containers/portfolio/portfolio-detail/insight-chart/sankey-chart';
+import { Sankey } from 'containers/portfolio/portfolio-detail/pd-insight-chart/sankey-chart';
+import { useRouter } from 'next/router';
 
-const TestSankey = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+const TestSankey = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const {
-    locale,
-    params: { portfolioId },
-  } = props;
+  const router = useRouter();
+
+  const { locale, query } = router;
+  const portfolioId = Array.isArray(query['portfolioId'])
+    ? query['portfolioId'][0]
+    : query['portfolioId'] || '';
 
   useEffect(() => {
     const fetchData = async () => {
       await portfolioDetailStore.fetchSankeyFlowData();
     };
     fetchData();
-  }, []);
+  }, [portfolioId]);
 
   const sankeyFlowData = portfolioDetailStore.sankeyFlowData;
   return (
@@ -74,27 +77,5 @@ TestSankey.requireAuth = true;
 TestSankey.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );
-
-export const getStaticPaths: GetStaticPaths<{
-  portoflioId: string;
-}> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: 'blocking', //indicates the type of fallback
-  };
-};
-
-export const getStaticProps: GetStaticProps = async (context) => {
-  const { params, locales, locale, defaultLocale } = context;
-  return {
-    props: {
-      context,
-      params,
-      locales,
-      locale,
-      defaultLocale,
-    },
-  };
-};
 
 export default TestSankey;

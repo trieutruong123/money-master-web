@@ -27,6 +27,7 @@ export const CryptoVolatilityDetail = observer(({ coinCode }: IProps) => {
    } =
     cryptoVolatilityDetailStore;
   const coinDetail = cryptoVolatilityDetailStore.cryptoDetail;
+  
   const transactionHistoryData =
     cryptoVolatilityDetailStore.getTransactionHistoryData;
   const historicalMarketData =

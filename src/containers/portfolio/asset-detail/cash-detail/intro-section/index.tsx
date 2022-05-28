@@ -1,22 +1,49 @@
 import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
-import { getCurrencyByCode } from 'shared/helpers';
 import { precisionRound } from 'utils/number';
-import { CashItem } from 'shared/models';
 
 interface IProps {
-  assetDetail: CashItem | undefined;
+  assetMarketData: any;
+  assetDetail: any;
 }
 
-export const IntroSection = ({ assetDetail }: IProps) => {
+const IntroSection = ({ assetMarketData, assetDetail }: IProps) => {
+  const marketData = assetMarketData.response[0];
+  const currentPrice=marketData.c;
+  
+  
 
+  const renderDailyPL = () => {
+    const priceChangePercentage24h:number=Number(marketData.cp.split('%')[0]);
+   
+    const priceChange24h:number=assetDetail?.quantity * currentPrice*(100+priceChangePercentage24h)/100;
+
+    if (priceChangePercentage24h < 0) {
+      return (
+        <Typography
+          variant="body1"
+          color={priceChangePercentage24h < 0 ? 'error.main' : 'success.main'}
+        >
+          &#x2193; ${precisionRound(priceChange24h,4)} ({precisionRound(priceChangePercentage24h, 4)}%)
+        </Typography>
+      );
+    } else
+      return (
+        <Typography
+          variant="body1"
+          color={priceChangePercentage24h < 0 ? 'error.main' : 'success.main'}
+        >
+          &#x2191; ${precisionRound(priceChange24h,4)} (+{precisionRound(priceChangePercentage24h, 4)}%)
+        </Typography>
+      );
+  };
+  
   return (
-    <Grid item lg={12} md={12} xl={12} xs={12}  mt="1rem">
+    <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
           borderRadius: '12px',
           padding: '5px 20px 20px 20px',
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
-          width:'100%'
         }}
       >
         <Card
@@ -42,9 +69,20 @@ export const IntroSection = ({ assetDetail }: IProps) => {
                 alignItems="center"
                 justifyContent="center"
               >
-                <Typography variant="h3" fontWeight="bold">
-                  {getCurrencyByCode(assetDetail?.currencyCode || '')?.symbol}
-                  {assetDetail?.amount}
+                <Typography
+                  variant="h5"
+                  fontWeight="bold"
+                  textTransform="uppercase"
+                >
+                  {assetDetail?.currencyName} &nbsp;
+                </Typography>
+
+                <Typography variant="h2" fontWeight="bold">
+                  $
+                  {precisionRound(
+                    assetDetail?.quantity * currentPrice,
+                    4,
+                  )}
                 </Typography>
               </Grid>
               <Grid
@@ -55,10 +93,10 @@ export const IntroSection = ({ assetDetail }: IProps) => {
                 justifyContent="center"
               >
                 <Typography variant="body1">
-                  Name:
+                  Open @ avg. price: &nbsp;
                 </Typography>
                 <Typography variant="body1" color={'success.main'}>
-                  {assetDetail?.name}
+                  {assetDetail?.quantity} @ ${currentPrice}
                 </Typography>
               </Grid>
               <Grid
@@ -68,12 +106,18 @@ export const IntroSection = ({ assetDetail }: IProps) => {
                 alignItems="center"
                 justifyContent="center"
               >
-                <Typography variant="body1">
-                  Curency:
-                </Typography>
-                <Typography variant="body1" color={'success.main'}>
-                  {getCurrencyByCode(assetDetail?.currencyCode || '')?.name}
-                </Typography>
+                <Typography variant="body1">Open Net P/L: &nbsp;</Typography>
+                  --
+              </Grid>
+              <Grid
+                container
+                direction="row"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Typography variant="body1">Daily P/L: &nbsp;</Typography>
+                {renderDailyPL()}
               </Grid>
             </Stack>
           </CardContent>
@@ -82,3 +126,6 @@ export const IntroSection = ({ assetDetail }: IProps) => {
     </Grid>
   );
 };
+
+
+export default IntroSection;

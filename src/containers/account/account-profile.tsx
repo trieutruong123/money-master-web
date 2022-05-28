@@ -11,14 +11,14 @@ import {
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { userStore } from 'shared/store';
+import { colorScheme } from 'utils';
 
-interface IProps{
-  content:any,
+interface IProps {
+  content: any;
 }
 
-
-export const AccountProfile = observer(({content}:IProps) => {
-  const [user,setUser] = useState({
+export const AccountProfile = observer(({ content }: IProps) => {
+  const [user, setUser] = useState({
     avatar: '/images/avatar_1.png',
     city: '',
     country: '',
@@ -26,13 +26,13 @@ export const AccountProfile = observer(({content}:IProps) => {
     name: '',
     timezone: '',
   });
-  useEffect(()=>{
-    const email = userStore.user?.email||'';
-    setUser({...user, name:email });
-  },[])
+  useEffect(() => {
+    const email = userStore.user?.email || '';
+    setUser({ ...user, name: email });
+  }, []);
 
   return (
-    <Card >
+    <Card>
       <CardContent>
         <Box
           sx={{
@@ -42,13 +42,16 @@ export const AccountProfile = observer(({content}:IProps) => {
           }}
         >
           <Avatar
-            src={user.avatar}
             sx={{
               height: 64,
               mb: 2,
               width: 64,
+              fontSize: '3rem',
+              backgroundColor: userStore.user?.backgroundColor || colorScheme.gray200,
             }}
-          />
+          >
+            {userStore.user?.email?.charAt(0).toUpperCase()}
+          </Avatar>
           <Typography color="textPrimary" gutterBottom variant="h5">
             {user.name}
           </Typography>

@@ -1,7 +1,11 @@
 export type Portfolio = {
-  id: string;
+  id: number;
   name: string;
   initialCash: number;
   initialCurrency: string;
   sum: number;
+};
+
+export type NewPeronsalCustomAsset = {
+  name: string;
 };

@@ -3,15 +3,18 @@ import { httpError } from 'shared/helpers';
 import { action, computed, makeAutoObservable, observable } from 'mobx';
 import { httpService } from 'services';
 import { RealEstateItem } from 'shared/models';
+import { content } from 'i18n';
 
 class RealEstateDetailStore {
   portfolioId: string = '';
+  realEstateName: string | undefined = '';
   assetId: string = '';
   assetDetail: RealEstateItem | undefined = undefined;
 
   constructor() {
     makeAutoObservable(this, {
       portfolioId: observable,
+      realEstateName: observable,
       assetId: observable,
       assetDetail: observable,
 
@@ -41,7 +44,13 @@ class RealEstateDetailStore {
     const res: any = await httpService.get(url);
     if (!res.isError) {
       this.assetDetail = res.data.find((item: any) => item.id == assetId);
+      this.realEstateName = res.data.find(
+        (item: any) => item.id == assetId,
+      ).name;
     } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
       this.assetDetail = undefined;
     }
   }

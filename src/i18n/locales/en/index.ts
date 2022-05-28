@@ -158,11 +158,12 @@ export const en = {
         currentPrice: 'CURRENT PRICE',
         todayChange: `Today's Change`,
         totalPL: 'Total P/L',
-        shares: 'Shares',
+        amount: 'Amount',
         total: 'Total',
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -178,6 +179,7 @@ export const en = {
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -192,6 +194,7 @@ export const en = {
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -203,6 +206,7 @@ export const en = {
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -216,6 +220,7 @@ export const en = {
       },
       settingDropDownMenu: {
         moveToPortfolio: 'Move to portfolio',
+        transferToInvestFund: 'Transfer to invest fund',
         delete: 'Delete',
       },
     },
@@ -229,6 +234,7 @@ export const en = {
         cash: 'Cash',
         bankSavings: 'Bank Savings',
         others: 'Others+',
+        comodity: 'Comodity',
       },
       searchAssets: {
         title: 'Search Assets',
@@ -244,6 +250,19 @@ export const en = {
         currency: 'Currency',
         inputDay: 'Input day',
         bankCode: 'Bank Code',
+        description: 'Description',
+        addNew: 'ADD',
+      },
+      otherCustomAssetTransaction: {
+        title: 'Add New Asset',
+        name: 'Name',
+        assetType: 'Asset Type',
+        inputMoney: 'Input Money',
+        interestRate: 'Interest Rate',
+        termRange: 'Term Range',
+        months: 'months',
+        currency: 'Currency',
+        inputDay: 'Input day',
         description: 'Description',
         addNew: 'ADD',
       },
@@ -304,6 +323,7 @@ export const en = {
     delete: 'Delete item successfully',
     create: 'Create new item successfully',
     add: 'Add new item successfully',
+    transfer: 'Transfer item successfully',
     default: 'Done',
   },
 

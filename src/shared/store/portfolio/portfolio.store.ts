@@ -1,7 +1,7 @@
 import { action, makeAutoObservable, observable } from 'mobx';
-import { Portfolio } from '../../types';
+import { Portfolio } from 'shared/types';
+import { rootStore } from 'shared/store';
 import { portfolioService } from 'services';
-import { rootStore } from '../root.store';
 
 class PortfolioStore {
   portfolio: Array<Portfolio> = [];

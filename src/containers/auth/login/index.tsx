@@ -236,7 +236,7 @@ export const LoginForm = observer(({ content }: IProps) => {
             </Button>
             <p style={{ marginLeft: '1rem' }}>
               {content.noAccount}{' '}
-              <Link href="/register" locale={locale}>
+              <Link href="/sign-up" locale={locale}>
                 <a color={colorScheme.theme}>{content.register}</a>
               </Link>
             </p>

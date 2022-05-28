@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import classes from './modify-portfolio.module.css';
-import { currencyList } from '../../../shared/helpers/enum';
+import { getSupportedCurrencyList } from 'shared/helpers/currency-info';
 import React from 'react';
 
 const ModifyPortfolio = (
@@ -23,6 +23,13 @@ const ModifyPortfolio = (
       initialCash: 0,
     });
   }
+
+  const [currencyList,setCurrencyList]=React.useState<any>({});
+  React.useEffect(()=>{
+    getSupportedCurrencyList().forEach(currency=>{
+      setCurrencyList((prevState:any)=>({...prevState,[currency.code]:currency.name})
+    )})
+  },[])
 
   return (
     <div ref={ref} className={classes.body}>

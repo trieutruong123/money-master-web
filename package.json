@@ -5,9 +5,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "tsc": "tsc",
     "export ": "next export",
-    "lint": "next lint",
-    "lint-fix": "next lint --fix"
+    "lint": "next lint --dir components --dir containers --dir services --dir pages --dir utils --dir shared",
+    "lint-fix": "next lint --fix",
+    "build:dev": "next build && next export"
+
   },
   "dependencies": {
     "@emotion/cache": "^11.7.1",

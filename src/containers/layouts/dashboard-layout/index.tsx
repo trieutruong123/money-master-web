@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { DashboardNavbar } from './navbar';
-import { DashboardSidebar } from './sidebar';
+import { DashboardNavbar } from './navbar/navbar-main';
+import { DashboardSidebar } from './sidebar/sidebar-main';
 import { toast } from 'react-toastify';
 import { rootStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
@@ -21,6 +21,7 @@ export const DashboardLayout = observer((props: any) => {
   const { children } = props;
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const { isNotified, message, variant } = rootStore;
+
   useEffect(() => {
     if (isNotified) {
       toast(message, {
@@ -29,6 +30,8 @@ export const DashboardLayout = observer((props: any) => {
       });
     }
   }, [isNotified, message, variant, rootStore, toast]);
+
+  
 
   return (
     <>

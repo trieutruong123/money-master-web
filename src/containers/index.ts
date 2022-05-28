@@ -8,3 +8,4 @@ export * from './dashboard';
 export * from './account';
 export * from './loading-page';
 export * from './layouts';
+export * from './currency-converter';
