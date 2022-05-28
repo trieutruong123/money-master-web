@@ -89,7 +89,6 @@ export const CreateCashForm = observer(({}: IProps) => {
     setSelectedForm(formArray[key]);
   };
 
-  const { portfolioName } = portfolioDetailStore;
   const assetName = cashDetailStore.currencyName;
 
   const handleFormSubmit = async (data: any) => {};
@@ -123,7 +122,7 @@ export const CreateCashForm = observer(({}: IProps) => {
             fontWeight: "bold",
           }}
         >
-          {portfolioName}
+          {portfolioDetailStore.portfolioInfo?.name||''}
         </Typography>
         <Typography
           variant="body1"

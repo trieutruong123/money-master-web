@@ -110,7 +110,7 @@ class StockVolatilityDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.map(
-        (item: Portfolio) => item.id === this.portfolioId.toString(),
+        (item: Portfolio) => item.id === this.portfolioId,
       );
       this.portfolioInfo = currentPortfolio;
       this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
