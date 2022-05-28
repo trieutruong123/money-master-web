@@ -62,14 +62,14 @@ const AccountMenuDropdown = observer(
           <MenuItem>
             <Avatar
               sx={{
-                backgroundColor: userStore.user?.backgroundColor||colorScheme.gray200,
+                backgroundColor: userStore.user?userStore.user?.backgroundColor:undefined||colorScheme.gray200,
                 color: 'white',
                 fontSize: '1.4rem',
               }}
             >
-              {userStore.user?.email?.charAt(0).toUpperCase()}
+              {userStore.user?userStore.user?.email?.charAt(0).toUpperCase():undefined}
             </Avatar>
-            {userStore.user?.email.slice(0, 14) + '...'}
+            {userStore.user?(userStore.user?.email.slice(0, 14)):'' + '...'}
           </MenuItem>
         </Link>
         <Divider />

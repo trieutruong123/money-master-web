@@ -29,7 +29,7 @@ const ExchangeRateInfo = observer((props: IProps) => {
           {cashDetailStore.baseCurrencyCode}
         </h1>
         {forexMarketData !== undefined ? (
-          <i>Mid-market exchange rate at {forexMarketData.response[0].tm}</i>
+          <i>Mid-market exchange rate at {forexMarketData.response?forexMarketData.response[0].tm:""}</i>
         ) : (
           <></>
         )}

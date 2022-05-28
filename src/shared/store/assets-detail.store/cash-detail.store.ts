@@ -104,6 +104,7 @@ class CashDetailStore {
     this.forexDetail = data;
   }
 
+
   async fetchData() {
     const forexDetail = portfolioData.portfolioData.cash.find(
       (item) => item.id === this.currencyId,
@@ -157,8 +158,8 @@ class CashDetailStore {
       });
       if (!res.isError) {
         this.forexMarketData = res.data;
-        return res.data;
-      } else return undefined;
+        
+      } 
     }
   }
 

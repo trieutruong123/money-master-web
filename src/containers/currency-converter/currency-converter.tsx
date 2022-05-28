@@ -1,56 +1,56 @@
-import * as React from 'react';
-import { observer } from 'mobx-react-lite';
-import { Box, Container, styled } from '@mui/material';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
+import * as React from "react";
+import { observer } from "mobx-react-lite";
+import { Box, Container, styled } from "@mui/material";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import MuiAccordion, { AccordionProps } from "@mui/material/Accordion";
 import MuiAccordionSummary, {
   AccordionSummaryProps,
-} from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import Typography from '@mui/material/Typography';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import { content } from 'i18n';
-import { cashDetailStore } from 'shared/store';
-import AmountConvert from './amount-convert';
-import ExchangeRateInfo from './exchange-rate-info';
-import CurrencyProfile from './currency-profile';
-import classes from './index.module.css';
+} from "@mui/material/AccordionSummary";
+import MuiAccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
+import { content } from "i18n";
+import { cashDetailStore } from "shared/store";
+import AmountConvert from "./amount-convert";
+import ExchangeRateInfo from "./exchange-rate-info";
+import CurrencyProfile from "./currency-profile";
+import classes from "./index.module.css";
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
-  '&:not(:last-child)': {
+  "&:not(:last-child)": {
     borderBottom: 0,
   },
-  '&:before': {
-    display: 'none',
+  "&:before": {
+    display: "none",
   },
 }));
 
 const AccordionSummary = styled((props: AccordionSummaryProps) => (
   <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: "0.9rem" }} />}
     {...props}
   />
 ))(({ theme }) => ({
   backgroundColor:
-    theme.palette.mode === 'dark'
-      ? 'rgba(255, 255, 255, .05)'
-      : 'rgba(0, 0, 0, .03)',
-  flexDirection: 'row-reverse',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)',
+    theme.palette.mode === "dark"
+      ? "rgba(255, 255, 255, .05)"
+      : "rgba(0, 0, 0, .03)",
+  flexDirection: "row-reverse",
+  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
+    transform: "rotate(90deg)",
   },
-  '& .MuiAccordionSummary-content': {
+  "& .MuiAccordionSummary-content": {
     marginLeft: theme.spacing(1),
   },
 }));
 
 const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: theme.spacing(2),
-  borderTop: '1px solid rgba(0, 0, 0, .125)',
+  borderTop: "1px solid rgba(0, 0, 0, .125)",
 }));
 
 interface TabPanelProps {
@@ -82,7 +82,7 @@ function TabPanel(props: TabPanelProps) {
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 interface IProps {
@@ -91,7 +91,7 @@ interface IProps {
 
 const CurrencyConverter = observer(({ context }: IProps) => {
   const { locale } = context;
-  const detail = locale === 'vi' ? content['vi'] : content['en'];
+  const detail = locale === "vi" ? content["vi"] : content["en"];
   //const pageContent = detail.CurrencyConverterPage;
   const [expanded, setExpanded] = React.useState<string | false>(false);
 
@@ -109,43 +109,58 @@ const CurrencyConverter = observer(({ context }: IProps) => {
   const [sourceAmount, setSourceAmount] = React.useState(1.0);
   const [targetAmount, setTargetAmount] = React.useState(1.0);
 
-  const handleSourceCurrencyChange = async (symbol: string) => {
-    cashDetailStore.setCurrencyId(symbol);
-    cashDetailStore.forexMarketData =
-      await cashDetailStore.fetchForexInfoByCode(cashDetailStore.currencyId);
+  async function onTargetCurrencyChange() {
+    await cashDetailStore.fetchData();
+
+    await cashDetailStore.fetchForexInfoByCode(cashDetailStore.currencyId);
     await cashDetailStore.fetchHistoricalMarketData();
     setTargetAmount(
       parseFloat(
         (
           sourceAmount * cashDetailStore.forexMarketData.response[0].c
-        ).toPrecision(2),
-      ),
+        ).toPrecision(2)
+      )
     );
+  }
+
+  async function onDestinationCurrencyChange() {
+    await cashDetailStore.fetchData();
+
+    await cashDetailStore.fetchForexInfoByCode(cashDetailStore.currencyId);
+    await cashDetailStore.fetchHistoricalMarketData();
+    setTargetAmount(
+      parseFloat(
+        (
+          sourceAmount * cashDetailStore.forexMarketData.response[0].c
+        ).toPrecision(4)
+      )
+    );
+  }
+
+  React.useEffect(() => {
+    onTargetCurrencyChange();
+  }, [cashDetailStore.currencyId]);
+
+  React.useEffect(() => {
+    onDestinationCurrencyChange();
+  }, [cashDetailStore.baseCurrencyCode]);
+
+  const handleSourceCurrencyChange = async (symbol: string) => {
+    cashDetailStore.setCurrencyId(symbol);
   };
 
   const handleTargetCurrencyChange = async (symbol: string) => {
     cashDetailStore.setBaseCurrency(symbol);
 
     //assign trực tiếp dưới store, hoặc assign thông qua action setForexDetail, đừng assign trên component, bởi assign state ở đây mobx ko quản lý đâu.
-    // cashDetailStore.forexMarketData =
-    //   await cashDetailStore.fetchForexInfoByCode(cashDetailStore.currencyId);
-
-    await cashDetailStore.fetchHistoricalMarketData();
-    setTargetAmount(
-      parseFloat(
-        (
-          sourceAmount * cashDetailStore.forexMarketData.response[0].c
-        ).toPrecision(4),
-      ),
-    );
   };
 
   const handleSourceValueChange = (value: number) => {
     setSourceAmount(value);
     setTargetAmount(
       parseFloat(
-        (value * cashDetailStore.forexMarketData.response[0].c).toPrecision(4),
-      ),
+        (value * cashDetailStore.forexMarketData.response[0].c).toPrecision(4)
+      )
     );
   };
 
@@ -153,20 +168,21 @@ const CurrencyConverter = observer(({ context }: IProps) => {
     setTargetAmount(value);
     setSourceAmount(
       parseFloat(
-        (value / cashDetailStore.forexMarketData.response[0].c).toPrecision(4),
-      ),
+        (value / cashDetailStore.forexMarketData.response[0].c).toPrecision(4)
+      )
     );
   };
 
   const fetchData = async () => {
     await cashDetailStore.fetchData();
+    await cashDetailStore.fetchForexInfoByCode(cashDetailStore.currencyId);
     await cashDetailStore.fetchHistoricalMarketData();
     setTargetAmount(cashDetailStore.forexMarketData.response[0].c);
   };
 
   React.useEffect(() => {
-    cashDetailStore.setBaseCurrency('EUR');
-    cashDetailStore.setCurrencyId('USD');
+    cashDetailStore.setBaseCurrency("EUR");
+    cashDetailStore.setCurrencyId("USD");
     fetchData();
   }, []);
 
@@ -180,7 +196,7 @@ const CurrencyConverter = observer(({ context }: IProps) => {
     >
       <Container
         maxWidth="lg"
-        sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+        sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
       >
         <Typography sx={{ mb: 3 }} align="center" variant="h4">
           CONVERTER
@@ -189,7 +205,7 @@ const CurrencyConverter = observer(({ context }: IProps) => {
       </Container>
       <Container
         maxWidth={false}
-        sx={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}
+        sx={{ display: "flex", flexDirection: "column", rowGap: "10px" }}
       >
         <AmountConvert
           sourceAmount={sourceAmount}
@@ -200,8 +216,8 @@ const CurrencyConverter = observer(({ context }: IProps) => {
           onTargetCurrencyChange={handleTargetCurrencyChange}
         />
         <Accordion
-          expanded={expanded === 'panel1'}
-          onChange={handleChange('panel1')}
+          expanded={expanded === "panel1"}
+          onChange={handleChange("panel1")}
         >
           <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
             Exchange rate information
@@ -216,14 +232,14 @@ const CurrencyConverter = observer(({ context }: IProps) => {
         </Accordion>
 
         <Accordion
-          expanded={expanded === 'panel2'}
-          onChange={handleChange('panel2')}
+          expanded={expanded === "panel2"}
+          onChange={handleChange("panel2")}
         >
           <AccordionSummary aria-controls="panel2d-content" id="panel2d-header">
             Currency Information
           </AccordionSummary>
           <AccordionDetails>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tabs
                 value={tabValue}
                 onChange={handleTabChange}
