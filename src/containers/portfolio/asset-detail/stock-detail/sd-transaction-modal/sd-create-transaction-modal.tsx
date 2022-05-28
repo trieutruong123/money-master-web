@@ -1,8 +1,8 @@
 import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { styled } from '@mui/material/styles';
-import { stockVolatilityDetailStore, portfolioDetailStore } from 'shared/store';
-import { CreateCryptoForm } from './create-crypto-form';
+import { stockDetailStore } from 'shared/store';
+import { SDStockForm } from './sd-transaction-form/sd-stock-form';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
   position: 'absolute',
@@ -36,15 +36,15 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
   },
 }));
 
-export const AddNewTransactionModal = observer(() => {
-  const { isOpenAddNewTransactionModal } = stockVolatilityDetailStore;
+export const SDCreateTransactionModal = observer(() => {
+  const { isOpenAddNewTransactionModal } = stockDetailStore;
 
   const handleClose = () => {
-    stockVolatilityDetailStore.setOpenAddNewTransactionModal(false);
+    stockDetailStore.setOpenAddNewTransactionModal(false);
   };
 
   return (
-    <Box >
+    <Box>
       <Modal
         open={isOpenAddNewTransactionModal}
         onClose={handleClose}
@@ -52,7 +52,7 @@ export const AddNewTransactionModal = observer(() => {
         aria-describedby="modal-modal-description"
       >
         <StyledModal>
-          <CreateCryptoForm />
+          <SDStockForm />
         </StyledModal>
       </Modal>
     </Box>

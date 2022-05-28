@@ -11,7 +11,7 @@ interface IProps {
   timeInterval: string;
 }
 
-export const AreaChart = ({ timeInterval, data }: IProps) => {
+ const AreaChart = ({ timeInterval, data }: IProps) => {
   const areaData = data.map((item: Array<number>) => {
     return [item[0], item[1]];
   });
@@ -119,3 +119,5 @@ export const AreaChart = ({ timeInterval, data }: IProps) => {
     </React.Fragment>
   );
 };
+
+export default AreaChart;

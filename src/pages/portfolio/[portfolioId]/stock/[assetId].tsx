@@ -13,7 +13,7 @@ import {  HypnosisLoading } from 'shared/components';
 import { DashboardLayout } from 'containers';
 
 const StockVolatilityDetail = lazy(()=>
-  import ('containers/portfolio/asset-detail/stock-detail/pd-stock-detail'),
+  import ('containers/portfolio/asset-detail/stock-detail/sd-stock-detail-main'),
 );
 
 

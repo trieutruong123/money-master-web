@@ -1,31 +1,34 @@
-import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
-import { Box, Button, TextField, useTheme } from '@mui/material';
+import {
+  Box,
+  Button,
+  TextField,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
+  useTheme,
+} from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { TransactionRequestType, AssetTypeName } from 'shared/constants';
+import { stockDetailStore } from 'shared/store';
+import { getSupportedCurrencyList } from 'shared/helpers';
 
 type FormValues = {
   sellPrice: number;
   amount: number;
-  date: Date;
-  currency?: string;
-  note?: string;
-  brokerFeeInPercent?: number;
-  brokerFee?: number;
-  brokerFeeForSecurity?: number;
-  incomeTax?: number;
+  currencyCode: string;
+  fee?: string;
 };
 
 interface IProps {
-  handleFormSubmit: any;
+  handleFormSubmit: Function;
 }
 
-export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
+export const SDSellStockForm = ({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
-  const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
     sellPrice: Yup.number()
       .required('Price is required')
@@ -41,12 +44,19 @@ export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
   const { register, reset, handleSubmit, formState, getValues, setError } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
+  const currencyList = getSupportedCurrencyList();
 
-  const handleDateChange = (newValue: Date | null) => {
-    setDate(newValue);
-  };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    handleFormSubmit(data);
+    const res = handleFormSubmit({
+      amount: data.sellPrice,
+      amountInDestinationAssetUnit: data.amount,
+      currencyCode: data.currencyCode || 'USD',
+      transactionType: TransactionRequestType.sellAsset,
+      destinationAssetId: null,
+      destinationAssetType: AssetTypeName.cash,
+      isTransferringAll: false,
+      // isUsingInvestFund:checked
+    });
   };
 
   return (
@@ -88,24 +98,26 @@ export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
         error={typeof errors.amount?.message !== 'undefined'}
         helperText={errors.amount?.message}
       ></TextField>
-      <LocalizationProvider
-        sx={{
-          my: 1,
-          display: 'block',
-          width: 'inherit',
-          
-        }}
-        dateAdapter={AdapterDateFns}
-      >
-        <DesktopDatePicker
-          label="*Date desktop"
-          inputFormat="dd/MM/yyyy"
-          value={date}
-          onChange={handleDateChange}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </LocalizationProvider>
-      <TextField
+      <FormControl fullWidth>
+        <InputLabel id="currency-list">{'Currency'}</InputLabel>
+        <Select
+          variant="outlined"
+          labelId="currency-list"
+          id="crypto-currency-list-select"
+          label={`*${'Currency'}`}
+          defaultValue={stockDetailStore.stockDetail?.currencyCode || 'USD'}
+          {...register('currencyCode')}
+        >
+          {currencyList.map((item, index) => {
+            return (
+              <MenuItem key={item.code} value={item.code}>
+                {item.code} - {item.name}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </FormControl>
+      {/* <TextField
         type="number"
         fullWidth
         sx={{ my: 1, display: 'block' }}
@@ -113,20 +125,8 @@ export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
         label={'Broker fee'}
         {...register('brokerFee')}
         variant="outlined"
-      ></TextField>
-      <TextField
-        type="text"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-note"
-        label={'Note'}
-        {...register('note')}
-        variant="outlined"
-        error={typeof errors.note?.message !== 'undefined'}
-        helperText={errors.note?.message}
-      ></TextField>
-
-      <Button 
+      ></TextField> */}
+      <Button
         type="submit"
         variant="contained"
         sx={{
@@ -137,7 +137,7 @@ export const SellCryptoForm = ({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        ADD
+        SAVE
       </Button>
     </Box>
   );
