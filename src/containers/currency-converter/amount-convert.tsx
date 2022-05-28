@@ -3,12 +3,12 @@ import { MenuItem, TextField } from "@mui/material";
 import React from "react";
 import classes from "./amount-convert.module.css";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
-import { currencyList } from "shared/helpers/enum";
+import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 interface IProps {
-  sourceAmount:number;
-  targetAmount:number;
+  sourceAmount: number;
+  targetAmount: number;
   onSourceCurrencyChange: (symbol: string) => void;
   onTargetCurrencyChange: (symbol: string) => void;
   onSourceValueChange: (value: number) => void;
@@ -16,16 +16,27 @@ interface IProps {
 }
 
 function AmountConvert(props: IProps) {
+  const [currencyList, setCurrencyList] = React.useState<any>({});
+  React.useEffect(() => {
+    getSupportedCurrencyList().forEach((currency) => {
+      setCurrencyList((prevState: any) => ({
+        ...prevState,
+        [currency.code]: currency.name,
+      }));
+    });
+  }, []);
   const [sourceCurrency, setSourceCurrency] = React.useState("USD");
   const [targetCurrency, setTargetCurrency] = React.useState("EUR");
 
   const handleCurrencySelectChange = (event: SelectChangeEvent) => {
     switch (event.target.name) {
       case "sourceCurrencySelect":
+        if (event.target.value==targetCurrency) return;
         setSourceCurrency(event.target.value as string);
         props.onSourceCurrencyChange(event.target.value as string);
         break;
       case "targetCurrencySelect":
+        if (event.target.value==sourceCurrency) return;
         setTargetCurrency(event.target.value as string);
         props.onTargetCurrencyChange(event.target.value as string);
         break;
@@ -68,7 +79,7 @@ function AmountConvert(props: IProps) {
         >
           {Object.keys(currencyList).map((currency, index) => (
             <MenuItem
-            key = {index}
+              key={index}
               value={currency}
             >{`${currencyList[currency]} (${currency})`}</MenuItem>
           ))}
@@ -80,7 +91,6 @@ function AmountConvert(props: IProps) {
       <div className={classes.amount_group}>
         <TextField
           value={props.targetAmount}
-
           onChange={handleValueChange}
           name="targetValue"
           label="Amount"
@@ -99,7 +109,7 @@ function AmountConvert(props: IProps) {
         >
           {Object.keys(currencyList).map((currency, index) => (
             <MenuItem
-              key= {index.toString()}
+              key={index.toString()}
               value={currency}
             >{`${currencyList[currency]} (${currency})`}</MenuItem>
           ))}
