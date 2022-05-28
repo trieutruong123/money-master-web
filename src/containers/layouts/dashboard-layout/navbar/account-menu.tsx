@@ -49,14 +49,14 @@ const AccountMenu = () => {
           <Avatar
             sx={{
               backgroundColor:
-                userStore.user?.backgroundColor || colorScheme.gray200,
+                userStore.user?(userStore.user?.backgroundColor):undefined || colorScheme.gray200,
               color: 'white',
               fontSize: '1.4rem',
               height: 32,
               width: 32,
             }}
           >
-            {userStore.user?.email?.charAt(0).toUpperCase()}
+            {userStore.user?userStore.user?.email?.charAt(0).toUpperCase():undefined}
           </Avatar>
         </IconButton>
       </Tooltip>
