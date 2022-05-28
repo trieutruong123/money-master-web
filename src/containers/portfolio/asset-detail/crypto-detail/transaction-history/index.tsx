@@ -21,7 +21,7 @@ import dayjs from 'dayjs';
 import { precisionRound } from 'utils/number';
 import SettingsMenuButton from './settings-menu-button';
 import { CustomNoRowsOverlay, TransactionTypeIcon } from 'shared/components';
-import { TransactionItemType } from 'shared/constants';
+import { TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
 
 const columns: GridColDef[] = [
@@ -41,70 +41,70 @@ const columns: GridColDef[] = [
     editable: true,
     renderCell: (params: GridCellParams) => {
       switch (params.row.type) {
-        case TransactionItemType.AddValue:
+        case TransactionTypeName.AddValue:
           return (
             <Chip
               label="BUY"
               variant="filled"
               avatar={
                 <TransactionTypeIcon
-                  transactionType={TransactionItemType.AddValue}
+                  transactionType={TransactionTypeName.AddValue}
                   color="white"
                 />
               }
               sx={{ backgroundColor: 'success.light' }}
             />
           );
-        case TransactionItemType.SellAsset:
+        case TransactionTypeName.SellAsset:
           return (
             <Chip
               label="SELL"
               variant="filled"
               avatar={
                 <TransactionTypeIcon
-                  transactionType={TransactionItemType.SellAsset}
+                  transactionType={TransactionTypeName.SellAsset}
                   color="white"
                 />
               }
               sx={{ backgroundColor: 'error.light' }}
             />
           );
-        case TransactionItemType.MoveToFund:
+        case TransactionTypeName.MoveToFund:
           return (
             <Chip
               label="MOVE TO FUND"
               variant="filled"
               avatar={
                 <TransactionTypeIcon
-                  transactionType={TransactionItemType.MoveToFund}
+                  transactionType={TransactionTypeName.MoveToFund}
                   color="white"
                 />
               }
               sx={{ backgroundColor: 'warning.light' }}
             />
           );
-        case TransactionItemType.NewAsset:
+        case TransactionTypeName.NewAsset:
           return (
             <Chip
               label="Create"
               variant="filled"
               avatar={
                 <TransactionTypeIcon
-                  transactionType={TransactionItemType.NewAsset}
+                  transactionType={TransactionTypeName.NewAsset}
                   color="white"
                 />
               }
               sx={{ backgroundColor: 'main.light' }}
             />
           );
-        case TransactionItemType.WithdrawValue:
+        case TransactionTypeName.WithdrawValue:
           return (
             <Chip
               label="Create"
               variant="filled"
               avatar={
                 <TransactionTypeIcon
-                  transactionType={TransactionItemType.WithdrawValue}
+                  transactionType={TransactionTypeName.WithdrawValue}
                   color="white"
                 />
               }

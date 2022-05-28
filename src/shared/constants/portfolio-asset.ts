@@ -6,7 +6,7 @@ export const PACryptoBreadcrumbTabs = {
 
 export const PAStockBreadcrumbTabs = {
   overview: 'Overview',
-  insight: 'Insight',
+  marketData: 'Market Data',
   settings: 'Settings',
 };
 

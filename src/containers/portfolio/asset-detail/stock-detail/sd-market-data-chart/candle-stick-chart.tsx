@@ -11,7 +11,7 @@ interface IProps {
   timeInterval: string;
 }
 
-export const CandleStickChart = ({ timeInterval, data }: IProps) => {
+ const CandleStickChart = ({ timeInterval, data }: IProps) => {
   const candleStickData = data.map((item: Array<number>) => {
     return {
       x: item[0],
@@ -74,3 +74,5 @@ export const CandleStickChart = ({ timeInterval, data }: IProps) => {
     </React.Fragment>
   );
 };
+
+export default CandleStickChart;

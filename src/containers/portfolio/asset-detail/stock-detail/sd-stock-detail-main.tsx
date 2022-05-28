@@ -13,19 +13,17 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { rootStore, stockVolatilityDetailStore } from 'shared/store';
-import { AddNewTransactionModal } from './add-new-transaction-modal';
-import { HistoricalMarketChart } from './historical-market-chart';
-import { IntroSection } from './intro-section';
-import { TransactionHistory } from './transaction-history';
-import dayjs from 'dayjs';
+import { stockDetailStore } from 'shared/store';
 import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
 import { PAStockBreadcrumbTabs } from 'shared/constants/portfolio-asset';
 import { TabContext, TabList } from '@mui/lab';
+import SDOverviewTab from './sd-overview-tab/sd-overview-main';
+import SDMarketDataTab from './sd-market-data-chart/sd-market-data-tab';
+import { SDCreateTransactionModal } from './sd-transaction-modal/sd-create-transaction-modal';
 
-interface IProps { }
+interface IProps {}
 
-const StockVolatilityDetail = observer(({ }: IProps) => {
+const StockVolatilityDetail = observer(({}: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
@@ -40,38 +38,12 @@ const StockVolatilityDetail = observer(({ }: IProps) => {
 
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
-    stockVolatilityDetailStore.setStockId(assetId);
-    stockVolatilityDetailStore.setPortfolioId(portfolioId);
-  }, [router, stockVolatilityDetailStore, portfolioId, assetId]);
-
-
-  useEffect(() => {
-    const { portfolioId, stockId } = stockVolatilityDetailStore;
-    const fetchData = async () => {
-      await stockVolatilityDetailStore.fetchData();
-      await stockVolatilityDetailStore.fetchFinhubService();
-    };
-    rootStore.startLoading();
-    if (portfolioId && stockId) {
-      fetchData();
-    }
-    rootStore.stopLoading();
-  }, [
-    stockVolatilityDetailStore.portfolioId,
-    stockVolatilityDetailStore.stockId,
-  ]);
-
-  const handleDateSelectionChanged = useCallback((params: any) => {
-    stockVolatilityDetailStore.setTimeInterval(params?.interval);
-    stockVolatilityDetailStore.fetchHistoricalMarketData({
-      startDate: params?.startDate,
-      endDate: params?.endDate,
-      interval: params?.interval,
-    });
-  }, []);
+    stockDetailStore.setStockId(assetId);
+    stockDetailStore.setPortfolioId(portfolioId);
+  }, [router, stockDetailStore, portfolioId, assetId]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-    stockVolatilityDetailStore.setSelectedTab(newValue);
+    stockDetailStore.setSelectedTab(newValue);
   };
 
   return (
@@ -96,19 +68,19 @@ const StockVolatilityDetail = observer(({ }: IProps) => {
             <BreadcrumbsLink
               urlArr={[
                 '/portfolio',
-                `/portfolio/${stockVolatilityDetailStore.portfolioId}`,
-                `/portfolio/${stockVolatilityDetailStore.portfolioId}/stock/${stockVolatilityDetailStore.stockId}`,
+                `/portfolio/${stockDetailStore.portfolioId}`,
+                `/portfolio/${stockDetailStore.portfolioId}/stock/${stockDetailStore.stockId}`,
               ]}
               displayNameArr={[
                 'Portfolio',
-                stockVolatilityDetailStore.portfolioInfo?.name ||
-                stockVolatilityDetailStore.portfolioId.toString(),
-                stockVolatilityDetailStore.stockDetail?.stockCode ||
-                stockVolatilityDetailStore.stockId.toString(),
+                stockDetailStore.portfolioInfo?.name ||
+                  stockDetailStore.portfolioId.toString(),
+                stockDetailStore.stockDetail?.stockCode ||
+                  stockDetailStore.stockId.toString(),
               ]}
             />
             <Typography sx={{ mb: 3 }} variant="h4">
-              {stockVolatilityDetailStore.stockCode}
+              {stockDetailStore.stockDetail?.stockCode || ''}
             </Typography>
           </Container>
 
@@ -116,7 +88,7 @@ const StockVolatilityDetail = observer(({ }: IProps) => {
             sx={{ padding: isMobile ? '0px' : 'initial' }}
             maxWidth="lg"
           >
-            <TabContext value={stockVolatilityDetailStore.selectedTab}>
+            <TabContext value={stockDetailStore.selectedTab}>
               <Box sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}>
                 <TabList
                   onChange={handleTabChange}
@@ -129,8 +101,8 @@ const StockVolatilityDetail = observer(({ }: IProps) => {
                     value={PAStockBreadcrumbTabs.overview}
                   />
                   <Tab
-                    label={PAStockBreadcrumbTabs.insight}
-                    value={PAStockBreadcrumbTabs.insight}
+                    label={PAStockBreadcrumbTabs.marketData}
+                    value={PAStockBreadcrumbTabs.marketData}
                   />
                   <Tab
                     label={PAStockBreadcrumbTabs.settings}
@@ -142,31 +114,25 @@ const StockVolatilityDetail = observer(({ }: IProps) => {
           </Container>
           <Box sx={{ overflow: 'hidden' }}>
             <Container sx={{ padding: isMobile ? '0px' : 'initial' }}>
-              <Grid display="flex" justifyContent="center" flexDirection='column' >
-                {stockVolatilityDetailStore.selectedTab ===
-                  PAStockBreadcrumbTabs.overview ? (
+              <Grid
+                display="flex"
+                justifyContent="center"
+                flexDirection="column"
+              >
+                {stockDetailStore.selectedTab ===
+                PAStockBreadcrumbTabs.overview ? (
                   <Suspense fallback={<HypnosisLoading />}>
-                    <IntroSection
-                      assetDetail={stockVolatilityDetailStore.stockDetail}
-                    />
-                    <TransactionHistory
-                      transactionHistoryData={
-                        stockVolatilityDetailStore.transactionList?.slice()
-                      }
-                    />
+                    <SDOverviewTab />
                   </Suspense>
                 ) : null}
-                {stockVolatilityDetailStore.selectedTab ===
-                  PAStockBreadcrumbTabs.insight ? (
+                {stockDetailStore.selectedTab ===
+                PAStockBreadcrumbTabs.marketData ? (
                   <Suspense fallback={<HypnosisLoading />}>
-                    <HistoricalMarketChart
-                      data={stockVolatilityDetailStore.historicalMarketData?.slice()}
-                      handleDateSelectionChanged={handleDateSelectionChanged}
-                    />
+                    <SDMarketDataTab />
                   </Suspense>
                 ) : null}
-                {stockVolatilityDetailStore.selectedTab ===
-                  PAStockBreadcrumbTabs.settings ? (
+                {stockDetailStore.selectedTab ===
+                PAStockBreadcrumbTabs.settings ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <h1>You are in setting tab</h1>
                   </Suspense>
@@ -176,13 +142,13 @@ const StockVolatilityDetail = observer(({ }: IProps) => {
           </Box>
         </Box>
         <Box>
-          <AddNewTransactionModal />
+          <SDCreateTransactionModal />
         </Box>
         <Tooltip title="Add new transaction">
           <IconButton
             onClick={() => {
-              stockVolatilityDetailStore.setOpenAddNewTransactionModal(
-                !stockVolatilityDetailStore.isOpenAddNewTransactionModal,
+              stockDetailStore.setOpenAddNewTransactionModal(
+                !stockDetailStore.isOpenAddNewTransactionModal,
               );
             }}
             color="success"

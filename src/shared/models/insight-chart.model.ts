@@ -7,12 +7,14 @@ export class PieChartItem {
 }
 
 export class TransactionItem {
-  singleAssetTransactionType: TransactionType | undefined = undefined;
+  singleAssetTransactionType: TransactionType | null = null;
   id: number = 0;
   referentialAssetId: number = 0;
-  referentialAssetType: AssetType | undefined = undefined;
+  referentialAssetType: AssetType | null = null;
+  referentialAssetName: string = '';
   destinationAssetId: number = 0;
-  destinationAssetType: AssetType | undefined = undefined;
+  destinationAssetType: AssetType | null = null;
+  destinationAssetName: string = '';
   amount: number = 0;
   currencyCode: string = '';
   createdAt: string = '';
