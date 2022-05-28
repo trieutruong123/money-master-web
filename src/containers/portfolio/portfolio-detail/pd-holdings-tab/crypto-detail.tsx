@@ -73,15 +73,14 @@ export const CryptoInvestments = ({
     // "Today's Gain/Loss"
     collumnsName.todayChange,
     collumnsName.totalPL,
-    collumnsName.shares,
+    collumnsName.amount,
     collumnsName.total,
     '',
   ];
   const renderPriceWithCommas = (currencyCode: string, price: number) => {
     const currencySymbol = getCurrencyByCode(currencyCode)?.symbol;
-    return (
-      currencySymbol + price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-    );
+    return `${currencySymbol}${roundAndAddDotAndCommaSeparator(price, 4)}`;
+
   };
 
   const renderPriceChange = (currencyCode: string, num: number) => {
@@ -104,7 +103,7 @@ export const CryptoInvestments = ({
   };
 
   const renderPercentage = (num: number) => {
-    if (typeof num !== 'undefined') {
+    if (typeof num !== 'undefined' && !isNaN(num) && isFinite(num)) {
       if (num < 0)
         return (
           <span style={{ color: '#e01616' }}>
@@ -117,7 +116,7 @@ export const CryptoInvestments = ({
             &#40;&#43;{roundAndAddDotAndCommaSeparator(num, 4)}%&#41;
           </span>
         );
-    } else return undefined;
+    } else return null;
   };
 
   const renderTotalValue = (currencyCode: string, num: number) => {
@@ -208,12 +207,12 @@ export const CryptoInvestments = ({
                       {renderPriceChange(
                         record.currencyCode,
                         record.currentAmountHolding *
-                          (record.currentPrice - record.purchasePrice),
+                        (record.currentPrice - record.purchasePrice),
                       )}
                       &nbsp;
                       {renderPercentage(
                         (record.currentPrice - record.purchasePrice) /
-                          record.currentPrice,
+                        record.currentPrice,
                       )}
                     </TableBodyCell>
                     <TableBodyCell
@@ -223,20 +222,20 @@ export const CryptoInvestments = ({
                       {renderPriceChange(
                         record.currencyCode,
                         record.currentAmountHolding *
-                          (record.currentPrice - record.purchasePrice),
+                        (record.currentPrice - record.purchasePrice),
                       )}
                     </TableBodyCell>
                     <TableBodyCell
                       onClick={() => handleItemClick(record.id.toString())}
                     >
-                      {record.currentAmountHolding}
+                      {roundAndAddDotAndCommaSeparator(record.currentAmountHolding, 4)}
                     </TableBodyCell>
                     <TableBodyCell
                       onClick={() => handleItemClick(record.id.toString())}
                     >
                       {renderTotalValue(
                         record.currencyCode,
-                        record.currentPrice * record.currentAmountHolding,
+                        record.currentAmountHolding
                       )}
                     </TableBodyCell>
                     <TableBodyCell>

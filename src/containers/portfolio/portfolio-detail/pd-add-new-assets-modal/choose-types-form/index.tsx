@@ -23,7 +23,6 @@ import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import SaveIcon from '@mui/icons-material/Save';
 import { BsCashCoin } from 'react-icons/bs';
 import { RiPsychotherapyFill } from 'react-icons/ri';
-import { AiFillGolden } from 'react-icons/ai';
 import { AssetTypeName } from 'shared/constants';
 import { portfolioDetailStore } from 'shared/store';
 
@@ -35,7 +34,7 @@ interface IProps {
 export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
   const [isAddingNewAssetType, setOpenNewAssetType] = useState<boolean>(false);
   const [newAssetType, setAssetType] = useState<string>('');
-  const [errorMessage,setErrorMessage] = useState<string> ("");
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const CategoryList = [
     {
       id: uuid(),
@@ -67,19 +66,13 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
       label: content.bankSavings,
       icon: <AccountBalanceIcon />,
     },
-    {
-      id: uuid(),
-      type: AssetTypeName.comodity,
-      label: content.comodity,
-      icon: <AiFillGolden />,
-    },
   ];
 
   const handleSelectionClick = (
     assetType: string,
     selectedCustomAssetId?: number,
   ) => {
-    if (assetType === AssetTypeName.others)
+    if (assetType === AssetTypeName.custom)
       portfolioDetailStore.setSelectedCustomAssetId(selectedCustomAssetId || 0);
     openNextForm({ curFormType: 'type', selectedType: assetType });
   };
@@ -91,20 +84,24 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (
+      event.key === 'Enter' &&
+      typeof newAssetType !== 'undefined' &&
+      newAssetType.length > 0
+    ) {
       portfolioDetailStore.addNewCustomAsseType({ name: newAssetType });
       setAssetType('');
       setOpenNewAssetType(false);
     }
   };
+
   const handleCreateNewAssetType = () => {
     if (typeof newAssetType !== 'undefined' && newAssetType.length > 0) {
       portfolioDetailStore.addNewCustomAsseType({ name: newAssetType });
       setAssetType('');
       setOpenNewAssetType(false);
       setErrorMessage('');
-    }
-    else{
+    } else {
       setErrorMessage('Type name is required');
     }
   };
@@ -145,7 +142,7 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
             <ListItemButton
               key={item.id}
               onClick={() =>
-                handleSelectionClick(AssetTypeName.others, item.id)
+                handleSelectionClick(AssetTypeName.custom, item.id)
               }
             >
               <ListItemIcon>
@@ -191,8 +188,8 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               sx={{ width: '90%', ml: '1.5rem' }}
-              error={errorMessage?.length>0}
-              helperText = {errorMessage}
+              error={errorMessage?.length > 0}
+              helperText={errorMessage}
               required
             ></TextField>
             <IconButton

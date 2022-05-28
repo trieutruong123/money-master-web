@@ -158,7 +158,7 @@ export const vi = {
         currentPrice: 'GIÁ HIỆN TẠI',
         todayChange: `THAY ĐỔI TRONG NGÀY`,
         totalPL: 'TỔNG LỜI/LỖ',
-        shares: 'SỐ LƯỢNG',
+        amount: 'SỐ LƯỢNG',
         total: 'TỔNG CỘNG',
       },
       settingDropDownMenu: {

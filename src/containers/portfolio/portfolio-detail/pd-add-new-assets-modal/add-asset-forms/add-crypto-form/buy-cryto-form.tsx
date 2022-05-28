@@ -18,6 +18,7 @@ import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getSupportedCurrencyList } from 'shared/helpers';
+import CheckBoxButton from 'shared/components/checkbox';
 
 type FormValues = {
   name: string;
@@ -45,6 +46,7 @@ export const BuyCryptoForm = ({
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [checked, setChecked] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -78,8 +80,13 @@ export const BuyCryptoForm = ({
       purchasePrice: data.purchasePrice,
       currencyCode: data.currencyCode,
       cryptoCoinCode: selectedCoin.id,
+      isUsingInvestFund: checked,
     });
   };
+
+  const handleChangeCheckBox = (isCheck: boolean) => {
+    setChecked(isCheck);
+  }
 
   return (
     <Box
@@ -198,6 +205,10 @@ export const BuyCryptoForm = ({
           error={typeof errors.description?.message !== 'undefined'}
           helperText={errors.description?.message}
         ></TextField>
+        <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ mb: 1 }}>
+          <CheckBoxButton color='primary' onChange={handleChangeCheckBox} />
+          <h4>Is money from invest fund?</h4>
+        </Box>
       </Box>
 
       <Box

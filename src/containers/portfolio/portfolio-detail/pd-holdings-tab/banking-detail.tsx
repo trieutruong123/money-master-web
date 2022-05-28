@@ -95,11 +95,9 @@ export const BankingInvestments = ({
   const renderTermRange = (termRange: number, unit: string) => {
     const years = Math.floor(termRange / 12);
     const months = termRange % 12;
-    const displayText = `${
-      years > 1 ? years + ' years ' : years === 1 ? years + ' year ' : ''
-    }${years > 0 && months !== 0 ? '& ' : ''}${
-      months > 1 ? months + ' months' : months === 1 ? '1 month' : ''
-    }`;
+    const displayText = `${years > 1 ? years + ' years ' : years === 1 ? years + ' year ' : ''
+      }${years > 0 && months !== 0 ? '& ' : ''}${months > 1 ? months + ' months' : months === 1 ? '1 month' : ''
+      }`;
     return displayText;
   };
 
@@ -165,11 +163,14 @@ export const BankingInvestments = ({
                     onClick={() => handleItemClick(record.id)}
                   >
                     <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
+                      {record.bankCode}
+                    </Box>
+                    <Box >
                       {record.name}
                     </Box>
-                    <Box sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}>
+                    {/* <Box sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}>
                       {dayjs(record.inputDay).format('DD-MM-YYYY')}
-                    </Box>
+                    </Box> */}
                   </TableBodyCellSymbol>
                   <TableBodyCell onClick={() => handleItemClick(record.id)}>
                     {renderDeposit(

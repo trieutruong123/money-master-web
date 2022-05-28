@@ -82,9 +82,8 @@ export const StockInvestments = ({
   ];
   const renderPriceWithCommas = (currencyCode: string, price: number) => {
     const currencySymbol = getCurrencyByCode(currencyCode)?.symbol;
-    return (
-      currencySymbol + price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-    );
+    return currencySymbol + roundAndAddDotAndCommaSeparator(price, 4);
+
   };
 
   const renderPriceChange = (currencyCode: string, num: number) => {
@@ -107,7 +106,7 @@ export const StockInvestments = ({
   const renderPercentage = (num: number) => {
     // const num = parseFloat(number);
     const number = roundAndAddDotAndCommaSeparator(num, 4).toString();
-    if (typeof num !== 'undefined') {
+    if (typeof num !== 'undefined' && !isNaN(num) && isFinite(num)) {
       if (num < 0)
         return <span style={{ color: '#e01616' }}>&#40;{number}%&#41;</span>;
       else
@@ -205,12 +204,12 @@ export const StockInvestments = ({
                       {renderPriceChange(
                         record.currencyCode,
                         record.currentAmountHolding *
-                          (record.currentPrice - record.purchasePrice),
+                        (record.currentPrice - record.purchasePrice),
                       )}
                       &nbsp;
                       {renderPercentage(
                         (record.currentPrice - record.purchasePrice) /
-                          record.purchasePrice,
+                        record.purchasePrice,
                       )}
                     </TableBodyCell>
                     <TableBodyCell
@@ -220,13 +219,13 @@ export const StockInvestments = ({
                       {renderPriceChange(
                         record.currencyCode,
                         record.currentAmountHolding *
-                          (record.currentPrice - record.purchasePrice),
+                        (record.currentPrice - record.purchasePrice),
                       )}
                     </TableBodyCell>
                     <TableBodyCell
                       onClick={() => handleItemClick(record.id.toString())}
                     >
-                      {record.currentAmountHolding}
+                      {roundAndAddDotAndCommaSeparator(record.currentAmountHolding, 4)}
                     </TableBodyCell>
                     <TableBodyCell
                       onClick={() => handleItemClick(record.id.toString())}

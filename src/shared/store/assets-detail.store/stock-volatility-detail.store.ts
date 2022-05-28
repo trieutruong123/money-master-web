@@ -1,9 +1,13 @@
+import { PAStockBreadcrumbTabs } from './../../constants/portfolio-asset';
+import { StockTransactionList } from './../../models/insight-chart.model';
 import { content } from 'i18n';
 import { action, computed, makeAutoObservable, observable } from 'mobx';
 import { finhubService, httpService } from 'services';
 import { StockItem } from 'shared/models';
 import { rootStore } from 'shared/store';
 import { portfolioData } from 'shared/store/portfolio/portfolio-data';
+import { NewTransactionRequestBody, Portfolio } from 'shared/types';
+import dayjs from 'dayjs';
 
 class StockVolatilityDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
@@ -13,15 +17,24 @@ class StockVolatilityDetailStore {
   stockName: string | undefined = '';
   currencyCode: string = 'usd';
   timeInterval: string = 'W';
+  selectedTab: string = PAStockBreadcrumbTabs.overview;
   historicalMarketData: Array<any> = [];
   stockDetail: StockItem | undefined = undefined;
   stockList: Array<StockItem> | undefined = undefined;
+  transactionList: StockTransactionList | undefined = [];
+  portfolioInfo: Portfolio | undefined = undefined;
+
   constructor() {
     makeAutoObservable(this, {
       isOpenAddNewTransactionModal: observable,
       historicalMarketData: observable,
       timeInterval: observable,
       stockName: observable,
+      selectedTab: observable,
+      portfolioInfo: observable,
+      transactionList: observable,
+      currencyCode: observable,
+      portfolioId: observable,
 
       setOpenAddNewTransactionModal: action,
       setStockId: action,
@@ -29,10 +42,15 @@ class StockVolatilityDetailStore {
       setCurrency: action,
       setPortfolioId: action,
       setStockCode: action,
+      setSelectedTab: action,
+
       fetchStockDetail: action,
       fetchHistoricalMarketData: action,
+      fetchStockTransactionList: action,
+      fetchPortfolioInfo: action,
+      fetchStockInfoByCode: action,
 
-      getTransactionHistoryData: computed,
+      createNewTransaction: action,
     });
   }
 
@@ -56,11 +74,54 @@ class StockVolatilityDetailStore {
     this.currencyCode = currencyCode;
   }
 
+  setSelectedTab(tab: string) {
+    this.selectedTab = tab;
+  }
+
   setStockCode(stockCode: string) {
     this.stockCode = stockCode;
   }
 
-  async fetchStockDetail({ stockId }: { stockId: string }) {
+  async fetchData() {
+    Promise.all([
+      await this.fetchStockDetail(),
+      await this.fetchStockTransactionList(),
+      await this.fetchPortfolioInfo(),
+    ]);
+  }
+
+  async fetchFinhubService() {
+    Promise.all([
+      await this.fetchStockInfoByCode(),
+      await this.fetchHistoricalMarketData({
+        startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
+        endDate: dayjs(Date.now()).unix(),
+        interval: 'W',
+      }),
+    ]);
+  }
+
+  async fetchPortfolioInfo() {
+    if (!this.portfolioId) {
+      return;
+    }
+    const url = `/portfolio`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+
+    if (!res.isError) {
+      const currentPortfolio = res.data.map(
+        (item: Portfolio) => item.id === this.portfolioId.toString(),
+      );
+      this.portfolioInfo = currentPortfolio;
+      this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
+    } else {
+    }
+  }
+
+  async fetchStockDetail() {
+    if (!this.portfolioId || !this.stockId) {
+      return;
+    }
     const url = `/portfolio/${this.portfolioId}/stock`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
@@ -81,9 +142,27 @@ class StockVolatilityDetailStore {
     }
   }
 
-  async fetchStockInfoByCode({ stockId }: { stockId: string }) {
+  async fetchStockTransactionList() {
+    if (!this.portfolioId || !this.stockId) {
+      return;
+    }
+    const url = `/portfolio/${this.portfolioId}/stock/${this.stockId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      this.transactionList = res.data;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+    }
+  }
+
+  async fetchStockInfoByCode() {
+    if (!this.stockCode) {
+      return;
+    }
     const res: any = await finhubService.getStockInfoByCode({
-      symbol: stockId,
+      symbol: this.stockCode,
     });
     if (!res.isError) {
       return res.data;
@@ -91,6 +170,9 @@ class StockVolatilityDetailStore {
   }
 
   async fetchHistoricalMarketData(params: any) {
+    if (!this.stockCode) {
+      return;
+    }
     const res: any = await finhubService.getStockOHCL({
       stockId: this.stockCode,
       resolution: params.interval,
@@ -114,59 +196,19 @@ class StockVolatilityDetailStore {
     return true;
   }
 
-  get getTransactionHistoryData() {
-    if (typeof this.stockDetail === 'undefined') return undefined;
+  async createNewTransaction(params: NewTransactionRequestBody) {
+    const url = `/portfolio/${this.portfolioId}/stock/${this.stockCode}/transaction`;
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      params,
+    );
 
-    const marketPrice = this.stockDetail?.currentPrice;
-    const res = transactionHistory.map((item) => {
-      const { amount, purchasePrice, fee, type } = item;
-      const totalCost =
-        type === 'buy'
-          ? amount * purchasePrice + fee
-          : type === 'sell'
-          ? amount * purchasePrice - fee
-          : 0;
-      const totalProfitLoss =
-        type === 'buy'
-          ? marketPrice * amount - totalCost
-          : type === 'sell'
-          ? totalCost - marketPrice * amount
-          : 0;
-      const profitLossPercentage = totalProfitLoss / totalCost;
-      return {
-        ...item,
-        totalCost,
-        totalProfitLoss,
-        profitLossPercentage,
-      };
-    });
-    return res;
+    if (!res.isError) {
+      this.transactionList?.push(res.data);
+    } else {
+      rootStore.raiseError(content[rootStore.locale].error.badRequest);
+    }
   }
-
-  updateTransactionHistoryData() {}
 }
 
 export const stockVolatilityDetailStore = new StockVolatilityDetailStore();
-
-const transactionHistory = [
-  {
-    id: 1647501595399,
-    time: 1647501595399,
-    type: 'buy',
-    amount: 3,
-    purchasePrice: 178.96,
-    fee: 1,
-    netValue: 0,
-    settings: 0,
-  },
-  {
-    id: 1647501595310,
-    time: 1647501595310,
-    type: 'sell',
-    amount: 1,
-    purchasePrice: 180.96,
-    fee: 1,
-    netValue: 0,
-    settings: 0,
-  },
-];

@@ -26,7 +26,7 @@ export const DeleteAssetForm = observer(() => {
 
   const { deletedAssetInfo } = portfolioDetailStore;
   const deletedAssetDetail = portfolioDetailStore.findAssetByIdAndType(
-    deletedAssetInfo?.assetType || AssetTypeName.others,
+    deletedAssetInfo?.assetType || AssetTypeName.custom,
     deletedAssetInfo?.assetId || -1,
   );
 
@@ -34,9 +34,15 @@ export const DeleteAssetForm = observer(() => {
     portfolioDetailStore.setOpenDeleteAssetModal(false);
   };
 
-  const handleDeleteAsset = () => {
-    portfolioDetailStore.deleteAsset();
-    portfolioDetailStore.setOpenDeleteAssetModal(false);
+  const handleDeleteAsset = async () => {
+    if (portfolioDetailStore.deletedAssetInfo !== undefined) {
+      const res = await portfolioDetailStore.deleteAsset();
+      if (!res.isError) {
+        portfolioDetailStore.setUpdateReport(true);
+        portfolioDetailStore.setOpenDeleteAssetModal(false);
+      } else {
+      }
+    }
   };
 
   return (

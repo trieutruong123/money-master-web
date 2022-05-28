@@ -158,7 +158,7 @@ export const en = {
         currentPrice: 'CURRENT PRICE',
         todayChange: `Today's Change`,
         totalPL: 'Total P/L',
-        shares: 'Shares',
+        amount: 'Amount',
         total: 'Total',
       },
       settingDropDownMenu: {

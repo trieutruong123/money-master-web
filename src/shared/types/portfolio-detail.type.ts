@@ -18,6 +18,7 @@ export type NewBanksSavingAsset = {
   description: string;
   interestRate: number;
   termRange: number;
+  isUsingInvestFund: boolean;
 };
 
 export type NewRealEstateAsset = {
@@ -28,6 +29,7 @@ export type NewRealEstateAsset = {
   buyPrice: number;
   currentPrice: number;
   description: string;
+  isUsingInvestFund: boolean;
 };
 
 export type NewStockAsset = {
@@ -39,6 +41,7 @@ export type NewStockAsset = {
   marketCode: string;
   purchasePrice: 0;
   currencyCode: string;
+  isUsingInvestFund: boolean;
 };
 
 export type NewCryptoCurrencyAsset = {
@@ -48,6 +51,7 @@ export type NewCryptoCurrencyAsset = {
   currentAmountHolding: number;
   buyPrice: number;
   cryptoCoinCode: string;
+  isUsingInvestFund: boolean;
 };
 
 export type NewCashAsset = {
@@ -56,6 +60,7 @@ export type NewCashAsset = {
   description: string;
   currencyCode: number;
   inputDay: string;
+  isUsingInvestFund: boolean;
 };
 
 export type NewPortfolioCustomAsset = {
@@ -66,6 +71,7 @@ export type NewPortfolioCustomAsset = {
   description: string;
   interestRate: number;
   termRange: number;
+  isUsingInvestFund: boolean;
 };
 
 export type UpdatedRealEstateItem = {
@@ -91,14 +97,6 @@ export type UpdatedBankSavingItem = {
   termRange: number;
 };
 
-export type TransferToInvestFundType = {
-  referentialAssetId: number;
-  referentialAssetType: string;
-  amount: number;
-  currencyCode: string;
-  isTransferringAll: boolean;
-};
-
 export type SearchingDataItem = {
   id: string;
   symbol: string;
@@ -112,13 +110,14 @@ export type SankeyDataLink = {
 };
 
 export type AssetType =
-  | 'crypto'
+  | 'cryptoCurrency'
   | 'stock'
   | 'cash'
   | 'bankSaving'
   | 'realEstate'
-  | 'comodity'
-  | 'custom';
+  | 'custom'
+  | 'fund'
+  | '';
 
 //Type for portfolio detail tabs
 //export type PDTabsType = 'holdings' | 'report' | 'investFund' | 'settings';

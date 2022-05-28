@@ -17,10 +17,10 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { getSupportedCurrencyList } from 'shared/helpers';
+import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
+import CheckBoxButton from 'shared/components/checkbox';
 
 type FormValues = {
-  name: string;
   amount: number;
   currencyCode: string;
   description: string;
@@ -39,11 +39,10 @@ export const BuyCashForm = ({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [checked, setChecked] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(new Date());
-
   const validationSchema = Yup.object().shape({
     currencyCode: Yup.string().required().default('USD'),
-    name: Yup.string().required('Name is required'),
     amount: Yup.number()
       .required('Amount is required')
       .typeError('Amount must be a number')
@@ -66,9 +65,14 @@ export const BuyCashForm = ({ handleFormSubmit, content }: IProps) => {
       inputDay: date,
       currencyCode: data.currencyCode,
       amount: data.amount,
-      name: data.name,
+      name: getCurrencyByCode(data.currencyCode)?.name || '',
       description: data.description,
+      isUsingInvestFund: checked,
     });
+  };
+
+  const handleChangeCheckBox = (isCheck: boolean) => {
+    setChecked(isCheck);
   };
 
   return (
@@ -98,17 +102,6 @@ export const BuyCashForm = ({ handleFormSubmit, content }: IProps) => {
         }}
       >
         <Grid container spacing="2">
-          <TextField
-            type="text"
-            fullWidth
-            sx={{ mt: 1, display: 'block' }}
-            id="outlined-cash-name"
-            label={`*${content.name}`}
-            {...register('name')}
-            variant="outlined"
-            error={typeof errors.name?.message !== 'undefined'}
-            helperText={errors.name?.message}
-          ></TextField>
           <TextField
             type="number"
             fullWidth
@@ -169,6 +162,10 @@ export const BuyCashForm = ({ handleFormSubmit, content }: IProps) => {
             error={typeof errors.description?.message !== 'undefined'}
             helperText={errors.description?.message}
           ></TextField>
+          <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ mb: 1 }}>
+            <CheckBoxButton color='primary' onChange={handleChangeCheckBox} />
+            <h4>Is money from invest fund?</h4>
+          </Box>
         </Grid>
       </Box>
       <Box
