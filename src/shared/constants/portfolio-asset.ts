@@ -1,6 +1,6 @@
 export const PACryptoBreadcrumbTabs = {
   overview: 'Overview',
-  insight: 'Insight',
+  marketData: 'Market Data',
   settings: 'Settings',
 };
 

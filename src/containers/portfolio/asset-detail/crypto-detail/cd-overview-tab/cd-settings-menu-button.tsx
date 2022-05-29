@@ -1,16 +1,12 @@
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import * as React from 'react';
 import {
-  Box,
   Menu,
-  MenuList,
   MenuItem,
   ListItemIcon,
   Divider,
   ListItemText,
   IconButton,
-  Grow,
-  Popper,
   Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,6 +14,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
+
 interface IProps {
   assetId: string;
   portfolioId: string;

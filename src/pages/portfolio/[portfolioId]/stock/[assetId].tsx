@@ -12,7 +12,7 @@ import { content } from 'i18n';
 import {  HypnosisLoading } from 'shared/components';
 import { DashboardLayout } from 'containers';
 
-const StockVolatilityDetail = lazy(()=>
+const SDStockDetail = lazy(()=>
   import ('containers/portfolio/asset-detail/stock-detail/sd-stock-detail-main'),
 );
 
@@ -39,7 +39,7 @@ const AssetVolatilityDetailPage = () => {
       >
         <Container maxWidth="lg">
           <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-            <StockVolatilityDetail/>
+            <SDStockDetail/>
           </Suspense>
         </Container>
       </Box>
