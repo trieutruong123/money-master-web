@@ -1,10 +1,10 @@
 import {
   BankSavingsDetail,
   CashDetail,
-  CryptoVolatilityDetail,
+  CDCryptoDetail,
   OtherAssetsDetail,
   RealEstateDetail,
-  StockVolatilityDetail,
+  SDStockDetail,
 } from './asset-detail';
 import {
   DeletePortfolio,
@@ -15,8 +15,8 @@ import {
 import PortfolioDetail from './portfolio-detail/pd-portfolio-detail';
 
 export {
-  CryptoVolatilityDetail,
-  StockVolatilityDetail,
+  CDCryptoDetail,
+  SDStockDetail,
   RealEstateDetail,
   CashDetail,
   OtherAssetsDetail,

@@ -13,24 +13,18 @@ import {
   useTheme,
   useMediaQuery,
 } from '@mui/material';
-import dayjs from 'dayjs';
-import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import { BiLineChart } from 'react-icons/bi';
 import { FcCandleSticks } from 'react-icons/fc';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { CandleStickChart } from './candle-stick-chart';
 import { AreaChart } from './area-chart';
+import { cryptoDetailStore } from 'shared/store';
+import { observer } from 'mobx-react-lite';
 
-interface IProps {
-  data: Array<any>;
-  handleTimeIntervalChanged: any;
-}
+interface IProps {}
 
-export const HistoricalMarketChart = ({
-  data,
-  handleTimeIntervalChanged,
-}: IProps) => {
+export const CDMarketChart = observer(({}: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [rangeSelection, setTimeRangeSelection] = useState('0');
@@ -55,6 +49,7 @@ export const HistoricalMarketChart = ({
     handleTimeIntervalChanged(timeRangeList[index].amount);
   };
 
+
   const handleTimeIntervalChange = (event: SelectChangeEvent) => {
     setInterval(event.target.value as string);
     const index = Number.parseInt(event.target.value);
@@ -63,6 +58,11 @@ export const HistoricalMarketChart = ({
     );
     handleTimeIntervalChanged(timeRangeList[timeRangeIndex].amount);
   };
+
+  const handleTimeIntervalChanged = useCallback((interval: number) => {
+    cryptoDetailStore.setTimeInterval(interval.toString());
+    cryptoDetailStore.fetchOHLC();
+  }, []);
 
   return (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
@@ -106,7 +106,7 @@ export const HistoricalMarketChart = ({
                   value={rangeSelection}
                   label="Range"
                   onChange={handeTimeRangeChange}
-                  sx = {{width:110}}
+                  sx={{ width: 110 }}
                 >
                   {timeRangeList.map((item, index) => (
                     <MenuItem key={index.toString()} value={index}>
@@ -115,10 +115,10 @@ export const HistoricalMarketChart = ({
                   ))}
                 </Select>
               </FormControl>
-              <FormControl sx={{ minWidth: 80, px: '.2rem', pb: '.2rem'}}>
+              <FormControl sx={{ minWidth: 80, px: '.2rem', pb: '.2rem' }}>
                 <InputLabel id="interval-select-label">Interval</InputLabel>
                 <Select
-                  sx = {{width:120}}
+                  sx={{ width: 120 }}
                   labelId="interval-select-label"
                   id="interva-select"
                   value={intervalSelection}
@@ -163,26 +163,36 @@ export const HistoricalMarketChart = ({
               </Stack>
             </Grid>
             <Grid>
-              <Box display={chartType === 'area' ? 'none' : 'inherit'}>
-                <CandleStickChart
-                  timeInterval={
-                    timeRangeList[Number.parseInt(rangeSelection)]?.amount
-                  }
-                  data={data}
-                />
-              </Box>
-              <Box display={chartType === 'candlestick' ? 'none' : 'inherit'}>
-                <AreaChart
-                  timeInterval={
-                    timeRangeList[Number.parseInt(rangeSelection)]?.amount
-                  }
-                  data={data}
-                />
-              </Box>
+              {cryptoDetailStore.OHLC_data !== undefined ? (
+                <Suspense fallback={<></>}>
+                  <Box display={chartType === 'area' ? 'none' : 'inherit'}>
+                    <CandleStickChart
+                      timeInterval={
+                        timeRangeList[Number.parseInt(rangeSelection)]?.amount
+                      }
+                      data={cryptoDetailStore.OHLC_data}
+                    />
+                  </Box>
+                </Suspense>
+              ) : null}
+              {cryptoDetailStore.OHLC_data !== undefined ? (
+                <Suspense fallback={<></>}>
+                  <Box
+                    display={chartType === 'candlestick' ? 'none' : 'inherit'}
+                  >
+                    <AreaChart
+                      timeInterval={
+                        timeRangeList[Number.parseInt(rangeSelection)]?.amount
+                      }
+                      data={cryptoDetailStore.OHLC_data}
+                    />
+                  </Box>
+                </Suspense>
+              ) : null}
             </Grid>
           </CardContent>
         </Card>
       </Card>
     </Grid>
   );
-};
+});

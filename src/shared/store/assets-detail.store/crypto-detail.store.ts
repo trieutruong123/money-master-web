@@ -1,46 +1,46 @@
-import { PAStockBreadcrumbTabs } from '../../constants/portfolio-asset';
+import { coinGeckoService, httpService } from 'services';
 import {
-  StockTransactionList,
-  TransactionItem,
-} from '../../models/insight-chart.model';
+  action,
+  computed,
+  makeAutoObservable,
+  observable,
+  runInAction,
+} from 'mobx';
 import { content } from 'i18n';
-import { action, makeAutoObservable, observable, runInAction } from 'mobx';
-import { finhubService, httpService } from 'services';
-import { StockItem } from 'shared/models';
 import { rootStore } from 'shared/store';
+import { CryptoItem, TransactionItem } from 'shared/models';
+import { portfolioData } from '../portfolio/portfolio-data';
 import {
   ITransactionRequest,
   Portfolio,
   TransferToInvestFundType,
 } from 'shared/types';
-import dayjs from 'dayjs';
+import { PACryptoBreadcrumbTabs } from 'shared/constants';
 
-interface IStockMarketData {
+interface ICryptoMarketData {
   c: number;
   dp: number;
   d: number;
   h: number;
   l: number;
-  o: number;
-  pc: number;
 }
 
-class StockDetailStore {
+class CryptoDetailStore {
   portfolioId: number = 0;
   currencyCode: string = 'usd';
   portfolioInfo: Portfolio | undefined = undefined;
 
-  stockId: number = 0;
-  stockDetail: StockItem | undefined = undefined;
+  cryptoId: number = 0;
+  cryptoDetail: CryptoItem | undefined = undefined;
   transactionHistory: Array<TransactionItem> | undefined = [];
 
   needUpdateOverviewData: boolean = true;
 
-  timeInterval: string = 'W';
+  timeInterval: string = '1';
   OHLC_data: Array<any> = [];
-  marketData: IStockMarketData | undefined = undefined;
+  marketData: ICryptoMarketData | undefined = undefined;
 
-  selectedTab: string = PAStockBreadcrumbTabs.overview;
+  selectedTab: string = PACryptoBreadcrumbTabs.overview;
   isOpenAddNewTransactionModal: boolean = false;
 
   constructor() {
@@ -48,55 +48,54 @@ class StockDetailStore {
       portfolioId: observable,
       currencyCode: observable,
       portfolioInfo: observable,
-      stockId: observable,
-      stockDetail: observable,
+      cryptoId: observable,
+      cryptoDetail: observable,
       transactionHistory: observable,
       timeInterval: observable,
       OHLC_data: observable,
       selectedTab: observable,
       isOpenAddNewTransactionModal: observable,
       needUpdateOverviewData: observable,
-      marketData: observable,
 
-      setOpenAddNewTransactionModal: action,
-      setStockId: action,
-      setTimeInterval: action,
+      setCryptoId: action,
       setCurrency: action,
+      setOpenAddNewTransactionModal: action,
+      setTimeInterval: action,
       setPortfolioId: action,
       setSelectedTab: action,
 
-      fetchStockDetail: action,
+      fetchCryptoDetail: action,
       fetchOHLC: action,
-      fetchStockTransactionHistory: action,
+      fetchCryptoTransactionHistory: action,
       fetchPortfolioInfo: action,
-      fetchStockInfoByCode: action,
+      fetchCryptoInfoByCode: action,
 
       createNewTransaction: action,
     });
   }
 
-  setUpdateOverviewData(isUpdate: boolean) {
-    this.needUpdateOverviewData = isUpdate;
-  }
-
-  setTimeInterval(interval: string) {
-    this.timeInterval = interval;
-  }
-
-  setOpenAddNewTransactionModal(isOpen: boolean) {
-    this.isOpenAddNewTransactionModal = isOpen;
-  }
-
-  setStockId(stockId: string) {
-    this.stockId = Number.parseInt(stockId);
+  setCryptoId(cryptoId: string) {
+    this.cryptoId = Number.parseInt(cryptoId);
   }
 
   setPortfolioId(portfolioId: string) {
     this.portfolioId = Number.parseInt(portfolioId);
   }
 
+  setTimeInterval(interval: string) {
+    this.timeInterval = interval;
+  }
+
   setCurrency(currencyCode: string) {
     this.currencyCode = currencyCode;
+  }
+
+  setOpenAddNewTransactionModal(isOpen: boolean) {
+    this.isOpenAddNewTransactionModal = isOpen;
+  }
+
+  setUpdateOverviewData(isUpdate: boolean) {
+    this.needUpdateOverviewData = isUpdate;
   }
 
   setSelectedTab(tab: string) {
@@ -105,12 +104,12 @@ class StockDetailStore {
 
   async fetchOverviewTabData() {
     Promise.all([
-      await this.fetchStockDetail(),
-      await this.fetchStockTransactionHistory(),
+      await this.fetchCryptoDetail(),
+      await this.fetchCryptoTransactionHistory(),
       await this.fetchPortfolioInfo(),
     ]);
     if (this.marketData === undefined) {
-      await this.fetchStockInfoByCode();
+      await this.fetchCryptoInfoByCode();
     }
   }
 
@@ -137,16 +136,16 @@ class StockDetailStore {
     }
   }
 
-  async fetchStockDetail() {
-    if (!this.portfolioId || !this.stockId) {
+  async fetchCryptoDetail() {
+    if (!this.portfolioId || !this.cryptoId) {
       return;
     }
-    const url = `/portfolio/${this.portfolioId}/stock`;
+    const url = `/portfolio/${this.portfolioId}/crypto`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
       runInAction(() => {
-        this.stockDetail = res.data.find(
-          (item: StockItem) => item.id === this.stockId,
+        this.cryptoDetail = res.data.find(
+          (item: CryptoItem) => item.id === this.cryptoId,
         );
       });
     } else {
@@ -157,11 +156,11 @@ class StockDetailStore {
     return res;
   }
 
-  async fetchStockTransactionHistory() {
-    if (!this.portfolioId || !this.stockId) {
+  async fetchCryptoTransactionHistory() {
+    if (!this.portfolioId || !this.cryptoId) {
       return;
     }
-    const url = `/portfolio/${this.portfolioId}/stock/${this.stockId}/transactions`;
+    const url = `/portfolio/${this.portfolioId}/crypto/${this.cryptoId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
       runInAction(() => {
@@ -177,7 +176,7 @@ class StockDetailStore {
 
   async createNewTransaction(params: ITransactionRequest) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/stock/${this.stockId}/transaction`;
+    const url = `/portfolio/${this.portfolioId}/crypto/${this.cryptoId}/transaction`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
       params,
@@ -212,59 +211,64 @@ class StockDetailStore {
   }
 
   async fetchMarketData() {
-    Promise.all([
-      await this.fetchOHLC({
-        startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
-        endDate: dayjs(Date.now()).unix(),
-        interval: 'W',
-      }),
-    ]);
+    Promise.all([await this.fetchOHLC()]);
   }
 
-  async fetchStockInfoByCode() {
-    if (!this.stockDetail?.stockCode) {
+  async fetchCryptoInfoByCode() {
+    if (this.cryptoDetail?.cryptoCoinCode === undefined) {
       return;
     }
-    const res: any = await finhubService.getStockInfoByCode({
-      symbol: this.stockDetail.stockCode,
+    const res: any = await coinGeckoService.getCoinInfoByCode({
+      coinCode: this.cryptoDetail?.cryptoCoinCode,
+      exclude: {
+        localization: true,
+        ticker: true,
+        communityData: true,
+        developerData: true,
+      },
     });
     if (!res.isError) {
       runInAction(() => {
-        this.marketData = res.data;
+        const marketData = res.data.market_data;
+        const h = marketData.high_24h.usd;
+        const l = marketData.low_24h.usd;
+        const c = marketData.current_price.usd;
+        const d = marketData.price_change_24h;
+        const dp = marketData.price_change_24h / c;
+        const pc = marketData.price_change_24h;
+        this.marketData = { h, l, c, d, dp };
       });
     } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
       runInAction(() => {
         this.marketData = undefined;
       });
     }
   }
 
-  async fetchOHLC(params: any) {
-    if (!this.stockDetail?.stockCode) {
+  async fetchOHLC() {
+    if (!this.cryptoDetail?.cryptoCoinCode) {
       return;
     }
-    const res: any = await finhubService.getStockOHCL({
-      stockId: this.stockDetail.stockCode,
-      resolution: params.interval,
-      startDate: params.startDate,
-      endDate: params.endDate,
+    const res: any = await coinGeckoService.getCoinOHCL({
+      coinCode: this.cryptoDetail.cryptoCoinCode,
+      days: this.timeInterval,
+      vsCurrency: this.currencyCode,
     });
     if (!res.isError) {
-      const datetime = res.data['t'];
-      if (typeof datetime === 'undefined' || datetime === null) return false;
-      const open = res.data['o'];
-      const close = res.data['c'];
-      const high = res.data['h'];
-      const low = res.data['l'];
       runInAction(() => {
-        this.OHLC_data = datetime?.map((item: number, index: number) => {
-          return [item, open[index], high[index], low[index], close[index]];
-        });
+        this.OHLC_data = res.data;
       });
       return res;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
     }
     return res;
   }
 }
 
-export const stockDetailStore = new StockDetailStore();
+export const cryptoDetailStore = new CryptoDetailStore();
