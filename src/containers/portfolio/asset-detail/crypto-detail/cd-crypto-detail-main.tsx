@@ -1,5 +1,3 @@
-import { Suspense, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import {
   Box,
   Container,
@@ -8,27 +6,30 @@ import {
   Tooltip,
   useTheme,
   useMediaQuery,
-  Typography,
   Tab,
+  Typography,
 } from '@mui/material';
+import { Suspense, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { stockDetailStore } from 'shared/store';
-import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
-import { PAStockBreadcrumbTabs } from 'shared/constants/portfolio-asset';
+import { cryptoDetailStore } from 'shared/store';
 import { TabContext, TabList } from '@mui/lab';
-import SDOverviewTab from './sd-overview-tab/sd-overview-main';
-import SDMarketDataTab from './sd-market-data-chart/sd-market-data-tab';
-import { SDCreateTransactionModal } from './sd-transaction-modal/sd-create-transaction-modal';
+import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
+import { PACryptoBreadcrumbTabs } from 'shared/constants';
+import CDOverviewTab from './cd-overview-tab/cd-overview-main';
+import CDMarketDataTab from './cd-market-data-chart/cd-market-data-tab';
+import { CDCreateTransactionModal } from './cd-transaction-modal/cd-create-transaction-modal';
+import { useRouter } from 'next/router';
 
-interface IProps {}
+interface IProps {};
 
-const SDStockDetail = observer(({}: IProps) => {
+const CDCryptoDetail = observer(({}: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
 
   const { locale, query } = router;
+
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
     : query['portfolioId'] || '';
@@ -38,12 +39,12 @@ const SDStockDetail = observer(({}: IProps) => {
 
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
-    stockDetailStore.setStockId(assetId);
-    stockDetailStore.setPortfolioId(portfolioId);
-  }, [router, stockDetailStore, portfolioId, assetId]);
+    cryptoDetailStore.setCryptoId(assetId);
+    cryptoDetailStore.setPortfolioId(portfolioId);
+  }, [router, cryptoDetailStore, portfolioId, assetId]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-    stockDetailStore.setSelectedTab(newValue);
+    cryptoDetailStore.setSelectedTab(newValue);
   };
 
   return (
@@ -55,7 +56,7 @@ const SDStockDetail = observer(({}: IProps) => {
         width: '100%',
       }}
     >
-      <Box
+       <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
@@ -68,27 +69,26 @@ const SDStockDetail = observer(({}: IProps) => {
             <BreadcrumbsLink
               urlArr={[
                 '/portfolio',
-                `/portfolio/${stockDetailStore.portfolioId}`,
-                `/portfolio/${stockDetailStore.portfolioId}/stock/${stockDetailStore.stockId}`,
+                `/portfolio/${cryptoDetailStore.portfolioId}`,
+                `/portfolio/${cryptoDetailStore.portfolioId}/stock/${cryptoDetailStore.cryptoId}`,
               ]}
               displayNameArr={[
                 'Portfolio',
-                stockDetailStore.portfolioInfo?.name ||
-                  stockDetailStore.portfolioId.toString(),
-                stockDetailStore.stockDetail?.stockCode ||
-                  stockDetailStore.stockId.toString(),
+                cryptoDetailStore.portfolioInfo?.name ||
+                  cryptoDetailStore.portfolioId.toString(),
+                cryptoDetailStore.cryptoDetail?.cryptoCoinCode.toUpperCase() ||
+                  cryptoDetailStore.cryptoId.toString(),
               ]}
             />
             <Typography sx={{ mb: 3 }} variant="h4">
-              {stockDetailStore.stockDetail?.stockCode || ''}
+              {cryptoDetailStore.cryptoDetail?.cryptoCoinCode || ''}
             </Typography>
           </Container>
-
           <Container
             sx={{ padding: isMobile ? '0px' : 'initial' }}
             maxWidth="lg"
           >
-            <TabContext value={stockDetailStore.selectedTab}>
+            <TabContext value={cryptoDetailStore.selectedTab}>
               <Box sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}>
                 <TabList
                   onChange={handleTabChange}
@@ -97,16 +97,16 @@ const SDStockDetail = observer(({}: IProps) => {
                   indicatorColor="primary"
                 >
                   <Tab
-                    label={PAStockBreadcrumbTabs.overview}
-                    value={PAStockBreadcrumbTabs.overview}
+                    label={PACryptoBreadcrumbTabs.overview}
+                    value={PACryptoBreadcrumbTabs.overview}
                   />
                   <Tab
-                    label={PAStockBreadcrumbTabs.marketData}
-                    value={PAStockBreadcrumbTabs.marketData}
+                    label={PACryptoBreadcrumbTabs.marketData}
+                    value={PACryptoBreadcrumbTabs.marketData}
                   />
                   <Tab
-                    label={PAStockBreadcrumbTabs.settings}
-                    value={PAStockBreadcrumbTabs.settings}
+                    label={PACryptoBreadcrumbTabs.settings}
+                    value={PACryptoBreadcrumbTabs.settings}
                   />
                 </TabList>
               </Box>
@@ -119,20 +119,20 @@ const SDStockDetail = observer(({}: IProps) => {
                 justifyContent="center"
                 flexDirection="column"
               >
-                {stockDetailStore.selectedTab ===
-                PAStockBreadcrumbTabs.overview ? (
+                {cryptoDetailStore.selectedTab ===
+                PACryptoBreadcrumbTabs.overview ? (
                   <Suspense fallback={<HypnosisLoading />}>
-                    <SDOverviewTab />
+                    <CDOverviewTab />
                   </Suspense>
                 ) : null}
-                {stockDetailStore.selectedTab ===
-                PAStockBreadcrumbTabs.marketData ? (
+                {cryptoDetailStore.selectedTab ===
+                PACryptoBreadcrumbTabs.marketData ? (
                   <Suspense fallback={<HypnosisLoading />}>
-                    <SDMarketDataTab />
+                    <CDMarketDataTab />
                   </Suspense>
                 ) : null}
-                {stockDetailStore.selectedTab ===
-                PAStockBreadcrumbTabs.settings ? (
+                {cryptoDetailStore.selectedTab ===
+                PACryptoBreadcrumbTabs.settings ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <h1>You are in setting tab</h1>
                   </Suspense>
@@ -142,13 +142,13 @@ const SDStockDetail = observer(({}: IProps) => {
           </Box>
         </Box>
         <Box>
-          <SDCreateTransactionModal />
+          <CDCreateTransactionModal />
         </Box>
         <Tooltip title="Add new transaction">
           <IconButton
             onClick={() => {
-              stockDetailStore.setOpenAddNewTransactionModal(
-                !stockDetailStore.isOpenAddNewTransactionModal,
+              cryptoDetailStore.setOpenAddNewTransactionModal(
+                !cryptoDetailStore.isOpenAddNewTransactionModal,
               );
             }}
             color="success"
@@ -162,4 +162,4 @@ const SDStockDetail = observer(({}: IProps) => {
   );
 });
 
-export default SDStockDetail;
+export default CDCryptoDetail;
