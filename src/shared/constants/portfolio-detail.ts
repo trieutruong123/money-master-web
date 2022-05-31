@@ -34,8 +34,8 @@ export const PDBreadcrumbTabs = {
 export enum TransactionTypeName {
   NewAsset = 'newAsset',
   AddValue = 'addValue',
-  WithdrawValue = 'withdrawValue',
-  SellAsset = 'sellAsset',
+  withdrawToOutside = 'withdrawToOutside',
+  withdrawToCash = 'withdrawToCash',
   MoveToFund = 'moveToFund',
   BuyFromFund = 'buyFromFund',
   BuyFromCash = 'buyFromCash',
@@ -45,8 +45,8 @@ export enum TransactionTypeName {
 export const TransactionTypeConstants = {
   newAsset: 'new asset',
   addValue: 'add value',
-  withdrawValue: 'withdraw value',
-  sellAsset: 'sell asset',
+  withdrawToOutside: 'withdraw to outside',
+  withdrawToCash: 'withdraw to cash',
   moveToFund: 'move to fund',
   buyFromFund: 'buy from fund',
   buyFromCash: 'buy from cash',
