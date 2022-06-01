@@ -1,25 +1,25 @@
+import { CSDCustomAssetDetail } from "./asset-detail/custom-asset-detail/csd-custom-assset-detail-main";
 import {
   BankSavingsDetail,
   CashDetail,
   CDCryptoDetail,
-  OtherAssetsDetail,
   RealEstateDetail,
   SDStockDetail,
-} from './asset-detail';
+} from "./asset-detail";
 import {
   DeletePortfolio,
   ModifyPortfolio,
   PortfolioCard,
   PortfolioList,
-} from './portfolio-list';
-import PortfolioDetail from './portfolio-detail/pd-portfolio-detail';
+} from "./portfolio-list";
+import PortfolioDetail from "./portfolio-detail/pd-portfolio-detail";
 
 export {
   CDCryptoDetail,
   SDStockDetail,
   RealEstateDetail,
   CashDetail,
-  OtherAssetsDetail,
+  CSDCustomAssetDetail,
   BankSavingsDetail,
   DeletePortfolio,
   ModifyPortfolio,

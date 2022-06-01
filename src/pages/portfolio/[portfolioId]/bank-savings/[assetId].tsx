@@ -9,7 +9,6 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { DashboardLayout } from 'containers';
 import { BankSavingsDetail } from 'containers/portfolio';
@@ -39,7 +38,7 @@ const AssetDetailPage = () => {
     ? query['assetId'][0]
     : query['assetId'] || '';
 
-  
+
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
 

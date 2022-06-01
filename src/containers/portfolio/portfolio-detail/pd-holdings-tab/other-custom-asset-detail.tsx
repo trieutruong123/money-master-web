@@ -97,11 +97,9 @@ export const OtherCustomAssetInvestments = ({
   const renderTermRange = (termRange: number, unit: string) => {
     const years = Math.floor(termRange / 12);
     const months = termRange % 12;
-    const displayText = `${
-      years > 1 ? years + ' years ' : years === 1 ? years + ' year ' : ''
-    }${years > 0 && months !== 0 ? '& ' : ''}${
-      months > 1 ? months + ' months' : months === 1 ? '1 month' : ''
-    }`;
+    const displayText = `${years > 1 ? years + ' years ' : years === 1 ? years + ' year ' : ''
+      }${years > 0 && months !== 0 ? '& ' : ''}${months > 1 ? months + ' months' : months === 1 ? '1 month' : ''
+      }`;
     return displayText;
   };
 
@@ -110,11 +108,11 @@ export const OtherCustomAssetInvestments = ({
   };
 
   const handleItemClick = (assetId: number | string) => {
-    // router.push(
-    //   `/portfolio/${portfolioId}/bank-savings/${assetId.toString()}`,
-    //   `/portfolio/${portfolioId}/bank-savings/${assetId.toString()}`,
-    //   { locale: locale },
-    // );
+    router.push(
+      `/portfolio/${portfolioId}/custom/${assetId.toString()}`,
+      `/portfolio/${portfolioId}/custom/${assetId.toString()}`,
+      { locale: locale },
+    );
   };
 
   return customAssetDetail?.length ? (
