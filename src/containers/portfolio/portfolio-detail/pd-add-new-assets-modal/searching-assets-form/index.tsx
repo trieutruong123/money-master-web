@@ -18,7 +18,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { portfolioDetailStore } from 'shared/store';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionFormType } from 'shared/constants';
 import { sampleSearchingData } from './sample-search-data';
 
 type SearchingItemType = {
@@ -28,16 +28,14 @@ type SearchingItemType = {
 };
 
 interface IProps {
-  assetType: string;
-  openNextForm: (params: any) => void;
-  openPreviousForm: (params: any) => void;
-  searchData: any;
+  openNextForm: Function;
+  openPreviousForm: Function;
+  searchData: Function;
   content: any;
 }
 
 export const SearchingAssetsForm = observer(
   ({
-    assetType,
     openNextForm,
     openPreviousForm,
     searchData,
@@ -49,8 +47,9 @@ export const SearchingAssetsForm = observer(
     const [searchingText, setSearchingText] = useState<string>('');
     const [isSearching, setIsSearching] = useState(false);
     const [debouncedSearchTerm] = useDebounce(searchingText, 1000, {});
+    const selectedAsset = portfolioDetailStore.selectedAsset;
     useEffect(() => {
-      setSearchingData(AssetTypeName.cryptoCurrency === assetType ? sampleSearchingData.crypto : sampleSearchingData.stock)
+      setSearchingData(AssetTypeName.cryptoCurrency === selectedAsset?.assetType ? sampleSearchingData.crypto : sampleSearchingData.stock)
     }, [])
 
     useEffect(
@@ -59,13 +58,13 @@ export const SearchingAssetsForm = observer(
           setIsSearching(true);
           searchData({
             searchingText: debouncedSearchTerm,
-            searchingType: assetType,
+            searchingType: selectedAsset?.assetType,
           }).then((results: Array<SearchingItemType> | any) => {
             setIsSearching(false);
             setSearchingData(results);
           });
         } else {
-          setSearchingData(AssetTypeName.cryptoCurrency === assetType ? sampleSearchingData.crypto : sampleSearchingData.stock);
+          setSearchingData(AssetTypeName.cryptoCurrency === selectedAsset?.assetType ? sampleSearchingData.crypto : sampleSearchingData.stock);
           setIsSearching(false);
         }
       },
@@ -82,30 +81,32 @@ export const SearchingAssetsForm = observer(
           setIsSearching(true);
           searchData({
             searchingText: debouncedSearchTerm,
-            searchingType: assetType,
+            searchingType: selectedAsset?.assetType,
           }).then((results: Array<SearchingItemType> | any) => {
             setIsSearching(false);
             setSearchingData(results);
           });
         }
         else {
-          setSearchingData(AssetTypeName.cryptoCurrency === assetType ? sampleSearchingData.crypto : sampleSearchingData.stock);
+          setSearchingData(AssetTypeName.cryptoCurrency === selectedAsset?.assetType ? sampleSearchingData.crypto : sampleSearchingData.stock);
           setIsSearching(false);
         }
       }
     };
 
     const handleItemClick = (itemId: string, selectedItem: any) => {
-      openNextForm({
-        curFormType: 'search',
-        selectedType: assetType,
-        assetId: itemId,
-        selectedItem: selectedItem,
-      });
+      if (selectedAsset?.assetType && selectedAsset?.assetType === AssetTypeName.stock) {
+        portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.search, stockCode: selectedItem.symbol, stockInfo: selectedItem })
+      }
+      else if (selectedAsset?.assetType && selectedAsset?.assetType === AssetTypeName.cryptoCurrency) {
+        portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.search, cryptoCoinCode: selectedItem.id, cryptoInfo: selectedItem })
+      }
+      openNextForm();
     };
 
     const handleComeback = () => {
-      openPreviousForm({ curFormType: 'search' });
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.search })
+      openPreviousForm();
     };
 
     const getListElementHeight = (): number => {

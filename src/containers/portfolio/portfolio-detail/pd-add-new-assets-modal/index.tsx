@@ -1,10 +1,10 @@
-import { Box, Modal } from '@mui/material';
-import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { portfolioDetailStore, rootStore } from 'shared/store';
-import { SearchingAssetsForm } from './searching-assets-form';
-import { ChooseTypesForm } from './choose-types-form';
+import { Box, Modal } from "@mui/material";
+import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { styled } from "@mui/material/styles";
+import { portfolioDetailStore, rootStore } from "shared/store";
+import { SearchingAssetsForm } from "./searching-assets-form";
+import { ChooseTypesForm } from "./choose-types-form";
 import {
   AddNewCryptoForm,
   AddNewStockForm,
@@ -12,39 +12,40 @@ import {
   AddNewRealEstateForm,
   AddNewBankSavingsForm,
   AddOtherAssetForm,
-} from './add-asset-forms';
-import { AssetTypeName } from 'shared/constants';
-import { AssetType } from 'shared/types';
+} from "./add-asset-forms";
+import { AssetTypeName, TransactionFormType } from "shared/constants";
+import { AssetType } from "shared/types";
+import { UsingMoneySourceForm } from "./pd-using-money-form";
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 'auto',
-  minWidth: '320px',
-  height: '650px',
-  maxHeight: '100vh',
-  backgroundColor: '#FFFFFF',
-  borderRadius: '12px',
-  overflow: 'hidden',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "auto",
+  minWidth: "320px",
+  height: "650px",
+  maxHeight: "100vh",
+  backgroundColor: "#FFFFFF",
+  borderRadius: "12px",
+  overflow: "hidden",
   //boxShadow: '0 0 0 50vmax rgba(0,0,0,.5);',
-  [theme.breakpoints.up('md')]: {
-    minWidth: '450px',
-    width: '450px',
+  [theme.breakpoints.up("md")]: {
+    minWidth: "450px",
+    width: "450px",
   },
-  [theme.breakpoints.down('md')]: {
-    width: '70vw',
+  [theme.breakpoints.down("md")]: {
+    width: "70vw",
   },
-  [theme.breakpoints.down('sm')]: {
-    width: '90vw',
-    height: '570px',
-    '@media (maxHeight: 570px)': {
-      height: '100vh',
+  [theme.breakpoints.down("sm")]: {
+    width: "90vw",
+    height: "570px",
+    "@media (maxHeight: 570px)": {
+      height: "100vh",
     },
   },
-  '@media(maxHeight: 650px) and (minWidth:600px)': {
-    height: '100vh',
+  "@media(maxHeight: 650px) and (minWidth:600px)": {
+    height: "100vh",
   },
 }));
 
@@ -62,107 +63,111 @@ const fetchData = async () => {
 
 export const AddNewAssetsModal = observer(({ content }: IProps) => {
   const [current, setCurrent] = useState<any>(null);
-  const [type, setType] = useState('');
   useEffect(() => {
     //set initial form
     setCurrent(
       <ChooseTypesForm
         content={content.chooseType}
         openNextForm={openNextForm}
-      />,
+      />
     );
-    //fetch personal custom asset list
-    if (typeof portfolioDetailStore.customAssetList === 'undefined')
+    if (typeof portfolioDetailStore.customAssetList === "undefined") {
       fetchData();
+    }
   }, []);
 
   const { isOpenAddNewAssetModal } = portfolioDetailStore;
 
   const handleClose = useCallback(() => {
-    setType('');
+    portfolioDetailStore.setAddedAssetInfo({});
+    portfolioDetailStore.setOpenAddNewAssetModal(false);
     setCurrent(
       <ChooseTypesForm
         content={content.chooseType}
         openNextForm={openNextForm}
-      />,
+      />
     );
-    portfolioDetailStore.setOpenAddNewAssetModal(false);
   }, []);
 
-  const openNextForm = (params: any) => {
-    switch (params.curFormType) {
-      case 'type':
-        setType(params.selectedType);
+  const openNextForm = () => {
+    const selectedAsset = portfolioDetailStore.selectedAsset;
+    console.log(selectedAsset);
+    switch (selectedAsset?.formType) {
+      case TransactionFormType.selectType:
         if (
-          [AssetTypeName.stock, AssetTypeName.cryptoCurrency].includes(
-            params.selectedType,
-          )
-        )
-          openSearchingForm({ assetType: params.selectedType });
-        else if (
-          [
+          Array<any>(
+            AssetTypeName.stock,
+            AssetTypeName.cryptoCurrency
+          ).includes(selectedAsset?.assetType)
+        ) {
+          openSearchingForm();
+        } else if (
+          Array<any>(
             AssetTypeName.realEstate,
             AssetTypeName.bankSaving,
             AssetTypeName.custom,
-            AssetTypeName.cash,
-          ].includes(params.selectedType)
-        )
-          openTransactionForm({ selectedType: params.selectedType });
+            AssetTypeName.cash
+          ).includes(selectedAsset.assetType)
+        ) {
+          openSourceMoneyForm();
+        }
         break;
-      case 'search':
-        openTransactionForm(params);
+      case TransactionFormType.selectMoneySource:
+        openTransactionForm();
+        break;
+      case TransactionFormType.search:
+        openSourceMoneyForm();
         break;
       default:
-        openChooseTypesForm(params);
+        openChooseTypesForm();
         break;
     }
   };
 
-  const openPreviousForm = (params: any) => {
-    switch (params.curFormType) {
-      case 'search':
-        setCurrent(
-          <ChooseTypesForm
-            content={content.chooseType}
-            openNextForm={openNextForm}
-          />,
-        );
+  const openPreviousForm = () => {
+    const selectedAsset = portfolioDetailStore.selectedAsset;
+    switch (selectedAsset?.formType) {
+      case TransactionFormType.search:
+        openChooseTypesForm();
         break;
-      case 'transaction':
+      case TransactionFormType.transaction:
+        openSourceMoneyForm();
+        break;
+      case TransactionFormType.selectMoneySource:
         if (
-          [AssetTypeName.stock, AssetTypeName.cryptoCurrency].includes(
-            params.selectedType,
-          )
-        )
-          openSearchingForm(params);
-        else if (
-          [
+          Array<any>(
+            AssetTypeName.stock,
+            AssetTypeName.cryptoCurrency
+          ).includes(selectedAsset?.assetType)
+        ) {
+          openSearchingForm();
+        } else if (
+          Array<any>(
             AssetTypeName.realEstate,
             AssetTypeName.bankSaving,
             AssetTypeName.custom,
-            AssetTypeName.cash,
-          ].includes(params.selectedType)
-        )
-          openChooseTypesForm(params);
-        else openChooseTypesForm(params);
+            AssetTypeName.cash
+          ).includes(selectedAsset?.assetType)
+        ) {
+          openChooseTypesForm();
+        }
         break;
       default:
-        openChooseTypesForm(params);
+        openChooseTypesForm();
         break;
     }
   };
 
-  const openTransactionForm = (params: any) => {
-    switch (params.selectedType) {
+  const openTransactionForm = () => {
+    const selectedAsset = portfolioDetailStore.selectedAsset;
+    switch (selectedAsset?.assetType) {
       case AssetTypeName.cryptoCurrency:
         setCurrent(
           <AddNewCryptoForm
             content={content.cryptoTransaction}
-            coinCode={params.assetId}
-            selectedCoin={params.selectedItem}
             openPreviousForm={openPreviousForm}
             handleClose={handleClose}
-          />,
+          />
         );
         break;
       case AssetTypeName.stock:
@@ -170,11 +175,9 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
         setCurrent(
           <AddNewStockForm
             content={content.stockTransaction}
-            stockId={params.assetId}
-            selectedStock={params.selectedItem}
             openPreviousForm={openPreviousForm}
             handleClose={handleClose}
-          />,
+          />
         );
         break;
       case AssetTypeName.cash:
@@ -183,7 +186,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
             content={content.cashTransaction}
             openPreviousForm={openPreviousForm}
             handleClose={handleClose}
-          />,
+          />
         );
         break;
       case AssetTypeName.realEstate:
@@ -192,7 +195,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
             content={content.realEstateTransaction}
             handleClose={handleClose}
             openPreviousForm={openPreviousForm}
-          />,
+          />
         );
         break;
       case AssetTypeName.bankSaving:
@@ -201,40 +204,49 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
             content={content.bankSavingsTransaction}
             handleClose={handleClose}
             openPreviousForm={openPreviousForm}
-          />,
+          />
         );
         break;
       case AssetTypeName.custom:
         setCurrent(
           <AddOtherAssetForm
-            customAssetList={portfolioDetailStore.customAssetList}
             content={content.otherCustomAssetTransaction}
             handleClose={handleClose}
             openPreviousForm={openPreviousForm}
-          />,
+          />
         );
     }
   };
 
-  const openSearchingForm = (params: any) => {
+  const openSourceMoneyForm = () => {
     setCurrent(
-      <SearchingAssetsForm
+      <UsingMoneySourceForm
         content={content.searchAssets}
-        assetType={params.assetType}
         openNextForm={openNextForm}
         openPreviousForm={openPreviousForm}
-        searchData={searchData}
-      />,
+      />
     );
   };
 
-  const openChooseTypesForm = (params: any) => {
+  const openSearchingForm = () => {
+    setCurrent(
+      <SearchingAssetsForm
+        content={content.searchAssets}
+        openNextForm={openNextForm}
+        openPreviousForm={openPreviousForm}
+        searchData={searchData}
+      />
+    );
+  };
+
+  const openChooseTypesForm = () => {
     setCurrent(
       <ChooseTypesForm
         content={content.chooseType}
         openNextForm={openNextForm}
-      />,
+      />
     );
+    portfolioDetailStore.setAddedAssetInfo({});
   };
 
   const searchData = async ({

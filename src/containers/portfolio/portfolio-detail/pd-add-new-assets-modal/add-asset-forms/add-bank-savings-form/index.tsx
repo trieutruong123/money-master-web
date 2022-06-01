@@ -5,37 +5,35 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { BuyBankSavingsForm } from './buy-bank-savings-form';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { NewBanksSavingAsset, UpdatedBankSavingItem } from 'shared/types';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionFormType } from 'shared/constants';
 
 interface IProps {
-  openPreviousForm: (params: any) => void;
+  openPreviousForm: Function,
   handleClose: () => void;
   content: any;
 }
 
 export const AddNewBankSavingsForm = observer(
   ({ handleClose, openPreviousForm, content }: IProps) => {
+    const selectedAsset = portfolioDetailStore.selectedAsset
     const [errorMessage, setErrorMessage] = useState<string>('');
     const theme = useTheme();
     useEffect(() => {
-      const fetchAssetPrice = async () => {};
+      const fetchAssetPrice = async () => { };
       fetchAssetPrice();
     }, []);
 
     const handleComeback = () => {
-      openPreviousForm({
-        curFormType: 'transaction',
-        selectedType: AssetTypeName.bankSaving,
-      });
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.transaction, assetType: AssetTypeName.bankSaving });
+      openPreviousForm();
     };
 
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
 
     const handleFormSubmit = async (data: NewBanksSavingAsset) => {
       const res = await portfolioDetailStore.addNewBankSaving(data);
-      console.log(data);
       if (res.isError) {
-        if (data.isUsingInvestFund) {
+        if (data.isUsingInvestFund || data.isUsingCash) {
           setErrorMessage(res.data);
         } else {
           rootStore.raiseError(res?.data.en);
@@ -45,6 +43,8 @@ export const AddNewBankSavingsForm = observer(
         rootStore.raiseNotification(res.data.en, 'success');
         if (data.isUsingInvestFund) {
           portfolioDetailStore.setUpdateInvestFund(true);
+        } else if (data.isUsingCash) {
+          portfolioDetailStore.setUpdateCashDetail(true);
         }
         portfolioDetailStore.setUpdateReport(true);
         handleClose();
@@ -83,7 +83,11 @@ export const AddNewBankSavingsForm = observer(
             {portfolioName}
           </p>
         </div>
-        <Typography variant="body1" color="error">
+        <Typography variant="body1"
+          color="error"
+          width="100%"
+          align="center"
+          height="1.5rem">
           {errorMessage}
         </Typography>
         <Box
@@ -91,7 +95,7 @@ export const AddNewBankSavingsForm = observer(
             [theme.breakpoints.down('sm')]: { height: '450px' },
 
             [theme.breakpoints.up('sm')]: {
-              height: '550px',
+              height: '530px',
             },
           }}
         >

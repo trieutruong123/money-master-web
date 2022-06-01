@@ -17,8 +17,10 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { getSupportedCurrencyList } from 'shared/helpers';
-import CheckBoxButton from 'shared/components/checkbox';
+import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
+import { portfolioDetailStore } from 'shared/store';
+import { UsingMoneySource } from 'shared/constants';
+import { observer } from 'mobx-react-lite';
 
 type FormValues = {
   name: string;
@@ -28,10 +30,9 @@ type FormValues = {
   inputCurrency: string;
   description?: string;
   bankCode: string;
-  brokerFee?: number;
-  brokerFeeInPercent?: number;
-  brokerFeeForSecurity?: number;
-  incomeTax?: number;
+  cashId?: number;
+  fee?: number;
+  tax?: number;
 };
 
 interface IProps {
@@ -39,11 +40,11 @@ interface IProps {
   content: any;
 }
 
-export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
+export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const cashList = portfolioDetailStore.cashDetail;
 
-  const [checked, setChecked] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -60,7 +61,11 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
       .typeError('Term range must be a number')
       .positive('Term range must be greater than zero'),
     inputCurrency: Yup.string().required().default('USD'),
-    bankCode: Yup.string().required('Bank code is required')
+    bankCode: Yup.string().required('Bank code is required'),
+    cashId: Yup.number(),
+    fee: Yup.number(),
+    tax: Yup.number(),
+    description: Yup.string(),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -74,7 +79,23 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    handleFormSubmit({
+    // handleFormSubmit({
+    //   name: data.name,
+    //   bankCode: data.bankCode,
+    //   inputCurrency: data.inputCurrency,
+    //   inputDay: date,
+    //   inputMoneyAmount: data.inputMoneyAmount,
+    //   isGoingReinState: true,
+    //   interestRate: data.interestRate,
+    //   termRange: data.termRange,
+    //   description: data?.description || '',
+    //   isUsingInvestFund: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingFund,
+    //   isUsingCash: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash,
+    //   usingCashId: data.cashId,
+    //   fee: data.fee,
+    //   tax: data.tax,
+    // });
+    console.log({
       name: data.name,
       bankCode: data.bankCode,
       inputCurrency: data.inputCurrency,
@@ -84,13 +105,13 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
       interestRate: data.interestRate,
       termRange: data.termRange,
       description: data?.description || '',
-      isUsingInvestFund: checked,
-    });
+      isUsingInvestFund: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingFund,
+      isUsingCash: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash,
+      usingCashId: data.cashId,
+      fee: data.fee,
+      tax: data.tax,
+    })
   };
-
-  const handleChangeCheckBox = (isCheck: boolean) => {
-    setChecked(isCheck);
-  }
 
   return (
     <div
@@ -133,7 +154,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
           type="number"
           fullWidth
           inputProps={{
-            step: "0.0000001"
+            step: 'any'
           }}
           sx={{ mt: 1, display: 'block' }}
           id="outlined-bank-saving-input-money"
@@ -143,34 +164,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
           error={typeof errors.inputMoneyAmount?.message !== 'undefined'}
           helperText={errors.inputMoneyAmount?.message}
         ></TextField>
-        <TextField
-          type="number"
-          fullWidth
-          inputProps={{
-            step: "0.0000001"
-          }}
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-bank-savings-interest-rate"
-          label={`*${content.interestRate}`}
-          {...register('interestRate')}
-          variant="outlined"
-          error={typeof errors.interestRate?.message !== 'undefined'}
-          helperText={errors.interestRate?.message}
-        ></TextField>
-        <TextField
-          type="number"
-          fullWidth
-          inputProps={{
-            step: "0.0000001"
-          }}
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-bank-savings-term-range"
-          label={`*${content.termRange} (${content.months})`}
-          {...register('termRange')}
-          variant="outlined"
-          error={typeof errors.termRange?.message !== 'undefined'}
-          helperText={errors.termRange?.message}
-        ></TextField>
+
         <TextField
           type="text"
           fullWidth
@@ -182,6 +176,40 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
           error={typeof errors.bankCode?.message !== 'undefined'}
           helperText={errors.bankCode?.message}
         ></TextField>
+        <Grid container spacing={isXs ? 1 : 2}>
+          <Grid item xs={12} sm={6} sx={{ display: 'block' }}>
+            <TextField
+              type="number"
+              fullWidth
+              inputProps={{
+                step: 'any'
+              }}
+              sx={{ mt: 1, display: 'block' }}
+              id="outlined-bank-savings-interest-rate"
+              label={`*${content.interestRate}`}
+              {...register('interestRate')}
+              variant="outlined"
+              error={typeof errors.interestRate?.message !== 'undefined'}
+              helperText={errors.interestRate?.message}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ display: 'block' }}>
+            <TextField
+              type="number"
+              fullWidth
+              inputProps={{
+                step: 'any'
+              }}
+              sx={{ mt: 1, display: 'block' }}
+              id="outlined-bank-savings-term-range"
+              label={`*${content.termRange} (${content.months})`}
+              {...register('termRange')}
+              variant="outlined"
+              error={typeof errors.termRange?.message !== 'undefined'}
+              helperText={errors.termRange?.message}
+            ></TextField>
+          </Grid>
+        </Grid>
         <Grid container spacing={isXs ? 1 : 2}>
           <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
             <FormControl fullWidth>
@@ -218,15 +246,65 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
             </LocalizationProvider>
           </Grid>
         </Grid>
-        {/* <TextField
-          type="number"
-          fullWidth
-          sx={{ mt: 1, display: 'block' }}
-          id="outlined-broker-fee"
-          label={'Fee'}
-          {...register('brokerFee')}
-          variant="outlined"
-        ></TextField> */}
+        {
+          portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash && cashList !== undefined && cashList.length > 0 ? (
+            <Grid item xs={12} sx={{ mt: 1, display: 'block' }}>
+              <FormControl fullWidth>
+                <InputLabel id="select-cash-source">Select your cash source</InputLabel>
+                <Select
+                  variant="outlined"
+                  labelId="your-cash"
+                  id="bank-savings-your-cash-select"
+                  label={`*Select your cash source`}
+                  defaultValue={cashList[0].id}
+                  {...register('cashId')}
+                >
+                  {cashList.map((item, index) => {
+                    return (
+                      <MenuItem key={item.id} value={item.id}>
+                        {item.currencyCode} - {getCurrencyByCode(item.currencyCode)?.name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+          ) : null
+        }
+        <Grid container spacing={isXs ? 1 : 2}>
+          <Grid item xs={12} sm={6} sx={{ display: 'block' }}>
+            <TextField
+              type="number"
+              fullWidth
+              inputProps={{
+                step: 'any'
+              }}
+              sx={{ mt: 1, display: 'block' }}
+              id="outlined-bank-savings-fee"
+              label={`${"Fee"}`}
+              {...register('fee')}
+              variant="outlined"
+              defaultValue={0}
+              error={typeof errors.fee?.message !== 'undefined'}
+              helperText={errors.fee?.message} />
+          </Grid>
+          <Grid item xs={12} sm={6} sx={{ display: 'block' }}>
+            <TextField
+              type="number"
+              fullWidth
+              inputProps={{
+                step: 'any'
+              }}
+              sx={{ mt: 1, display: 'block' }}
+              id="outlined-bank-savings-tax"
+              label={`${"Tax (%)"}`}
+              {...register('tax')}
+              variant="outlined"
+              defaultValue={0}
+              error={typeof errors.tax?.message !== 'undefined'}
+              helperText={errors.tax?.message} />
+          </Grid>
+        </Grid>
         <TextField
           type="text"
           fullWidth
@@ -238,11 +316,7 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
           error={typeof errors.description?.message !== 'undefined'}
           helperText={errors.description?.message}
         ></TextField>
-        <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ mb: 1 }}>
-          <CheckBoxButton color='primary' onChange={handleChangeCheckBox} />
-          <h4>Is money from invest fund?</h4>
-        </Box>
-      </Box>
+      </Box >
       <Box
         sx={{
           mt: 'auto',
@@ -267,6 +341,6 @@ export const BuyBankSavingsForm = ({ handleFormSubmit, content }: IProps) => {
           {content.addNew}
         </Button>
       </Box>
-    </div>
+    </div >
   );
-};
+});

@@ -55,6 +55,23 @@ const PortfolioDetail = observer(({ content }: IProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [portfolioId]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      rootStore.startLoading();
+      Promise.all([portfolioDetailStore.fetchCash()]);
+      rootStore.stopLoading();
+    };
+    if (
+      portfolioDetailStore.needUpdatedCash
+    ) {
+      fetchData();
+      portfolioDetailStore.setUpdateCashDetail(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [portfolioDetailStore.needUpdatedCash]);
+
+
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     portfolioDetailStore.setSelectedTabs(newValue);
   };
@@ -86,7 +103,7 @@ const PortfolioDetail = observer(({ content }: IProps) => {
               displayNameArr={[
                 'Portfolio',
                 portfolioDetailStore.portfolioInfo?.name ||
-                  portfolioDetailStore.portfolioId.toString(),
+                portfolioDetailStore.portfolioId.toString(),
               ]}
             />
             <Typography sx={{ mb: 1 }} variant="h4">
@@ -114,7 +131,7 @@ const PortfolioDetail = observer(({ content }: IProps) => {
             </TabContext>
             <Grid container display="flex" justifyContent="center" width="100%">
               {portfolioDetailStore.selectedTabs ===
-              PDBreadcrumbTabs.holdings ? (
+                PDBreadcrumbTabs.holdings ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
                   <PDHoldingsTab content={content} />
                 </Suspense>
@@ -125,13 +142,13 @@ const PortfolioDetail = observer(({ content }: IProps) => {
                 </Suspense>
               ) : null}
               {portfolioDetailStore.selectedTabs ===
-              PDBreadcrumbTabs.investFund ? (
+                PDBreadcrumbTabs.investFund ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
                   <PDInvestFundTab />
                 </Suspense>
               ) : null}
               {portfolioDetailStore.selectedTabs ===
-              PDBreadcrumbTabs.settings ? (
+                PDBreadcrumbTabs.settings ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
                   <PDSettingsTab />
                 </Suspense>

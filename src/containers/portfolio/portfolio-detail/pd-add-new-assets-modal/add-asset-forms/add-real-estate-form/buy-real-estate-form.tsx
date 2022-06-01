@@ -15,10 +15,11 @@ import {
 } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
-import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { getSupportedCurrencyList } from 'shared/helpers';
-import CheckBoxButton from 'shared/components/checkbox';
+import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
+import { portfolioDetailStore } from 'shared/store';
+import { UsingMoneySource } from 'shared/constants';
+import { observer } from 'mobx-react-lite';
 
 type FormValues = {
   purchasePrice: number;
@@ -27,22 +28,22 @@ type FormValues = {
   name: string;
   currency?: string;
   description?: string;
-  brokerFeeInPercent?: number;
-  brokerFee?: number;
-  brokerFeeForSecurity?: number;
-  incomeTax?: number;
+  cashId?: number;
+  fee?: number;
+  tax?: number;
 };
+
 
 interface IProps {
   handleFormSubmit: any;
   content: any;
 }
 
-export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
+export const BuyRealEstateForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const cashList = portfolioDetailStore.cashDetail;
 
-  const [checked, setChecked] = useState<boolean>(false);
   const [date, setDate] = useState<Date | null>(new Date());
 
   const validationSchema = Yup.object().shape({
@@ -56,6 +57,10 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
       .required('Current price is required')
       .typeError('Current price must be a number')
       .positive('Price must be greater than zero'),
+    cashId: Yup.number(),
+    fee: Yup.number(),
+    tax: Yup.number(),
+    description: Yup.string(),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -76,14 +81,15 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
       buyPrice: data.purchasePrice,
       currentPrice: data.currentPrice,
       name: data.name,
-      description: data.description,
-      isUsingInvestFund: checked,
+      description: data?.description || '',
+      isUsingInvestFund: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingFund,
+      isUsingCash: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash,
+      usingCashId: data.cashId,
+      fee: data.fee,
+      tax: data.tax,
     });
   };
 
-  const handleChangeCheckBox = (isCheck: boolean) => {
-    setChecked(isCheck);
-  }
 
   return (
     <Box
@@ -184,7 +190,65 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
               </LocalizationProvider>
             </Grid>
           </Grid>
-
+          {
+            portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash && cashList !== undefined && cashList.length > 0 ? (
+              <Grid item xs={12} sx={{ mt: 1, display: 'block' }}>
+                <FormControl fullWidth>
+                  <InputLabel id="select-cash-source">Select your cash source</InputLabel>
+                  <Select
+                    variant="outlined"
+                    labelId="your-cash"
+                    id="bank-savings-your-cash-select"
+                    label={`*Select your cash source`}
+                    defaultValue={cashList[0].id}
+                    {...register('cashId')}
+                  >
+                    {cashList.map((item, index) => {
+                      return (
+                        <MenuItem key={item.id} value={item.id}>
+                          {item.currencyCode} - {getCurrencyByCode(item.currencyCode)?.name}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              </Grid>
+            ) : null
+          }
+          <Grid container spacing={isXs ? 1 : 2}>
+            <Grid item xs={12} sm={6} sx={{ display: 'block' }}>
+              <TextField
+                type="number"
+                fullWidth
+                inputProps={{
+                  step: 'any'
+                }}
+                sx={{ mt: 1, display: 'block' }}
+                id="outlined-real-estate-fee"
+                label={`${"Fee"}`}
+                {...register('fee')}
+                variant="outlined"
+                defaultValue={0}
+                error={typeof errors.fee?.message !== 'undefined'}
+                helperText={errors.fee?.message} />
+            </Grid>
+            <Grid item xs={12} sm={6} sx={{ display: 'block' }}>
+              <TextField
+                type="number"
+                fullWidth
+                inputProps={{
+                  step: 'any'
+                }}
+                sx={{ mt: 1, display: 'block' }}
+                id="outlined-real-estate-tax"
+                label={`${"Tax (%)"}`}
+                {...register('tax')}
+                variant="outlined"
+                defaultValue={0}
+                error={typeof errors.tax?.message !== 'undefined'}
+                helperText={errors.tax?.message} />
+            </Grid>
+          </Grid>
           <TextField
             type="text"
             fullWidth
@@ -196,10 +260,6 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
             error={typeof errors.description?.message !== 'undefined'}
             helperText={errors.description?.message}
           ></TextField>
-          <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ mb: 1 }}>
-            <CheckBoxButton color='primary' onChange={handleChangeCheckBox} />
-            <h4>Is money from invest fund?</h4>
-          </Box>
         </Grid>
       </Box>
       <Box
@@ -228,4 +288,4 @@ export const BuyRealEstateForm = ({ handleFormSubmit, content }: IProps) => {
       </Box>
     </Box>
   );
-};
+});

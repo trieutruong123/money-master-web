@@ -4,10 +4,10 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { NewRealEstateAsset, UpdatedRealEstateItem } from 'shared/types';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionFormType } from 'shared/constants';
 import { BuyRealEstateForm } from './buy-real-estate-form';
 interface IProps {
-  openPreviousForm: (params: any) => void;
+  openPreviousForm: Function;
   handleClose: () => void;
   content: any;
 }
@@ -16,26 +16,24 @@ export const AddNewRealEstateForm = observer(
   ({ handleClose, openPreviousForm, content }: IProps) => {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const theme = useTheme();
+    const selectedAsset = portfolioDetailStore.selectedAsset;
 
     useEffect(() => {
-      const fetchAssetPrice = async () => {};
+      const fetchAssetPrice = async () => { };
       fetchAssetPrice();
     }, []);
 
     const handleComeback = () => {
-      openPreviousForm({
-        curFormType: 'transaction',
-        selectedType: AssetTypeName.realEstate,
-      });
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.transaction, assetType: AssetTypeName.realEstate });
+      openPreviousForm();
     };
 
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
 
     const handleFormSubmit = async (data: NewRealEstateAsset) => {
-      console.log(data);
       const res = await portfolioDetailStore.addNewRealEstate(data);
       if (res.isError) {
-        if (data.isUsingInvestFund) {
+        if (data.isUsingInvestFund || data.isUsingCash) {
           setErrorMessage(res.data);
         } else {
           rootStore.raiseError(res?.data.en);
@@ -45,6 +43,8 @@ export const AddNewRealEstateForm = observer(
         rootStore.raiseNotification(res.data.en, 'success');
         if (data.isUsingInvestFund) {
           portfolioDetailStore.setUpdateInvestFund(true);
+        } else if (data.isUsingCash) {
+          portfolioDetailStore.setUpdateCashDetail(true);
         }
         portfolioDetailStore.setUpdateReport(true);
         handleClose();
@@ -86,6 +86,7 @@ export const AddNewRealEstateForm = observer(
         <Typography
           variant="body1"
           color="error"
+          width="100%"
           align="center"
           height="1.5rem"
         >

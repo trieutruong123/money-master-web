@@ -9,31 +9,30 @@ import {
   NewPortfolioCustomAsset,
   UpdatedBankSavingItem,
 } from 'shared/types';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionFormType } from 'shared/constants';
 import { PersonalInterestCustomAssetItem } from 'shared/models';
 
 interface IProps {
-  customAssetList: Array<PersonalInterestCustomAssetItem> | undefined;
   handleClose: () => void;
-  openPreviousForm: (params: any) => void;
+  openPreviousForm: Function;
   content: any;
 }
 
 export const AddOtherAssetForm = observer(
-  ({ customAssetList, handleClose, openPreviousForm, content }: IProps) => {
+  ({ handleClose, openPreviousForm, content }: IProps) => {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const theme = useTheme();
+    const customAssetList: Array<PersonalInterestCustomAssetItem> | undefined = portfolioDetailStore.customAssetList;
+    const selectedAsset = portfolioDetailStore.selectedAsset;
 
     useEffect(() => {
-      const fetchAssetPrice = async () => {};
+      const fetchAssetPrice = async () => { };
       fetchAssetPrice();
     }, []);
 
     const handleComeback = () => {
-      openPreviousForm({
-        curFormType: 'transaction',
-        selectedType: AssetTypeName.custom,
-      });
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.transaction, assetType: AssetTypeName.custom });
+      openPreviousForm();
     };
 
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
@@ -46,9 +45,8 @@ export const AddOtherAssetForm = observer(
         customInterestAssetInfoId,
         data,
       );
-
       if (res.isError) {
-        if (data.isUsingInvestFund) {
+        if (data.isUsingInvestFund || data.isUsingCash) {
           setErrorMessage(res.data);
         } else {
           rootStore.raiseError(res?.data.en);
@@ -58,11 +56,13 @@ export const AddOtherAssetForm = observer(
         rootStore.raiseNotification(res.data.en, 'success');
         if (data.isUsingInvestFund) {
           portfolioDetailStore.setUpdateInvestFund(true);
+        } else if (data.isUsingCash) {
+          portfolioDetailStore.setUpdateCashDetail(true);
         }
         portfolioDetailStore.setUpdateReport(true);
         handleClose();
       }
-    };
+    }
 
     return (
       <div style={{ height: 'inherit' }}>
@@ -99,6 +99,7 @@ export const AddOtherAssetForm = observer(
         <Typography
           variant="body1"
           color="error"
+          width="100%"
           align="center"
           height="1.5rem"
         >

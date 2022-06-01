@@ -67,7 +67,7 @@ export const CashInvestments = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { collumnsName, settingDropDownMenu } = content;
-  const headings = [collumnsName.total, 'Description'];
+  const headings = [collumnsName.total, 'Description', ''];
 
   const renderCurrencyName = (code: string) => {
     if (code) {
