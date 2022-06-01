@@ -39,6 +39,7 @@ const columns: GridColDef[] = [
               sx={{ backgroundColor: "success.light" }}
             />
           );
+
         case "moveToFund":
           return (
             <Chip

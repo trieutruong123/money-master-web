@@ -5,10 +5,13 @@ import { httpError } from 'shared/helpers';
 import { rootStore } from 'shared/store';
 import { content } from 'i18n';
 class BankSavingsDetailStore {
+  isOpenAddNewTransactionModal: boolean = false;
   portfolioId: string = '';
   bankSavingsName: string | undefined = '';
   assetId: string = '';
   assetDetail: BankSavingItem | undefined = undefined;
+  transactionHistoryData: Array<any> = [];
+
 
   constructor() {
     makeAutoObservable(this, {
@@ -17,19 +20,77 @@ class BankSavingsDetailStore {
       assetId: observable,
       assetDetail: observable,
 
+      setOpenAddNewTransactionModal: action,
       setPortfolioId: action,
       setAssetId: action,
       fetchBankSavingsDetail: action,
       updateAssetDetail: action,
+      withdrawAllToCash:action,
+      moveAllToFund:action
     });
   }
 
+  setOpenAddNewTransactionModal(isOpen: boolean) {
+    this.isOpenAddNewTransactionModal = isOpen;
+  }
+  
   setPortfolioId(val: string) {
     this.portfolioId = val;
   }
 
   setAssetId(val: string) {
     this.assetId = val;
+  }
+
+  async updateTransactionHistoryData() {
+    const url = `/portfolio/${this.portfolioId}/bankSaving/${this.assetId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      this.transactionHistoryData = res.data;
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+    }
+  }
+
+  async withdrawAllToCash(cashId: number, currencyCode:string){
+    var payload={
+      currencyCode,
+      transactionType:"withdrawToCash",
+      destinationAssetId:cashId,
+      destinationAssetType:"cash",
+      referentialAssetId:this.assetId,
+      referentialAssetType:"bankSaving",
+      isTransferringAll:true
+    }
+    const url = `/portfolio/${this.portfolioId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    if (!res.isError) {
+      await this.updateTransactionHistoryData();
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+    }
+  }
+
+  async moveAllToFund(currencyCode:string){
+    var payload={
+      referentialAssetId: this.assetId,
+      referentialAssetType: "bankSaving",
+      currencyCode,
+      isTransferringAll: true
+    }
+    const url = `/portfolio/${this.portfolioId}/fund`;
+    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    if (!res.isError) {
+      await this.updateTransactionHistoryData();
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+    }
   }
 
   async fetchBankSavingsDetail({

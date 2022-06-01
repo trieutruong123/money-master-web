@@ -15,3 +15,9 @@ export const PACashBreadcrumbTabs = {
   insight: 'Insight',
   settings: 'Settings',
 };
+
+export const PABankBreadcrumbTabs = {
+  overview: 'Overview',
+  trnsactions: 'Transactions',
+  settings: 'Settings',
+};

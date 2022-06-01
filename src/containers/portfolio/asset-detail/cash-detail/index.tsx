@@ -113,7 +113,6 @@ export const CashDetail = observer(({ }: IProps) => {
                   {forexDetail !== undefined && forexMarketData !== undefined ? (
                     <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
                       <TransactionHistory
-                        assetMarketData={forexMarketData}
                         transactionHistoryData={transactionHistoryData}
                       />
                     </Suspense>
