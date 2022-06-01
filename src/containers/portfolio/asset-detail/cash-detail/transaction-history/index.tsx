@@ -7,11 +7,7 @@ import {
   GridCellParams,
 } from "@mui/x-data-grid";
 import dayjs from "dayjs";
-import {
-  GiBuyCard,
-  GiSellCard,
-  GiTransform,
-} from "react-icons/gi";
+import { GiBuyCard, GiSellCard, GiTransform } from "react-icons/gi";
 import { CustomNoRowsOverlay } from "shared/components";
 import SettingsMenuButton from "./settings-menu-button";
 
@@ -34,6 +30,7 @@ const columns: GridColDef[] = [
       switch (params.row.type) {
         case "newAsset":
         case "buy":
+        case "buyFromOutside":
           return (
             <Chip
               label="BUY"
