@@ -25,7 +25,8 @@ class BankSavingsDetailStore {
       setAssetId: action,
       fetchBankSavingsDetail: action,
       updateAssetDetail: action,
-      withdrawAllToCash:action
+      withdrawAllToCash:action,
+      moveAllToFund:action
     });
   }
 
@@ -64,6 +65,24 @@ class BankSavingsDetailStore {
       isTransferringAll:true
     }
     const url = `/portfolio/${this.portfolioId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    if (!res.isError) {
+      await this.updateTransactionHistoryData();
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData,
+      );
+    }
+  }
+
+  async moveAllToFund(currencyCode:string){
+    var payload={
+      referentialAssetId: this.assetId,
+      referentialAssetType: "bankSaving",
+      currencyCode,
+      isTransferringAll: true
+    }
+    const url = `/portfolio/${this.portfolioId}/fund`;
     const res: { isError: boolean; data: any } = await httpService.post(url,payload);
     if (!res.isError) {
       await this.updateTransactionHistoryData();

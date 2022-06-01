@@ -48,15 +48,12 @@ export const CreateBankForm = observer(({}: IProps) => {
 
   async function makeWithdrawAction(data: any) {
     const {destinationCashId,currencyCode}=data;
-    console.log(" WITH ACTIONN");
     await bankSavingsDetailStore.withdrawAllToCash(destinationCashId,currencyCode)
   }
 
   async function makeSellAction(data: any) {
-
-   
-     console.log("SELL")
-    
+    const {currencyCode}=data;
+    await bankSavingsDetailStore.moveAllToFund(currencyCode)
   }
 
   const buttonLabels = ["Withdraw", "Sell"];
@@ -71,8 +68,6 @@ export const CreateBankForm = observer(({}: IProps) => {
   };
 
   const assetName = cashDetailStore.currencyName;
-
-  const handleFormSubmit = async (data: any) => {};
 
   return (
     <Box sx={{ height: "inherit" }}>

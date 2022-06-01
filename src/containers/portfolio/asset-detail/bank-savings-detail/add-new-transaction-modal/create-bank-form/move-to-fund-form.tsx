@@ -1,23 +1,35 @@
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/lab";
-import { Box, Button,  FormControlLabel,  FormLabel,  Radio,  RadioGroup,  TextField, useTheme } from "@mui/material";
-import {  SubmitErrorHandler, SubmitHandler, useForm } from "react-hook-form";
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { colorScheme } from "utils/color-scheme";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { observer } from "mobx-react-lite";
 import React from "react";
-import MenuItem from '@mui/material/MenuItem';
-import { cashDetailStore, portfolioDetailStore } from "shared/store";
+import MenuItem from "@mui/material/MenuItem";
+import {
+  bankSavingsDetailStore,
+  portfolioDetailStore,
+} from "shared/store";
 import { getSupportedCurrencyList } from "shared/helpers/currency-info";
-import InputLabel from '@mui/material/InputLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import InputLabel from "@mui/material/InputLabel";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { textAlign } from "@mui/system";
 
 type FormValues = {
-  amount: number;
-  currencyCode:string;
-  sellingDestination:string;
+  currencyCode: string;
 };
 
 interface IProps {
@@ -28,12 +40,7 @@ export const MoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
   const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
-    amount: Yup.number()
-      .required("Amount is required")
-      .typeError("Amount must be a number")
-      .positive("Amount must be greater than zero"),
-    currencyCode:Yup.string()
-      .required("Currency code is required")
+    currencyCode: Yup.string().required("Currency code is required"),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -46,31 +53,35 @@ export const MoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit(data);
-    cashDetailStore.setOpenAddNewTransactionModal(false);
+    bankSavingsDetailStore.setOpenAddNewTransactionModal(false);
   };
 
-  const onFailed: SubmitErrorHandler<FormValues> = (data: any) => {
-    console.log(data)
-  };
+  const [currencyList, setCurrencyList] = React.useState<any>({});
+  React.useEffect(() => {
+    getSupportedCurrencyList().forEach((currency) => {
+      setCurrencyList((prevState: any) => ({
+        ...prevState,
+        [currency.code]: currency.name,
+      }));
+    });
+  }, []);
 
-  const [currencyList,setCurrencyList]=React.useState<any>({});
-  React.useEffect(()=>{
-    getSupportedCurrencyList().forEach(currency=>{
-      setCurrencyList((prevState:any)=>({...prevState,[currency.code]:currency.name})
-    )})
-  },[])
+  const [currencyCode, setCurrencyCode] = React.useState("");
 
-  const [currencyCode, setCurrencyCode] = React.useState('');
-  
   const handleChangeCurrencyCode = (event: SelectChangeEvent) => {
     setCurrencyCode(event.target.value as string);
+  };
+
+  const [destinationCashId, setdestinationCashId] = React.useState("");
+  const handleChangedestinationCashId = (event: SelectChangeEvent) => {
+    setdestinationCashId(event.target.value as string);
   };
 
   return (
     <Box
       component="form"
       autoComplete="off"
-      onSubmit={handleSubmit(onSubmit,onFailed)}
+      onSubmit={handleSubmit(onSubmit)}
       sx={{
         height: "inherit",
         overflow: "auto",
@@ -85,24 +96,11 @@ export const MoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
       }}
     >
       
-      <TextField
-        type="number"
-        inputProps={{
-          step: "0.0000001"   // to accept float number in MUI text field
-        }}
-        fullWidth
-        sx={{ my: 1, display: "block" }}
-        id="outlined-amount"
-        label={"*Amount"}
-        {...register("amount")}
-        variant="outlined"
-        error={typeof errors.amount?.message !== "undefined"}
-        helperText={errors.amount?.message}
-      ></TextField>
+
       <InputLabel id="currency-code-select">Currency code</InputLabel>
       <Select
-      sx={{mb:3}}
-       {...register("currencyCode")}
+        sx={{ mb: 3 }}
+        {...register("currencyCode")}
         type="string"
         labelId="currency-code-select"
         id="currency-code-select"
@@ -111,21 +109,18 @@ export const MoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
         onChange={handleChangeCurrencyCode}
         error={typeof errors.currencyCode?.message !== "undefined"}
       >
-        {Object.keys(currencyList).map((currency, index) =>
-            <MenuItem key={index} value={currency}>{`${currencyList[currency]} (${currency})`}</MenuItem>
-          )
-        })
+        {Object.keys(currencyList).map((currency, index) => (
+          <MenuItem
+            key={index}
+            value={currency}
+          >{`${currencyList[currency]} (${currency})`}</MenuItem>
+        ))}
+        )
       </Select>
 
-      <RadioGroup
-        row
-        {...register("sellingDestination")}
+      <i>* All money from bank asset will be move to fund</i>
 
-      >
-        <FormControlLabel value="toFund" control={<Radio />} label="Sell to fund" />
-        <FormControlLabel value="toOutside" control={<Radio />} label="Sell to outside" />
-      </RadioGroup>
-      
+
       <Button
         type="submit"
         variant="contained"
@@ -137,7 +132,7 @@ export const MoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
           height: "2.5rem",
         }}
       >
-        ADD
+        SELL
       </Button>
     </Box>
   );
