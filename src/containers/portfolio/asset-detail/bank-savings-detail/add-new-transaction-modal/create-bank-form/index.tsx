@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   ButtonGroup,
-  IconButton,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -14,8 +13,6 @@ import { MoveToFundForm } from "./move-to-fund-form";
 import { bankSavingsDetailStore } from "shared/store";
 import {
   cashDetailStore,
-  IMoveToFundPayload,
-  ITransactionPayload,
   portfolioDetailStore,
 } from "shared/store";
 
@@ -25,26 +22,12 @@ export const CreateBankForm = observer(({}: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
-  const [assetPrice, setAssetPrice] = useState(0);
 
   useEffect(() => {
     const fetchAssetPrice = async () => {};
     fetchAssetPrice();
     setSelectedForm(<WithdrawToCashForm key={focusedButtonKey} handleFormSubmit={makeWithdrawAction} />);
   }, []);
-
-  async function makeTransferAction(data: any) {
-    const { currencyCode, destinationAssetId, amount } = data;
-    const payload: ITransactionPayload = {
-      currencyCode,
-      destinationAssetId,
-      amount,
-      transactionType:"withdrawValue",
-      destinationAssetType: "cash",
-      isTransferringAll: false
-    };
-    await cashDetailStore.makeTransaction(payload);
-  }
 
   async function makeWithdrawAction(data: any) {
     const {destinationCashId,currencyCode}=data;

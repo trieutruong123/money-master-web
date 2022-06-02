@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
@@ -23,14 +22,12 @@ type FormValues = {
   currencyCode: string;
   destinationCashId: number;
 };
-
 interface IProps {
   handleFormSubmit: any;
 }
 
 export const WithdrawToCashForm = observer(({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
-  const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
     destinationCashId: Yup.number().required(
       "Destination cash asset is required"
@@ -39,13 +36,10 @@ export const WithdrawToCashForm = observer(({ handleFormSubmit }: IProps) => {
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
-  const { register, reset, handleSubmit, formState, getValues, setError } =
+  const { register, handleSubmit, formState } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
-  const handleDateChange = (newValue: Date | null) => {
-    setDate(newValue);
-  };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit(data);
     bankSavingsDetailStore.setOpenAddNewTransactionModal(false);

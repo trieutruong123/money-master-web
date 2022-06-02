@@ -1,56 +1,40 @@
-import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { DesktopDatePicker, LocalizationProvider } from "@mui/lab";
 import {
   Box,
   Button,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  TextField,
-  Typography,
   useTheme,
 } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { colorScheme } from "utils/color-scheme";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import {
   bankSavingsDetailStore,
-  portfolioDetailStore,
 } from "shared/store";
 import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import InputLabel from "@mui/material/InputLabel";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { textAlign } from "@mui/system";
 
 type FormValues = {
   currencyCode: string;
 };
-
 interface IProps {
   handleFormSubmit: any;
 }
 
 export const MoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
-  const [date, setDate] = useState<Date | null>(new Date());
   const validationSchema = Yup.object().shape({
     currencyCode: Yup.string().required("Currency code is required"),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
-  const { register, reset, handleSubmit, formState, getValues, setError } =
+  const { register, handleSubmit, formState } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
-  const handleDateChange = (newValue: Date | null) => {
-    setDate(newValue);
-  };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit(data);
     bankSavingsDetailStore.setOpenAddNewTransactionModal(false);
@@ -70,11 +54,6 @@ export const MoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
 
   const handleChangeCurrencyCode = (event: SelectChangeEvent) => {
     setCurrencyCode(event.target.value as string);
-  };
-
-  const [destinationCashId, setdestinationCashId] = React.useState("");
-  const handleChangedestinationCashId = (event: SelectChangeEvent) => {
-    setdestinationCashId(event.target.value as string);
   };
 
   return (
