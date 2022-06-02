@@ -18,6 +18,13 @@ export const PACashBreadcrumbTabs = {
 
 export const PABankBreadcrumbTabs = {
   overview: 'Overview',
-  trnsactions: 'Transactions',
+  transactions: 'Transactions',
   settings: 'Settings',
 };
+
+export const PAEstateBreadcrumbTabs = {
+  overview: 'Overview',
+  transactions: 'Transactions',
+  settings: 'Settings',
+};
+
