@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
@@ -11,7 +12,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import {
-  bankSavingsDetailStore,
+  realEstateDetailStore,
   portfolioDetailStore,
 } from "shared/store";
 import { getSupportedCurrencyList } from "shared/helpers/currency-info";
@@ -22,6 +23,7 @@ type FormValues = {
   currencyCode: string;
   destinationCashId: number;
 };
+
 interface IProps {
   handleFormSubmit: any;
 }
@@ -36,13 +38,14 @@ export const WithdrawToCashForm = observer(({ handleFormSubmit }: IProps) => {
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
-  const { register, handleSubmit, formState } =
+  const { register,  handleSubmit, formState } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
+ 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit(data);
-    bankSavingsDetailStore.setOpenAddNewTransactionModal(false);
+    realEstateDetailStore.setOpenAddNewTransactionModal(false);
   };
 
   const [currencyList, setCurrencyList] = React.useState<any>({});
@@ -126,7 +129,7 @@ export const WithdrawToCashForm = observer(({ handleFormSubmit }: IProps) => {
         )
       </Select>
 
-      <i>* All money from bank asset will be withdraw to cash asset</i>
+      <i>* All money from estate asset will be withdraw to cash asset</i>
 
 
       <Button

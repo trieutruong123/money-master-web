@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
@@ -7,42 +8,38 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { colorScheme } from "utils/color-scheme";
-import { observer } from "mobx-react-lite";
 import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import {
-  bankSavingsDetailStore,
-  portfolioDetailStore,
+  realEstateDetailStore,
 } from "shared/store";
 import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import InputLabel from "@mui/material/InputLabel";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { observer } from "mobx-react-lite";
 
 type FormValues = {
   currencyCode: string;
-  destinationCashId: number;
 };
+
 interface IProps {
   handleFormSubmit: any;
 }
 
-export const WithdrawToCashForm = observer(({ handleFormSubmit }: IProps) => {
+export const MoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
   const validationSchema = Yup.object().shape({
-    destinationCashId: Yup.number().required(
-      "Destination cash asset is required"
-    ),
     currencyCode: Yup.string().required("Currency code is required"),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
-  const { register, handleSubmit, formState } =
+  const { register, handleSubmit, formState} =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit(data);
-    bankSavingsDetailStore.setOpenAddNewTransactionModal(false);
+    realEstateDetailStore.setOpenAddNewTransactionModal(false);
   };
 
   const [currencyList, setCurrencyList] = React.useState<any>({});
@@ -59,11 +56,6 @@ export const WithdrawToCashForm = observer(({ handleFormSubmit }: IProps) => {
 
   const handleChangeCurrencyCode = (event: SelectChangeEvent) => {
     setCurrencyCode(event.target.value as string);
-  };
-
-  const [destinationCashId, setdestinationCashId] = React.useState("");
-  const handleChangedestinationCashId = (event: SelectChangeEvent) => {
-    setdestinationCashId(event.target.value as string);
   };
 
   return (
@@ -84,27 +76,7 @@ export const WithdrawToCashForm = observer(({ handleFormSubmit }: IProps) => {
         },
       }}
     >
-      <InputLabel id="destination-asset-select">Destination asset</InputLabel>
-      <Select
-        {...register("destinationCashId")}
-        type="number"
-        labelId="destination-asset-select"
-        id="destination-asset-select"
-        value={destinationCashId}
-        label="Destination cash asset"
-        onChange={handleChangedestinationCashId}
-        error={typeof errors.destinationCashId?.message !== "undefined"}
-      >
-        {portfolioDetailStore.cashDetail?.map((asset) => {
-         
-            return (
-              <MenuItem key={asset.id} value={asset.id}>
-                {asset.name}
-              </MenuItem>
-            );
-        })}
-      </Select>
-
+      
       <InputLabel id="currency-code-select">Currency code</InputLabel>
       <Select
         sx={{ mb: 3 }}
@@ -126,7 +98,7 @@ export const WithdrawToCashForm = observer(({ handleFormSubmit }: IProps) => {
         )
       </Select>
 
-      <i>* All money from bank asset will be withdraw to cash asset</i>
+      <i>* All money from estate asset will be move to fund</i>
 
 
       <Button
@@ -140,7 +112,7 @@ export const WithdrawToCashForm = observer(({ handleFormSubmit }: IProps) => {
           height: "2.5rem",
         }}
       >
-        WITHDRAW
+        SELL
       </Button>
     </Box>
   );

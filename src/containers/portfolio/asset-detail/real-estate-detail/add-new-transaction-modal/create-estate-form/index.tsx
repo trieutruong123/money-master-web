@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  IconButton,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -10,33 +11,33 @@ import { observer } from "mobx-react-lite";
 
 import { WithdrawToCashForm } from "./withdraw-to-cash-form";
 import { MoveToFundForm } from "./move-to-fund-form";
-import { bankSavingsDetailStore } from "shared/store";
+import { realEstateDetailStore } from "shared/store";
 import {
   cashDetailStore,
+  IMoveToFundPayload,
+  ITransactionPayload,
   portfolioDetailStore,
 } from "shared/store";
 
 interface IProps {}
 
-export const CreateBankForm = observer(({}: IProps) => {
+export const CreateEstateForm = observer(({}: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
 
   useEffect(() => {
-    const fetchAssetPrice = async () => {};
-    fetchAssetPrice();
     setSelectedForm(<WithdrawToCashForm key={focusedButtonKey} handleFormSubmit={makeWithdrawAction} />);
   }, []);
 
   async function makeWithdrawAction(data: any) {
     const {destinationCashId,currencyCode}=data;
-    await bankSavingsDetailStore.withdrawAllToCash(destinationCashId,currencyCode)
+    await realEstateDetailStore.withdrawAllToCash(destinationCashId,currencyCode)
   }
 
   async function makeSellAction(data: any) {
     const {currencyCode}=data;
-    await bankSavingsDetailStore.moveAllToFund(currencyCode)
+    await realEstateDetailStore.moveAllToFund(currencyCode)
   }
 
   const buttonLabels = ["Withdraw", "Sell"];
@@ -62,7 +63,7 @@ export const CreateBankForm = observer(({}: IProps) => {
          align="center"  variant="h4"
           sx={{ color: "darkgreen" }}
         >
-          {`${bankSavingsDetailStore.bankSavingsName}`}
+          {`${realEstateDetailStore.realEstateName}`}
         </Typography>
       </Box>
       <Box sx={{ ml: "3rem", mt: "1rem" }}>
