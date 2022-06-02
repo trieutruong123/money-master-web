@@ -1,4 +1,3 @@
-import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Box,
   Container,
@@ -24,7 +23,7 @@ import { PABankBreadcrumbTabs } from "shared/constants/portfolio-asset";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import React from "react";
-import TransactionHistory from './transaction-history'
+import TransactionHistory from "./transaction-history";
 
 interface IProps {
   portfolioId: string;
@@ -44,15 +43,17 @@ export const BankSavingsDetail = observer(
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     useEffect(() => {
       const fetchData = async () => {
-        Promise.all([
-          bankSavingsDetailStore.updateTransactionHistoryData(),
-        ]);
+        Promise.all([bankSavingsDetailStore.updateTransactionHistoryData()]);
       };
-      if (bankSavingsDetailStore.assetId && bankSavingsDetailStore.portfolioId) fetchData();
+      if (bankSavingsDetailStore.assetId && bankSavingsDetailStore.portfolioId)
+        fetchData();
     }, [bankSavingsDetailStore.assetId, bankSavingsDetailStore.portfolioId]);
 
-    const { assetDetail, isOpenAddNewTransactionModal,transactionHistoryData } =
-      bankSavingsDetailStore;
+    const {
+      assetDetail,
+      isOpenAddNewTransactionModal,
+      transactionHistoryData,
+    } = bankSavingsDetailStore;
 
     const handleFormSubmit = async (data: UpdatedBankSavingItem) => {
       const res = await bankSavingsDetailStore.updateAssetDetail(data);
@@ -85,44 +86,45 @@ export const BankSavingsDetail = observer(
           <Box sx={{ overflow: "hidden" }}>
             <Container sx={{ padding: isMobile ? "0px" : "initial" }}>
               <Grid container display="flex" justifyContent="center">
-              <Box sx={{ width: '100vw' }}>
-
-                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                  <Tabs
-                    value={value}
-                    onChange={handleTabChange}
-                    aria-label="basic tabs example"
-                  >
-                    <Tab
-                      label={PABankBreadcrumbTabs.overview}
-                      {...a11yProps(0)}
+                <Box sx={{ width: "100vw" }}>
+                  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                    <Tabs
+                      value={value}
+                      onChange={handleTabChange}
+                      aria-label="basic tabs example"
+                    >
+                      <Tab
+                        label={PABankBreadcrumbTabs.overview}
+                        {...a11yProps(0)}
+                      />
+                      <Tab
+                        label={PABankBreadcrumbTabs.transactions}
+                        {...a11yProps(1)}
+                      />
+                      <Tab
+                        label={PABankBreadcrumbTabs.settings}
+                        {...a11yProps(2)}
+                      />
+                    </Tabs>
+                  </Box>
+                  <TabPanel value={value} index={0}>
+                    {typeof assetDetail !== "undefined" ? (
+                      <EditBankSavingsDetail
+                        assetDetail={assetDetail}
+                        handleFormSubmit={handleFormSubmit}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </TabPanel>
+                  <TabPanel value={value} index={1}>
+                    <TransactionHistory
+                      transactionHistoryData={transactionHistoryData}
                     />
-                    <Tab
-                      label={PABankBreadcrumbTabs.trnsactions}
-                      {...a11yProps(1)}
-                    />
-                    <Tab
-                      label={PABankBreadcrumbTabs.settings}
-                      {...a11yProps(2)}
-                    />
-                  </Tabs>
-                </Box>
-                <TabPanel value={value} index={0}>
-                  {typeof assetDetail !== "undefined" ? (
-                    <EditBankSavingsDetail
-                      assetDetail={assetDetail}
-                      handleFormSubmit={handleFormSubmit}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </TabPanel>
-                <TabPanel value={value} index={1}>
-                  <TransactionHistory transactionHistoryData={transactionHistoryData}/>
-                </TabPanel>
-                <TabPanel value={value} index={2}>
-                  Settings
-                </TabPanel>
+                  </TabPanel>
+                  <TabPanel value={value} index={2}>
+                    Settings
+                  </TabPanel>
                 </Box>
               </Grid>
             </Container>
