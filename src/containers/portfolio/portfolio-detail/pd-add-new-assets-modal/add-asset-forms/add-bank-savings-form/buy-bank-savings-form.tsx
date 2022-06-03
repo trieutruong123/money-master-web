@@ -79,23 +79,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    // handleFormSubmit({
-    //   name: data.name,
-    //   bankCode: data.bankCode,
-    //   inputCurrency: data.inputCurrency,
-    //   inputDay: date,
-    //   inputMoneyAmount: data.inputMoneyAmount,
-    //   isGoingReinState: true,
-    //   interestRate: data.interestRate,
-    //   termRange: data.termRange,
-    //   description: data?.description || '',
-    //   isUsingInvestFund: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingFund,
-    //   isUsingCash: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash,
-    //   usingCashId: data.cashId,
-    //   fee: data.fee,
-    //   tax: data.tax,
-    // });
-    console.log({
+    handleFormSubmit({
       name: data.name,
       bankCode: data.bankCode,
       inputCurrency: data.inputCurrency,
@@ -110,7 +94,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
       usingCashId: data.cashId,
       fee: data.fee,
       tax: data.tax,
-    })
+    });
   };
 
   return (

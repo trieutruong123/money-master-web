@@ -145,7 +145,7 @@ const SDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                         </Box>
                       </TableBodyCellSymbol>
                       <TableBodyCellSymbol align="center">
-                        {getCurrencyByCode(record.currencyCode)?.symbol}
+                        {getCurrencyByCode(record.currencyCode.toUpperCase())?.symbol}
                         {roundAndAddDotAndCommaSeparator(record.amount, 4)}
                       </TableBodyCellSymbol>
                       <TableBodyCellSymbol align="center">

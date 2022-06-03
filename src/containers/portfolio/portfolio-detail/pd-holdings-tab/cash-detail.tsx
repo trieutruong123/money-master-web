@@ -21,6 +21,7 @@ import { CashItem } from 'shared/models';
 import { AssetType } from 'shared/types';
 import { AssetTypeName } from 'shared/constants';
 import SettingsMenuButton from './settings-menu-button';
+import { observer } from 'mobx-react-lite';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -55,7 +56,7 @@ interface IProps {
   ) => void;
 }
 
-export const CashInvestments = ({
+export const CashInvestments = observer(({
   cashDetail,
   content,
   deleteAsset,
@@ -184,4 +185,4 @@ export const CashInvestments = ({
   ) : (
     <></>
   );
-};
+});

@@ -133,7 +133,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
             ></RealEstateInvesments>
           </Grid>
         ) : null}
-        {typeof bankingDetail !== undefined && bankingDetail?.length ? (
+        {typeof customAssetDetail !== undefined && customAssetDetail?.length ? (
           <Grid item lg={12} md={12} xl={12} xs={12}>
             <OtherCustomAssetInvestments
               content={content.bankSavingsTable}

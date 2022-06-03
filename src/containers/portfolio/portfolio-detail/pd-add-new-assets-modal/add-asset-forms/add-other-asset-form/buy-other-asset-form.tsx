@@ -87,21 +87,7 @@ export const BuyOtherAssetForm = observer(({
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
-    // handleFormSubmit(data.customInterestAssetInfoId, {
-    //   name: data.name,
-    //   inputCurrency: data.inputCurrency,
-    //   inputDay: date,
-    //   inputMoneyAmount: data.inputMoneyAmount,
-    //   interestRate: data.interestRate,
-    //   termRange: data.termRange,
-    //   description: data.description,
-    //   isUsingInvestFund: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingFund,
-    //   isUsingCash: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash,
-    //   usingCashId: data.cashId,
-    //   fee: data.fee,
-    //   tax: data.tax,
-    // });
-    console.log(data.customInterestAssetInfoId, {
+    handleFormSubmit(data.customInterestAssetInfoId, {
       name: data.name,
       inputCurrency: data.inputCurrency,
       inputDay: date,
@@ -114,7 +100,7 @@ export const BuyOtherAssetForm = observer(({
       usingCashId: data.cashId,
       fee: data.fee,
       tax: data.tax,
-    })
+    });
   };
 
 

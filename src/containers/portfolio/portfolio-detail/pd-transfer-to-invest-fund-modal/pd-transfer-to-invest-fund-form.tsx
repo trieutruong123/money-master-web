@@ -174,6 +174,10 @@ export const PDTransferToInvestFundForm = observer(() => {
           >
             {errorMessage}
           </Typography>
+          {transferedAssetInfo?.assetType === AssetTypeName.bankSaving ||
+            transferedAssetInfo?.assetType === AssetTypeName.custom ||
+            transferedAssetInfo?.assetType === AssetTypeName.realEstate ?
+            <Typography color = 'primary'>* All money from asset will be transfered to fund</Typography>:null}
           <TextField
             type="number"
             fullWidth

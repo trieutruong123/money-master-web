@@ -23,6 +23,7 @@ import { roundAndAddDotAndCommaSeparator } from 'utils';
 import { AssetType } from 'shared/types';
 import { AssetTypeName } from 'shared/constants';
 import SettingsMenuButton from './settings-menu-button';
+import { observer } from 'mobx-react-lite';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -57,7 +58,7 @@ interface IProps {
   ) => void;
 }
 
-export const OtherCustomAssetInvestments = ({
+export const OtherCustomAssetInvestments = observer(({
   customAssetDetail,
   content,
   deleteAsset,
@@ -71,7 +72,6 @@ export const OtherCustomAssetInvestments = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { collumnsName, settingDropDownMenu } = content;
   const headings = [
-    'Asset Name',
     'Amount',
     'Interest Rate',
     'Term Range',
@@ -142,6 +142,7 @@ export const OtherCustomAssetInvestments = ({
           <TableHead>
             <TableRow>
               <TableHeaderCell>Category</TableHeaderCell>
+              <TableHeaderCell>Asset Name</TableHeaderCell>
               {headings.map((heading, i) => (
                 <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
                   {heading}
@@ -170,7 +171,7 @@ export const OtherCustomAssetInvestments = ({
                         {itemIdx === 0 ? record.categoryName : ''}{' '}
                       </Box>
                     </TableBodyCellSymbol>
-                    <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                    <TableBodyCellSymbol onClick={() => handleItemClick(item.name)}>
                       <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
                         {item.name}
                       </Box>
@@ -179,7 +180,7 @@ export const OtherCustomAssetInvestments = ({
                       >
                         {dayjs(item.inputDay).format('DD-MM-YYYY')}
                       </Box>
-                    </TableBodyCell>
+                    </TableBodyCellSymbol>
                     <TableBodyCell onClick={() => handleItemClick(item.name)}>
                       {renderInputMoneyAmount(
                         item.inputMoneyAmount,
@@ -223,4 +224,4 @@ export const OtherCustomAssetInvestments = ({
   ) : (
     <></>
   );
-};
+});
