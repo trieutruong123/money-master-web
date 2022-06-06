@@ -24,7 +24,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { colorScheme } from 'utils/color-scheme';
 import { userService, googleAuth, facebookAuth } from 'services';
-import { authStore, rootStore, userStore} from 'shared/store';
+import { authStore, rootStore, userStore } from 'shared/store';
 import { httpError, previousPath } from 'shared/helpers';
 
 type FormValues = {
@@ -73,7 +73,7 @@ export const RegisterForm = observer(({ content }: IProps) => {
     confirmPassword: Yup.string()
       .required(String(content.error.confirmPasswordRequired))
       .oneOf(
-        [Yup.ref('password'),null],
+        [Yup.ref('password'), null],
         String(content.error.confirmPasswordNotMatch),
       ),
   });
@@ -100,7 +100,7 @@ export const RegisterForm = observer(({ content }: IProps) => {
     });
     if (res.isError) {
       const content = res.message;
-      const message = locale ==='vi'? content.vi: content.en; 
+      const message = locale === 'vi' ? content.vi : content.en;
       setRegisterError(message);
     } else router.push('/', '/', { locale: locale });
   };
@@ -119,6 +119,7 @@ export const RegisterForm = observer(({ content }: IProps) => {
         <Card sx={{ my: 5, mx: 1 }}>
           <Typography
             sx={{
+              pt: 2,
               fontSize: '2rem',
             }}
             align="center"

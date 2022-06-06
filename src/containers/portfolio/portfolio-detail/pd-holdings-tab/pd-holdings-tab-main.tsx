@@ -6,14 +6,6 @@ import { CryptoInvestments } from './crypto-detail';
 import { StockInvestments } from './stock-detail';
 import { RealEstateInvesments } from './real-estate-detail';
 import { CashInvestments } from './cash-detail';
-import {
-  RealEstateItem,
-  BankSavingItem,
-  CryptoItem,
-  CashItem,
-  StockItem,
-  CustomAssetItemByCategory,
-} from 'shared/models';
 import { OtherCustomAssetInvestments } from './other-custom-asset-detail';
 import { AssetType } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';

@@ -1,10 +1,12 @@
 //report tab in portfolio detail page
-
 import { observer } from 'mobx-react-lite';
 import { Grid } from '@mui/material';
 import { portfolioDetailStore, rootStore } from 'shared/store';
-import { DonutChart, HorizontalBarChart } from '../pd-insight-chart';
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+
+const PDDonutchart = lazy(() => import('./pd-donut-chart'));
+const PDHorizontalBarChart = lazy(() => import('./pd-horizontal-bar-chart'));
+const PDSankeyChart = lazy(() => import('./pd-sankey-chart'));
 
 interface IProps {
   content: any;
@@ -20,15 +22,12 @@ const PDReportTab = observer(({ content }: IProps) => {
     if (
       portfolioDetailStore.isMissingReportData ||
       portfolioDetailStore.needUpdatedReportData
-    )
-      fetchData();
-      portfolioDetailStore.setUpdateReport(false);
+    ) { fetchData(); }
+    portfolioDetailStore.setUpdateReport(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [portfolioDetailStore.needUpdatedReportData]);
-
-  const { pieChartData } = portfolioDetailStore;
-
-  return typeof pieChartData !== 'undefined' ? (
+  console.log(portfolioDetailStore.sankeyFlowData);
+  return (
     <Grid
       container
       item
@@ -53,10 +52,12 @@ const PDReportTab = observer(({ content }: IProps) => {
           alignItems: 'center',
         }}
       >
-        <DonutChart
-          content={content.assetAllocation}
-          pieChartData={pieChartData}
-        />
+        {typeof portfolioDetailStore.pieChartData !== 'undefined' ?
+          <Suspense fallback={<></>}>
+            <PDHorizontalBarChart content={content} pieChartData={portfolioDetailStore.pieChartData} />
+          </Suspense>
+          : <></>
+        }
       </Grid>
       <Grid
         item
@@ -71,14 +72,31 @@ const PDReportTab = observer(({ content }: IProps) => {
           alignItems: 'center',
         }}
       >
-        <HorizontalBarChart
-          content={content.assetAllocation}
-          pieChartData={pieChartData}
-        ></HorizontalBarChart>
+        {typeof portfolioDetailStore.pieChartData !== 'undefined' ?
+          <Suspense fallback={<></>}>
+            <PDDonutchart content={content} pieChartData={portfolioDetailStore.pieChartData} />
+          </Suspense>
+          : <></>
+        }
       </Grid>
-    </Grid>
-  ) : (
-    <></>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%'
+        }}
+      >
+        {typeof portfolioDetailStore.sankeyFlowData !== 'undefined' ?
+          <Suspense fallback={<></>}>
+            <PDSankeyChart sankeyFlowData={portfolioDetailStore.sankeyFlowData} />
+          </Suspense>
+          : <></>
+        }
+      </Grid>
+    </Grid >
   );
 });
 

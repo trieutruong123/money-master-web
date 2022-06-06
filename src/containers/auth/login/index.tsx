@@ -118,6 +118,7 @@ export const LoginForm = observer(({ content }: IProps) => {
         <Card sx={{ my: 5, mx: 1 }}>
           <Typography
             sx={{
+              pt: 2,
               fontSize: '2rem',
             }}
             align="center"

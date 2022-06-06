@@ -127,12 +127,6 @@ export type SearchingDataItem = {
   name: string;
 };
 
-export type SankeyDataLink = {
-  source: string;
-  target: string;
-  value: number;
-};
-
 export type AssetType =
   | "crypto"
   | "stock"

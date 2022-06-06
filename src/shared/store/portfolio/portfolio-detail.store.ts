@@ -1,10 +1,3 @@
-import { IAddedAsset } from "./../../types/portfolio-detail.type";
-import {
-  AssetTypeConstants,
-  UsingMoneySource,
-} from "./../../constants/portfolio-detail";
-import { CustomAssetItem } from "./../../models/portfolio-asset.model";
-import { InvestFundResponse } from "./../../models/portfolio.model";
 import {
   action,
   computed,
@@ -12,12 +5,7 @@ import {
   observable,
   runInAction,
 } from "mobx";
-import {
-  coinGeckoService,
-  httpService,
-  finhubService,
-  portfolioService,
-} from "services";
+import { coinGeckoService, httpService, finhubService } from "services";
 import { content } from "i18n";
 import {
   RealEstateItem,
@@ -29,6 +17,9 @@ import {
   PersonalInterestCustomAssetItem,
   CustomAssetItemByCategory,
   InvestFundTransactionItem,
+  CustomAssetItem,
+  InvestFundResponse,
+  SankeyDataItem,
 } from "shared/models";
 import {
   Portfolio,
@@ -43,10 +34,12 @@ import {
   AssetType,
   NewPersonalAssetType,
   TransferToInvestFundType,
+  IAddedAsset,
 } from "shared/types";
 import { AssetTypeName, PDBreadcrumbTabs } from "shared/constants";
 import { rootStore } from "shared/store";
 import { httpError } from "shared/helpers";
+import { getSankeyNodeType } from "shared/helpers/sankey-chart";
 
 class PortfolioDetailStore {
   portfolioId: number = 0;
@@ -79,7 +72,7 @@ class PortfolioDetailStore {
     undefined;
 
   needUpdatedReportData: boolean = false;
-  sankeyFlowData: Array<SankeyDataLink> = [];
+  sankeyFlowData: Array<SankeyDataLink> | undefined = undefined;
   pieChartData: Array<PieChartItem> | undefined = undefined;
 
   isOpenTransferToInvestFundModal: boolean = false;
@@ -658,20 +651,26 @@ class PortfolioDetailStore {
   }
 
   async fetchSankeyFlowData() {
-    var raw = await portfolioService.getCashFlowData(
-      this.portfolioId.toString()
-    );
-    runInAction(() => {
-      this.sankeyFlowData = raw.map((link) => {
-        return {
-          source: `${link.sourceType}@@${link.sourceName}`,
-          target: `${link.targetType}@@${link.targetName}`,
-          //error: type 'string' is incompatible with 'string',
-          // value: link.amount.toString(),
-          value: link.amount,
-        };
+    const url = `/portfolio/${this.portfolioId}/sankey`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+
+    if (!res.isError) {
+      runInAction(() => {
+        this.sankeyFlowData = res.data.map((link: SankeyDataItem) => {
+          return {
+            source: `${getSankeyNodeType(
+              link.sourceType
+            ).toUpperCase()}@@${link.sourceName.toUpperCase()}`,
+            target: `${getSankeyNodeType(
+              link.targetType
+            ).toUpperCase()}@@${link.targetName.toUpperCase()}`,
+            value: link.amount,
+          };
+        });
       });
-    });
+    } else {
+      this.sankeyFlowData = [];
+    }
   }
 
   async fetchPieChartData() {
@@ -783,7 +782,7 @@ class PortfolioDetailStore {
   }
 
   get isMissingReportData(): boolean {
-    return this.pieChartData === undefined;
+    return this.pieChartData === undefined && this.sankeyFlowData === undefined;
   }
 
   findAssetByIdAndType(assetType: AssetType, assetId: number) {
