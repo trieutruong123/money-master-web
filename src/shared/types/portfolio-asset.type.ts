@@ -9,9 +9,12 @@ export type TransactionType =
   | "moveToFund";
 
 export type TransactionRequestType =
-  | "buyAsset"
-  | "withdrawValue"
-  | "moveToFund";
+  | "addvalue"
+  | "withdrawToCash"
+  | "moveToFund"
+  | "buyFromFund"
+  | "buyFromCash"
+  | "buyFromOutside";
 
 export interface ITransactionRequest {
   amount: number;

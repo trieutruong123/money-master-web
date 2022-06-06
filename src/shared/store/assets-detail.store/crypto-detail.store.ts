@@ -1,21 +1,23 @@
-import { coinGeckoService, httpService } from 'services';
+import { coinGeckoService, httpService } from "services";
 import {
   action,
   computed,
   makeAutoObservable,
   observable,
   runInAction,
-} from 'mobx';
-import { content } from 'i18n';
-import { rootStore } from 'shared/store';
-import { CryptoItem, TransactionItem } from 'shared/models';
-import { portfolioData } from '../portfolio/portfolio-data';
+} from "mobx";
+import { content } from "i18n";
+import { rootStore } from "shared/store";
+import { CashItem, CryptoItem, TransactionItem } from "shared/models";
+import { portfolioData } from "../portfolio/portfolio-data";
 import {
+  CurrencyItem,
   ITransactionRequest,
   Portfolio,
   TransferToInvestFundType,
-} from 'shared/types';
-import { PACryptoBreadcrumbTabs } from 'shared/constants';
+} from "shared/types";
+import { PACryptoBreadcrumbTabs } from "shared/constants";
+import { getCurrencyByCode } from "shared/helpers";
 
 interface ICryptoMarketData {
   c: number;
@@ -27,16 +29,18 @@ interface ICryptoMarketData {
 
 class CryptoDetailStore {
   portfolioId: number = 0;
-  currencyCode: string = 'usd';
+  currencyCode: string = "usd";
   portfolioInfo: Portfolio | undefined = undefined;
 
   cryptoId: number = 0;
   cryptoDetail: CryptoItem | undefined = undefined;
   transactionHistory: Array<TransactionItem> | undefined = [];
+  cashDetail: Array<CashItem> | undefined = [];
+  currencyList: Array<CurrencyItem> | undefined = [];
 
   needUpdateOverviewData: boolean = true;
 
-  timeInterval: string = '1';
+  timeInterval: string = "1";
   OHLC_data: Array<any> = [];
   marketData: ICryptoMarketData | undefined = undefined;
 
@@ -50,6 +54,8 @@ class CryptoDetailStore {
       portfolioInfo: observable,
       cryptoId: observable,
       cryptoDetail: observable,
+      cashDetail: observable,
+      currencyList: observable,
       transactionHistory: observable,
       timeInterval: observable,
       OHLC_data: observable,
@@ -107,6 +113,7 @@ class CryptoDetailStore {
       await this.fetchCryptoDetail(),
       await this.fetchCryptoTransactionHistory(),
       await this.fetchPortfolioInfo(),
+      await this.fetchCash(),
     ]);
     if (this.marketData === undefined) {
       await this.fetchCryptoInfoByCode();
@@ -123,15 +130,39 @@ class CryptoDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.find(
-        (item: Portfolio) => item.id === this.portfolioId,
+        (item: Portfolio) => item.id === this.portfolioId
       );
       runInAction(() => {
-        this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
+        this.currencyCode = this.portfolioInfo?.initialCurrency || "usd";
         this.portfolioInfo = currentPortfolio;
       });
     } else {
       runInAction(() => {
         this.portfolioInfo = undefined;
+      });
+    }
+  }
+
+  async fetchCash() {
+    if (!this.portfolioId || !this.cryptoId) {
+      return;
+    }
+    const url = `/portfolio/${this.portfolioId}/cash`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      runInAction(() => {
+        this.cashDetail = res.data;
+        this.currencyList = res.data.map((item: CashItem) =>
+          getCurrencyByCode(item.currencyCode)
+        );
+      });
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData
+      );
+      runInAction(() => {
+        this.cashDetail = undefined;
+        this.currencyList = undefined;
       });
     }
   }
@@ -145,12 +176,12 @@ class CryptoDetailStore {
     if (!res.isError) {
       runInAction(() => {
         this.cryptoDetail = res.data.find(
-          (item: CryptoItem) => item.id === this.cryptoId,
+          (item: CryptoItem) => item.id === this.cryptoId
         );
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
     return res;
@@ -168,7 +199,7 @@ class CryptoDetailStore {
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
     return res;
@@ -176,10 +207,10 @@ class CryptoDetailStore {
 
   async createNewTransaction(params: ITransactionRequest) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/crypto/${this.cryptoId}/transaction`;
+    const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
@@ -195,13 +226,13 @@ class CryptoDetailStore {
     const url = `/portfolio/${this.portfolioId}/fund`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.transfer,
-        'success',
+        "success"
       );
       return res;
     } else {
@@ -240,7 +271,7 @@ class CryptoDetailStore {
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       runInAction(() => {
         this.marketData = undefined;
@@ -264,7 +295,7 @@ class CryptoDetailStore {
       return res;
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
     return res;

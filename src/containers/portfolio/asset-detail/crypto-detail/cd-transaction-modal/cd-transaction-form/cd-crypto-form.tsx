@@ -4,12 +4,13 @@ import { observer } from 'mobx-react-lite';
 import { CDBuyCryptoForm } from './cd-buy-crypto-form';
 import { CDSellCryptoForm } from './cd-sell-crypto-form';
 import { ITransactionRequest, TransferToInvestFundType } from 'shared/types';
-import CDMoveToFundForm from './cd-move-to-fund-form';
+import CDMoveToFundForm from './cd-transfer-to-fund-form';
 import { cryptoDetailStore } from 'shared/store';
+import CDWithdrawToOutsideForm from './cd-withdraw-to-outside-form';
 
-interface IProps {}
+interface IProps { }
 
-export const CDCryptoForm = observer(({}: IProps) => {
+export const CDCryptoForm = observer(({ }: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
@@ -17,7 +18,7 @@ export const CDCryptoForm = observer(({}: IProps) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
-    const fetchAssetPrice = async () => {};
+    const fetchAssetPrice = async () => { };
     fetchAssetPrice();
     setSelectedForm(
       <CDBuyCryptoForm
@@ -27,7 +28,7 @@ export const CDCryptoForm = observer(({}: IProps) => {
     );
   }, []);
 
-  const buttonLabels = ['Buy', 'Sell', 'Transfer'];
+  const buttonLabels = ['Buy', 'Sell', 'Transfer', 'Withdraw'];
 
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
@@ -63,8 +64,9 @@ export const CDCryptoForm = observer(({}: IProps) => {
   const sellCrypto = async (payload: ITransactionRequest) => {
     if (
       cryptoDetailStore.cryptoDetail &&
+      cryptoDetailStore.marketData?.c &&
       payload.amountInDestinationAssetUnit >
-        cryptoDetailStore.cryptoDetail?.currentAmountHolding
+      cryptoDetailStore.cryptoDetail?.currentAmountHolding * cryptoDetailStore.marketData.c
     ) {
       setErrorMessage('Amount is greater than your own shares');
       return;
@@ -79,10 +81,30 @@ export const CDCryptoForm = observer(({}: IProps) => {
     console.log(payload);
   };
 
+  const withdrawToOutside = async (payload: ITransactionRequest) => {
+    if (
+      cryptoDetailStore.cryptoDetail &&
+      cryptoDetailStore.marketData?.c &&
+      payload.amountInDestinationAssetUnit >
+      cryptoDetailStore.cryptoDetail?.currentAmountHolding * cryptoDetailStore.marketData.c
+    ) {
+      setErrorMessage('Amount is greater than your own shares');
+      return;
+    }
+    const res = await cryptoDetailStore.createNewTransaction(payload);
+    if (res.isError) {
+      setErrorMessage(res.data.data);
+    } else {
+      cryptoDetailStore.setUpdateOverviewData(true);
+      handleClose();
+    }
+  }
+
   const formArray = [
     <CDBuyCryptoForm key={focusedButtonKey} handleFormSubmit={buyMoreCrypto} />,
     <CDSellCryptoForm key={focusedButtonKey} handleFormSubmit={sellCrypto} />,
     <CDMoveToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
+    <CDWithdrawToOutsideForm key={focusedButtonKey} handleFormSubmit={withdrawToOutside} />
   ];
 
   const handleClose = () => {

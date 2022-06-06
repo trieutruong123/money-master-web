@@ -8,10 +8,12 @@ import {
   Button,
   InputLabel,
   useTheme,
+  Grid,
+  useMediaQuery,
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionRequestType } from 'shared/constants';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { stockDetailStore } from 'shared/store';
 import { colorScheme } from 'utils';
@@ -24,16 +26,21 @@ interface IProps {
 type FormValues = {
   amount: number;
   currencyCode: string;
+  fee: number;
+  tax: number;
 };
 
-const SDMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
+const SDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
       .required('Amount is required')
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
     currencyCode: Yup.string().required().default('USD'),
+    tax: Yup.number(),
+    fee: Yup.number(),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -44,11 +51,18 @@ const SDMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
+      amount: data.amount,
+      amountInDestinationAssetUnit: 0,
+      currencyCode: data.currencyCode || 'USD',
+      transactionType: TransactionRequestType.withdrawValue,
+      destinationAssetId: null,
+      destinationAssetType: null,
       referentialAssetId: stockDetailStore.stockDetail?.id,
       referentialAssetType: AssetTypeName.stock,
-      currencyCode: data.currencyCode || 'USD',
-      amount: data.amount,
-      isTransferingAll: false,
+      isTransferringAll: false,
+      isUsingFundAsSource: false,
+      fee: 0,
+      tax: 0,
     });
   };
 
@@ -116,4 +130,4 @@ const SDMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
   );
 });
 
-export default SDMoveToFundForm;
+export default SDWithdrawToOutsideForm;

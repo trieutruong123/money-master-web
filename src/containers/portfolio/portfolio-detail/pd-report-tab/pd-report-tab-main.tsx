@@ -26,7 +26,6 @@ const PDReportTab = observer(({ content }: IProps) => {
     portfolioDetailStore.setUpdateReport(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [portfolioDetailStore.needUpdatedReportData]);
-  console.log(portfolioDetailStore.sankeyFlowData);
   return (
     <Grid
       container

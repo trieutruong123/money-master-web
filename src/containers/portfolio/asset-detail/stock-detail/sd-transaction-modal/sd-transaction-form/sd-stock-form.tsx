@@ -3,13 +3,14 @@ import { Box, Button, ButtonGroup, Typography, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { SDBuyStockForm } from './sd-buy-stock-form';
 import { SDSellStockForm } from './sd-sell-stock-form';
-import SDMoveToFundForm from './sd-move-to-fund-form';
+import SDTransferToFundForm from './sd-transfer-to-fund-form';
+import SDWithdrawToOutside from './sd-withdraw-to-outside-form';
 import { stockDetailStore } from 'shared/store';
 import { ITransactionRequest, TransferToInvestFundType } from 'shared/types';
 
-interface IProps {}
+interface IProps { }
 
-export const SDStockForm = observer(({}: IProps) => {
+export const SDStockForm = observer(({ }: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
@@ -17,14 +18,14 @@ export const SDStockForm = observer(({}: IProps) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
-    const fetchAssetPrice = async () => {};
+    const fetchAssetPrice = async () => { };
     fetchAssetPrice();
     setSelectedForm(
       <SDBuyStockForm key={focusedButtonKey} handleFormSubmit={buyMoreStock} />,
     );
   }, []);
 
-  const buttonLabels = ['Buy', 'Sell', 'Transfer'];
+  const buttonLabels = ['Buy', 'Sell', 'Transfer', 'Withdraw'];
 
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
@@ -43,7 +44,6 @@ export const SDStockForm = observer(({}: IProps) => {
       stockDetailStore.setUpdateOverviewData(true);
       handleClose();
     }
-    console.log(payload);
   };
 
   const moveToFund = async (payload: TransferToInvestFundType) => {
@@ -54,14 +54,14 @@ export const SDStockForm = observer(({}: IProps) => {
       stockDetailStore.setUpdateOverviewData(true);
       handleClose();
     }
-    console.log(payload);
   };
 
   const sellStock = async (payload: ITransactionRequest) => {
     if (
       stockDetailStore.stockDetail &&
-      payload.amountInDestinationAssetUnit >
-        stockDetailStore.stockDetail?.currentAmountHolding
+      stockDetailStore.marketData?.c &&
+      payload.amount >
+      stockDetailStore.stockDetail?.currentAmountHolding * stockDetailStore.marketData?.c
     ) {
       setErrorMessage('Amount is greater than your own shares');
       return;
@@ -73,13 +73,32 @@ export const SDStockForm = observer(({}: IProps) => {
       stockDetailStore.setUpdateOverviewData(true);
       handleClose();
     }
-    console.log(payload);
   };
+
+  const withdrawToOutside = async (payload: ITransactionRequest) => {
+    if (
+      stockDetailStore.stockDetail &&
+      stockDetailStore.marketData?.c &&
+      payload.amountInDestinationAssetUnit >
+      stockDetailStore.stockDetail?.currentAmountHolding * stockDetailStore.marketData?.c
+    ) {
+      setErrorMessage('Amount is greater than your own shares');
+      return;
+    }
+    const res = await stockDetailStore.createNewTransaction(payload);
+    if (res.isError) {
+      setErrorMessage(res.data.data);
+    } else {
+      stockDetailStore.setUpdateOverviewData(true);
+      handleClose();
+    }
+  }
 
   const formArray = [
     <SDBuyStockForm key={focusedButtonKey} handleFormSubmit={buyMoreStock} />,
     <SDSellStockForm key={focusedButtonKey} handleFormSubmit={sellStock} />,
-    <SDMoveToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
+    <SDTransferToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
+    <SDWithdrawToOutside key={focusedButtonKey} handleFormSubmit={withdrawToOutside} />
   ];
 
   const handleClose = () => {

@@ -147,5 +147,13 @@ export interface IAddedAsset {
   cryptoInfo?: SearchingDataItem;
   stockInfo?: SearchingDataItem;
 }
-//Type for portfolio detail tabs
-//export type PDTabsType = 'holdings' | 'report' | 'investFund' | 'settings';
+
+export interface CurrencyItem {
+  name: string;
+  symbol: string;
+  symbolNative: string;
+  decimalDigits: any;
+  rounding: number;
+  code: string;
+  namePlural: string;
+}

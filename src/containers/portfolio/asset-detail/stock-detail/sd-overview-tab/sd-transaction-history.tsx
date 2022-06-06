@@ -68,7 +68,7 @@ const SDTransactionHistory = ({ transactionHistoryData }: IProps) => {
         </Box>
       );
     } else if (
-      Array<any>(TransactionTypeName.WithdrawValue).includes(transactionType)
+      Array<any>(TransactionTypeName.WithdrawValue, TransactionTypeName.WithDrawToCash, TransactionTypeName.MoveToFund).includes(transactionType)
     ) {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
@@ -148,7 +148,7 @@ const SDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                         {getCurrencyByCode(record.currencyCode.toUpperCase())?.symbol}
                         {roundAndAddDotAndCommaSeparator(record.amount, 4)}
                       </TableBodyCellSymbol>
-                      <TableBodyCellSymbol align="center">
+                      <TableBodyCellSymbol align='right'>
                         {renderSingleTransactionIncon(
                           record.singleAssetTransactionType,
                         )}
@@ -163,11 +163,12 @@ const SDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                         ).includes(record.singleAssetTransactionType)
                           ? record.referentialAssetType?.toUpperCase()
                           : Array<any>(
-                              TransactionTypeName.WithdrawValue,
-                              TransactionTypeName.MoveToFund,
-                            ).includes(record.singleAssetTransactionType)
-                          ? record.destinationAssetType?.toUpperCase()
-                          : ''}
+                            TransactionTypeName.WithDrawToCash,
+                            TransactionTypeName.WithdrawValue,
+                            TransactionTypeName.MoveToFund,
+                          ).includes(record.singleAssetTransactionType)
+                            ? record.destinationAssetType?.toUpperCase()
+                            : ''}
                       </TableBodyCellSymbol>
                     </TableRow>
                   );

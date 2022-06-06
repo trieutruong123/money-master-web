@@ -47,18 +47,13 @@ export const TransactionTypeConstants = {
   newAsset: "new asset",
   addValue: "add value",
   withdrawValue: "withdraw value",
+  withdrawToOutside: "withdraw to outside",
   sellAsset: "sell asset",
   moveToFund: "move to fund",
   buyFromFund: "buy from fund",
   buyFromCash: "buy from cash",
   buyFromOutside: "buy from outside",
 };
-
-export enum TransactionRequestType {
-  buyAsset = "buyAsset",
-  sellAsset = "sellAsset",
-  moveToFund = "moveToFund",
-}
 
 export enum UsingMoneySource {
   usingOutside = "usingMoneyFromOutside",
@@ -77,4 +72,15 @@ export enum TransactionFormType {
   search = "search",
   selectType = "selectType",
   selectMoneySource = "selectMoneySource",
+}
+
+export enum TransactionRequestType {
+  addValue = "addValue",
+  withdrawToCash = "withdrawToCash",
+  moveToFund = "moveToFund",
+  buyFromCash = "buyFromCash",
+  buyFromFund = "buyFromFund",
+  buyFromOutside = "buyFromOutside",
+  withdrawToOutside = "withdrawToOutside",
+  withdrawValue = "withdrawValue",
 }

@@ -8,6 +8,8 @@ import {
   MenuItem,
   InputLabel,
   useTheme,
+  Grid,
+  useMediaQuery,
 } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
@@ -15,20 +17,25 @@ import { colorScheme } from 'utils/color-scheme';
 import { TransactionRequestType, AssetTypeName } from 'shared/constants';
 import { stockDetailStore } from 'shared/store';
 import { getSupportedCurrencyList } from 'shared/helpers';
+import { CashItem } from 'shared/models';
+import { observer } from 'mobx-react-lite';
 
 type FormValues = {
   sellPrice: number;
   amount: number;
   currencyCode: string;
-  fee?: string;
+  destinationCurrencyCode: string;
+  fee: number;
+  tax: number;
 };
 
 interface IProps {
   handleFormSubmit: Function;
 }
 
-export const SDSellStockForm = ({ handleFormSubmit }: IProps) => {
+export const SDSellStockForm = observer(({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const validationSchema = Yup.object().shape({
     sellPrice: Yup.number()
       .required('Price is required')
@@ -38,6 +45,9 @@ export const SDSellStockForm = ({ handleFormSubmit }: IProps) => {
       .required('Amount is required')
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
+    destinationCurrencyCode: Yup.string().required(''),
+    fee: Yup.number(),
+    tax: Yup.number(),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -48,14 +58,18 @@ export const SDSellStockForm = ({ handleFormSubmit }: IProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
-      amount: data.sellPrice,
+      amount: data.sellPrice * data.amount,
       amountInDestinationAssetUnit: data.amount,
       currencyCode: data.currencyCode || 'USD',
-      transactionType: TransactionRequestType.sellAsset,
-      destinationAssetId: null,
+      transactionType: TransactionRequestType.withdrawToCash,
+      destinationAssetId: stockDetailStore.cashDetail?.find(item => item.currencyCode === data.destinationCurrencyCode)?.id,
       destinationAssetType: AssetTypeName.cash,
+      referentialAssetId: stockDetailStore.stockDetail?.id,
+      referentialAssetType: AssetTypeName.stock,
       isTransferringAll: false,
-      // isUsingInvestFund:checked
+      isUsingFundAsSource: false,
+      fee: data.fee,
+      tax: data.tax,
     });
   };
 
@@ -79,9 +93,9 @@ export const SDSellStockForm = ({ handleFormSubmit }: IProps) => {
       <TextField
         type="number"
         fullWidth
-        sx={{ my: 1, display: 'block' }}
+        sx={{ mt: 1, display: 'block' }}
         id="outlined-sell-price"
-        label={'*Sell Price'}
+        label={'Sell Price*'}
         {...register('sellPrice')}
         variant="outlined"
         error={typeof errors.sellPrice?.message !== 'undefined'}
@@ -90,25 +104,26 @@ export const SDSellStockForm = ({ handleFormSubmit }: IProps) => {
       <TextField
         type="number"
         fullWidth
-        sx={{ my: 1, display: 'block' }}
+        sx={{ mt: 1, display: 'block' }}
         id="outlined-amount"
-        label={'*Amount'}
+        label={'Amount*'}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
         helperText={errors.amount?.message}
       ></TextField>
+      <Box mt='10px'></Box>
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency'}</InputLabel>
+        <InputLabel id="currency-list">{'Currency*'}</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="crypto-currency-list-select"
-          label={`*${'Currency'}`}
+          label={`${'Currency'}*`}
           defaultValue={stockDetailStore.stockDetail?.currencyCode || 'USD'}
           {...register('currencyCode')}
         >
-          {currencyList.map((item, index) => {
+          {currencyList?.map((item, index) => {
             return (
               <MenuItem key={item.code} value={item.code}>
                 {item.code} - {item.name}
@@ -117,15 +132,61 @@ export const SDSellStockForm = ({ handleFormSubmit }: IProps) => {
           })}
         </Select>
       </FormControl>
-      {/* <TextField
-        type="number"
-        fullWidth
-        sx={{ my: 1, display: 'block' }}
-        id="outlined-broker-fee"
-        label={'Broker fee'}
-        {...register('brokerFee')}
-        variant="outlined"
-      ></TextField> */}
+      <Box mt='10px'></Box>
+      <FormControl fullWidth>
+        <InputLabel id="destination-cash">{'Destination cash*'}</InputLabel>
+        <Select
+          variant="outlined"
+          labelId="destination-cash"
+          id="crypto-destination-cash-select"
+          label={`${'Select destination cash'}*`}
+          {...register('destinationCurrencyCode')}
+          defaultValue={stockDetailStore.cashDetail?.at(0)?.currencyCode || 'USD'}
+          required
+        >
+          {stockDetailStore.currencyList?.map((item, index) => {
+            return (
+              <MenuItem key={item.code} value={item.code}>
+                {item.code} - {item.name}
+              </MenuItem>
+            );
+          })}
+        </Select>
+      </FormControl>
+      <Grid container spacing={isXs ? 1 : 2}>
+        <Grid item xs={12} sm={6} sx={{ display: 'block' }}>
+          <TextField
+            type="number"
+            fullWidth
+            inputProps={{
+              step: 'any'
+            }}
+            sx={{ mt: '10px', display: 'block' }}
+            id="outlined-fee"
+            label={`${"Fee"}`}
+            {...register('fee')}
+            variant="outlined"
+            defaultValue={0}
+            error={typeof errors.fee?.message !== 'undefined'}
+            helperText={errors.fee?.message} />
+        </Grid>
+        <Grid item xs={12} sm={6} sx={{ display: 'block' }}>
+          <TextField
+            type="number"
+            fullWidth
+            inputProps={{
+              step: 'any'
+            }}
+            sx={{ mt: '10px', display: 'block' }}
+            id="outlined-tax"
+            label={`${"Tax (%)"}`}
+            {...register('tax')}
+            variant="outlined"
+            defaultValue={0}
+            error={typeof errors.tax?.message !== 'undefined'}
+            helperText={errors.tax?.message} />
+        </Grid>
+      </Grid>
       <Button
         type="submit"
         variant="contained"
@@ -141,4 +202,4 @@ export const SDSellStockForm = ({ handleFormSubmit }: IProps) => {
       </Button>
     </Box>
   );
-};
+});
