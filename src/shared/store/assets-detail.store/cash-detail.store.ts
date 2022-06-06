@@ -4,15 +4,7 @@ import { portfolioData } from 'shared/store/portfolio/portfolio-data';
 import { CashItem } from 'shared/models';
 import { rootStore } from 'shared/store';
 import { content } from 'i18n';
-
-export interface ITransactionPayload{
-  amount:number,
-  currencyCode:string,
-  transactionType:string,
-  destinationAssetId:number,
-  destinationAssetType:string,
-  isTransferringAll:boolean
-}
+import { AssetTypeName, TransactionTypeName } from 'shared/constants';
 
 export interface IMoveToFundPayload{
   referentialAssetId:number,
@@ -175,8 +167,19 @@ class CashDetailStore {
     }
   }
 
-  async makeTransaction(payload:ITransactionPayload){
-    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transaction`;
+  async makeTransaction(currencyCode:string, destinationAssetId:number, amount:number){
+    var payload={
+      currencyCode,
+      transactionType:TransactionTypeName.WithdrawValue,
+      destinationAssetId,
+      destinationAssetType:AssetTypeName.cash,
+      referentialAssetId:this.cashId,
+      referentialAssetType:AssetTypeName.cash,
+      amount,
+      isTransferringAll:false
+    }
+    const url = `/portfolio/${this.portfolioId}/transactions`;
+
     const res: { isError: boolean; data: any } = await httpService.post(url,payload);
     if (!res.isError) {
       await this.updateTransactionHistoryData();

@@ -8,14 +8,11 @@ import {
   useTheme,
 } from "@mui/material";
 import { observer } from "mobx-react-lite";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { BuyCashForm } from "./buy-cash-form";
 import { SellCashForm } from "./sell-cash-form";
 import { TransferCashForm } from "./transfer-cash-form";
 import {
   cashDetailStore,
-  IMoveToFundPayload,
-  ITransactionPayload,
   portfolioDetailStore,
 } from "shared/store";
 
@@ -35,15 +32,7 @@ export const CreateCashForm = observer(({}: IProps) => {
 
   async function makeTransferAction(data: any) {
     const { currencyCode, destinationAssetId, amount } = data;
-    const payload: ITransactionPayload = {
-      currencyCode,
-      destinationAssetId,
-      amount,
-      transactionType:"withdrawValue",
-      destinationAssetType: "cash",
-      isTransferringAll: false
-    };
-    await cashDetailStore.makeTransaction(payload);
+    await cashDetailStore.makeTransaction(currencyCode, destinationAssetId, amount);
   }
 
   async function makeBuyAction(data: any) {
@@ -52,8 +41,6 @@ export const CreateCashForm = observer(({}: IProps) => {
   }
 
   async function makeSellAction(data: any) {
-
-   
      const { currencyCode, amount ,sellingDestination} = data;
      switch(sellingDestination){
        case 'toFund':{
