@@ -1,6 +1,6 @@
 import React from "react";
 import { SankeyNode } from "d3-sankey";
-import { SankeyDataLink, SankeyDataNode } from "./index";
+import { SankeyDataLink, SankeyDataNode } from "shared/types";
 
 export type RectNode = SankeyNode<SankeyDataNode, SankeyDataLink>;
 

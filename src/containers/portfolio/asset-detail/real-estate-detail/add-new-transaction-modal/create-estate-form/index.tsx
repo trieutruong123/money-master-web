@@ -15,13 +15,12 @@ import { realEstateDetailStore } from "shared/store";
 import {
   cashDetailStore,
   IMoveToFundPayload,
-  ITransactionPayload,
   portfolioDetailStore,
 } from "shared/store";
 
-interface IProps {}
+interface IProps { }
 
-export const CreateEstateForm = observer(({}: IProps) => {
+export const CreateEstateForm = observer(({ }: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
@@ -31,12 +30,12 @@ export const CreateEstateForm = observer(({}: IProps) => {
   }, []);
 
   async function makeWithdrawAction(data: any) {
-    const {destinationCashId,currencyCode}=data;
-    await realEstateDetailStore.withdrawAllToCash(destinationCashId,currencyCode)
+    const { destinationCashId, currencyCode } = data;
+    await realEstateDetailStore.withdrawAllToCash(destinationCashId, currencyCode)
   }
 
   async function makeSellAction(data: any) {
-    const {currencyCode}=data;
+    const { currencyCode } = data;
     await realEstateDetailStore.moveAllToFund(currencyCode)
   }
 
@@ -44,7 +43,7 @@ export const CreateEstateForm = observer(({}: IProps) => {
   const formArray = [
     <WithdrawToCashForm key={focusedButtonKey} handleFormSubmit={makeWithdrawAction} />,
     <MoveToFundForm key={focusedButtonKey} handleFormSubmit={makeSellAction} />,
-    
+
   ];
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
@@ -60,7 +59,7 @@ export const CreateEstateForm = observer(({}: IProps) => {
           Transaction
         </Typography>
         <Typography
-         align="center"  variant="h4"
+          align="center" variant="h4"
           sx={{ color: "darkgreen" }}
         >
           {`${realEstateDetailStore.realEstateName}`}
@@ -88,7 +87,7 @@ export const CreateEstateForm = observer(({}: IProps) => {
             fontWeight: "bold",
           }}
         >
-          {portfolioDetailStore.portfolioInfo?.name||''}
+          {portfolioDetailStore.portfolioInfo?.name || ''}
         </Typography>
         <Typography
           variant="body1"
