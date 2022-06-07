@@ -170,7 +170,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
               }}
               sx={{ mt: 1, display: 'block' }}
               id="outlined-bank-savings-interest-rate"
-              label={`${content.interestRate}*`}
+              label={`${content.interestRate}* (%/year)`}
               {...register('interestRate')}
               variant="outlined"
               error={typeof errors.interestRate?.message !== 'undefined'}

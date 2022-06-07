@@ -2,7 +2,7 @@ import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { styled } from '@mui/material/styles';
 import { bankSavingsDetailStore } from 'shared/store';
-import { CreateBankForm } from './create-bank-form';
+import { CreateBankForm } from './bs-transaction-form/bs-main-form';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
   position: 'absolute',

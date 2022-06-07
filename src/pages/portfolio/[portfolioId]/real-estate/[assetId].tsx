@@ -1,4 +1,4 @@
-import { lazy, useEffect } from 'react';
+import { lazy, useEffect, Suspense } from 'react';
 import Head from 'next/head';
 import {
   Box,
@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { content } from 'i18n';
 import { DashboardLayout } from 'containers';
+import { HypnosisLoading } from 'shared/components';
 
 const RealEstateDetail = lazy(() => import('containers/portfolio/asset-detail/real-estate-detail/re-real-estate-detail-main'));
 
@@ -30,7 +31,10 @@ const AssetDetailPage = () => {
         }}
       >
         <Container maxWidth="lg">
-          <RealEstateDetail />
+          <Suspense fallback={<HypnosisLoading />}>
+            <RealEstateDetail />
+
+          </Suspense>
         </Container>
       </Box>
     </>

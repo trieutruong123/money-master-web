@@ -7,62 +7,62 @@ import {
   useTheme,
 } from "@mui/material";
 import { observer } from "mobx-react-lite";
-import { REWithdrawToCash } from "./re-withdraw-to-cash-form";
-import { REMoveToFundForm } from "./re-move-to-fund-form";
-import { realEstateDetailStore } from "shared/store";
+import { bankSavingsDetailStore } from "shared/store";
 import { ITransactionRequest, TransferToInvestFundType } from "shared/types";
-import REWithdrawToOutside from "./re-withdraw-outside";
+import BSWithdrawToCash from "./bs-withdraw-to-cash-form";
+import BSWithdrawToOutside from "./bs-withdraw-to-outside";
+import { BSMoveToFundForm } from "./bs-move-to-fund-form";
 
 interface IProps { }
 
-export const CreateEstateForm = observer(({ }: IProps) => {
+export const CreateBankForm = observer(({ }: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const portfolioName = realEstateDetailStore.portfolioInfo?.name;
-  const assetName = realEstateDetailStore.assetDetail?.name;
+  const portfolioName = bankSavingsDetailStore.portfolioInfo?.name;
+  const assetName = bankSavingsDetailStore.assetDetail?.name;
   const buttonLabels = ["Sell", "Withdraw", "Transfer"];
 
   useEffect(() => {
-    setSelectedForm(<REWithdrawToCash key={focusedButtonKey} handleFormSubmit={sellAsset} />);
+    setSelectedForm(<BSWithdrawToCash key={focusedButtonKey} handleFormSubmit={sellAsset} />);
   }, []);
 
   const sellAsset = async (payload: ITransactionRequest) => {
-    const res = await realEstateDetailStore.createNewTransaction(payload);
+    const res = await bankSavingsDetailStore.createNewTransaction(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
     } else {
-      realEstateDetailStore.setUpdateOverviewData(true);
+      bankSavingsDetailStore.setUpdateOverviewData(true);
       handleClose();
     }
   };
 
   const moveToFund = async (payload: TransferToInvestFundType) => {
-    const res = await realEstateDetailStore.transferAssetToInvestFund(payload);
+    const res = await bankSavingsDetailStore.transferAssetToInvestFund(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
     } else {
-      realEstateDetailStore.setUpdateOverviewData(true);
+      bankSavingsDetailStore.setUpdateOverviewData(true);
       handleClose();
     }
   };
 
   const withdrawValue = async (payload: ITransactionRequest) => {
-    const res = await realEstateDetailStore.createNewTransaction(payload);
+    const res = await bankSavingsDetailStore.createNewTransaction(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
     } else {
-      realEstateDetailStore.setUpdateOverviewData(true);
+      bankSavingsDetailStore.setUpdateOverviewData(true);
       handleClose();
     }
   }
 
   const formArray = [
-    <REWithdrawToCash key={focusedButtonKey} handleFormSubmit={sellAsset} />,
-    <REWithdrawToOutside key={focusedButtonKey} handleFormSubmit={withdrawValue} />,
-    <REMoveToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
+    <BSWithdrawToCash key={focusedButtonKey} handleFormSubmit={sellAsset} />,
+    <BSWithdrawToOutside key={focusedButtonKey} handleFormSubmit={withdrawValue} />,
+    <BSMoveToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
   ];
 
   const handleSelectionChanged = (key: number) => {
@@ -72,7 +72,7 @@ export const CreateEstateForm = observer(({ }: IProps) => {
   };
 
   const handleClose = () => {
-    realEstateDetailStore.setOpenAddNewTransactionModal(false);
+    bankSavingsDetailStore.setOpenAddNewTransactionModal(false);
   };
 
   return (

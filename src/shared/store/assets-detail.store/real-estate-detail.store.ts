@@ -48,6 +48,10 @@ class RealEstateDetailStore {
       setAssetId: action,
 
       fetchRealEstateDetail: action,
+      fetchRealEstateTransactionHistory: action,
+      fetchPortfolioInfo: action,
+      fetchCash: action,
+
       createNewTransaction: action,
       transferAssetToInvestFund: action,
     });
@@ -120,26 +124,6 @@ class RealEstateDetailStore {
     }
   }
 
-  async fetchRealEstateDetail() {
-    const url = `/portfolio/${this.portfolioId}/${AssetTypeName.realEstate}`;
-    const res: any = await httpService.get(url);
-    if (!res.isError) {
-      runInAction(() => {
-        this.assetDetail = res.data.find(
-          (item: any) => item.id == this.assetId
-        );
-        this.realEstateName = res.data.find(
-          (item: any) => item.id == this.assetId
-        ).name;
-      });
-    } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
-      this.assetDetail = undefined;
-    }
-  }
-
   async transferAssetToInvestFund(params: TransferToInvestFundType) {
     rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/fund`;
@@ -157,6 +141,26 @@ class RealEstateDetailStore {
     } else {
       rootStore.raiseError(content[rootStore.locale].error.default);
       return res;
+    }
+  }
+
+  async fetchRealEstateDetail() {
+    const url = `/portfolio/${this.portfolioId}/${AssetTypeName.realEstate}`;
+    const res: any = await httpService.get(url);
+    if (!res.isError) {
+      runInAction(() => {
+        this.assetDetail = res.data.find(
+          (item: any) => item.id == this.assetId
+        );
+        this.realEstateName = res.data.find(
+          (item: any) => item.id == this.assetId
+        ).name;
+      });
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData
+      );
+      this.assetDetail = undefined;
     }
   }
 

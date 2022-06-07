@@ -31,7 +31,7 @@ interface IProps {
   handleFormSubmit: Function;
 }
 
-export const REMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
+export const BSMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
   const theme = useTheme();
   const validationSchema = Yup.object().shape({
     amount: Yup.number(),
@@ -47,7 +47,7 @@ export const REMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
       referentialAssetId: realEstateDetailStore.assetDetail?.id,
-      referentialAssetType: AssetTypeName.realEstate,
+      referentialAssetType: AssetTypeName.bankSaving,
       currencyCode: realEstateDetailStore.assetDetail?.inputCurrency.toUpperCase() || 'USD',
       amount: realEstateDetailStore.assetDetail?.inputMoneyAmount,
       isTransferingAll: true,
