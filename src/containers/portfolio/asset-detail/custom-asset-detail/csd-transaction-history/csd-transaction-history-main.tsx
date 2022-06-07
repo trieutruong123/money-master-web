@@ -16,7 +16,7 @@ import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
 import { TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
-import { StockTransactionList } from 'shared/models';
+import { CustomAssetTransactionList } from 'shared/models';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TransactionType } from 'shared/types';
 import { colorScheme } from 'utils';
@@ -41,7 +41,7 @@ const TableBodyCell = styled(TableCell)`
   `;
 
 interface IProps {
-    transactionHistoryData: StockTransactionList | undefined;
+    transactionHistoryData: CustomAssetTransactionList | undefined;
 }
 
 const CSDTransactionHistory = ({ transactionHistoryData }: IProps) => {

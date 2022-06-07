@@ -92,12 +92,9 @@ class CustomAssetDetailStore {
   }
 
   async fetchPortfolioInfo() {
-    console.log("có gọi nè");
-    console.log(this.portfolioId, this.customAssetId);
     if (!this.portfolioId || !this.customAssetId) {
       return;
     }
-    console.log("move over ");
     const url = `/portfolio`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
 

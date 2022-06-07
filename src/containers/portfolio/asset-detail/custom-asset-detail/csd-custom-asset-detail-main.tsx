@@ -50,7 +50,6 @@ const CSDCustomAssetDetail = observer(({ }: IProps) => {
         };
         if (portfolioId && assetId && customAssetsDetailStore.needUpdateOverviewData) {
             fetchData();
-            console.log('fetch nè')
             customAssetsDetailStore.setUpdateOverviewData(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps

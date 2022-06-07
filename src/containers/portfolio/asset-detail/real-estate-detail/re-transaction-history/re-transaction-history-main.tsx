@@ -16,7 +16,7 @@ import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
 import { TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
-import { StockTransactionList } from 'shared/models';
+import { RealEstateTransactionList, StockTransactionList } from 'shared/models';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TransactionType } from 'shared/types';
 import { colorScheme } from 'utils';
@@ -41,13 +41,14 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  transactionHistoryData: StockTransactionList | undefined;
+  transactionHistoryData: RealEstateTransactionList | undefined;
 }
 
-const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
+const RETransactionHistory = ({ transactionHistoryData }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = ['Date', 'Amount', 'Type', 'From/To'];
+
   const renderSingleTransactionIncon = (
     transactionType: TransactionType | null,
   ) => {
@@ -180,4 +181,5 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
   );
 };
 
-export default CDTransactionHistory;
+
+export default RETransactionHistory;

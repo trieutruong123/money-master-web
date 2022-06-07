@@ -104,7 +104,7 @@ export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
             ></TextField>
             <Box mt='10px'></Box>
             <FormControl fullWidth>
-                <InputLabel id="currency-list">{'Currency Code'}</InputLabel>
+                <InputLabel id="currency-list">{'Currency Code*'}</InputLabel>
                 <Select
                     variant="outlined"
                     labelId="currency-list"

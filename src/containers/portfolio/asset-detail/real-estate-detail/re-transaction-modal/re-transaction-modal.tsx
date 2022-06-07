@@ -2,7 +2,7 @@ import { Box, Modal } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { styled } from '@mui/material/styles';
 import { realEstateDetailStore } from 'shared/store';
-import { CreateEstateForm } from './create-estate-form';
+import { CreateEstateForm } from './re-transaction-form/re-main-form';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
   position: 'absolute',

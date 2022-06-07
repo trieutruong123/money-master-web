@@ -189,8 +189,6 @@ interface ISankeyProps {
 export const Sankey = observer(({ sankeyFlowData }: ISankeyProps): JSX.Element => {
   const [ref, measurements] = useMeasure<HTMLDivElement>();
   const { width } = measurements;
-  console.log(sankeyFlowData);
-  console.log(width);
   return (
     // ResizeObserver doesn't work directly on <svg/>
     <div ref={ref}>

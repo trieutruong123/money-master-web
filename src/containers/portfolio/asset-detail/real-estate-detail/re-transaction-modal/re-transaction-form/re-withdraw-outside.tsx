@@ -8,13 +8,15 @@ import {
     Button,
     InputLabel,
     useTheme,
+    Grid,
+    useMediaQuery,
     Typography,
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionRequestType } from 'shared/constants';
 import { getSupportedCurrencyList } from 'shared/helpers';
-import { customAssetsDetailStore, stockDetailStore } from 'shared/store';
+import { realEstateDetailStore, stockDetailStore } from 'shared/store';
 import { colorScheme } from 'utils';
 import * as Yup from 'yup';
 
@@ -25,13 +27,18 @@ interface IProps {
 type FormValues = {
     amount: number;
     currencyCode: string;
+    fee: number;
+    tax: number;
 };
 
-const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
+const REWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
     const theme = useTheme();
+    const isXs = useMediaQuery(theme.breakpoints.down('sm'));
     const validationSchema = Yup.object().shape({
         amount: Yup.number(),
         currencyCode: Yup.string().required().default('USD'),
+        tax: Yup.number(),
+        fee: Yup.number(),
     });
 
     const formOptions = { resolver: yupResolver(validationSchema) };
@@ -42,11 +49,18 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
 
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
-            referentialAssetId: customAssetsDetailStore.customAssetDetail?.id,
-            referentialAssetType: AssetTypeName.custom,
-            currencyCode: customAssetsDetailStore.customAssetDetail?.inputCurrency.toUpperCase() || 'USD',
-            amount: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
-            isTransferingAll: true,
+            amount: realEstateDetailStore.assetDetail?.inputMoneyAmount,
+            amountInDestinationAssetUnit: 0,
+            currencyCode: realEstateDetailStore.assetDetail?.inputCurrency || 'USD',
+            transactionType: TransactionRequestType.withdrawToOutside,
+            destinationAssetId: null,
+            destinationAssetType: null,
+            referentialAssetId: realEstateDetailStore.assetDetail?.id,
+            referentialAssetType: AssetTypeName.realEstate,
+            isTransferringAll: true,
+            isUsingFundAsSource: false,
+            fee: 0,
+            tax: 0,
         });
     };
 
@@ -67,33 +81,33 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
                 },
             }}
         >
-            <Typography color='primary'>* All money from asset will be transferred</Typography>
+            <Typography color='primary'>* All money from asset will be withdrawn</Typography>
+
             <TextField
                 type="number"
                 fullWidth
-                sx={{ mt: 1, display: 'block' }}
                 inputProps={{
                     step: 'any',
                     readOnly: true,
                 }}
-                id="outlined-amount"
-                label={'Amount*'}
-                value={customAssetsDetailStore.customAssetDetail?.inputMoneyAmount}
+                sx={{ mt: 1, display: 'block' }}
+                id="outlined-cash-amount"
+                label={`${'Amount'}*`}
                 variant="outlined"
+                value={realEstateDetailStore.assetDetail?.inputMoneyAmount}
                 error={typeof errors.amount?.message !== 'undefined'}
                 helperText={errors.amount?.message}
             ></TextField>
             <Box mt='10px'></Box>
 
             <FormControl fullWidth>
-                <InputLabel id="currency-list">{'Currency*'}</InputLabel>
+                <InputLabel id="currency-list">{'Currency Code'}</InputLabel>
                 <Select
                     variant="outlined"
                     labelId="currency-list"
-                    id="stock-currency-list-select"
-                    label={`*${'Currency'}`}
-                    value={customAssetsDetailStore.customAssetDetail?.inputCurrency || 'USD'}
-                    {...register('currencyCode')}
+                    id="cash-currency-list-select"
+                    label={`${'Currency Code'}*`}
+                    value={realEstateDetailStore.assetDetail?.inputCurrency.toUpperCase()}
                 >
                     {currencyList.map((item, index) => {
                         return (
@@ -115,12 +129,10 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
                     height: '2.5rem',
                 }}
             >
-                TRANSFER TO INVEST FUND
+                WITHDRAW
             </Button>
         </Box>
     );
 });
 
-export default CSDTransferToFundForm;
-
-
+export default REWithdrawToOutside;

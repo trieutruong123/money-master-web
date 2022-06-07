@@ -126,7 +126,6 @@ const SDTransactionHistory = ({ transactionHistoryData }: IProps) => {
               </TableHead>
               <TableBody>
                 {transactionHistoryData.map((record, i) => {
-                  console.log(record);
                   return (
                     <TableRow
                       key={i}

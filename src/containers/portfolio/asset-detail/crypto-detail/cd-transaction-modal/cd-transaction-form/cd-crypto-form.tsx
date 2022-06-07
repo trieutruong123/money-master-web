@@ -47,7 +47,6 @@ export const CDCryptoForm = observer(({ }: IProps) => {
       cryptoDetailStore.setUpdateOverviewData(true);
       handleClose();
     }
-    console.log(payload);
   };
 
   const moveToFund = async (payload: TransferToInvestFundType) => {
@@ -58,7 +57,6 @@ export const CDCryptoForm = observer(({ }: IProps) => {
       cryptoDetailStore.setUpdateOverviewData(true);
       handleClose();
     }
-    console.log(payload);
   };
 
   const sellCrypto = async (payload: ITransactionRequest) => {
@@ -78,7 +76,6 @@ export const CDCryptoForm = observer(({ }: IProps) => {
       cryptoDetailStore.setUpdateOverviewData(true);
       handleClose();
     }
-    console.log(payload);
   };
 
   const withdrawToOutside = async (payload: ITransactionRequest) => {

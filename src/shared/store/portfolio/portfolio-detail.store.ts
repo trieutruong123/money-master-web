@@ -484,16 +484,12 @@ class PortfolioDetailStore {
     customInterestAssetId: number,
     params: NewPortfolioCustomAsset
   ) {
-    console.log(params);
-    console.log(customInterestAssetId);
     rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/custom/${customInterestAssetId}`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
       params
     );
-    console.log(url);
-    console.log(res);
     rootStore.stopLoading();
     if (!res.isError) {
       Promise.all([this.fetchOtherCustomAsset()]);

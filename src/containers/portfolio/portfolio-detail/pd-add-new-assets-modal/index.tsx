@@ -91,7 +91,6 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
 
   const openNextForm = () => {
     const selectedAsset = portfolioDetailStore.selectedAsset;
-    console.log(selectedAsset);
     switch (selectedAsset?.formType) {
       case TransactionFormType.selectType:
         if (
