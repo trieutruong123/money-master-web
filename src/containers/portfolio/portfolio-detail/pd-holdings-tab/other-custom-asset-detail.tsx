@@ -154,6 +154,9 @@ export const OtherCustomAssetInvestments = observer(({
             {customAssetDetail.map((record, recordIdx) => {
               const { assets } = record;
               return assets.map((item, itemIdx) => {
+                if (item.inputMoneyAmount) {
+                  return;
+                }
                 return (
                   <TableRow
                     key={`category-${record.categoryId}-asset-${itemIdx}`}
@@ -168,7 +171,7 @@ export const OtherCustomAssetInvestments = observer(({
                       onClick={() => handleItemClick(item.id)}
                     >
                       <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
-                        {itemIdx === 0 ? record.categoryName : ''}{' '}
+                        {record.categoryName}
                       </Box>
                     </TableBodyCellSymbol>
                     <TableBodyCellSymbol onClick={() => handleItemClick(item.id)}>
