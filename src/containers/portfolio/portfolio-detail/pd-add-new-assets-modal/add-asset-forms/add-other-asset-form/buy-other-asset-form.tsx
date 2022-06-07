@@ -135,7 +135,7 @@ export const BuyOtherAssetForm = observer(({
           fullWidth
           sx={{ mt: 1, display: 'block' }}
           id="outlined-other-name"
-          label={`*${content.name}`}
+          label={`${content.name}*`}
           {...register('name')}
           variant="outlined"
           error={typeof errors.name?.message !== 'undefined'}
@@ -149,7 +149,7 @@ export const BuyOtherAssetForm = observer(({
           }}
           sx={{ mt: 1, display: 'block' }}
           id="outlined-other-input-money"
-          label={`*${content.inputMoney}`}
+          label={`${content.inputMoney}*`}
           {...register('inputMoneyAmount')}
           variant="outlined"
           error={typeof errors.inputMoneyAmount?.message !== 'undefined'}
@@ -161,7 +161,7 @@ export const BuyOtherAssetForm = observer(({
             fullWidth
           >
             <InputLabel id="personal-custom-asset-type" sx={{ width: '100%' }}>
-              *{content.assetType}
+              {content.assetType}*
             </InputLabel>
             <Select
               sx={{ width: '100%' }}
@@ -169,7 +169,7 @@ export const BuyOtherAssetForm = observer(({
               labelId="personal-custom-asset-type"
               id="other-custom-asset-select"
               defaultValue={portfolioDetailStore.selectedAsset?.customAssetId}
-              label={`*${content.assetType}`}
+              label={`${content.assetType}*`}
               {...register('customInterestAssetInfoId')}
             >
               {customAssetList.map((item, index) => {
@@ -191,7 +191,7 @@ export const BuyOtherAssetForm = observer(({
                 variant="outlined"
                 labelId="currency-list"
                 id="other-currency-list-select"
-                label={`*${content.currency}`}
+                label={`${content.currency}*`}
                 defaultValue="USD"
                 {...register('inputCurrency')}
               >
@@ -208,7 +208,7 @@ export const BuyOtherAssetForm = observer(({
           <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
-                label={`*${content.inputDay}`}
+                label={`${content.inputDay}*`}
                 inputFormat="dd/MM/yyyy"
                 value={date}
                 onChange={handleDateChange}
@@ -253,12 +253,12 @@ export const BuyOtherAssetForm = observer(({
           portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash && cashList !== undefined && cashList.length > 0 ? (
             <Grid item xs={12} sx={{ mt: 1, display: 'block' }}>
               <FormControl fullWidth>
-                <InputLabel id="select-cash-source">Select your cash source</InputLabel>
+                <InputLabel id="select-cash-source">Select your cash source*</InputLabel>
                 <Select
                   variant="outlined"
                   labelId="your-cash"
                   id="bank-savings-your-cash-select"
-                  label={`*Select your cash source`}
+                  label={`Select your cash source*`}
                   defaultValue={cashList[0].id}
                   {...register('cashId')}
                 >

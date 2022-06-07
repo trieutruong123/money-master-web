@@ -54,7 +54,7 @@ const SDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
       amount: data.amount,
       amountInDestinationAssetUnit: 0,
       currencyCode: data.currencyCode || 'USD',
-      transactionType: TransactionRequestType.withdrawValue,
+      transactionType: TransactionRequestType.withdrawToOutside,
       destinationAssetId: null,
       destinationAssetType: null,
       referentialAssetId: stockDetailStore.stockDetail?.id,
@@ -99,7 +99,7 @@ const SDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
         <Select
           variant="outlined"
           labelId="currency-list"
-          id="crypto-currency-list-select"
+          id="stock-currency-list-select"
           label={`*${'Currency'}`}
           defaultValue={stockDetailStore.stockDetail?.currencyCode || 'USD'}
           {...register('currencyCode')}
@@ -124,7 +124,7 @@ const SDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        SAVE
+        WITHDRAW
       </Button>
     </Box>
   );

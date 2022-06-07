@@ -110,7 +110,7 @@ const CDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        SAVE
+        TRANSFER TO INVEST FUND
       </Button>
     </Box>
   );

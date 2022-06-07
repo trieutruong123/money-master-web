@@ -165,13 +165,13 @@ export const OtherCustomAssetInvestments = observer(({
                     }}
                   >
                     <TableBodyCellSymbol
-                      onClick={() => handleItemClick(item.name)}
+                      onClick={() => handleItemClick(item.id)}
                     >
                       <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
                         {itemIdx === 0 ? record.categoryName : ''}{' '}
                       </Box>
                     </TableBodyCellSymbol>
-                    <TableBodyCellSymbol onClick={() => handleItemClick(item.name)}>
+                    <TableBodyCellSymbol onClick={() => handleItemClick(item.id)}>
                       <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
                         {item.name}
                       </Box>
@@ -181,20 +181,20 @@ export const OtherCustomAssetInvestments = observer(({
                         {dayjs(item.inputDay).format('DD-MM-YYYY')}
                       </Box>
                     </TableBodyCellSymbol>
-                    <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                    <TableBodyCell onClick={() => handleItemClick(item.id)}>
                       {renderInputMoneyAmount(
                         item.inputMoneyAmount,
                         item.inputCurrency,
                       )}
                     </TableBodyCell>
-                    <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                    <TableBodyCell onClick={() => handleItemClick(item.id)}>
                       {renderInterestRate(item.interestRate)}
                     </TableBodyCell>
-                    <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                    <TableBodyCell onClick={() => handleItemClick(item.id)}>
                       {renderTermRange(item.termRange, 'months')}
                     </TableBodyCell>
                     <Tooltip title={item.description}>
-                      <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                      <TableBodyCell onClick={() => handleItemClick(item.id)}>
                         {renderDescription(item.description)}
                       </TableBodyCell>
                     </Tooltip>

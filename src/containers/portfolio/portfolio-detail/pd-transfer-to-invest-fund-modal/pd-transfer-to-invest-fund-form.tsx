@@ -177,7 +177,7 @@ export const PDTransferToInvestFundForm = observer(() => {
           {transferedAssetInfo?.assetType === AssetTypeName.bankSaving ||
             transferedAssetInfo?.assetType === AssetTypeName.custom ||
             transferedAssetInfo?.assetType === AssetTypeName.realEstate ?
-            <Typography color = 'primary'>* All money from asset will be transfered to fund</Typography>:null}
+            <Typography color='primary'>* All money from asset will be transfered to fund</Typography> : null}
           <TextField
             type="number"
             fullWidth
@@ -187,7 +187,7 @@ export const PDTransferToInvestFundForm = observer(() => {
             }}
             sx={{ mt: 1, display: 'block' }}
             id="outlined-cash-amount"
-            label={`*${'Amount'}`}
+            label={`${'Amount'}*`}
             {...register('amount')}
             variant="outlined"
             defaultValue={defaultAmount()}
@@ -201,7 +201,7 @@ export const PDTransferToInvestFundForm = observer(() => {
                 variant="outlined"
                 labelId="currency-list"
                 id="cash-currency-list-select"
-                label={`*${'Currency Code'}`}
+                label={`${'Currency Code'}*`}
                 value={
                   !checkWhetherAllowedChangingCurrency()
                     ? defaultCurrencyCode()

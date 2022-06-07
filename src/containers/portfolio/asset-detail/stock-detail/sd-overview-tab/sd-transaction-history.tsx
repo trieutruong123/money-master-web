@@ -48,7 +48,7 @@ const SDTransactionHistory = ({ transactionHistoryData }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = ['Date', 'Amount', 'Type', 'From/To'];
-  console.log(transactionHistoryData);
+
   const renderSingleTransactionIncon = (
     transactionType: TransactionType | null,
   ) => {
@@ -68,7 +68,7 @@ const SDTransactionHistory = ({ transactionHistoryData }: IProps) => {
         </Box>
       );
     } else if (
-      Array<any>(TransactionTypeName.WithdrawValue, TransactionTypeName.WithDrawToCash, TransactionTypeName.MoveToFund).includes(transactionType)
+      Array<any>(TransactionTypeName.WithdrawValue, TransactionTypeName.WithdrawToCash).includes(transactionType)
     ) {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
@@ -163,7 +163,7 @@ const SDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                         ).includes(record.singleAssetTransactionType)
                           ? record.referentialAssetType?.toUpperCase()
                           : Array<any>(
-                            TransactionTypeName.WithDrawToCash,
+                            TransactionTypeName.WithdrawToCash,
                             TransactionTypeName.WithdrawValue,
                             TransactionTypeName.MoveToFund,
                           ).includes(record.singleAssetTransactionType)

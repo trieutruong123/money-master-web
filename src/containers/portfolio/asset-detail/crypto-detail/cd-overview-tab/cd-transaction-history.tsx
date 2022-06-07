@@ -68,7 +68,7 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
         </Box>
       );
     } else if (
-      Array<any>(TransactionTypeName.WithdrawValue, TransactionTypeName.WithDrawToCash, TransactionTypeName.MoveToFund).includes(transactionType)
+      Array<any>(TransactionTypeName.WithdrawValue, TransactionTypeName.WithdrawToCash).includes(transactionType)
     ) {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
@@ -165,7 +165,7 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                           : Array<any>(
                             TransactionTypeName.WithdrawValue,
                             TransactionTypeName.MoveToFund,
-                            TransactionTypeName.WithDrawToCash
+                            TransactionTypeName.WithdrawToCash
                           ).includes(record.singleAssetTransactionType)
                             ? record.destinationAssetType?.toUpperCase()
                             : ''}

@@ -196,7 +196,7 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        SAVE
+        SELL
       </Button>
     </Box>
   );

@@ -112,7 +112,7 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
             inputProps={{ step: 'any' }}
             sx={{ mt: 1, display: 'block' }}
             id="outlined-cash-amount"
-            label={`*${content.amount}`}
+            label={`${content.amount}*`}
             {...register('amount')}
             variant="outlined"
             error={typeof errors.amount?.message !== 'undefined'}
@@ -126,7 +126,7 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
                   variant="outlined"
                   labelId="currency-list"
                   id="cash-currency-list-select"
-                  label={`*${content.currency}`}
+                  label={`${content.currency}*`}
                   defaultValue="USD"
                   {...register('currencyCode')}
                 >
@@ -143,7 +143,7 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
             <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
-                  label={`*${content.inputDay}`}
+                  label={`${content.inputDay}*`}
                   inputFormat="dd/MM/yyyy"
                   value={date}
                   onChange={handleDateChange}
@@ -163,7 +163,7 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
                     variant="outlined"
                     labelId="your-cash"
                     id="bank-savings-your-cash-select"
-                    label={`*Select your cash source`}
+                    label={`Select your cash source*`}
                     defaultValue={cashList[0].id}
                     {...register('cashId')}
                   >
@@ -226,10 +226,6 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
             error={typeof errors.description?.message !== 'undefined'}
             helperText={errors.description?.message}
           ></TextField>
-          {/* <Box display='flex' flexDirection='row' alignItems='center' justifyContent={'start'} sx={{ mb: 1 }}>
-            <CheckBoxButton color='primary' onChange={handleChangeCheckBox} />
-            <h4>Is money from invest fund?</h4>
-          </Box> */}
         </Grid>
       </Box>
       <Box

@@ -40,7 +40,7 @@ export enum TransactionTypeName {
   BuyFromFund = "buyFromFund",
   BuyFromCash = "buyFromCash",
   BuyFromOutside = "buyFromOutside",
-  WithDrawToCash = "withdrawToCash",
+  WithdrawToCash = "withdrawToCash",
 }
 
 export const TransactionTypeConstants = {

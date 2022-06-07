@@ -1,4 +1,4 @@
-import { CSDCustomAssetDetail } from "./asset-detail/custom-asset-detail/csd-custom-assset-detail-main";
+import { CSDCustomAssetDetail } from "./asset-detail/custom-asset-detail/csd-custom-asset-detail-main";
 import {
   BankSavingsDetail,
   CashDetail,

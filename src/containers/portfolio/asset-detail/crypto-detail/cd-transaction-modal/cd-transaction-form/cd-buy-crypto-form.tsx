@@ -253,7 +253,7 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        SAVE
+        ADD
       </Button>
     </Box>
   );

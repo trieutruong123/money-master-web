@@ -1,19 +1,18 @@
-import { rootStore } from 'shared/store';
-import { httpError } from 'shared/helpers';
-import { action, computed, makeAutoObservable, observable } from 'mobx';
-import { httpService } from 'services';
-import { RealEstateItem } from 'shared/models';
-import { content } from 'i18n';
-import { AssetTypeName, TransactionTypeName } from 'shared/constants';
+import { rootStore } from "shared/store";
+import { httpError } from "shared/helpers";
+import { action, computed, makeAutoObservable, observable } from "mobx";
+import { httpService } from "services";
+import { RealEstateItem } from "shared/models";
+import { content } from "i18n";
+import { AssetTypeName, TransactionTypeName } from "shared/constants";
 
 class RealEstateDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
-  portfolioId: string = '';
-  realEstateName: string | undefined = '';
-  assetId: string = '';
+  portfolioId: string = "";
+  realEstateName: string | undefined = "";
+  assetId: string = "";
   assetDetail: RealEstateItem | undefined = undefined;
   transactionHistoryData: Array<any> = [];
-
 
   constructor() {
     makeAutoObservable(this, {
@@ -27,8 +26,8 @@ class RealEstateDetailStore {
       setAssetId: action,
       fetchRealEstateDetail: action,
       updateAssetDetail: action,
-      withdrawAllToCash:action,
-      moveAllToFund:action
+      withdrawAllToCash: action,
+      moveAllToFund: action,
     });
   }
 
@@ -51,46 +50,52 @@ class RealEstateDetailStore {
       this.transactionHistoryData = res.data;
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
   }
 
-  async withdrawAllToCash(cashId: number, currencyCode:string){
-    var payload={
+  async withdrawAllToCash(cashId: number, currencyCode: string) {
+    var payload = {
       currencyCode,
-      transactionType:TransactionTypeName.WithDrawToCash,
-      destinationAssetId:cashId,
-      destinationAssetType:AssetTypeName.cash,
-      referentialAssetId:this.assetId,
-      referentialAssetType:AssetTypeName.realEstate,
-      isTransferringAll:true
-    }
+      transactionType: TransactionTypeName.WithdrawToCash,
+      destinationAssetId: cashId,
+      destinationAssetType: AssetTypeName.cash,
+      referentialAssetId: this.assetId,
+      referentialAssetType: AssetTypeName.realEstate,
+      isTransferringAll: true,
+    };
     const url = `/portfolio/${this.portfolioId}/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      payload
+    );
     if (!res.isError) {
       await this.updateTransactionHistoryData();
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
   }
 
-  async moveAllToFund(currencyCode:string){
-    var payload={
+  async moveAllToFund(currencyCode: string) {
+    var payload = {
       referentialAssetId: this.assetId,
       referentialAssetType: AssetTypeName.realEstate,
       currencyCode,
-      isTransferringAll: true
-    }
+      isTransferringAll: true,
+    };
     const url = `/portfolio/${this.portfolioId}/${AssetTypeName.fund}`;
-    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      payload
+    );
     if (!res.isError) {
       await this.updateTransactionHistoryData();
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
   }
@@ -107,11 +112,11 @@ class RealEstateDetailStore {
     if (!res.isError) {
       this.assetDetail = res.data.find((item: any) => item.id == assetId);
       this.realEstateName = res.data.find(
-        (item: any) => item.id == assetId,
+        (item: any) => item.id == assetId
       ).name;
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       this.assetDetail = undefined;
     }
@@ -132,7 +137,7 @@ class RealEstateDetailStore {
     rootStore.stopLoading();
     if (!res.isError) {
       this.assetDetail = res.data;
-      return { isError: false, data: httpError.handleSuccessMessage('update') };
+      return { isError: false, data: httpError.handleSuccessMessage("update") };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 }

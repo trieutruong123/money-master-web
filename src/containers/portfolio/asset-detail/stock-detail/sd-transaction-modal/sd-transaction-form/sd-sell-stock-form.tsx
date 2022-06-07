@@ -198,7 +198,7 @@ export const SDSellStockForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        SAVE
+        SELL
       </Button>
     </Box>
   );

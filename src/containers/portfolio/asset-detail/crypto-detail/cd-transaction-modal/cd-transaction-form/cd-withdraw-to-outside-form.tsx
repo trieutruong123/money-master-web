@@ -55,7 +55,7 @@ const CDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
       amount: data.amount,
       amountInDestinationAssetUnit: 0,
       currencyCode: data.currencyCode || 'USD',
-      transactionType: TransactionRequestType.withdrawValue,
+      transactionType: TransactionRequestType.withdrawToOutside,
       destinationAssetId: null,
       destinationAssetType: null,
       referentialAssetId: cryptoDetailStore.cryptoDetail?.id,
@@ -125,7 +125,7 @@ const CDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        SAVE
+        WITHDRAW
       </Button>
     </Box>
   );

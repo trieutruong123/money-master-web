@@ -122,7 +122,7 @@ export const BuyCryptoForm = observer(({
           fullWidth
           sx={{ mt: 1, display: 'block' }}
           id="outlined-crypto-name"
-          label={`*${content.name}`}
+          label={`${content.name}*`}
           {...register('name')}
           variant="outlined"
           error={typeof errors.name?.message !== 'undefined'}
@@ -134,7 +134,7 @@ export const BuyCryptoForm = observer(({
           sx={{ mt: 1, display: 'block' }}
           id="outlined-crypto-purchase-price"
           inputProps={{ step: 'any' }}
-          label={`*${content.purchasePrice}`}
+          label={`${content.purchasePrice}*`}
           {...register('purchasePrice')}
           variant="outlined"
           error={typeof errors.purchasePrice?.message !== 'undefined'}
@@ -146,7 +146,7 @@ export const BuyCryptoForm = observer(({
           sx={{ mt: 1, display: 'block' }}
           inputProps={{ step: 'any' }}
           id="outlined-crypto-current-amount-holding"
-          label={`*${content.amount}`}
+          label={`${content.amount}*`}
           {...register('currentAmountHolding')}
           variant="outlined"
           error={typeof errors.currentAmountHolding?.message !== 'undefined'}
@@ -160,7 +160,7 @@ export const BuyCryptoForm = observer(({
                 variant="outlined"
                 labelId="currency-list"
                 id="crypto-currency-list-select"
-                label={`*${content.currency}`}
+                label={`${content.currency}*`}
                 defaultValue="USD"
                 {...register('currencyCode')}
               >
@@ -177,7 +177,7 @@ export const BuyCryptoForm = observer(({
           <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
-                label={`*${content.inputDay}`}
+                label={`${content.inputDay}*`}
                 inputFormat="dd/MM/yyyy"
                 value={date}
                 onChange={handleDateChange}
@@ -192,12 +192,12 @@ export const BuyCryptoForm = observer(({
           portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash && cashList !== undefined && cashList.length > 0 ? (
             <Grid item xs={12} sx={{ mt: 1, display: 'block' }}>
               <FormControl fullWidth>
-                <InputLabel id="select-cash-source">Select your cash source</InputLabel>
+                <InputLabel id="select-cash-source">Select your cash source*</InputLabel>
                 <Select
                   variant="outlined"
                   labelId="your-cash"
                   id="bank-savings-your-cash-select"
-                  label={`*Select your cash source`}
+                  label={`Select your cash source*`}
                   defaultValue={cashList[0].id}
                   {...register('cashId')}
                 >

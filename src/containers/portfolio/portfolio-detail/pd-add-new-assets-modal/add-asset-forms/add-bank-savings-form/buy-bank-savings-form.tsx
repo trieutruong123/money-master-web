@@ -128,7 +128,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
           fullWidth
           sx={{ mt: 1, display: 'block' }}
           id="outlined-bank-savings-name"
-          label={`*${content.name}`}
+          label={`${content.name}*`}
           {...register('name')}
           variant="outlined"
           error={typeof errors.name?.message !== 'undefined'}
@@ -142,7 +142,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
           }}
           sx={{ mt: 1, display: 'block' }}
           id="outlined-bank-saving-input-money"
-          label={`*${content.inputMoney}`}
+          label={`${content.inputMoney}*`}
           {...register('inputMoneyAmount')}
           variant="outlined"
           error={typeof errors.inputMoneyAmount?.message !== 'undefined'}
@@ -154,7 +154,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
           fullWidth
           sx={{ mt: 1, display: 'block' }}
           id="outlined-bank-savings-bank-code"
-          label={`*${content.bankCode}`}
+          label={`${content.bankCode}*`}
           {...register('bankCode')}
           variant="outlined"
           error={typeof errors.bankCode?.message !== 'undefined'}
@@ -170,7 +170,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
               }}
               sx={{ mt: 1, display: 'block' }}
               id="outlined-bank-savings-interest-rate"
-              label={`*${content.interestRate}`}
+              label={`${content.interestRate}*`}
               {...register('interestRate')}
               variant="outlined"
               error={typeof errors.interestRate?.message !== 'undefined'}
@@ -186,7 +186,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
               }}
               sx={{ mt: 1, display: 'block' }}
               id="outlined-bank-savings-term-range"
-              label={`*${content.termRange} (${content.months})`}
+              label={`${content.termRange} (${content.months})*`}
               {...register('termRange')}
               variant="outlined"
               error={typeof errors.termRange?.message !== 'undefined'}
@@ -202,7 +202,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
                 variant="outlined"
                 labelId="currency-list"
                 id="bank-savings-currency-list-select"
-                label={`*${content.currency}`}
+                label={`${content.currency}*`}
                 defaultValue="USD"
                 {...register('inputCurrency')}
               >
@@ -219,7 +219,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
           <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
-                label={`*${content.inputDay}`}
+                label={`${content.inputDay}*`}
                 inputFormat="dd/MM/yyyy"
                 value={date}
                 onChange={handleDateChange}
@@ -234,12 +234,12 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
           portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash && cashList !== undefined && cashList.length > 0 ? (
             <Grid item xs={12} sx={{ mt: 1, display: 'block' }}>
               <FormControl fullWidth>
-                <InputLabel id="select-cash-source">Select your cash source</InputLabel>
+                <InputLabel id="select-cash-source">Select your cash source*</InputLabel>
                 <Select
                   variant="outlined"
                   labelId="your-cash"
                   id="bank-savings-your-cash-select"
-                  label={`*Select your cash source`}
+                  label={`Select your cash source*`}
                   defaultValue={cashList[0].id}
                   {...register('cashId')}
                 >
