@@ -10,7 +10,6 @@
     "lint": "next lint --dir components --dir containers --dir services --dir pages --dir utils --dir shared",
     "lint-fix": "next lint --fix",
     "build:dev": "next build && next export"
-
   },
   "dependencies": {
     "@emotion/cache": "^11.7.1",
@@ -60,7 +59,6 @@
     "react-dom": "17.0.2",
     "react-hook-form": "^7.25.1",
     "react-icons": "^4.3.1",
-    "react-tiny-fab": "^4.0.4",
     "react-toastify": "^8.2.0",
     "react-use": "^17.3.2",
     "use-debounce": "^7.0.1",
