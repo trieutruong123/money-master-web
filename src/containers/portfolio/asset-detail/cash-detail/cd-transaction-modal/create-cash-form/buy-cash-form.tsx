@@ -89,8 +89,7 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
         error={typeof errors.amount?.message !== 'undefined'}
         helperText={errors.amount?.message}
       ></TextField>
-      <Box sx={{ my: 1, display: 'block' }}
-      >
+      <Box sx={{ my: 1, display: 'block' }}>
         <LocalizationProvider
           dateAdapter={AdapterDateFns}
         >
