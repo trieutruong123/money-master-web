@@ -10,10 +10,10 @@ interface IProps {
 }
 
 export const CandleStickChart = ({ timeInterval, data }: IProps) => {
-  const candleStickData = Object.values(data).slice(0,timeInterval.barAmount).map((item: any) => {
+  const candleStickData = Object.values(data).slice(0, timeInterval.barAmount).map((item: any) => {
     return {
-      x: new Date(item.t*1000),
-      y: [item.o, item.h,item.l,item.c],
+      x: new Date(item.t * 1000),
+      y: [item.o, item.h, item.l, item.c],
     };
   });
   const candleStickSeries = [{ name: 'candestick', data: candleStickData }];

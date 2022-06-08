@@ -15,17 +15,18 @@ import {
   cashDetailStore,
   portfolioDetailStore,
 } from "shared/store";
+import { getCurrencyByCode } from "shared/helpers";
 
-interface IProps {}
+interface IProps { }
 
-export const CreateCashForm = observer(({}: IProps) => {
+export const CreateCashForm = observer(({ }: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
   const [assetPrice, setAssetPrice] = useState(0);
 
   useEffect(() => {
-    const fetchAssetPrice = async () => {};
+    const fetchAssetPrice = async () => { };
     fetchAssetPrice();
     setSelectedForm(<BuyCashForm key={focusedButtonKey} handleFormSubmit />);
   }, []);
@@ -41,25 +42,25 @@ export const CreateCashForm = observer(({}: IProps) => {
   }
 
   async function makeSellAction(data: any) {
-     const { currencyCode, amount ,sellingDestination} = data;
-     switch(sellingDestination){
-       case 'toFund':{
-        const payload= {
-          referentialAssetId:cashDetailStore.cashId,
-          referentialAssetType:'cash',
+    const { currencyCode, amount, sellingDestination } = data;
+    switch (sellingDestination) {
+      case 'toFund': {
+        const payload = {
+          referentialAssetId: cashDetailStore.cashId,
+          referentialAssetType: 'cash',
           amount,
           currencyCode,
           isTransferringAll: false
         };
         await cashDetailStore.moveToFund(payload);
         break;
-       }
-       case 'toOutside':{
+      }
+      case 'toOutside': {
 
         break;
-       }
-     }
-    
+      }
+    }
+
   }
 
   const buttonLabels = ["Buy", "Sell", "Transfer"];
@@ -76,9 +77,9 @@ export const CreateCashForm = observer(({}: IProps) => {
     setSelectedForm(formArray[key]);
   };
 
-  const assetName = cashDetailStore.currencyName;
+  const assetName = getCurrencyByCode(cashDetailStore.cashDetail?.currencyCode || '')?.name;
 
-  const handleFormSubmit = async (data: any) => {};
+  const handleFormSubmit = async (data: any) => { };
 
   return (
     <Box sx={{ height: "inherit" }}>
@@ -109,7 +110,7 @@ export const CreateCashForm = observer(({}: IProps) => {
             fontWeight: "bold",
           }}
         >
-          {portfolioDetailStore.portfolioInfo?.name||''}
+          {portfolioDetailStore.portfolioInfo?.name || ''}
         </Typography>
         <Typography
           variant="body1"

@@ -12,51 +12,48 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import dayjs from 'dayjs';
-import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { BiLineChart } from 'react-icons/bi';
 import { FcCandleSticks } from 'react-icons/fc';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { CandleStickChart } from './candle-stick-chart';
 import { AreaChart } from './area-chart';
+import { observer } from 'mobx-react-lite';
+import { cashDetailStore } from 'shared/store';
 
 interface IProps {
-  data: Array<any>;
-  handleTimeIntervalChanged: any;
 }
 
-const HistoricalMarketChart = ({
-  data,
-  handleTimeIntervalChanged,
+const CDHistoricalMarketChart = observer(({
 }: IProps) => {
   const theme = useTheme();
   const isMobile = theme.breakpoints.down('sm');
   const [selection, setSelection] = useState('0');
   const [chartType, setChartType] = useState('candlestick');
 
-  const timeRangeList = [
-    { timeRange: '1 day', interval: '30 minutes', dayAmount: 1,barAmount:48 },
-    { timeRange: '1 week', interval: '4 hours', dayAmount: 7 ,barAmount:42},
-    { timeRange: '2 weeks', interval: '4 hours', dayAmount: 14 ,barAmount:84},
-    { timeRange: '1 month', interval: '4 hours', dayAmount: 30 ,barAmount:180},
-    { timeRange: '6 months', interval: '1 day', dayAmount: 180,barAmount:180 },
-    { timeRange: '1 year', interval: '1 week', dayAmount: 365 ,barAmount:52},
-  ];
+  const timeRangeList = Array(
+    { timeRange: '1 day', interval: '30 minutes', dayAmount: 1, barAmount: 48 },
+    { timeRange: '1 week', interval: '30 minutes', dayAmount: 7, barAmount: 42 },
+    { timeRange: '2 weeks', interval: '4 hours', dayAmount: 14, barAmount: 84 },
+    { timeRange: '1 month', interval: '4 hours', dayAmount: 30, barAmount: 180 },
+    { timeRange: '6 months', interval: '1 day', dayAmount: 180, barAmount: 180 },
+    { timeRange: '1 year', interval: '1 week', dayAmount: 365, barAmount: 52 },
+  ).reverse();
+
 
   const handleSelectionChanged = (event: SelectChangeEvent) => {
     setSelection(event.target.value as string);
     const index = Number.parseInt(event.target.value);
-    handleTimeIntervalChanged(timeRangeList[index].dayAmount);
+    cashDetailStore.setTimeInterval(timeRangeList[index].dayAmount);
   };
 
-  return (
+  return (cashDetailStore.OHLC_data !== undefined && cashDetailStore.forexMarketData !== undefined ? (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px':'5px 20px 20px 20px',
-          
+          padding: isMobile ? '5px' : '5px 20px 20px 20px',
+
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}
       >
@@ -76,8 +73,8 @@ const HistoricalMarketChart = ({
               display="flex"
               alignItems="center"
               justifyContent="center"
-              paddingLeft ={'10px'}
-              
+              paddingLeft={'10px'}
+
             >
               <FormControl sx={{ minWidth: 80, pb: '.2rem' }}>
                 <InputLabel id="time-range-select-label">Range</InputLabel>
@@ -147,7 +144,7 @@ const HistoricalMarketChart = ({
                   timeInterval={
                     timeRangeList[Number.parseInt(selection)]
                   }
-                  data={data}
+                  data={cashDetailStore.OHLC_data}
                 />
               </Box>
               <Box display={chartType === 'candlestick' ? 'none' : 'inherit'}>
@@ -155,7 +152,7 @@ const HistoricalMarketChart = ({
                   timeInterval={
                     timeRangeList[Number.parseInt(selection)]?.dayAmount
                   }
-                  data={data}
+                  data={cashDetailStore.OHLC_data}
                 />
               </Box>
             </Grid>
@@ -163,7 +160,7 @@ const HistoricalMarketChart = ({
         </Card>
       </Card>
     </Grid>
-  );
-};
+  ) : <></>);
+});
 
-export default HistoricalMarketChart;
+export default CDHistoricalMarketChart;

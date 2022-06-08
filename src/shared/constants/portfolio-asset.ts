@@ -12,7 +12,7 @@ export const PAStockBreadcrumbTabs = {
 
 export const PACashBreadcrumbTabs = {
   overview: "Overview",
-  insight: "Insight",
+  marketData: "Market Data",
   settings: "Settings",
 };
 

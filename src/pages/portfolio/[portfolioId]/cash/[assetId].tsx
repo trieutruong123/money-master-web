@@ -1,49 +1,21 @@
-import { useEffect } from 'react';
+import { lazy, Suspense } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import {
   Box,
   Container,
-  Typography,
   useTheme,
-  useMediaQuery,
-  Breadcrumbs,
 } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { cashDetailStore, rootStore } from 'shared/store';
-import { BreadcrumbsLink } from 'shared/components';
-import { CashDetail } from 'containers/portfolio';
 import { DashboardLayout } from 'containers';
 
-const fetchData = async (portfolioId: string, assetId: string) => {
-  rootStore.startLoading();
-
-  cashDetailStore.setCashId(assetId);
-  cashDetailStore.setPortfolioId(portfolioId);
-
-  rootStore.stopLoading();
-};
+const CDCashDetail = lazy(() => import('containers/portfolio/asset-detail/cash-detail/cd-cash-detail-main'));
 
 const AssetVolatilityDetailPage = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
-
-  const { locale, query } = router;
-  const portfolioId = Array.isArray(query['portfolioId'])
-    ? query['portfolioId'][0]
-    : query['portfolioId'] || '';
-  const assetId = Array.isArray(query['assetId'])
-    ? query['assetId'][0]
-    : query['assetId'] || '';
-
-  useEffect(() => {
-    if (typeof assetId === 'undefined') router.push('/404');
-    if (assetId && portfolioId) fetchData(portfolioId, assetId);
-  }, [assetId, portfolioId, router]);
-
+  const { locale } = router;
   const detail = locale === 'vi' ? content['vi'] : content['en'];
   //const { assetVolatilityDetailPage } = detail;
   return (
@@ -59,25 +31,9 @@ const AssetVolatilityDetailPage = () => {
         }}
       >
         <Container maxWidth="lg">
-          <BreadcrumbsLink
-            urlArr={[
-              '/portfolio',
-              `/portfolio/${portfolioId}`,
-              `/portfolio/${portfolioId}/cash/${assetId}`,
-            ]}
-            displayNameArr={[
-              'Portfolio',
-              portfolioId,
-              cashDetailStore.currencyName || assetId.toString(),
-            ]}
-          />
-          <Typography sx={{ mb: 3 }} variant="h4">
-            Cash
-          </Typography>
-        </Container>
-
-        <Container sx={{ padding: isMobile ? '0px' : 'initial' }} maxWidth="lg">
-          <CashDetail />
+          <Suspense fallback={<></>}>
+            <CDCashDetail />
+          </Suspense>
         </Container>
       </Box>
     </>

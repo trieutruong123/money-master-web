@@ -36,7 +36,7 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
   },
 }));
 
-export const AddNewTransactionModal = observer(() => {
+const CDAddNewTransactionModal = observer(() => {
   const { isOpenAddNewTransactionModal } = cashDetailStore;
 
   const handleClose = () => {
@@ -58,3 +58,5 @@ export const AddNewTransactionModal = observer(() => {
     </Box>
   );
 });
+
+export default CDAddNewTransactionModal;
