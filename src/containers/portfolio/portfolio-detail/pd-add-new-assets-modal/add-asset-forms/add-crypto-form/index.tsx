@@ -4,50 +4,44 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NewCryptoCurrencyAsset } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionFormType } from 'shared/constants';
 import { BuyCryptoForm } from './buy-cryto-form';
 
 interface IProps {
-  coinCode: string;
-  openPreviousForm: (params: any) => void;
+  openPreviousForm: Function;
   handleClose: () => void;
-  selectedCoin: { id: string; name: string; symbol: string };
   content: any;
 }
 
 export const AddNewCryptoForm = observer(
   ({
-    coinCode,
     openPreviousForm,
     handleClose,
-    selectedCoin,
     content,
   }: IProps) => {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const theme = useTheme();
-
+    const selectedAsset = portfolioDetailStore.selectedAsset;
     useEffect(() => {
       const fetchAssetPrice = async () => {
-        portfolioDetailStore.getCryptoInfoById(coinCode.toLowerCase());
+        portfolioDetailStore.getCryptoInfoById(selectedAsset?.cryptoCoinCode?.toLowerCase() || '');
       };
       fetchAssetPrice();
     }, []);
 
     const handleComeback = () => {
-      openPreviousForm({
-        curFormType: 'transaction',
-        selectedType: AssetTypeName.cryptoCurrency,
-      });
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.transaction, assetType: AssetTypeName.cryptoCurrency });
+      openPreviousForm();
     };
 
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
-    const assetName = selectedCoin.name.toUpperCase();
+    const assetName = selectedAsset?.cryptoInfo?.name.toUpperCase() || '';
     const currentPrice = portfolioDetailStore.searchedCryptoDetail?.usd;
 
     const handleFormSubmit = async (data: NewCryptoCurrencyAsset) => {
       const res = await portfolioDetailStore.addNewCryptoCurrency(data);
       if (res.isError) {
-        if (data.isUsingInvestFund) {
+        if (data.isUsingInvestFund || data.isUsingCash) {
           setErrorMessage(res.data);
         } else {
           rootStore.raiseError(res?.data.en);
@@ -57,6 +51,8 @@ export const AddNewCryptoForm = observer(
         rootStore.raiseNotification(res.data.en, 'success');
         if (data.isUsingInvestFund) {
           portfolioDetailStore.setUpdateInvestFund(true);
+        } else if (data.isUsingCash) {
+          portfolioDetailStore.setUpdateCashDetail(true);
         }
         portfolioDetailStore.setUpdateReport(true);
         handleClose();
@@ -97,6 +93,7 @@ export const AddNewCryptoForm = observer(
         <Typography
           variant="body1"
           color="error"
+          width="100%"
           align="center"
           height="1.5rem"
         >
@@ -114,7 +111,6 @@ export const AddNewCryptoForm = observer(
           <BuyCryptoForm
             content={content}
             handleFormSubmit={handleFormSubmit}
-            selectedCoin={selectedCoin}
           />
         </Box>
       </Box>

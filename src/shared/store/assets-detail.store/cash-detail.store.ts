@@ -1,79 +1,86 @@
-import { fcsapiService, httpService } from 'services';
-import { action, makeAutoObservable, observable } from 'mobx';
-import { portfolioData } from 'shared/store/portfolio/portfolio-data';
-import { CashItem } from 'shared/models';
-import { rootStore } from 'shared/store';
-import { content } from 'i18n';
+import { TransactionItem } from "./../../models/transaction.model";
+import { PACashBreadcrumbTabs } from "./../../constants/portfolio-asset";
+import { fcsapiService, httpService } from "services";
+import { action, makeAutoObservable, observable, runInAction } from "mobx";
+import { portfolioData } from "shared/store/portfolio/portfolio-data";
+import { CashItem } from "shared/models";
+import { rootStore } from "shared/store";
+import { content } from "i18n";
+import { AssetTypeName, TransactionTypeName } from "shared/constants";
+import { CurrencyItem, Portfolio } from "shared/types";
 
-export interface ITransactionPayload{
-  amount:number,
-  currencyCode:string,
-  transactionType:string,
-  destinationAssetId:number,
-  destinationAssetType:string,
-  isTransferringAll:boolean
+export interface IMoveToFundPayload {
+  referentialAssetId: number;
+  referentialAssetType: string;
+  amount: number;
+  currencyCode: string;
+  isTransferringAll: boolean;
 }
 
-export interface IMoveToFundPayload{
-  referentialAssetId:number,
-  referentialAssetType:string,
-  amount:number,
-  currencyCode:string,
-  isTransferringAll:boolean
-}
 class CashDetailStore {
-  isOpenAddNewTransactionModal: boolean = false;
-  currencyId: string = '';
-  cashId: number = 0;
   portfolioId: number = 0;
-  currencyName: string | undefined = '';
-  currencyCode: string = 'usd';
-  cashDetail: CashItem | undefined = undefined;
-  cashList: Array<CashItem> | undefined = undefined;
+  portfolioInfo: Portfolio | undefined = undefined;
 
-  transactionHistoryData: Array<any> = [];
-  historicalMarketData: Array<any> = [];
+  cashId: number = 0;
+  cashDetail: CashItem | undefined = undefined;
+  transactionHistory: Array<TransactionItem> | undefined = undefined;
+  currencyList: Array<CurrencyItem> | undefined = undefined;
+  destCurrencyCode: string = "";
+  sourceCurrencyCode: string = "";
+
+  OHLC_data: Array<any> = [];
   forexMarketData: any = undefined;
   forexDetail: any = undefined;
   timeInterval: number = 1;
-  baseCurrencyCode: string = 'usd';
-  timeFrame = '1h';
+  timeFrame: string = "1w";
+
+  selectedTab: string = PACashBreadcrumbTabs.overview;
+  isOpenAddNewTransactionModal: boolean = false;
+  needUpdateOverviewData: boolean = false;
 
   constructor() {
     makeAutoObservable(this, {
-      isOpenAddNewTransactionModal: observable,
-      currencyId: observable,
-      cashId: observable,
+      portfolioInfo: observable,
       portfolioId: observable,
-      currencyName: observable,
-      cashDetail: observable,
 
-      transactionHistoryData: observable,
-      historicalMarketData: observable,
+      cashId: observable,
+      cashDetail: observable,
+      currencyList: observable,
+      transactionHistory: observable,
+      destCurrencyCode: observable,
+      sourceCurrencyCode: observable,
+
+      OHLC_data: observable,
       forexDetail: observable,
+      forexMarketData: observable,
+      timeInterval: observable,
       timeFrame: observable,
 
-      fetchHistoricalMarketData: action,
+      selectedTab: observable,
+      isOpenAddNewTransactionModal: observable,
+      needUpdateOverviewData: observable,
+
+      fetchOHLC_Data: action,
       fetchForexInfoByCode: action,
+      fetchTransactionHistoryData: action,
 
       setOpenAddNewTransactionModal: action,
       setCashId: action,
       setPortfolioId: action,
-      setCurrencyId: action,
-      setCurrencyCode: action,
       setTimeInterval: action,
-      setBaseCurrency: action,
-      setForexDetail: action,
-      makeTransaction: action
+      setSourceCurrency: action,
+      setDestCurrency: action,
+      setSelectedTab: action,
+      setUpdateOverviewData: action,
+
+      resetInitialState: action,
+
+      makeTransaction: action,
     });
   }
 
   setOpenAddNewTransactionModal(isOpen: boolean) {
     this.isOpenAddNewTransactionModal = isOpen;
-  }
-
-  setCurrencyId(code: string) {
-    this.currencyId = code;
   }
 
   setCashId(id: string) {
@@ -84,119 +91,216 @@ class CashDetailStore {
     this.portfolioId = Number.parseInt(id);
   }
 
-  setCurrencyCode(currencyCode: string) {
-    this.currencyCode = currencyCode.toLowerCase();
-  }
-
   setTimeInterval(interval: number) {
     this.timeInterval = interval;
-    if (interval >= 1 && interval <= 2) this.timeFrame = '30m';
-    if (interval >= 3 && interval <= 30) this.timeFrame = '4h';
-    if (interval >= 31 && interval <= 180) this.timeFrame = '1d';
-    if (interval > 180) this.timeFrame = '1w';
+    if (interval >= 1 && interval <= 2) this.timeFrame = "30m";
+    if (interval >= 3 && interval <= 30) this.timeFrame = "4h";
+    if (interval >= 31 && interval <= 180) this.timeFrame = "1d";
+    if (interval > 180) this.timeFrame = "1w";
   }
 
-  setBaseCurrency(baseCurrencyCode: string) {
-    this.baseCurrencyCode = baseCurrencyCode;
+  setSourceCurrency(source: string) {
+    this.sourceCurrencyCode = source;
   }
 
-  setForexDetail(data: any) {
-    this.forexDetail = data;
+  setDestCurrency(dest: string) {
+    this.destCurrencyCode = dest;
   }
 
+  setSelectedTab(tab: string) {
+    this.selectedTab = tab;
+  }
 
-  async fetchData() {
-    const forexDetail = portfolioData.portfolioData.cash.find(
-      (item) => item.id === this.currencyId,
-    );
-    this.setForexDetail(forexDetail);
-    Promise.all([this.fetchForexInfoByCode(this.currencyId)]);
-    return true;
+  setUpdateOverviewData(isUpdate: boolean) {
+    this.needUpdateOverviewData = isUpdate;
+  }
+
+  async fetchOverviewData() {
+    Promise.all([
+      this.fetchPortfolioInfo(),
+      this.fetchCashDetail(),
+      this.fetchTransactionHistoryData(),
+    ]);
+  }
+
+  async fetchPortfolioInfo() {
+    if (!this.portfolioId || !this.cashId) {
+      return;
+    }
+    const url = `/portfolio`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+
+    if (!res.isError) {
+      const currentPortfolio = res.data.find(
+        (item: Portfolio) => item.id === this.portfolioId
+      );
+      runInAction(() => {
+        this.portfolioInfo = currentPortfolio;
+        this.destCurrencyCode = currentPortfolio.initialCurrency;
+      });
+    } else {
+      runInAction(() => {
+        this.portfolioInfo = undefined;
+        this.destCurrencyCode = "";
+      });
+    }
   }
 
   async fetchCashDetail() {
     const url = `/portfolio/${this.portfolioId}/cash`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
-      this.cashList = res.data;
-      this.cashDetail = res.data.find((item: any) => item.id === this.cashId);
-      this.currencyName = res.data.find(
-        (item: any) => item.id === this.cashId,
-      )?.name;
-
-      this.currencyId = res.data
-        .find((item: any) => item.id === this.cashId)
-        ?.currencyCode.toLowerCase();
+      runInAction(() => {
+        this.currencyList = res.data;
+        this.cashDetail = res.data.find(
+          (item: CashItem) => item.id === this.cashId
+        );
+        this.sourceCurrencyCode = this.cashDetail?.currencyCode || "USD";
+      });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
-      this.cashDetail = undefined;
+      runInAction(() => {
+        this.cashDetail = undefined;
+        this.currencyList = undefined;
+        this.sourceCurrencyCode = "";
+      });
     }
   }
 
-  async fetchHistoricalMarketData() {
+  async fetchTransactionHistoryData() {
+    if (!this.portfolioId || !this.cashId) {
+      return;
+    }
+    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      runInAction(() => {
+        this.transactionHistory = res.data;
+      });
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData
+      );
+    }
+    return res;
+  }
+
+  async fetchMarketData() {
+    if (!this.portfolioId || !this.cashId) {
+      return;
+    }
+    Promise.all([this.fetchForexInfoByCode(), this.fetchOHLC_Data()]);
+    return true;
+  }
+
+  async fetchOHLC_Data() {
+    if (this.sourceCurrencyCode === this.destCurrencyCode) {
+      return;
+    }
     const symbol =
-      this.currencyId.toUpperCase() + '/' + this.baseCurrencyCode.toUpperCase();
+      this.sourceCurrencyCode?.toUpperCase() +
+      "/" +
+      this.destCurrencyCode?.toUpperCase();
     const res: any = await fcsapiService.getForexOHCL({
       symbol,
       timeFrame: this.timeFrame,
+      level: 1,
     });
     if (!res.isError) {
-      this.historicalMarketData = res.data;
+      runInAction(() => {
+        this.OHLC_data = res.data;
+      });
     }
     return true;
   }
 
-  async fetchForexInfoByCode(code: string) {
+  async fetchForexInfoByCode() {
+    if (
+      !this.sourceCurrencyCode ||
+      !this.destCurrencyCode ||
+      this.sourceCurrencyCode === this.destCurrencyCode
+    ) {
+      return;
+    }
     const symbol =
-      code.toUpperCase() + '/' + this.baseCurrencyCode.toUpperCase();
+      this.sourceCurrencyCode?.toUpperCase() +
+      "/" +
+      this.destCurrencyCode?.toUpperCase();
 
-    if (code !== '' || code !== undefined) {
-      const res: any = await fcsapiService.getForexInfoByCode({
-        symbol,
-      });
-      if (!res.isError) {
+    const res: any = await fcsapiService.getForexInfoByCode({
+      symbol,
+    });
+    if (!res.isError) {
+      runInAction(() => {
         this.forexMarketData = res.data;
-        
-      } 
+      });
     }
   }
 
-  async updateTransactionHistoryData() {
-    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.get(url);
+  async makeTransaction(
+    currencyCode: string,
+    destinationAssetId: number,
+    amount: number
+  ) {
+    var payload = {
+      currencyCode,
+      transactionType: TransactionTypeName.WithdrawValue,
+      destinationAssetId,
+      destinationAssetType: AssetTypeName.cash,
+      referentialAssetId: this.cashId,
+      referentialAssetType: AssetTypeName.cash,
+      amount,
+      isTransferringAll: false,
+    };
+    const url = `/portfolio/${this.portfolioId}/transactions`;
+
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      payload
+    );
     if (!res.isError) {
-      this.transactionHistoryData = res.data;
+      await this.fetchTransactionHistoryData();
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
   }
 
-  async makeTransaction(payload:ITransactionPayload){
-    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transaction`;
-    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
-    if (!res.isError) {
-      await this.updateTransactionHistoryData();
-    } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
-      );
-    }
-  }
-
-  async moveToFund(payload:IMoveToFundPayload){
+  async moveToFund(payload: IMoveToFundPayload) {
     const url = `/portfolio/${this.portfolioId}/fund`;
-    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      payload
+    );
     if (!res.isError) {
-      await this.updateTransactionHistoryData();
+      await this.fetchTransactionHistoryData();
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
+  }
+
+  resetInitialState() {
+    this.cashDetail = undefined;
+    this.portfolioInfo = undefined;
+    this.currencyList = undefined;
+    this.transactionHistory = [];
+
+    this.sourceCurrencyCode = "";
+    this.destCurrencyCode = "";
+
+    this.forexMarketData = undefined;
+    this.forexDetail = undefined;
+
+    this.OHLC_data = [];
+    this.timeFrame = "1w";
+
+    this.needUpdateOverviewData = true;
+    this.selectedTab = PACashBreadcrumbTabs.overview;
   }
 }
 

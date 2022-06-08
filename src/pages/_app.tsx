@@ -14,6 +14,7 @@ import { rootStore } from 'shared/store';
 import { AuthGuard } from 'containers';
 import '../styles/globals.css';
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/router';
 
 export type NextApplicationPage<P = any, IP = P> = NextPage<P, IP> & {
   requireAuth?: boolean;
@@ -32,11 +33,15 @@ export default function MyApp(props: AppProps) {
     emotionCache?: EmotionCache;
     pageProps: any;
   } = props;
+  //reset state as default whenever user  navigate to another page, or the same page
+  //set key component to router.asPath.
+  const router = useRouter();
+
   const AnyComponent = Component as any;
   const getLayout = Component.getLayout ?? ((page: any) => page);
 
   return (
-    <>
+    <div key={router.asPath}>
       <Head>
         <title>Money Master</title>
         <link rel="icon" href="/images/app-icon.png" />
@@ -50,10 +55,10 @@ export default function MyApp(props: AppProps) {
             <React.StrictMode>
               {Component.requireAuth ? (
                 <AuthGuard>
-                  {getLayout(<AnyComponent {...pageProps} />)}
+                  {getLayout(<AnyComponent key={router.asPath} {...pageProps} />)}
                 </AuthGuard>
               ) : (
-                getLayout(<AnyComponent {...pageProps} />)
+                getLayout(<AnyComponent key={router.asPath}  {...pageProps} />)
               )}
               <ToastContainer
                 position="top-right"
@@ -70,6 +75,6 @@ export default function MyApp(props: AppProps) {
           </ThemeProvider>
         </LocalizationProvider>
       </CacheProvider>
-    </>
+    </div>
   );
 }

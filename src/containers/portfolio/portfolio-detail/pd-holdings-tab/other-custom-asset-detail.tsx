@@ -23,6 +23,7 @@ import { roundAndAddDotAndCommaSeparator } from 'utils';
 import { AssetType } from 'shared/types';
 import { AssetTypeName } from 'shared/constants';
 import SettingsMenuButton from './settings-menu-button';
+import { observer } from 'mobx-react-lite';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -57,7 +58,7 @@ interface IProps {
   ) => void;
 }
 
-export const OtherCustomAssetInvestments = ({
+export const OtherCustomAssetInvestments = observer(({
   customAssetDetail,
   content,
   deleteAsset,
@@ -71,7 +72,6 @@ export const OtherCustomAssetInvestments = ({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { collumnsName, settingDropDownMenu } = content;
   const headings = [
-    'Asset Name',
     'Amount',
     'Interest Rate',
     'Term Range',
@@ -97,11 +97,9 @@ export const OtherCustomAssetInvestments = ({
   const renderTermRange = (termRange: number, unit: string) => {
     const years = Math.floor(termRange / 12);
     const months = termRange % 12;
-    const displayText = `${
-      years > 1 ? years + ' years ' : years === 1 ? years + ' year ' : ''
-    }${years > 0 && months !== 0 ? '& ' : ''}${
-      months > 1 ? months + ' months' : months === 1 ? '1 month' : ''
-    }`;
+    const displayText = `${years > 1 ? years + ' years ' : years === 1 ? years + ' year ' : ''
+      }${years > 0 && months !== 0 ? '& ' : ''}${months > 1 ? months + ' months' : months === 1 ? '1 month' : ''
+      }`;
     return displayText;
   };
 
@@ -110,11 +108,11 @@ export const OtherCustomAssetInvestments = ({
   };
 
   const handleItemClick = (assetId: number | string) => {
-    // router.push(
-    //   `/portfolio/${portfolioId}/bank-savings/${assetId.toString()}`,
-    //   `/portfolio/${portfolioId}/bank-savings/${assetId.toString()}`,
-    //   { locale: locale },
-    // );
+    router.push(
+      `/portfolio/${portfolioId}/custom/${assetId.toString()}`,
+      `/portfolio/${portfolioId}/custom/${assetId.toString()}`,
+      { locale: locale },
+    );
   };
 
   return customAssetDetail?.length ? (
@@ -144,6 +142,7 @@ export const OtherCustomAssetInvestments = ({
           <TableHead>
             <TableRow>
               <TableHeaderCell>Category</TableHeaderCell>
+              <TableHeaderCell>Asset Name</TableHeaderCell>
               {headings.map((heading, i) => (
                 <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
                   {heading}
@@ -155,6 +154,9 @@ export const OtherCustomAssetInvestments = ({
             {customAssetDetail.map((record, recordIdx) => {
               const { assets } = record;
               return assets.map((item, itemIdx) => {
+                if (item.inputMoneyAmount) {
+                  return;
+                }
                 return (
                   <TableRow
                     key={`category-${record.categoryId}-asset-${itemIdx}`}
@@ -166,13 +168,13 @@ export const OtherCustomAssetInvestments = ({
                     }}
                   >
                     <TableBodyCellSymbol
-                      onClick={() => handleItemClick(item.name)}
+                      onClick={() => handleItemClick(item.id)}
                     >
                       <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
-                        {itemIdx === 0 ? record.categoryName : ''}{' '}
+                        {record.categoryName}
                       </Box>
                     </TableBodyCellSymbol>
-                    <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                    <TableBodyCellSymbol onClick={() => handleItemClick(item.id)}>
                       <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
                         {item.name}
                       </Box>
@@ -181,21 +183,21 @@ export const OtherCustomAssetInvestments = ({
                       >
                         {dayjs(item.inputDay).format('DD-MM-YYYY')}
                       </Box>
-                    </TableBodyCell>
-                    <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                    </TableBodyCellSymbol>
+                    <TableBodyCell onClick={() => handleItemClick(item.id)}>
                       {renderInputMoneyAmount(
                         item.inputMoneyAmount,
                         item.inputCurrency,
                       )}
                     </TableBodyCell>
-                    <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                    <TableBodyCell onClick={() => handleItemClick(item.id)}>
                       {renderInterestRate(item.interestRate)}
                     </TableBodyCell>
-                    <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                    <TableBodyCell onClick={() => handleItemClick(item.id)}>
                       {renderTermRange(item.termRange, 'months')}
                     </TableBodyCell>
                     <Tooltip title={item.description}>
-                      <TableBodyCell onClick={() => handleItemClick(item.name)}>
+                      <TableBodyCell onClick={() => handleItemClick(item.id)}>
                         {renderDescription(item.description)}
                       </TableBodyCell>
                     </Tooltip>
@@ -225,4 +227,4 @@ export const OtherCustomAssetInvestments = ({
   ) : (
     <></>
   );
-};
+});

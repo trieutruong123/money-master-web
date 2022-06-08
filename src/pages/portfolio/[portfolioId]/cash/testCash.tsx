@@ -15,7 +15,6 @@ const AssetVolatilityDetailPage = (
   const { locale } = props.context;
   const router = useRouter();
   const detail = locale === 'vi' ? content['vi'] : content['en'];
-  //const { assetVolatilityDetailPage } = detail;
 
   return (
     <>

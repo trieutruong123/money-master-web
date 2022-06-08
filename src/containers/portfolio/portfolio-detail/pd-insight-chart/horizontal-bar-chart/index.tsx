@@ -118,7 +118,7 @@ export const HorizontalBarChart = ({ pieChartData, content }: IProps) => {
         sx={{ height: '3rem', padding: '0px' }}
       />
 
-      <CardContent sx={{ padding: 0, width: '100%', height: 'auto'}}>
+      <CardContent sx={{ padding: 0, width: '100%', height: 'auto' }}>
         <AnyComponent type="bar" series={series} options={options} />
       </CardContent>
     </Card>

@@ -4,30 +4,29 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NewCashAsset } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionFormType } from 'shared/constants';
 import { BuyCashForm } from './buy-cash-form';
 
 interface IProps {
-  openPreviousForm: (params: any) => void;
+  openPreviousForm: Function;
   handleClose: () => void;
   content: any;
 }
 
 export const AddNewCashForm = observer(
   ({ handleClose, openPreviousForm, content }: IProps) => {
+    const selectedAsset = portfolioDetailStore.selectedAsset;
     const [errorMessage, setErrorMessage] = useState<string>('');
     const theme = useTheme();
 
     useEffect(() => {
-      const fetchAssetPrice = async () => {};
+      const fetchAssetPrice = async () => { };
       fetchAssetPrice();
     }, []);
 
     const handleComeback = () => {
-      openPreviousForm({
-        curFormType: 'transaction',
-        selectedType: AssetTypeName.cash,
-      });
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.transaction, assetType: AssetTypeName.cash });
+      openPreviousForm();
     };
 
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
@@ -35,7 +34,7 @@ export const AddNewCashForm = observer(
     const handleFormSubmit = async (data: NewCashAsset) => {
       const res = await portfolioDetailStore.addNewCash(data);
       if (res.isError) {
-        if (data.isUsingInvestFund) {
+        if (data.isUsingInvestFund || data.isUsingCash) {
           setErrorMessage(res.data);
         } else {
           rootStore.raiseError(res?.data.en);
@@ -45,6 +44,8 @@ export const AddNewCashForm = observer(
         rootStore.raiseNotification(res.data.en, 'success');
         if (data.isUsingInvestFund) {
           portfolioDetailStore.setUpdateInvestFund(true);
+        } else if (data.isUsingCash) {
+          portfolioDetailStore.setUpdateCashDetail(true);
         }
         portfolioDetailStore.setUpdateReport(true);
         handleClose();

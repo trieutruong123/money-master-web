@@ -78,7 +78,7 @@ const PortfolioList = observer(({ context }: IProps) => {
           {pageContent.add}
         </Button>
       </Container>
-      <Container maxWidth={false}>
+      <Container maxWidth="lg">
         <Box>
           <Modal
             open={openCreateModal}

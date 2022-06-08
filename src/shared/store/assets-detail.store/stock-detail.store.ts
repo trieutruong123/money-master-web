@@ -1,19 +1,17 @@
-import { PAStockBreadcrumbTabs } from '../../constants/portfolio-asset';
-import {
-  StockTransactionList,
-  TransactionItem,
-} from '../../models/insight-chart.model';
-import { content } from 'i18n';
-import { action, makeAutoObservable, observable, runInAction } from 'mobx';
-import { finhubService, httpService } from 'services';
-import { StockItem } from 'shared/models';
-import { rootStore } from 'shared/store';
+import { getCurrencyByCode } from "./../../helpers/currency-info";
+import { CurrencyItem } from "./../../types/portfolio-detail.type";
+import { PAStockBreadcrumbTabs } from "../../constants/portfolio-asset";
+import { content } from "i18n";
+import { action, makeAutoObservable, observable, runInAction } from "mobx";
+import { finhubService, httpService } from "services";
+import { CashItem, StockItem, TransactionItem } from "shared/models";
+import { rootStore } from "shared/store";
 import {
   ITransactionRequest,
   Portfolio,
   TransferToInvestFundType,
-} from 'shared/types';
-import dayjs from 'dayjs';
+} from "shared/types";
+import dayjs from "dayjs";
 
 interface IStockMarketData {
   c: number;
@@ -27,16 +25,18 @@ interface IStockMarketData {
 
 class StockDetailStore {
   portfolioId: number = 0;
-  currencyCode: string = 'usd';
+  currencyCode: string = "usd";
   portfolioInfo: Portfolio | undefined = undefined;
 
   stockId: number = 0;
   stockDetail: StockItem | undefined = undefined;
   transactionHistory: Array<TransactionItem> | undefined = [];
+  cashDetail: Array<CashItem> | undefined = [];
+  currencyList: Array<CurrencyItem> | undefined = [];
 
-  needUpdateOverviewData: boolean = true;
+  needUpdateOverviewData: boolean = false;
 
-  timeInterval: string = 'W';
+  timeInterval: string = "W";
   OHLC_data: Array<any> = [];
   marketData: IStockMarketData | undefined = undefined;
 
@@ -48,6 +48,8 @@ class StockDetailStore {
       portfolioId: observable,
       currencyCode: observable,
       portfolioInfo: observable,
+      cashDetail: observable,
+      currencyList: observable,
       stockId: observable,
       stockDetail: observable,
       transactionHistory: observable,
@@ -56,6 +58,7 @@ class StockDetailStore {
       selectedTab: observable,
       isOpenAddNewTransactionModal: observable,
       needUpdateOverviewData: observable,
+      marketData: observable,
 
       setOpenAddNewTransactionModal: action,
       setStockId: action,
@@ -63,6 +66,9 @@ class StockDetailStore {
       setCurrency: action,
       setPortfolioId: action,
       setSelectedTab: action,
+      setUpdateOverviewData: action,
+
+      resetInitialState: action,
 
       fetchStockDetail: action,
       fetchOHLC: action,
@@ -103,10 +109,14 @@ class StockDetailStore {
   }
 
   async fetchOverviewTabData() {
+    if (!this.portfolioId || !this.stockId) {
+      return;
+    }
     Promise.all([
-      await this.fetchStockDetail(),
-      await this.fetchStockTransactionHistory(),
-      await this.fetchPortfolioInfo(),
+      this.fetchStockDetail(),
+      this.fetchStockTransactionHistory(),
+      this.fetchPortfolioInfo(),
+      this.fetchCash(),
     ]);
     if (this.marketData === undefined) {
       await this.fetchStockInfoByCode();
@@ -123,10 +133,10 @@ class StockDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.find(
-        (item: Portfolio) => item.id === this.portfolioId,
+        (item: Portfolio) => item.id === this.portfolioId
       );
       runInAction(() => {
-        this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
+        this.currencyCode = this.portfolioInfo?.initialCurrency || "usd";
         this.portfolioInfo = currentPortfolio;
       });
     } else {
@@ -145,15 +155,39 @@ class StockDetailStore {
     if (!res.isError) {
       runInAction(() => {
         this.stockDetail = res.data.find(
-          (item: StockItem) => item.id === this.stockId,
+          (item: StockItem) => item.id === this.stockId
         );
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
     return res;
+  }
+
+  async fetchCash() {
+    if (!this.portfolioId || !this.stockId) {
+      return;
+    }
+    const url = `/portfolio/${this.portfolioId}/cash`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+    if (!res.isError) {
+      runInAction(() => {
+        this.cashDetail = res.data;
+        this.currencyList = res.data.map((item: CashItem) =>
+          getCurrencyByCode(item.currencyCode)
+        );
+      });
+    } else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData
+      );
+      runInAction(() => {
+        this.cashDetail = undefined;
+        this.currencyList = undefined;
+      });
+    }
   }
 
   async fetchStockTransactionHistory() {
@@ -163,13 +197,12 @@ class StockDetailStore {
     const url = `/portfolio/${this.portfolioId}/stock/${this.stockId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
-      console.log(res.data);
       runInAction(() => {
         this.transactionHistory = res.data;
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
     return res;
@@ -177,10 +210,10 @@ class StockDetailStore {
 
   async createNewTransaction(params: ITransactionRequest) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/stock/${this.stockDetail?.stockCode}/transaction`;
+    const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
@@ -196,13 +229,13 @@ class StockDetailStore {
     const url = `/portfolio/${this.portfolioId}/fund`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.transfer,
-        'success',
+        "success"
       );
       return res;
     } else {
@@ -210,12 +243,13 @@ class StockDetailStore {
       return res;
     }
   }
+
   async fetchMarketData() {
     Promise.all([
-      await this.fetchOHLC({
-        startDate: dayjs(Date.now()).subtract(2, 'year').unix(),
+      this.fetchOHLC({
+        startDate: dayjs(Date.now()).subtract(2, "year").unix(),
         endDate: dayjs(Date.now()).unix(),
-        interval: 'W',
+        interval: "W",
       }),
     ]);
   }
@@ -249,12 +283,12 @@ class StockDetailStore {
       endDate: params.endDate,
     });
     if (!res.isError) {
-      const datetime = res.data['t'];
-      if (typeof datetime === 'undefined' || datetime === null) return false;
-      const open = res.data['o'];
-      const close = res.data['c'];
-      const high = res.data['h'];
-      const low = res.data['l'];
+      const datetime = res.data["t"];
+      if (typeof datetime === "undefined" || datetime === null) return false;
+      const open = res.data["o"];
+      const close = res.data["c"];
+      const high = res.data["h"];
+      const low = res.data["l"];
       runInAction(() => {
         this.OHLC_data = datetime?.map((item: number, index: number) => {
           return [item, open[index], high[index], low[index], close[index]];
@@ -263,6 +297,24 @@ class StockDetailStore {
       return res;
     }
     return res;
+  }
+
+  resetInitialState() {
+    runInAction(() => {
+      this.portfolioInfo = undefined;
+      this.cashDetail = undefined;
+      this.currencyList = undefined;
+
+      this.stockDetail = undefined;
+      this.transactionHistory = undefined;
+
+      this.OHLC_data = [];
+      this.marketData = undefined;
+
+      this.isOpenAddNewTransactionModal = false;
+      this.needUpdateOverviewData = true;
+      this.selectedTab = PAStockBreadcrumbTabs.overview;
+    });
   }
 }
 

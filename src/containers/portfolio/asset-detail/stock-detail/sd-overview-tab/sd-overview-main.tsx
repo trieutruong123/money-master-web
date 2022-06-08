@@ -7,7 +7,6 @@ const SDIntroSection = lazy(() => import('./sd-intro-section'));
 const SDTransactionHistory = lazy(() => import('./sd-transaction-history'));
 
 const SDOverviewTab = observer(() => {
-  const { portfolioId, stockId } = stockDetailStore;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,12 +14,12 @@ const SDOverviewTab = observer(() => {
       await stockDetailStore.fetchOverviewTabData();
       rootStore.stopLoading();
     };
-    if (portfolioId && stockId && stockDetailStore.needUpdateOverviewData) {
+    if (stockDetailStore.needUpdateOverviewData) {
       fetchData();
       stockDetailStore.setUpdateOverviewData(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [portfolioId, stockId, stockDetailStore.needUpdateOverviewData]);
+  }, [stockDetailStore.needUpdateOverviewData]);
 
   return (
     <>

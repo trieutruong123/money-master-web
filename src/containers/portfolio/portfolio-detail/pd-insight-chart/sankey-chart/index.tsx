@@ -1,23 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useMeasure } from 'react-use';
-
 import { SankeyRects } from './sankey-rect';
 import { SankeyLinks } from './sankey-link';
 import { SankeyLabels } from './sankey-label';
-
 import { observer } from 'mobx-react-lite';
 import { portfolioDetailStore } from 'shared/store';
-
-export interface SankeyDataLink {
-  source: string;
-  target: string;
-  value: number;
-}
-
-export interface SankeyDataNode {
-  name: string;
-  category: string;
-}
+import { sankey, SankeyLayout } from 'd3-sankey';
+import { scaleOrdinal } from 'd3-scale';
+import { schemeCategory10 } from 'd3-scale-chromatic';
+import { format } from 'd3-format';
+import { RectNode } from './sankey-rect';
+import { PathLink } from './sankey-link';
+import { SankeyDataLink, SankeyDataNode } from 'shared/types';
 
 export interface SankeyData {
   nodes: SankeyDataNode[];
@@ -27,16 +21,9 @@ export interface SankeyData {
 interface SankeyChartProps {
   width: number;
   height: number;
+  sankeyFlowData: Array<SankeyDataLink>;
 }
 
-import { sankey, SankeyLayout } from 'd3-sankey';
-import { scaleOrdinal, scaleSequential } from 'd3-scale';
-import { schemeCategory10, interpolatePiYG } from 'd3-scale-chromatic';
-import { format } from 'd3-format';
-
-import { RectNode } from './sankey-rect';
-import { PathLink } from './sankey-link';
-import { instanceOf } from 'prop-types';
 
 const d3Color = scaleOrdinal(schemeCategory10);
 
@@ -46,7 +33,7 @@ export const colorRectFunc = (dataPoint: RectNode) =>
 export const colorLinkFunc = (dataPoint: PathLink) => {
   const name =
     typeof dataPoint.target === 'object' &&
-    dataPoint.target['name'] !== undefined
+      dataPoint.target['name'] !== undefined
       ? dataPoint.target['name']
       : dataPoint.target;
 
@@ -75,9 +62,8 @@ export const formatLinkTitleFunc = ({
       ? target['name']
       : target;
 
-  return `${sourceName.split('@@')[1]} → ${
-    targetName.split('@@')[1]
-  }\n${d3format(value)}`;
+  return `${sourceName.split('@@')[1]} → ${targetName.split('@@')[1]
+    }\n${d3format(value)}`;
 };
 
 interface MakeSankeyInput {
@@ -149,14 +135,15 @@ const formatData = async (
   return { nodes, links };
 };
 
-export const SankeyChart = ({
+export const SankeyChart = observer(({
   width,
   height,
+  sankeyFlowData
 }: SankeyChartProps): JSX.Element | null => {
   const [data, setData] = useState<SankeyData | null>(null);
 
   useEffect(() => {
-    formatData(portfolioDetailStore.sankeyFlowData).then(setData);
+    formatData(sankeyFlowData).then(setData);
   }, []);
 
   const sankeyGen = useMemo(
@@ -193,20 +180,19 @@ export const SankeyChart = ({
       <SankeyLabels nodes={nodes} width={width} />
     </svg>
   );
-};
+});
 
 interface ISankeyProps {
   sankeyFlowData: SankeyDataLink[];
 }
 
-export const Sankey = observer((props: ISankeyProps): JSX.Element => {
+export const Sankey = observer(({ sankeyFlowData }: ISankeyProps): JSX.Element => {
   const [ref, measurements] = useMeasure<HTMLDivElement>();
   const { width } = measurements;
-
   return (
     // ResizeObserver doesn't work directly on <svg/>
     <div ref={ref}>
-      {width > 0 && <SankeyChart width={width} height={600} />}
+      {width > 0 && <SankeyChart width={width} height={600} sankeyFlowData={sankeyFlowData} />}
     </div>
   );
 });

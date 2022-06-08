@@ -6,14 +6,6 @@ import { CryptoInvestments } from './crypto-detail';
 import { StockInvestments } from './stock-detail';
 import { RealEstateInvesments } from './real-estate-detail';
 import { CashInvestments } from './cash-detail';
-import {
-  RealEstateItem,
-  BankSavingItem,
-  CryptoItem,
-  CashItem,
-  StockItem,
-  CustomAssetItemByCategory,
-} from 'shared/models';
 import { OtherCustomAssetInvestments } from './other-custom-asset-detail';
 import { AssetType } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
@@ -33,6 +25,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
       await portfolioDetailStore.fetchInitialData();
       rootStore.stopLoading();
     };
+
     if (portfolioDetailStore.isMissingHoldingsData) fetchData();
   }, []);
 
@@ -124,7 +117,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
         ) : null
         }
         {typeof realEstateDetail !== undefined && realEstateDetail?.length ? (
-          <Grid item xs={12} mt="1rem">
+          <Grid item xs={12} >
             <RealEstateInvesments
               content={content.realEstateTable}
               realEstateDetail={realEstateDetail}
@@ -133,7 +126,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
             ></RealEstateInvesments>
           </Grid>
         ) : null}
-        {typeof bankingDetail !== undefined && bankingDetail?.length ? (
+        {typeof customAssetDetail !== undefined && customAssetDetail?.length ? (
           <Grid item lg={12} md={12} xl={12} xs={12}>
             <OtherCustomAssetInvestments
               content={content.bankSavingsTable}

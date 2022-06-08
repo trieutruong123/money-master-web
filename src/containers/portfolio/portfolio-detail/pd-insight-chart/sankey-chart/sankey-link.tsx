@@ -1,7 +1,7 @@
 import React from "react";
-
 import { SankeyLink as SankeyLinkType, sankeyLinkHorizontal } from "d3-sankey";
-import { SankeyDataLink, SankeyDataNode } from "./index";
+import { SankeyDataLink, SankeyDataNode } from "shared/types";
+
 
 export type PathLink = SankeyLinkType<SankeyDataNode, SankeyDataLink>;
 
@@ -20,7 +20,7 @@ export const SankeyLink = ({
   strokeWidth,
   title
 }: SankeyLinkProps): JSX.Element => {
-  
+
   return (
     <g style={{ mixBlendMode: "multiply" }}>
       <path d={d} stroke={color} strokeWidth={strokeWidth}>
@@ -52,9 +52,9 @@ export const SankeyLinks = ({
 
         const { source, target } = link;
         const key =
-          (typeof source === 'object' && source['name'] !== undefined? source['name'] : source) +
+          (typeof source === 'object' && source['name'] !== undefined ? source['name'] : source) +
           "--" +
-          (typeof target === 'object' && target['name'] !== undefined? target['name'] : target);
+          (typeof target === 'object' && target['name'] !== undefined ? target['name'] : target);
 
         return (
           <SankeyLink

@@ -1,19 +1,12 @@
-import { CustomAssetItem } from './../../models/portfolio-asset.model';
-import { InvestFundResponse } from './../../models/portfolio.model';
 import {
   action,
   computed,
   makeAutoObservable,
   observable,
   runInAction,
-} from 'mobx';
-import {
-  coinGeckoService,
-  httpService,
-  finhubService,
-  portfolioService,
-} from 'services';
-import { content } from 'i18n';
+} from "mobx";
+import { coinGeckoService, httpService, finhubService } from "services";
+import { content } from "i18n";
 import {
   RealEstateItem,
   BankSavingItem,
@@ -24,7 +17,10 @@ import {
   PersonalInterestCustomAssetItem,
   CustomAssetItemByCategory,
   InvestFundTransactionItem,
-} from 'shared/models';
+  CustomAssetItem,
+  InvestFundResponse,
+  SankeyDataItem,
+} from "shared/models";
 import {
   Portfolio,
   NewStockAsset,
@@ -38,15 +34,17 @@ import {
   AssetType,
   NewPersonalAssetType,
   TransferToInvestFundType,
-} from 'shared/types';
-import { AssetTypeName, PDBreadcrumbTabs } from 'shared/constants';
-import { rootStore } from 'shared/store';
-import { httpError } from 'shared/helpers';
+  IAddedAsset,
+} from "shared/types";
+import { AssetTypeName, PDBreadcrumbTabs } from "shared/constants";
+import { rootStore } from "shared/store";
+import { httpError } from "shared/helpers";
+import { getSankeyNodeType } from "shared/helpers/sankey-chart";
 
 class PortfolioDetailStore {
   portfolioId: number = 0;
   portfolioInfo: Portfolio | undefined = undefined;
-  currencyCode: string = '';
+  currencyCode: string = "";
   selectedTabs: string = PDBreadcrumbTabs.holdings;
 
   portfolioValue: number = 0;
@@ -65,14 +63,16 @@ class PortfolioDetailStore {
   searchedStockDetail: any = undefined;
   searchedCryptoDetail: any = undefined;
   selectedCustomAssetId: number = 0;
+  selectedAsset: IAddedAsset | undefined = undefined;
 
   needUpdatedInvestFundData: boolean = false;
+  needUpdatedCash: boolean = false;
   investFundDetail: InvestFundResponse | undefined = undefined;
   investFundTransactionHistory: Array<InvestFundTransactionItem> | undefined =
     undefined;
 
   needUpdatedReportData: boolean = false;
-  sankeyFlowData: Array<SankeyDataLink> = [];
+  sankeyFlowData: Array<SankeyDataLink> | undefined = undefined;
   pieChartData: Array<PieChartItem> | undefined = undefined;
 
   isOpenTransferToInvestFundModal: boolean = false;
@@ -104,6 +104,7 @@ class PortfolioDetailStore {
       pieChartData: observable,
 
       needUpdatedInvestFundData: observable,
+      needUpdatedCash: observable,
       investFundDetail: observable,
       investFundTransactionHistory: observable,
 
@@ -111,6 +112,7 @@ class PortfolioDetailStore {
       searchedStockDetail: observable,
       searchedCryptoDetail: observable,
       selectedCustomAssetId: observable,
+      selectedAsset: observable,
 
       isOpenDeleteAssetModal: observable,
       deletedAssetInfo: observable,
@@ -122,7 +124,11 @@ class PortfolioDetailStore {
       setTransferedAssetInfo: action,
       setOpenTransferToInvestFundModal: action,
       setUpdateInvestFund: action,
+      setUpdateCashDetail: action,
       setUpdateReport: action,
+      setAddedAssetInfo: action,
+
+      resetInitialState: action,
 
       fetchRealEstate: action,
       fetchPersonalCustomAsset: action,
@@ -174,13 +180,17 @@ class PortfolioDetailStore {
   setTransferedAssetInfo(
     assetType: AssetType,
     assetId: string,
-    portfolioId: string,
+    portfolioId: string
   ) {
     this.transferedAssetInfo = {
       assetType: assetType,
       assetId: Number.parseInt(assetId),
       portfolioId: Number.parseInt(portfolioId),
     };
+  }
+
+  setAddedAssetInfo(info: IAddedAsset) {
+    this.selectedAsset = { ...info };
   }
 
   setOpenDeleteAssetModal(isOpen: boolean) {
@@ -190,7 +200,7 @@ class PortfolioDetailStore {
   setDeletedAssetInfo(
     assetType: AssetType,
     assetId: string,
-    portfolioId: string,
+    portfolioId: string
   ) {
     this.deletedAssetInfo = {
       assetType: assetType,
@@ -203,21 +213,28 @@ class PortfolioDetailStore {
     this.needUpdatedReportData = isNeedUpdated;
   }
 
+  setUpdateCashDetail(isNeedUpdated: boolean) {
+    this.needUpdatedCash = isNeedUpdated;
+  }
+
   setUpdateInvestFund(isNeedUpdated: boolean) {
     this.needUpdatedInvestFundData = isNeedUpdated;
   }
 
   async fetchInitialData() {
-    this.currencyCode = 'usd';
+    if (!this.portfolioId) {
+      return;
+    }
+    this.currencyCode = "usd";
 
     Promise.all([
-      await this.fetchPortfolioInfo(),
-      await this.fetchBankSaving(),
-      await this.fetchCash(),
-      await this.fetchCryptoCurrency(),
-      await this.fetchStock(),
-      await this.fetchRealEstate(),
-      await this.fetchOtherCustomAsset(),
+      this.fetchPortfolioInfo(),
+      this.fetchBankSaving(),
+      this.fetchCash(),
+      this.fetchCryptoCurrency(),
+      this.fetchStock(),
+      this.fetchRealEstate(),
+      this.fetchOtherCustomAsset(),
     ]);
   }
 
@@ -227,11 +244,11 @@ class PortfolioDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.find(
-        (item: Portfolio) => item.id == this.portfolioId,
+        (item: Portfolio) => item.id == this.portfolioId
       );
       runInAction(() => {
         this.portfolioInfo = currentPortfolio;
-        this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
+        this.currencyCode = this.portfolioInfo?.initialCurrency || "usd";
       });
     } else {
       runInAction(() => {
@@ -241,7 +258,7 @@ class PortfolioDetailStore {
   }
 
   async fetchPersonalCustomAsset() {
-    const url = '/personalAsset/interest/custom';
+    const url = "/personalAsset/interest/custom";
     const res: { isError: boolean; data: any } = await httpService.get(url);
 
     if (!res.isError) {
@@ -265,7 +282,7 @@ class PortfolioDetailStore {
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       runInAction(() => {
         this.stockDetail = undefined;
@@ -282,7 +299,7 @@ class PortfolioDetailStore {
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       runInAction(() => {
         this.cryptoDetail = undefined;
@@ -299,7 +316,7 @@ class PortfolioDetailStore {
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       runInAction(() => {
         this.bankingDetail = undefined;
@@ -316,7 +333,7 @@ class PortfolioDetailStore {
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       runInAction(() => {
         this.realEstateDetail = undefined;
@@ -333,7 +350,7 @@ class PortfolioDetailStore {
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       runInAction(() => {
         this.cashDetail = undefined;
@@ -350,7 +367,7 @@ class PortfolioDetailStore {
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       runInAction(() => {
         this.customAssetDetail = undefined;
@@ -363,12 +380,12 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/realEstate`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       this.realEstateDetail?.push(res.data);
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else {
       if (params.isUsingInvestFund) {
         return { isError: true, data: res.data.data };
@@ -385,12 +402,12 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/bankSaving`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       this.bankingDetail?.push(res.data);
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else {
       if (params.isUsingInvestFund) {
         return { isError: true, data: res.data.data };
@@ -407,12 +424,12 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/crypto`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       this.cryptoDetail?.push(res.data);
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else {
       if (params.isUsingInvestFund) {
         return { isError: true, data: res.data.data };
@@ -429,12 +446,12 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/stock`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       this.stockDetail?.push(res.data);
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else {
       if (params.isUsingInvestFund) {
         return { isError: true, data: res.data.data };
@@ -451,12 +468,12 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/cash`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       this.cashDetail?.push(res.data);
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else {
       if (params.isUsingInvestFund) {
         return { isError: true, data: res.data.data };
@@ -470,18 +487,18 @@ class PortfolioDetailStore {
 
   async addNewOtherCustomAsset(
     customInterestAssetId: number,
-    params: NewPortfolioCustomAsset,
+    params: NewPortfolioCustomAsset
   ) {
     rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/custom/${customInterestAssetId}`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       Promise.all([this.fetchOtherCustomAsset()]);
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else {
       if (params.isUsingInvestFund) {
         return { isError: true, data: res.data.data };
@@ -498,12 +515,12 @@ class PortfolioDetailStore {
     const url = `/personalAsset/interest/custom`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       this.customAssetList?.push(res.data);
-      return { isError: false, data: httpError.handleSuccessMessage('add') };
+      return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
@@ -537,47 +554,47 @@ class PortfolioDetailStore {
       rootStore.startLoading();
       const url = `/portfolio/${this.portfolioId}/${this.deletedAssetInfo.assetType}/${this.deletedAssetInfo.assetId}`;
       const res: { isError: boolean; data: any } = await httpService.delete(
-        url,
+        url
       );
       rootStore.stopLoading();
       if (!res.isError) {
         rootStore.raiseNotification(
           content[rootStore.locale].success.delete,
-          'success',
+          "success"
         );
         switch (this.deletedAssetInfo.assetType) {
           case AssetTypeName.cryptoCurrency:
             runInAction(() => {
               this.cryptoDetail = this.cryptoDetail?.filter(
-                (item) => item.id !== res.data.id,
+                (item) => item.id !== res.data.id
               );
             });
             break;
           case AssetTypeName.stock:
             runInAction(() => {
               this.stockDetail = this.stockDetail?.filter(
-                (item) => item.id !== res.data.id,
+                (item) => item.id !== res.data.id
               );
             });
             break;
           case AssetTypeName.bankSaving:
             runInAction(() => {
               this.bankingDetail = this.bankingDetail?.filter(
-                (item) => item.id !== res.data.id,
+                (item) => item.id !== res.data.id
               );
             });
             break;
           case AssetTypeName.realEstate:
             runInAction(() => {
               this.realEstateDetail = this.realEstateDetail?.filter(
-                (item) => item.id !== res.data.id,
+                (item) => item.id !== res.data.id
               );
             });
             break;
           case AssetTypeName.cash:
             runInAction(() => {
               this.cashDetail = this.cashDetail?.filter(
-                (item) => item.id !== res.data.id,
+                (item) => item.id !== res.data.id
               );
             });
             break;
@@ -585,7 +602,7 @@ class PortfolioDetailStore {
             runInAction(() => {
               this.customAssetDetail = this.customAssetDetail?.map((item) => {
                 const assetList = item.assets.filter(
-                  (cur) => cur.id !== res.data.id,
+                  (cur) => cur.id !== res.data.id
                 );
                 return {
                   ...item,
@@ -605,7 +622,7 @@ class PortfolioDetailStore {
     }
     return {
       isError: true,
-      data: '',
+      data: "",
     };
   }
 
@@ -614,13 +631,13 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/fund`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params,
+      params
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.transfer,
-        'success',
+        "success"
       );
       this.fetchDataAfterTransferringToInvestFund();
       return res;
@@ -635,20 +652,26 @@ class PortfolioDetailStore {
   }
 
   async fetchSankeyFlowData() {
-    var raw = await portfolioService.getCashFlowData(
-      this.portfolioId.toString(),
-    );
-    runInAction(() => {
-      this.sankeyFlowData = raw.map((link) => {
-        return {
-          source: `${link.sourceType}@@${link.sourceName}`,
-          target: `${link.targetType}@@${link.targetName}`,
-          //error: type 'string' is incompatible with 'string',
-          // value: link.amount.toString(),
-          value: link.amount,
-        };
+    const url = `/portfolio/${this.portfolioId}/sankey`;
+    const res: { isError: boolean; data: any } = await httpService.get(url);
+
+    if (!res.isError) {
+      runInAction(() => {
+        this.sankeyFlowData = res.data.map((link: SankeyDataItem) => {
+          return {
+            source: `${getSankeyNodeType(
+              link.sourceType
+            ).toUpperCase()}@@${link.sourceName.toUpperCase()}`,
+            target: `${getSankeyNodeType(
+              link.targetType
+            ).toUpperCase()}@@${link.targetName.toUpperCase()}`,
+            value: link.amount,
+          };
+        });
       });
-    });
+    } else {
+      this.sankeyFlowData = [];
+    }
   }
 
   async fetchPieChartData() {
@@ -662,7 +685,7 @@ class PortfolioDetailStore {
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       this.pieChartData = undefined;
     }
@@ -695,7 +718,7 @@ class PortfolioDetailStore {
     const res = await httpService.get(url);
     if (!res.isError) {
       runInAction(() => {
-        this.investFundTransactionHistory = res.data;
+        this.investFundTransactionHistory = res.data.reverse();
       });
     } else {
       runInAction(() => {
@@ -760,7 +783,7 @@ class PortfolioDetailStore {
   }
 
   get isMissingReportData(): boolean {
-    return this.pieChartData === undefined;
+    return this.pieChartData === undefined && this.sankeyFlowData === undefined;
   }
 
   findAssetByIdAndType(assetType: AssetType, assetId: number) {
@@ -776,21 +799,21 @@ class PortfolioDetailStore {
         return stock;
       case AssetTypeName.bankSaving:
         var bankSaving = this.bankingDetail?.find(
-          (item) => item.id === assetId,
+          (item) => item.id === assetId
         );
         return bankSaving;
       case AssetTypeName.realEstate:
         var realEstate = this.realEstateDetail?.find(
-          (item) => item.id === assetId,
+          (item) => item.id === assetId
         );
         return realEstate;
       case AssetTypeName.custom:
         var category = this.customAssetDetail?.find(
           (category: CustomAssetItemByCategory) => {
             return category.assets.some(
-              (item: CustomAssetItem) => item.id === assetId,
+              (item: CustomAssetItem) => item.id === assetId
             );
-          },
+          }
         );
         var otherAsset = category?.assets.find((item) => item.id === assetId);
         return otherAsset;
@@ -822,6 +845,30 @@ class PortfolioDetailStore {
       default:
         break;
     }
+  }
+
+  resetInitialState() {
+    runInAction(() => {
+      this.stockDetail = undefined;
+      this.cashDetail = undefined;
+      this.cryptoDetail = undefined;
+      this.realEstateDetail = undefined;
+      this.bankingDetail = undefined;
+      this.customAssetDetail = undefined;
+      this.portfolioInfo = undefined;
+
+      this.isOpenAddNewAssetModal = false;
+      this.isOpenDeleteAssetModal = false;
+      this.isOpenTransferToInvestFundModal = false;
+
+      this.investFundDetail = undefined;
+      this.investFundTransactionHistory = undefined;
+
+      this.pieChartData = undefined;
+      this.sankeyFlowData = undefined;
+
+      this.selectedTabs = PDBreadcrumbTabs.holdings;
+    });
   }
 }
 

@@ -1,25 +1,25 @@
+import CSDCustomAssetDetail from "./asset-detail/custom-asset-detail/csd-custom-asset-detail-main";
 import {
   BankSavingsDetail,
   CashDetail,
-  CryptoVolatilityDetail,
-  OtherAssetsDetail,
+  CDCryptoDetail,
   RealEstateDetail,
-  StockVolatilityDetail,
-} from './asset-detail';
+  SDStockDetail,
+} from "./asset-detail";
 import {
   DeletePortfolio,
   ModifyPortfolio,
   PortfolioCard,
   PortfolioList,
-} from './portfolio-list';
-import PortfolioDetail from './portfolio-detail/pd-portfolio-detail';
+} from "./portfolio-list";
+import PortfolioDetail from "./portfolio-detail/pd-portfolio-detail";
 
 export {
-  CryptoVolatilityDetail,
-  StockVolatilityDetail,
+  CDCryptoDetail,
+  SDStockDetail,
   RealEstateDetail,
   CashDetail,
-  OtherAssetsDetail,
+  CSDCustomAssetDetail,
   BankSavingsDetail,
   DeletePortfolio,
   ModifyPortfolio,

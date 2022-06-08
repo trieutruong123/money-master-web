@@ -19,6 +19,10 @@ export type NewBanksSavingAsset = {
   interestRate: number;
   termRange: number;
   isUsingInvestFund: boolean;
+  isUsingCash: boolean;
+  usingCashId: number;
+  fee: number;
+  tax: number;
 };
 
 export type NewRealEstateAsset = {
@@ -30,6 +34,10 @@ export type NewRealEstateAsset = {
   currentPrice: number;
   description: string;
   isUsingInvestFund: boolean;
+  isUsingCash: boolean;
+  usingCashId: number;
+  fee: number;
+  tax: number;
 };
 
 export type NewStockAsset = {
@@ -42,6 +50,10 @@ export type NewStockAsset = {
   purchasePrice: 0;
   currencyCode: string;
   isUsingInvestFund: boolean;
+  isUsingCash: boolean;
+  usingCashId: number;
+  fee: number;
+  tax: number;
 };
 
 export type NewCryptoCurrencyAsset = {
@@ -52,6 +64,10 @@ export type NewCryptoCurrencyAsset = {
   buyPrice: number;
   cryptoCoinCode: string;
   isUsingInvestFund: boolean;
+  isUsingCash: boolean;
+  usingCashId: number;
+  fee: number;
+  tax: number;
 };
 
 export type NewCashAsset = {
@@ -61,6 +77,10 @@ export type NewCashAsset = {
   currencyCode: number;
   inputDay: string;
   isUsingInvestFund: boolean;
+  isUsingCash: boolean;
+  usingCashId: number;
+  fee: number;
+  tax: number;
 };
 
 export type NewPortfolioCustomAsset = {
@@ -72,6 +92,10 @@ export type NewPortfolioCustomAsset = {
   interestRate: number;
   termRange: number;
   isUsingInvestFund: boolean;
+  isUsingCash: boolean;
+  usingCashId: number;
+  fee: number;
+  tax: number;
 };
 
 export type UpdatedRealEstateItem = {
@@ -103,21 +127,33 @@ export type SearchingDataItem = {
   name: string;
 };
 
-export type SankeyDataLink = {
-  source: string;
-  target: string;
-  value: number;
-};
-
 export type AssetType =
-  | 'cryptoCurrency'
-  | 'stock'
-  | 'cash'
-  | 'bankSaving'
-  | 'realEstate'
-  | 'custom'
-  | 'fund'
-  | '';
+  | "crypto"
+  | "stock"
+  | "cash"
+  | "bankSaving"
+  | "realEstate"
+  | "custom"
+  | "fund"
+  | "";
 
-//Type for portfolio detail tabs
-//export type PDTabsType = 'holdings' | 'report' | 'investFund' | 'settings';
+export interface IAddedAsset {
+  assetType?: string;
+  moneySource?: string;
+  customAssetId?: number;
+  stockCode?: string;
+  cryptoCoinCode?: string;
+  formType?: string;
+  cryptoInfo?: SearchingDataItem;
+  stockInfo?: SearchingDataItem;
+}
+
+export interface CurrencyItem {
+  name: string;
+  symbol: string;
+  symbolNative: string;
+  decimalDigits: any;
+  rounding: number;
+  code: string;
+  namePlural: string;
+}

@@ -104,7 +104,7 @@ export const sampleStockSearchData: Array<SearchingDataItem> = [
     symbol: "MA",
   },
   {
-    id: "BCOC.BE",
+    id: "BCOC",
     name: "Boeing",
     symbol: "BCOC.BE",
   },

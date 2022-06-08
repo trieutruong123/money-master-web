@@ -170,7 +170,7 @@ const PDTransactionHistory = ({ transactionHistory }: IProps) => {
                       &nbsp;&nbsp;
                       {capitalizeFirstLetter(
                         AssetTypeConstants[
-                          record.referentialAssetType || AssetTypeName.custom
+                        record.referentialAssetType || AssetTypeName.custom
                         ],
                       )}
                     </TableBodyCellSymbol>
@@ -180,7 +180,6 @@ const PDTransactionHistory = ({ transactionHistory }: IProps) => {
             </TableBody>
           </Table>
         </Box>
-        {/* </Scrollbars> */}
       </Card>
     </Grid>
   ) : (

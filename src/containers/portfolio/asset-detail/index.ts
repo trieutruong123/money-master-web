@@ -1,15 +1,15 @@
-import { BankSavingsDetail } from './bank-savings-detail';
-import { CashDetail } from './cash-detail';
-import { CryptoVolatilityDetail } from './crypto-detail';
-import { OtherAssetsDetail } from './others';
-import { RealEstateDetail } from './real-estate-detail';
-import StockVolatilityDetail from './stock-detail/sd-stock-detail-main';
+import CSDCustomAssetDetail from "./custom-asset-detail/csd-custom-asset-detail-main";
+import BankSavingsDetail from "./bank-savings-detail/bs-bank-savings-detail";
+import CashDetail from "./cash-detail/cd-cash-detail-main";
+import CDCryptoDetail from "./crypto-detail/cd-crypto-detail-main";
+import RealEstateDetail from "./real-estate-detail/re-real-estate-detail-main";
+import SDStockDetail from "./stock-detail/sd-stock-detail-main";
 
 export {
-  CryptoVolatilityDetail,
-  StockVolatilityDetail,
+  CDCryptoDetail,
+  SDStockDetail,
   RealEstateDetail,
   CashDetail,
-  OtherAssetsDetail,
+  CSDCustomAssetDetail,
   BankSavingsDetail,
 };

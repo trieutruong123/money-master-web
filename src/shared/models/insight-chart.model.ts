@@ -1,29 +1,14 @@
-import { AssetType } from 'shared/types';
-import { TransactionType } from '../types';
-
 export class PieChartItem {
-  assetType: string = '';
+  assetType: string = "";
   sumValue: number = 0;
 }
-
-export class TransactionItem {
-  singleAssetTransactionType: TransactionType | null = null;
-  id: number = 0;
-  referentialAssetId: number = 0;
-  referentialAssetType: AssetType | null = null;
-  referentialAssetName: string = '';
-  destinationAssetId: number = 0;
-  destinationAssetType: AssetType | null = null;
-  destinationAssetName: string = '';
+export class SankeyDataItem {
+  sourceType: string = "";
+  sourceName: string = "";
+  sourceId: number = 0;
+  targetType: string = "";
+  targetName: string = "";
+  targetId: number = 0;
   amount: number = 0;
-  currencyCode: string = '';
-  createdAt: string = '';
-  lastChanged: string = '';
+  currency: string = "";
 }
-
-export type RealEstateTransactionList = Array<TransactionItem>;
-export type CryptoTransactionList = Array<TransactionItem>;
-export type CashTransactionList = Array<TransactionItem>;
-export type BankSavingsTransactionList = Array<TransactionItem>;
-export type StockTransactionList = Array<TransactionItem>;
-export type CustomAssetTransactionList = Array<TransactionItem>;

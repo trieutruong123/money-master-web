@@ -23,11 +23,11 @@ import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import SaveIcon from '@mui/icons-material/Save';
 import { BsCashCoin } from 'react-icons/bs';
 import { RiPsychotherapyFill } from 'react-icons/ri';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionFormType } from 'shared/constants';
 import { portfolioDetailStore } from 'shared/store';
 
 interface IProps {
-  openNextForm: (params: any) => void;
+  openNextForm: Function;
   content: any;
 }
 
@@ -72,9 +72,13 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
     assetType: string,
     selectedCustomAssetId?: number,
   ) => {
+    const selectedAsset = portfolioDetailStore.selectedAsset;
     if (assetType === AssetTypeName.custom)
-      portfolioDetailStore.setSelectedCustomAssetId(selectedCustomAssetId || 0);
-    openNextForm({ curFormType: 'type', selectedType: assetType });
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, customAssetId: selectedCustomAssetId, assetType, formType: TransactionFormType.selectType });
+    else {
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, assetType, formType: TransactionFormType.selectType });
+    }
+    openNextForm();
   };
 
   const handleInputChange = (

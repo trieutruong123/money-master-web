@@ -22,6 +22,7 @@ import { roundAndAddDotAndCommaSeparator } from 'utils';
 import { AssetType } from 'shared/types';
 import { AssetTypeName } from 'shared/constants';
 import SettingsMenuButton from './settings-menu-button';
+import { observer } from 'mobx-react-lite';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -56,7 +57,7 @@ interface IProps {
   ) => void;
 }
 
-export const BankingInvestments = ({
+export const BankingInvestments = observer(({
   bankingDetail,
   content,
   deleteAsset,
@@ -214,4 +215,4 @@ export const BankingInvestments = ({
   ) : (
     <></>
   );
-};
+});
