@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
 import { Box, Button, TextField, useTheme } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 
 type FormValues = {
   sellPrice: number;
@@ -88,23 +89,25 @@ export const SellCashForm = ({ handleFormSubmit }: IProps) => {
         error={typeof errors.amount?.message !== 'undefined'}
         helperText={errors.amount?.message}
       ></TextField>
-      <LocalizationProvider
-        sx={{
-          my: 1,
-          display: 'block',
-          width: 'inherit',
-          
-        }}
-        dateAdapter={AdapterDateFns}
-      >
-        <DesktopDatePicker
-          label="*Date desktop"
-          inputFormat="dd/MM/yyyy"
-          value={date}
-          onChange={handleDateChange}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </LocalizationProvider>
+      <Box sx={{
+        my: 1,
+        display: 'block',
+        width: 'inherit',
+
+      }}>
+        <LocalizationProvider
+          dateAdapter={AdapterDateFns}
+        >
+          <DesktopDatePicker
+            label="*Date desktop"
+            inputFormat="dd/MM/yyyy"
+            value={date}
+            onChange={handleDateChange}
+            renderInput={(params: any) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+      </Box>
+
       <TextField
         type="number"
         fullWidth
@@ -126,7 +129,7 @@ export const SellCashForm = ({ handleFormSubmit }: IProps) => {
         helperText={errors.note?.message}
       ></TextField>
 
-      <Button 
+      <Button
         type="submit"
         variant="contained"
         sx={{

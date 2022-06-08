@@ -1,23 +1,21 @@
 import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { DesktopDatePicker, LocalizationProvider } from "@mui/lab";
-import { Box, Button,  FormControlLabel,  FormLabel,  Radio,  RadioGroup,  TextField, useTheme } from "@mui/material";
-import {  SubmitHandler, useForm } from "react-hook-form";
+import { Box, Button, FormControlLabel, Radio, RadioGroup, TextField, useTheme } from "@mui/material";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { colorScheme } from "utils/color-scheme";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import MenuItem from '@mui/material/MenuItem';
-import { cashDetailStore, portfolioDetailStore } from "shared/store";
+import { cashDetailStore } from "shared/store";
 import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 type FormValues = {
   amount: number;
-  currencyCode:string;
-  sellingDestination:string;
+  currencyCode: string;
+  sellingDestination: string;
 };
 
 interface IProps {
@@ -32,7 +30,7 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
       .required("Amount is required")
       .typeError("Amount must be a number")
       .positive("Amount must be greater than zero"),
-      currencyCode:Yup.string()
+    currencyCode: Yup.string()
       .required("Currency code is required")
   });
 
@@ -49,15 +47,16 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
     cashDetailStore.setOpenAddNewTransactionModal(false);
   };
 
-  const [currencyList,setCurrencyList]=React.useState<any>({});
-  React.useEffect(()=>{
-    getSupportedCurrencyList().forEach(currency=>{
-      setCurrencyList((prevState:any)=>({...prevState,[currency.code]:currency.name})
-    )})
-  },[])
+  const [currencyList, setCurrencyList] = React.useState<any>({});
+  React.useEffect(() => {
+    getSupportedCurrencyList().forEach(currency => {
+      setCurrencyList((prevState: any) => ({ ...prevState, [currency.code]: currency.name })
+      )
+    })
+  }, [])
 
   const [currencyCode, setCurrencyCode] = React.useState('');
-  
+
   const handleChangeCurrencyCode = (event: SelectChangeEvent) => {
     setCurrencyCode(event.target.value as string);
   };
@@ -80,7 +79,7 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
         },
       }}
     >
-      
+
       <TextField
         type="number"
         inputProps={{
@@ -97,8 +96,8 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
       ></TextField>
       <InputLabel id="currency-code-select">Currency code</InputLabel>
       <Select
-      sx={{mb:3}}
-       {...register("currencyCode")}
+        sx={{ mb: 3 }}
+        {...register("currencyCode")}
         type="string"
         labelId="currency-code-select"
         id="currency-code-select"
@@ -108,8 +107,8 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
         error={typeof errors.currencyCode?.message !== "undefined"}
       >
         {Object.keys(currencyList).map((currency, index) =>
-            <MenuItem key={index} value={currency}>{`${currencyList[currency]} (${currency})`}</MenuItem>
-          )
+          <MenuItem key={index} value={currency}>{`${currencyList[currency]} (${currency})`}</MenuItem>
+        )
         })
       </Select>
 
@@ -121,7 +120,7 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
         <FormControlLabel value="toFund" control={<Radio />} label="Sell to fund" />
         <FormControlLabel value="toOutside" control={<Radio />} label="Sell to outside" />
       </RadioGroup>
-      
+
       <Button
         type="submit"
         variant="contained"
