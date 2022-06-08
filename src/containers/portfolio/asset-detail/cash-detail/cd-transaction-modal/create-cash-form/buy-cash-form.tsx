@@ -50,47 +50,48 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
   };
 
   return (
-      <Box
-        component="form"
-        autoComplete="off"
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{
-          height: 'inherit',
-          overflow:'auto',
-          justifyContent: 'center',
-          display: 'flex',
-          alignItems: 'stretch',
-          flexDirection: 'column',
-          mx: '3rem',
-          [theme.breakpoints.down('xs')]: {
-            mx: '2rem',
-          },
-        }}
+    <Box
+      component="form"
+      autoComplete="off"
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        height: 'inherit',
+        overflow: 'auto',
+        justifyContent: 'center',
+        display: 'flex',
+        alignItems: 'stretch',
+        flexDirection: 'column',
+        mx: '3rem',
+        [theme.breakpoints.down('xs')]: {
+          mx: '2rem',
+        },
+      }}
+    >
+      <TextField
+        type="number"
+        fullWidth
+        sx={{ my: 1, display: 'block' }}
+        id="outlined-buy-price"
+        label={'*Purchase Price'}
+        {...register('purchasePrice')}
+        variant="outlined"
+        error={typeof errors.purchasePrice?.message !== 'undefined'}
+        helperText={errors.purchasePrice?.message}
+      ></TextField>
+      <TextField
+        type="number"
+        fullWidth
+        sx={{ my: 1, display: 'block' }}
+        id="outlined-amount"
+        label={'*Amount'}
+        {...register('amount')}
+        variant="outlined"
+        error={typeof errors.amount?.message !== 'undefined'}
+        helperText={errors.amount?.message}
+      ></TextField>
+      <Box sx={{ my: 1, display: 'block' }}
       >
-        <TextField
-          type="number"
-          fullWidth
-          sx={{ my: 1, display: 'block' }}
-          id="outlined-buy-price"
-          label={'*Purchase Price'}
-          {...register('purchasePrice')}
-          variant="outlined"
-          error={typeof errors.purchasePrice?.message !== 'undefined'}
-          helperText={errors.purchasePrice?.message}
-        ></TextField>
-        <TextField
-          type="number"
-          fullWidth
-          sx={{ my: 1, display: 'block' }}
-          id="outlined-amount"
-          label={'*Amount'}
-          {...register('amount')}
-          variant="outlined"
-          error={typeof errors.amount?.message !== 'undefined'}
-          helperText={errors.amount?.message}
-        ></TextField>
         <LocalizationProvider
-          sx={{ my: 1, display: 'block' }}
           dateAdapter={AdapterDateFns}
         >
           <DesktopDatePicker
@@ -98,42 +99,44 @@ export const BuyCashForm = ({ handleFormSubmit }: IProps) => {
             inputFormat="dd/MM/yyyy"
             value={date}
             onChange={handleDateChange}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params: any) => <TextField {...params} />}
           />
         </LocalizationProvider>
-        <TextField
-          type="number"
-          fullWidth
-          sx={{ my: 1, display: 'block' }}
-          id="outlined-broker-fee"
-          label={'Broker fee'}
-          {...register('brokerFee')}
-          variant="outlined"
-        ></TextField>
-        <TextField
-          type="text"
-          fullWidth
-          sx={{ my: 1, display: 'block' }}
-          id="outlined-note"
-          label={'Note'}
-          {...register('note')}
-          variant="outlined"
-          error={typeof errors.note?.message !== 'undefined'}
-          helperText={errors.note?.message}
-        ></TextField>
-        <Button
-          type="submit"
-          variant="contained"
-          sx={{
-            mt: 'auto',
-            bg: colorScheme.theme,
-            width: '100%',
-            fontSize: '1.4rem',
-            height: '2.5rem',
-          }}
-        >
-          ADD
-        </Button>
       </Box>
+
+      <TextField
+        type="number"
+        fullWidth
+        sx={{ my: 1, display: 'block' }}
+        id="outlined-broker-fee"
+        label={'Broker fee'}
+        {...register('brokerFee')}
+        variant="outlined"
+      ></TextField>
+      <TextField
+        type="text"
+        fullWidth
+        sx={{ my: 1, display: 'block' }}
+        id="outlined-note"
+        label={'Note'}
+        {...register('note')}
+        variant="outlined"
+        error={typeof errors.note?.message !== 'undefined'}
+        helperText={errors.note?.message}
+      ></TextField>
+      <Button
+        type="submit"
+        variant="contained"
+        sx={{
+          mt: 'auto',
+          bg: colorScheme.theme,
+          width: '100%',
+          fontSize: '1.4rem',
+          height: '2.5rem',
+        }}
+      >
+        ADD
+      </Button>
+    </Box>
   );
 };
