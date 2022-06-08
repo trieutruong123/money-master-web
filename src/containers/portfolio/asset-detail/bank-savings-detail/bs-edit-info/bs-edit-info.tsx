@@ -25,10 +25,8 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
 import dayjs from 'dayjs';
 import { getSupportedCurrencyList } from 'shared/helpers';
-import { colorScheme } from 'utils';
 import { BankSavingItem } from 'shared/models';
 import { rootStore } from 'shared/store';
-import { toast } from 'react-toastify';
 
 interface IProps {
   assetDetail: BankSavingItem | undefined;

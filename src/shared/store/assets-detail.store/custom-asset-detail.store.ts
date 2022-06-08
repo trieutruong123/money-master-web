@@ -55,6 +55,9 @@ class CustomAssetDetailStore {
       setCustomAssetId: action,
       setOpenAddNewTransactionModal: action,
       setCurrency: action,
+      setUpdateOverviewData: action,
+
+      resetInitialState: action,
 
       fetchCash: action,
       fetchPortfolioInfo: action,
@@ -84,10 +87,10 @@ class CustomAssetDetailStore {
 
   async fetchOverviewTabData() {
     Promise.all([
-      await this.fetchPortfolioInfo(),
-      await this.fetchCustomAssetDetail(),
-      await this.fetchCustomAssetTransactionHistory(),
-      await this.fetchCash(),
+      this.fetchPortfolioInfo(),
+      this.fetchCustomAssetDetail(),
+      this.fetchCustomAssetTransactionHistory(),
+      this.fetchCash(),
     ]);
   }
 
@@ -213,6 +216,22 @@ class CustomAssetDetailStore {
       rootStore.raiseError(content[rootStore.locale].error.default);
       return res;
     }
+  }
+
+  resetInitialState() {
+    runInAction(() => {
+      this.portfolioInfo = undefined;
+      this.cashDetail = undefined;
+      this.currencyList = undefined;
+
+      this.customAssetDetail = undefined;
+      this.categoryInfo = undefined;
+
+      this.transactionHistory = undefined;
+
+      this.isOpenAddNewTransactionModal = false;
+      this.needUpdateOverviewData = true;
+    });
   }
 }
 

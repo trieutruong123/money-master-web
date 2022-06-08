@@ -69,12 +69,15 @@ class CryptoDetailStore {
       setTimeInterval: action,
       setPortfolioId: action,
       setSelectedTab: action,
+      setUpdateOverviewData: action,
 
       fetchCryptoDetail: action,
       fetchOHLC: action,
       fetchCryptoTransactionHistory: action,
       fetchPortfolioInfo: action,
       fetchCryptoInfoByCode: action,
+
+      resetInitialState: action,
 
       createNewTransaction: action,
     });
@@ -110,10 +113,10 @@ class CryptoDetailStore {
 
   async fetchOverviewTabData() {
     Promise.all([
-      await this.fetchCryptoDetail(),
-      await this.fetchCryptoTransactionHistory(),
-      await this.fetchPortfolioInfo(),
-      await this.fetchCash(),
+      this.fetchCryptoDetail(),
+      this.fetchCryptoTransactionHistory(),
+      this.fetchPortfolioInfo(),
+      this.fetchCash(),
     ]);
     if (this.marketData === undefined) {
       await this.fetchCryptoInfoByCode();
@@ -242,7 +245,7 @@ class CryptoDetailStore {
   }
 
   async fetchMarketData() {
-    Promise.all([await this.fetchOHLC()]);
+    Promise.all([this.fetchOHLC()]);
   }
 
   async fetchCryptoInfoByCode() {
@@ -299,6 +302,24 @@ class CryptoDetailStore {
       );
     }
     return res;
+  }
+
+  resetInitialState() {
+    runInAction(() => {
+      this.portfolioInfo = undefined;
+      this.cashDetail = undefined;
+      this.currencyList = undefined;
+
+      this.cryptoDetail = undefined;
+      this.transactionHistory = undefined;
+
+      this.OHLC_data = [];
+      this.marketData = undefined;
+
+      this.isOpenAddNewTransactionModal = false;
+      this.needUpdateOverviewData = true;
+      this.selectedTab = PACryptoBreadcrumbTabs.overview;
+    });
   }
 }
 

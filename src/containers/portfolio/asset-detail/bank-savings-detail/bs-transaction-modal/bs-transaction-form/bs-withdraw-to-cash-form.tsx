@@ -59,7 +59,7 @@ export const BSWithdrawToCash = observer(({ handleFormSubmit }: IProps) => {
       destinationAssetType: AssetTypeName.cash,
       referentialAssetId: bankSavingsDetailStore.assetDetail?.id,
       referentialAssetType: AssetTypeName.bankSaving,
-      isTransferringAll: false,
+      isTransferringAll: true,
       isUsingFundAsSource: false,
       fee: data.fee,
       tax: data.tax,

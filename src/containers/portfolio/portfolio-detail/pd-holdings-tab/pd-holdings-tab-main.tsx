@@ -25,6 +25,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
       await portfolioDetailStore.fetchInitialData();
       rootStore.stopLoading();
     };
+
     if (portfolioDetailStore.isMissingHoldingsData) fetchData();
   }, []);
 
@@ -116,7 +117,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
         ) : null
         }
         {typeof realEstateDetail !== undefined && realEstateDetail?.length ? (
-          <Grid item xs={12} mt="1rem">
+          <Grid item xs={12} >
             <RealEstateInvesments
               content={content.realEstateTable}
               realEstateDetail={realEstateDetail}

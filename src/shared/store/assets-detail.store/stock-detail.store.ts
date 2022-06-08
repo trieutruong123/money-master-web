@@ -34,7 +34,7 @@ class StockDetailStore {
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
 
-  needUpdateOverviewData: boolean = true;
+  needUpdateOverviewData: boolean = false;
 
   timeInterval: string = "W";
   OHLC_data: Array<any> = [];
@@ -66,6 +66,9 @@ class StockDetailStore {
       setCurrency: action,
       setPortfolioId: action,
       setSelectedTab: action,
+      setUpdateOverviewData: action,
+
+      resetInitialState: action,
 
       fetchStockDetail: action,
       fetchOHLC: action,
@@ -106,11 +109,14 @@ class StockDetailStore {
   }
 
   async fetchOverviewTabData() {
+    if (!this.portfolioId || !this.stockId) {
+      return;
+    }
     Promise.all([
-      await this.fetchStockDetail(),
-      await this.fetchStockTransactionHistory(),
-      await this.fetchPortfolioInfo(),
-      await this.fetchCash(),
+      this.fetchStockDetail(),
+      this.fetchStockTransactionHistory(),
+      this.fetchPortfolioInfo(),
+      this.fetchCash(),
     ]);
     if (this.marketData === undefined) {
       await this.fetchStockInfoByCode();
@@ -240,7 +246,7 @@ class StockDetailStore {
 
   async fetchMarketData() {
     Promise.all([
-      await this.fetchOHLC({
+      this.fetchOHLC({
         startDate: dayjs(Date.now()).subtract(2, "year").unix(),
         endDate: dayjs(Date.now()).unix(),
         interval: "W",
@@ -291,6 +297,24 @@ class StockDetailStore {
       return res;
     }
     return res;
+  }
+
+  resetInitialState() {
+    runInAction(() => {
+      this.portfolioInfo = undefined;
+      this.cashDetail = undefined;
+      this.currencyList = undefined;
+
+      this.stockDetail = undefined;
+      this.transactionHistory = undefined;
+
+      this.OHLC_data = [];
+      this.marketData = undefined;
+
+      this.isOpenAddNewTransactionModal = false;
+      this.needUpdateOverviewData = true;
+      this.selectedTab = PAStockBreadcrumbTabs.overview;
+    });
   }
 }
 

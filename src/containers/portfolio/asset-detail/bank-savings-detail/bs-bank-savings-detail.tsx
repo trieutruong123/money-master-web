@@ -38,6 +38,10 @@ const BankSavingsDetail = observer(({ }: IProps) => {
     : query['assetId'] || '';
 
   useEffect(() => {
+    bankSavingsDetailStore.resetInitialState();
+  }, []);
+
+  useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
 
     bankSavingsDetailStore.setAssetId(assetId);

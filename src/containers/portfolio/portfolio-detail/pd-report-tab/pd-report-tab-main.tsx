@@ -22,8 +22,10 @@ const PDReportTab = observer(({ content }: IProps) => {
     if (
       portfolioDetailStore.isMissingReportData ||
       portfolioDetailStore.needUpdatedReportData
-    ) { fetchData(); }
-    portfolioDetailStore.setUpdateReport(false);
+    ) {
+      fetchData();
+      portfolioDetailStore.setUpdateReport(false);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [portfolioDetailStore.needUpdatedReportData]);
   return (

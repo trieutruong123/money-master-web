@@ -28,6 +28,10 @@ const RealEstateDetail = observer(({ }: IProps) => {
     : query['assetId'] || '';
 
   useEffect(() => {
+    realEstateDetailStore.resetInitialState();
+  }, []);
+
+  useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
 
     realEstateDetailStore.setAssetId(assetId);

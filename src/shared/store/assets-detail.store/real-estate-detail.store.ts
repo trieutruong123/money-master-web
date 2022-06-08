@@ -46,11 +46,14 @@ class RealEstateDetailStore {
       setOpenAddNewTransactionModal: action,
       setCurrency: action,
       setAssetId: action,
+      setUpdateOverviewData: action,
 
       fetchRealEstateDetail: action,
       fetchRealEstateTransactionHistory: action,
       fetchPortfolioInfo: action,
       fetchCash: action,
+
+      resetInitialState: action,
 
       createNewTransaction: action,
       transferAssetToInvestFund: action,
@@ -79,10 +82,10 @@ class RealEstateDetailStore {
 
   async fetchOverviewData() {
     Promise.all([
-      await this.fetchPortfolioInfo(),
-      await this.fetchCash(),
-      await this.fetchRealEstateDetail(),
-      await this.fetchRealEstateTransactionHistory(),
+      this.fetchPortfolioInfo(),
+      this.fetchCash(),
+      this.fetchRealEstateDetail(),
+      this.fetchRealEstateTransactionHistory(),
     ]);
   }
 
@@ -192,7 +195,7 @@ class RealEstateDetailStore {
     if (!this.portfolioId || !this.assetId) {
       return;
     }
-    const url = `/portfolio/${this.portfolioId}/custom/${this.assetId}/transactions`;
+    const url = `/portfolio/${this.portfolioId}/realEstate/${this.assetId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
       runInAction(() => {
@@ -223,6 +226,20 @@ class RealEstateDetailStore {
       this.assetDetail = res.data;
       return { isError: false, data: httpError.handleSuccessMessage("update") };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
+  }
+
+  resetInitialState() {
+    runInAction(() => {
+      this.portfolioInfo = undefined;
+      this.cashDetail = undefined;
+      this.currencyList = undefined;
+
+      this.assetDetail = undefined;
+      this.transactionHistory = undefined;
+
+      this.isOpenAddNewTransactionModal = false;
+      this.needUpdateOverviewData = true;
+    });
   }
 }
 

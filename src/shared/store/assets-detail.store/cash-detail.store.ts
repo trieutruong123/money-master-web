@@ -1,25 +1,25 @@
-import { fcsapiService, httpService } from 'services';
-import { action, makeAutoObservable, observable } from 'mobx';
-import { portfolioData } from 'shared/store/portfolio/portfolio-data';
-import { CashItem } from 'shared/models';
-import { rootStore } from 'shared/store';
-import { content } from 'i18n';
-import { AssetTypeName, TransactionTypeName } from 'shared/constants';
+import { fcsapiService, httpService } from "services";
+import { action, makeAutoObservable, observable, runInAction } from "mobx";
+import { portfolioData } from "shared/store/portfolio/portfolio-data";
+import { CashItem } from "shared/models";
+import { rootStore } from "shared/store";
+import { content } from "i18n";
+import { AssetTypeName, TransactionTypeName } from "shared/constants";
 
-export interface IMoveToFundPayload{
-  referentialAssetId:number,
-  referentialAssetType:string,
-  amount:number,
-  currencyCode:string,
-  isTransferringAll:boolean
+export interface IMoveToFundPayload {
+  referentialAssetId: number;
+  referentialAssetType: string;
+  amount: number;
+  currencyCode: string;
+  isTransferringAll: boolean;
 }
 class CashDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
-  currencyId: string = '';
+  currencyId: string = "";
   cashId: number = 0;
   portfolioId: number = 0;
-  currencyName: string | undefined = '';
-  currencyCode: string = 'usd';
+  currencyName: string | undefined = "";
+  currencyCode: string = "usd";
   cashDetail: CashItem | undefined = undefined;
   cashList: Array<CashItem> | undefined = undefined;
 
@@ -28,8 +28,8 @@ class CashDetailStore {
   forexMarketData: any = undefined;
   forexDetail: any = undefined;
   timeInterval: number = 1;
-  baseCurrencyCode: string = 'usd';
-  timeFrame = '1h';
+  baseCurrencyCode: string = "usd";
+  timeFrame = "1h";
 
   constructor() {
     makeAutoObservable(this, {
@@ -56,7 +56,7 @@ class CashDetailStore {
       setTimeInterval: action,
       setBaseCurrency: action,
       setForexDetail: action,
-      makeTransaction: action
+      makeTransaction: action,
     });
   }
 
@@ -82,10 +82,10 @@ class CashDetailStore {
 
   setTimeInterval(interval: number) {
     this.timeInterval = interval;
-    if (interval >= 1 && interval <= 2) this.timeFrame = '30m';
-    if (interval >= 3 && interval <= 30) this.timeFrame = '4h';
-    if (interval >= 31 && interval <= 180) this.timeFrame = '1d';
-    if (interval > 180) this.timeFrame = '1w';
+    if (interval >= 1 && interval <= 2) this.timeFrame = "30m";
+    if (interval >= 3 && interval <= 30) this.timeFrame = "4h";
+    if (interval >= 31 && interval <= 180) this.timeFrame = "1d";
+    if (interval > 180) this.timeFrame = "1w";
   }
 
   setBaseCurrency(baseCurrencyCode: string) {
@@ -96,10 +96,9 @@ class CashDetailStore {
     this.forexDetail = data;
   }
 
-
   async fetchData() {
     const forexDetail = portfolioData.portfolioData.cash.find(
-      (item) => item.id === this.currencyId,
+      (item) => item.id === this.currencyId
     );
     this.setForexDetail(forexDetail);
     Promise.all([this.fetchForexInfoByCode(this.currencyId)]);
@@ -113,7 +112,7 @@ class CashDetailStore {
       this.cashList = res.data;
       this.cashDetail = res.data.find((item: any) => item.id === this.cashId);
       this.currencyName = res.data.find(
-        (item: any) => item.id === this.cashId,
+        (item: any) => item.id === this.cashId
       )?.name;
 
       this.currencyId = res.data
@@ -121,7 +120,7 @@ class CashDetailStore {
         ?.currencyCode.toLowerCase();
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
       this.cashDetail = undefined;
     }
@@ -129,7 +128,7 @@ class CashDetailStore {
 
   async fetchHistoricalMarketData() {
     const symbol =
-      this.currencyId.toUpperCase() + '/' + this.baseCurrencyCode.toUpperCase();
+      this.currencyId.toUpperCase() + "/" + this.baseCurrencyCode.toUpperCase();
     const res: any = await fcsapiService.getForexOHCL({
       symbol,
       timeFrame: this.timeFrame,
@@ -142,16 +141,15 @@ class CashDetailStore {
 
   async fetchForexInfoByCode(code: string) {
     const symbol =
-      code.toUpperCase() + '/' + this.baseCurrencyCode.toUpperCase();
+      code.toUpperCase() + "/" + this.baseCurrencyCode.toUpperCase();
 
-    if (code !== '' || code !== undefined) {
+    if (code !== "" || code !== undefined) {
       const res: any = await fcsapiService.getForexInfoByCode({
         symbol,
       });
       if (!res.isError) {
         this.forexMarketData = res.data;
-        
-      } 
+      }
     }
   }
 
@@ -162,42 +160,52 @@ class CashDetailStore {
       this.transactionHistoryData = res.data;
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
   }
 
-  async makeTransaction(currencyCode:string, destinationAssetId:number, amount:number){
-    var payload={
+  async makeTransaction(
+    currencyCode: string,
+    destinationAssetId: number,
+    amount: number
+  ) {
+    var payload = {
       currencyCode,
-      transactionType:TransactionTypeName.WithdrawValue,
+      transactionType: TransactionTypeName.WithdrawValue,
       destinationAssetId,
-      destinationAssetType:AssetTypeName.cash,
-      referentialAssetId:this.cashId,
-      referentialAssetType:AssetTypeName.cash,
+      destinationAssetType: AssetTypeName.cash,
+      referentialAssetId: this.cashId,
+      referentialAssetType: AssetTypeName.cash,
       amount,
-      isTransferringAll:false
-    }
+      isTransferringAll: false,
+    };
     const url = `/portfolio/${this.portfolioId}/transactions`;
 
-    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      payload
+    );
     if (!res.isError) {
       await this.updateTransactionHistoryData();
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
   }
 
-  async moveToFund(payload:IMoveToFundPayload){
+  async moveToFund(payload: IMoveToFundPayload) {
     const url = `/portfolio/${this.portfolioId}/fund`;
-    const res: { isError: boolean; data: any } = await httpService.post(url,payload);
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      payload
+    );
     if (!res.isError) {
       await this.updateTransactionHistoryData();
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData,
+        content[rootStore.locale].error.failedToLoadInitialData
       );
     }
   }

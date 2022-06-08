@@ -21,9 +21,9 @@ import CDMarketDataTab from './cd-market-data-chart/cd-market-data-tab';
 import { CDCreateTransactionModal } from './cd-transaction-modal/cd-create-transaction-modal';
 import { useRouter } from 'next/router';
 
-interface IProps {};
+interface IProps { };
 
-const CDCryptoDetail = observer(({}: IProps) => {
+const CDCryptoDetail = observer(({ }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
@@ -36,6 +36,10 @@ const CDCryptoDetail = observer(({}: IProps) => {
   const assetId = Array.isArray(query['assetId'])
     ? query['assetId'][0]
     : query['assetId'] || '';
+
+  useEffect(() => {
+    cryptoDetailStore.resetInitialState();
+  }, []);
 
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
@@ -56,7 +60,7 @@ const CDCryptoDetail = observer(({}: IProps) => {
         width: '100%',
       }}
     >
-       <Box
+      <Box
         sx={{
           display: 'flex',
           justifyContent: 'center',
@@ -75,9 +79,9 @@ const CDCryptoDetail = observer(({}: IProps) => {
               displayNameArr={[
                 'Portfolio',
                 cryptoDetailStore.portfolioInfo?.name ||
-                  cryptoDetailStore.portfolioId.toString(),
+                cryptoDetailStore.portfolioId.toString(),
                 cryptoDetailStore.cryptoDetail?.cryptoCoinCode.toUpperCase() ||
-                  cryptoDetailStore.cryptoId.toString(),
+                cryptoDetailStore.cryptoId.toString(),
               ]}
             />
             <Typography sx={{ mb: 3 }} variant="h4">
@@ -120,19 +124,19 @@ const CDCryptoDetail = observer(({}: IProps) => {
                 flexDirection="column"
               >
                 {cryptoDetailStore.selectedTab ===
-                PACryptoBreadcrumbTabs.overview ? (
+                  PACryptoBreadcrumbTabs.overview ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <CDOverviewTab />
                   </Suspense>
                 ) : null}
                 {cryptoDetailStore.selectedTab ===
-                PACryptoBreadcrumbTabs.marketData ? (
+                  PACryptoBreadcrumbTabs.marketData ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <CDMarketDataTab />
                   </Suspense>
                 ) : null}
                 {cryptoDetailStore.selectedTab ===
-                PACryptoBreadcrumbTabs.settings ? (
+                  PACryptoBreadcrumbTabs.settings ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <h1>You are in setting tab</h1>
                   </Suspense>

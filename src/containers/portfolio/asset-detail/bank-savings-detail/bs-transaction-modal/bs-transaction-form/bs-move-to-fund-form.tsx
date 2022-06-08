@@ -14,6 +14,7 @@ import { colorScheme } from "utils/color-scheme";
 import React from "react";
 import MenuItem from "@mui/material/MenuItem";
 import {
+  bankSavingsDetailStore,
   realEstateDetailStore,
 } from "shared/store";
 import { getSupportedCurrencyList } from "shared/helpers/currency-info";
@@ -46,10 +47,10 @@ export const BSMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
-      referentialAssetId: realEstateDetailStore.assetDetail?.id,
+      referentialAssetId: bankSavingsDetailStore.assetDetail?.id,
       referentialAssetType: AssetTypeName.bankSaving,
-      currencyCode: realEstateDetailStore.assetDetail?.inputCurrency.toUpperCase() || 'USD',
-      amount: realEstateDetailStore.assetDetail?.inputMoneyAmount,
+      currencyCode: bankSavingsDetailStore.assetDetail?.inputCurrency.toUpperCase() || 'USD',
+      amount: bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
       isTransferingAll: true,
     });
   };

@@ -46,6 +46,10 @@ const PortfolioDetail = observer(({ content }: IProps) => {
     : query['portfolioId'] || '';
 
   useEffect(() => {
+    portfolioDetailStore.resetInitialState();
+  }, [])
+
+  useEffect(() => {
     rootStore.startLoading();
 
     portfolioDetailStore.setSelectedTabs(PDBreadcrumbTabs.holdings);

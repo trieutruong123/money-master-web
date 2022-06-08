@@ -128,6 +128,8 @@ class PortfolioDetailStore {
       setUpdateReport: action,
       setAddedAssetInfo: action,
 
+      resetInitialState: action,
+
       fetchRealEstate: action,
       fetchPersonalCustomAsset: action,
       fetchSankeyFlowData: action,
@@ -220,16 +222,19 @@ class PortfolioDetailStore {
   }
 
   async fetchInitialData() {
+    if (!this.portfolioId) {
+      return;
+    }
     this.currencyCode = "usd";
 
     Promise.all([
-      await this.fetchPortfolioInfo(),
-      await this.fetchBankSaving(),
-      await this.fetchCash(),
-      await this.fetchCryptoCurrency(),
-      await this.fetchStock(),
-      await this.fetchRealEstate(),
-      await this.fetchOtherCustomAsset(),
+      this.fetchPortfolioInfo(),
+      this.fetchBankSaving(),
+      this.fetchCash(),
+      this.fetchCryptoCurrency(),
+      this.fetchStock(),
+      this.fetchRealEstate(),
+      this.fetchOtherCustomAsset(),
     ]);
   }
 
@@ -840,6 +845,30 @@ class PortfolioDetailStore {
       default:
         break;
     }
+  }
+
+  resetInitialState() {
+    runInAction(() => {
+      this.stockDetail = undefined;
+      this.cashDetail = undefined;
+      this.cryptoDetail = undefined;
+      this.realEstateDetail = undefined;
+      this.bankingDetail = undefined;
+      this.customAssetDetail = undefined;
+      this.portfolioInfo = undefined;
+
+      this.isOpenAddNewAssetModal = false;
+      this.isOpenDeleteAssetModal = false;
+      this.isOpenTransferToInvestFundModal = false;
+
+      this.investFundDetail = undefined;
+      this.investFundTransactionHistory = undefined;
+
+      this.pieChartData = undefined;
+      this.sankeyFlowData = undefined;
+
+      this.selectedTabs = PDBreadcrumbTabs.holdings;
+    });
   }
 }
 

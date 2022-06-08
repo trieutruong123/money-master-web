@@ -54,6 +54,8 @@ class BankSavingsDetailStore {
       fetchBankSavingsDetail: action,
       fetchBankSavingTransactionHistory: action,
 
+      resetInitialState: action,
+
       createNewTransaction: action,
       transferAssetToInvestFund: action,
     });
@@ -81,10 +83,10 @@ class BankSavingsDetailStore {
 
   async fetchOverviewData() {
     Promise.all([
-      await this.fetchPortfolioInfo(),
-      await this.fetchCash(),
-      await this.fetchBankSavingsDetail(),
-      await this.fetchBankSavingTransactionHistory(),
+      this.fetchPortfolioInfo(),
+      this.fetchCash(),
+      this.fetchBankSavingsDetail(),
+      this.fetchBankSavingTransactionHistory(),
     ]);
   }
 
@@ -253,6 +255,20 @@ class BankSavingsDetailStore {
       this.assetDetail = res.data;
       return { isError: false, data: httpError.handleSuccessMessage("update") };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
+  }
+
+  resetInitialState() {
+    runInAction(() => {
+      this.portfolioInfo = undefined;
+      this.cashDetail = undefined;
+      this.currencyList = undefined;
+
+      this.assetDetail = undefined;
+      this.transactionHistory = undefined;
+
+      this.isOpenAddNewTransactionModal = false;
+      this.needUpdateOverviewData = true;
+    });
   }
 }
 

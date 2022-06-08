@@ -23,10 +23,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import dayjs from 'dayjs';
 import { getSupportedCurrencyList } from 'shared/helpers';
-import { colorScheme } from 'utils';
 import { RealEstateItem } from 'shared/models';
 import { rootStore } from 'shared/store';
-import { toast } from 'react-toastify';
 
 interface IProps {
   assetDetail: RealEstateItem | undefined;

@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { stockDetailStore } from 'shared/store';
+import { portfolioDetailStore, stockDetailStore } from 'shared/store';
 import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
 import { PAStockBreadcrumbTabs } from 'shared/constants/portfolio-asset';
 import { TabContext, TabList } from '@mui/lab';
@@ -21,9 +21,9 @@ import SDOverviewTab from './sd-overview-tab/sd-overview-main';
 import SDMarketDataTab from './sd-market-data-chart/sd-market-data-tab';
 import { SDCreateTransactionModal } from './sd-transaction-modal/sd-create-transaction-modal';
 
-interface IProps {}
+interface IProps { }
 
-const SDStockDetail = observer(({}: IProps) => {
+const SDStockDetail = observer(({ }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
@@ -37,10 +37,16 @@ const SDStockDetail = observer(({}: IProps) => {
     : query['assetId'] || '';
 
   useEffect(() => {
+    stockDetailStore.resetInitialState();
+  }, []);
+
+  useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
     stockDetailStore.setStockId(assetId);
     stockDetailStore.setPortfolioId(portfolioId);
-  }, [router, stockDetailStore, portfolioId, assetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query.portfolioId, router.query.assetId]);
+
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     stockDetailStore.setSelectedTab(newValue);
@@ -74,9 +80,9 @@ const SDStockDetail = observer(({}: IProps) => {
               displayNameArr={[
                 'Portfolio',
                 stockDetailStore.portfolioInfo?.name ||
-                  stockDetailStore.portfolioId.toString(),
+                stockDetailStore.portfolioId.toString(),
                 stockDetailStore.stockDetail?.stockCode ||
-                  stockDetailStore.stockId.toString(),
+                stockDetailStore.stockId.toString(),
               ]}
             />
             <Typography sx={{ mb: 3 }} variant="h4">
@@ -120,19 +126,19 @@ const SDStockDetail = observer(({}: IProps) => {
                 flexDirection="column"
               >
                 {stockDetailStore.selectedTab ===
-                PAStockBreadcrumbTabs.overview ? (
+                  PAStockBreadcrumbTabs.overview ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <SDOverviewTab />
                   </Suspense>
                 ) : null}
                 {stockDetailStore.selectedTab ===
-                PAStockBreadcrumbTabs.marketData ? (
+                  PAStockBreadcrumbTabs.marketData ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <SDMarketDataTab />
                   </Suspense>
                 ) : null}
                 {stockDetailStore.selectedTab ===
-                PAStockBreadcrumbTabs.settings ? (
+                  PAStockBreadcrumbTabs.settings ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <h1>You are in setting tab</h1>
                   </Suspense>

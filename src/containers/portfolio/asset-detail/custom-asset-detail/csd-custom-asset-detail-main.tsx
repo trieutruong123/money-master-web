@@ -36,6 +36,11 @@ const CSDCustomAssetDetail = observer(({ }: IProps) => {
         : query['slug'] || '';
 
     useEffect(() => {
+        customAssetsDetailStore.resetInitialState();
+    }, []);
+
+
+    useEffect(() => {
         if (typeof assetId === 'undefined') router.push('/404');
         customAssetsDetailStore.setCustomAssetId(assetId);
         customAssetsDetailStore.setPortfolioId(portfolioId);
