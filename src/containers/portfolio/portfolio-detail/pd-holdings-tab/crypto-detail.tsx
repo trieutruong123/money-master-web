@@ -151,9 +151,7 @@ export const CryptoInvestments = observer(({
           }}
         >
           <CardHeader title="Crypto" sx={{ padding: '0px' }} />
-          <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-            <MoreHorizIcon />
-          </Button>
+
         </Card>
         {/* <Scrollbars autoHeight> */}
         <Box>

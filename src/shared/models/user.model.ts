@@ -1,17 +1,19 @@
-import { colorScheme } from 'utils';
+import { colorScheme } from "utils";
 export class UserInfo {
-  email: string = '';
-  firstName?: string = '';
-  lastName?: string = '';
-  displayName?: string = '';
-  profileImage?: string = '';
-  backgroundColor?: string = '';
+  email: string = "";
+  firstName?: string = "";
+  lastName?: string = "";
+  displayName?: string = "";
+  profileImage?: string = "";
+  birthday?: Date = undefined;
+  gender?: string = undefined;
+  backgroundColor?: string = "";
   constructor(newUser?: UserInfo) {
-    this.email = newUser?.email || '';
-    this.firstName = newUser?.firstName || '';
-    this.lastName = newUser?.lastName || '';
-    this.displayName = newUser?.displayName || '';
-    this.profileImage = newUser?.profileImage || '';
-    this.backgroundColor = colorScheme.gray200;
+    this.email = newUser?.email || "";
+    this.firstName = newUser?.firstName || "";
+    this.lastName = newUser?.lastName || "";
+    this.profileImage = newUser?.profileImage || "";
+    this.birthday = newUser?.birthday;
+    this.gender = newUser?.gender;
   }
 }

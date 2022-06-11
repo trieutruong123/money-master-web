@@ -75,6 +75,9 @@ const CDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
         sx={{ my: 1, display: 'block' }}
         id="outlined-amount"
         label={'*Amount'}
+        inputProps={{
+          step: 'any',
+        }}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
@@ -110,7 +113,7 @@ const CDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        TRANSFER TO INVEST FUND
+        MOVE TO INVEST FUND
       </Button>
     </Box>
   );

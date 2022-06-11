@@ -118,9 +118,6 @@ class CryptoDetailStore {
       this.fetchPortfolioInfo(),
       this.fetchCash(),
     ]);
-    if (this.marketData === undefined) {
-      await this.fetchCryptoInfoByCode();
-    }
   }
 
   async fetchPortfolioInfo() {
@@ -249,7 +246,7 @@ class CryptoDetailStore {
   }
 
   async fetchCryptoInfoByCode() {
-    if (this.cryptoDetail?.cryptoCoinCode === undefined) {
+    if (!this.cryptoDetail || !this.cryptoDetail?.cryptoCoinCode) {
       return;
     }
     const res: any = await coinGeckoService.getCoinInfoByCode({
@@ -262,14 +259,14 @@ class CryptoDetailStore {
       },
     });
     if (!res.isError) {
+      const marketData = res.data.market_data;
+      const h = marketData.high_24h.usd;
+      const l = marketData.low_24h.usd;
+      const c = marketData.current_price.usd;
+      const d = marketData.price_change_24h;
+      const dp = marketData.price_change_24h / c;
+      const pc = marketData.price_change_24h;
       runInAction(() => {
-        const marketData = res.data.market_data;
-        const h = marketData.high_24h.usd;
-        const l = marketData.low_24h.usd;
-        const c = marketData.current_price.usd;
-        const d = marketData.price_change_24h;
-        const dp = marketData.price_change_24h / c;
-        const pc = marketData.price_change_24h;
         this.marketData = { h, l, c, d, dp };
       });
     } else {

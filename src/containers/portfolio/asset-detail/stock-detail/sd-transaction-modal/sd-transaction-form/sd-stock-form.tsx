@@ -14,7 +14,6 @@ export const SDStockForm = observer(({ }: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
-  const [assetPrice, setAssetPrice] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {

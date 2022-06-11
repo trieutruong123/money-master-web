@@ -24,7 +24,9 @@ const SDOverviewTab = observer(() => {
   return (
     <>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
-        <SDIntroSection assetDetail={stockDetailStore.stockDetail} />
+        <Suspense fallback={<></>}>
+          <SDIntroSection assetDetail={stockDetailStore.stockDetail} />
+        </Suspense>
       </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <Suspense fallback={<></>}>

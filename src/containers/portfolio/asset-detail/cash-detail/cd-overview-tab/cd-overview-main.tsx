@@ -24,7 +24,9 @@ const CDOverviewMain = observer(() => {
 
     return <>
         <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
-            <CDIntroSection assetDetail={cashDetailStore.cashDetail} />
+            <Suspense fallback={<></>}>
+                <CDIntroSection assetDetail={cashDetailStore.cashDetail} />
+            </Suspense>
         </Grid>
         <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
             <Suspense fallback={<></>}>

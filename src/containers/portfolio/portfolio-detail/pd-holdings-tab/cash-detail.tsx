@@ -113,9 +113,7 @@ export const CashInvestments = observer(({
         }}
       >
         <CardHeader title="Cash" sx={{ padding: '0px' }} />
-        <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-          <MoreHorizIcon />
-        </Button>
+
       </Card>
       {/* <Scrollbars autoHeight> */}
       <Box>

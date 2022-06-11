@@ -35,12 +35,13 @@ export enum TransactionTypeName {
   NewAsset = "newAsset",
   AddValue = "addValue",
   WithdrawValue = "withdrawValue",
+  WithdrawToCash = "withdrawToCash",
+  WithdrawToOutside = "withdrawToOutside",
   SellAsset = "sellAsset",
   MoveToFund = "moveToFund",
   BuyFromFund = "buyFromFund",
   BuyFromCash = "buyFromCash",
   BuyFromOutside = "buyFromOutside",
-  WithdrawToCash = "withdrawToCash",
 }
 
 export const TransactionTypeConstants = {
@@ -48,6 +49,7 @@ export const TransactionTypeConstants = {
   addValue: "add value",
   withdrawValue: "withdraw value",
   withdrawToOutside: "withdraw to outside",
+  withdrawToCash: "withdraw to cash",
   sellAsset: "sell asset",
   moveToFund: "move to fund",
   buyFromFund: "buy from fund",

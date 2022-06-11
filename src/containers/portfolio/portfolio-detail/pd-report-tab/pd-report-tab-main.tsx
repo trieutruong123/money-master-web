@@ -51,6 +51,7 @@ const PDReportTab = observer(({ content }: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          mt: '1rem',
         }}
       >
         {typeof portfolioDetailStore.pieChartData !== 'undefined' ?
@@ -71,6 +72,8 @@ const PDReportTab = observer(({ content }: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          mt: '1rem',
+
         }}
       >
         {typeof portfolioDetailStore.pieChartData !== 'undefined' ?
@@ -90,7 +93,7 @@ const PDReportTab = observer(({ content }: IProps) => {
           width: '100%'
         }}
       >
-        {typeof portfolioDetailStore.sankeyFlowData !== 'undefined' ?
+        {portfolioDetailStore.sankeyFlowData && portfolioDetailStore.sankeyFlowData.length > 0 ?
           <Suspense fallback={<></>}>
             <PDSankeyChart sankeyFlowData={portfolioDetailStore.sankeyFlowData} />
           </Suspense>

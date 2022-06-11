@@ -60,16 +60,26 @@ const AccountMenuDropdown = observer(
       >
         <Link href="/profile">
           <MenuItem>
-            <Avatar
-              sx={{
-                backgroundColor: userStore.user?userStore.user?.backgroundColor:undefined||colorScheme.gray200,
-                color: 'white',
-                fontSize: '1.4rem',
-              }}
-            >
-              {userStore.user?userStore.user?.email?.charAt(0).toUpperCase():undefined}
-            </Avatar>
-            {userStore.user?(userStore.user?.email.slice(0, 14)):'' + '...'}
+            {userStore.user && userStore.user?.profileImage ?
+              <Avatar
+                src={userStore.user.profileImage}
+                sx={{
+                  color: 'white',
+                  fontSize: '1.4rem',
+                }}
+              />
+              :
+              <Avatar
+                sx={{
+                  color: 'white',
+                  fontSize: '1.4rem',
+                  backgroundColor: userStore.user?.backgroundColor || colorScheme.gray200,
+                }}
+              >
+                {userStore.user?.email?.charAt(0).toUpperCase()}
+              </Avatar>
+            }
+            {userStore.user ? (userStore.user?.email.slice(0, 14)) : '' + '...'}
           </MenuItem>
         </Link>
         <Divider />

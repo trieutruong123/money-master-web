@@ -10,7 +10,7 @@ const CDOverviewTab = observer(() => {
   const { portfolioId, cryptoId } = cryptoDetailStore;
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       rootStore.startLoading();
       await cryptoDetailStore.fetchOverviewTabData();
       rootStore.stopLoading();
@@ -25,7 +25,10 @@ const CDOverviewTab = observer(() => {
   return (
     <>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
-        <CDIntroSection assetDetail={cryptoDetailStore.cryptoDetail} />
+        <Suspense fallback={<></>}>
+
+          <CDIntroSection assetDetail={cryptoDetailStore.cryptoDetail} />
+        </Suspense>
       </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <Suspense fallback={<></>}>

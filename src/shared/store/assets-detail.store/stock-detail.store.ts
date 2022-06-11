@@ -118,9 +118,6 @@ class StockDetailStore {
       this.fetchPortfolioInfo(),
       this.fetchCash(),
     ]);
-    if (this.marketData === undefined) {
-      await this.fetchStockInfoByCode();
-    }
   }
 
   async fetchPortfolioInfo() {
@@ -255,7 +252,7 @@ class StockDetailStore {
   }
 
   async fetchStockInfoByCode() {
-    if (!this.stockDetail?.stockCode) {
+    if (!this.stockDetail || !this.stockDetail?.stockCode) {
       return;
     }
     const res: any = await finhubService.getStockInfoByCode({

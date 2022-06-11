@@ -9,7 +9,7 @@ const CDMarketInfo = observer(() => {
 
   return (
     <>
-      {marketData !== undefined ? (
+      {typeof marketData !== 'undefined' ? (
         <Card
           sx={{
             borderRadius: '12px',
@@ -66,10 +66,10 @@ const CDMarketInfo = observer(() => {
                     color={marketData?.dp > 0 ? 'success.main' : 'error.main'}
                   >
                     {marketData?.dp > 0 ? <>&uarr;</> : <>&darr;</>}
-                    {`${roundAndAddDotAndCommaSeparator(marketData?.dp,4)}%`}
+                    {`${roundAndAddDotAndCommaSeparator(marketData?.dp, 4)}%`}
                     &nbsp;@&nbsp;
                     {getCurrencyByCode('USD')?.symbol}
-                    {roundAndAddDotAndCommaSeparator(marketData?.d,4)}
+                    {roundAndAddDotAndCommaSeparator(marketData?.d, 4)}
                   </Typography>
                 </Grid>
                 <Grid

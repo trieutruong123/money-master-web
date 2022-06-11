@@ -6,6 +6,7 @@ import { DashboardSidebar } from './sidebar/sidebar-main';
 import { toast } from 'react-toastify';
 import { rootStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
+import firebase, { getApps } from "firebase/app";
 
 const DashboardLayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -31,7 +32,6 @@ export const DashboardLayout = observer((props: any) => {
     }
   }, [isNotified, message, variant, rootStore, toast]);
 
-  
 
   return (
     <>

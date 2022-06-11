@@ -1,16 +1,17 @@
-import { TransactionTypeIcon } from './transaction-type-icon/index';
-import { Link } from './link';
-import { MultipleLanguage } from './multiple-languages';
-import { SeverityPill } from './severity-pill';
-import { BreadcrumbsLink } from './breadcrumbs';
+import { TransactionTypeIcon } from "./transaction-type-icon/index";
+import { Link } from "./link";
+import { MultipleLanguage } from "./multiple-languages";
+import { SeverityPill } from "./severity-pill";
+import { BreadcrumbsLink } from "./breadcrumbs";
 import {
   HypnosisLoading,
   BarWaveLoading,
   CircularLoading,
   FadingBallsLoading,
-} from './loading';
-import CustomNoRowsOverlay from './custom-no-rows-overlay';
-import TabPanel from './tab-panel';
+} from "./loading";
+import CustomNoRowsOverlay from "./custom-no-rows-overlay";
+import TabPanel from "./tab-panel";
+import { ImagePicker } from "./image-picker";
 
 export {
   Link,
@@ -24,4 +25,5 @@ export {
   TransactionTypeIcon,
   CustomNoRowsOverlay,
   TabPanel,
+  ImagePicker,
 };

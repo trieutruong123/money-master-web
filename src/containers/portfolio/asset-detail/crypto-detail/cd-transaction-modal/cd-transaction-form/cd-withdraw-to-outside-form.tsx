@@ -89,6 +89,9 @@ const CDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ my: 1, display: 'block' }}
         id="outlined-amount"
+        inputProps={{
+          step: 'any',
+        }}
         label={'*Amount'}
         {...register('amount')}
         variant="outlined"

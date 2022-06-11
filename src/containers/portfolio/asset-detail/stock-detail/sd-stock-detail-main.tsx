@@ -47,6 +47,14 @@ const SDStockDetail = observer(({ }: IProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.portfolioId, router.query.assetId]);
 
+  useEffect(() => {
+    async function fetchData() {
+      if (stockDetailStore.stockDetail && stockDetailStore.marketData === undefined) {
+        await stockDetailStore.fetchStockInfoByCode();
+      }
+    }
+    fetchData();
+  }, [stockDetailStore.marketData, stockDetailStore.stockDetail])
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     stockDetailStore.setSelectedTab(newValue);

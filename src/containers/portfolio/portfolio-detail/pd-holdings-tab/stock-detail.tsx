@@ -148,9 +148,7 @@ export const StockInvestments = observer(({
           }}
         >
           <CardHeader title="Stock" sx={{ padding: '0px' }} />
-          <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-            <MoreHorizIcon />
-          </Button>
+
         </Card>
         {/* <Scrollbars autoHeight> */}
         <Box>
