@@ -55,17 +55,17 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
   const usingMoneySourceList = [{
     id: uuid(),
     type: 'outside',
-    name: 'Using money from outside',
+    name: 'Outside',
   },
   {
     id: uuid(),
     type: 'fund',
-    name: 'Using money from fund',
+    name: 'Fund',
   },
   {
     id: uuid(),
     type: 'cash',
-    name: 'Using money from cash',
+    name: 'Cash',
   },]
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -122,6 +122,7 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
         sx={{ mt: '10px', display: 'block' }}
         id="outlined-buy-price"
         label={'Purchase price*'}
+        inputProps={{ step: 'any' }}
         {...register('purchasePrice')}
         variant="outlined"
         error={typeof errors.purchasePrice?.message !== 'undefined'}
@@ -133,6 +134,9 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
         sx={{ mt: '10px', display: 'block' }}
         id="outlined-amount"
         label={'Shares*'}
+        inputProps={{
+          step: 'any',
+        }}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
@@ -160,12 +164,12 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
       </FormControl>
       <Box mt='10px' />
       <FormControl fullWidth>
-        <InputLabel id="source-money">{'Select source money*'}</InputLabel>
+        <InputLabel id="source-money">{'Use money from*'}</InputLabel>
         <Select
           variant="outlined"
           labelId="source-money"
           id="stock-source-money-select"
-          label={`*${'Select source money*'}`}
+          label={`*${'Use money from*'}`}
           onChange={handleMoneySourceChange}
           defaultValue={moneySource}
           value={moneySource}

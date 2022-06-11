@@ -131,9 +131,7 @@ export const BankingInvestments = observer(({
         }}
       >
         <CardHeader title="Bank Savings" sx={{ padding: '0px' }} />
-        <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-          <MoreHorizIcon />
-        </Button>
+
       </Card>
       {/* <Scrollbars autoHide style = {{cursor:'pointer', minWidth: "100%"}}> */}
       <Box>

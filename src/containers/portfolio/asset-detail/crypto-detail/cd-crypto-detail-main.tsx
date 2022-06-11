@@ -41,6 +41,17 @@ const CDCryptoDetail = observer(({ }: IProps) => {
     cryptoDetailStore.resetInitialState();
   }, []);
 
+
+  useEffect(() => {
+    async function fetchData() {
+      if (cryptoDetailStore.cryptoDetail && cryptoDetailStore.marketData === undefined) {
+        await cryptoDetailStore.fetchCryptoInfoByCode();
+      }
+    }
+    fetchData();
+  }, [cryptoDetailStore.marketData, cryptoDetailStore.cryptoDetail])
+
+
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
     cryptoDetailStore.setCryptoId(assetId);
@@ -107,10 +118,6 @@ const CDCryptoDetail = observer(({ }: IProps) => {
                   <Tab
                     label={PACryptoBreadcrumbTabs.marketData}
                     value={PACryptoBreadcrumbTabs.marketData}
-                  />
-                  <Tab
-                    label={PACryptoBreadcrumbTabs.settings}
-                    value={PACryptoBreadcrumbTabs.settings}
                   />
                 </TabList>
               </Box>

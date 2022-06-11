@@ -1,3 +1,4 @@
+import { ITransactionRequest } from "./../../types/portfolio-asset.type";
 import { TransactionItem } from "./../../models/transaction.model";
 import { PACashBreadcrumbTabs } from "./../../constants/portfolio-asset";
 import { fcsapiService, httpService } from "services";
@@ -7,7 +8,12 @@ import { CashItem } from "shared/models";
 import { rootStore } from "shared/store";
 import { content } from "i18n";
 import { AssetTypeName, TransactionTypeName } from "shared/constants";
-import { CurrencyItem, Portfolio } from "shared/types";
+import {
+  CurrencyItem,
+  Portfolio,
+  TransferToInvestFundType,
+} from "shared/types";
+import { getCurrencyByCode } from "shared/helpers";
 
 export interface IMoveToFundPayload {
   referentialAssetId: number;
@@ -23,6 +29,7 @@ class CashDetailStore {
 
   cashId: number = 0;
   cashDetail: CashItem | undefined = undefined;
+  cashList: CashItem[] | undefined = [];
   transactionHistory: Array<TransactionItem> | undefined = undefined;
   currencyList: Array<CurrencyItem> | undefined = undefined;
   destCurrencyCode: string = "";
@@ -45,6 +52,7 @@ class CashDetailStore {
 
       cashId: observable,
       cashDetail: observable,
+      cashList: observable,
       currencyList: observable,
       transactionHistory: observable,
       destCurrencyCode: observable,
@@ -76,6 +84,7 @@ class CashDetailStore {
       resetInitialState: action,
 
       makeTransaction: action,
+      moveToFund: action,
     });
   }
 
@@ -151,7 +160,10 @@ class CashDetailStore {
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
       runInAction(() => {
-        this.currencyList = res.data;
+        this.cashList = res.data;
+        this.currencyList = res.data.map((item: CashItem) =>
+          getCurrencyByCode(item.currencyCode)
+        );
         this.cashDetail = res.data.find(
           (item: CashItem) => item.id === this.cashId
         );
@@ -239,49 +251,39 @@ class CashDetailStore {
     }
   }
 
-  async makeTransaction(
-    currencyCode: string,
-    destinationAssetId: number,
-    amount: number
-  ) {
-    var payload = {
-      currencyCode,
-      transactionType: TransactionTypeName.WithdrawValue,
-      destinationAssetId,
-      destinationAssetType: AssetTypeName.cash,
-      referentialAssetId: this.cashId,
-      referentialAssetType: AssetTypeName.cash,
-      amount,
-      isTransferringAll: false,
-    };
+  async makeTransaction(params: ITransactionRequest) {
+    rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/transactions`;
-
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      payload
+      params
     );
+    rootStore.stopLoading();
     if (!res.isError) {
-      await this.fetchTransactionHistoryData();
+      return res;
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
+      rootStore.raiseError(content[rootStore.locale].error.badRequest);
+      return res;
     }
   }
 
-  async moveToFund(payload: IMoveToFundPayload) {
+  async moveToFund(payload: TransferToInvestFundType) {
     const url = `/portfolio/${this.portfolioId}/fund`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
       payload
     );
     if (!res.isError) {
-      await this.fetchTransactionHistoryData();
+      rootStore.raiseNotification(
+        content[rootStore.locale].success.transfer,
+        "success"
+      );
     } else {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData
       );
     }
+    return res;
   }
 
   resetInitialState() {

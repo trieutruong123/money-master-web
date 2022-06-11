@@ -58,7 +58,7 @@ interface IProps {
   ) => void;
 }
 
-export const RealEstateInvesments =observer( ({
+export const RealEstateInvesments = observer(({
   realEstateDetail,
   content,
   deleteAsset,
@@ -117,9 +117,7 @@ export const RealEstateInvesments =observer( ({
         }}
       >
         <CardHeader title={content.title} sx={{ padding: '0px' }} />
-        <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-          <MoreHorizIcon />
-        </Button>
+
       </Card>
       {/* <Scrollbars autoHeight > */}
       <Box>

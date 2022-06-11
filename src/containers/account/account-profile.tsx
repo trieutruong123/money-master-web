@@ -8,29 +8,39 @@ import {
   Divider,
   Typography,
 } from '@mui/material';
+import { content } from 'i18n';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
-import { userStore } from 'shared/store';
+import { useRouter } from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
+import { ImagePicker } from 'shared/components';
+import { rootStore, userStore } from 'shared/store';
 import { colorScheme } from 'utils';
 
 interface IProps {
-  content: any;
+  translatedContent: any;
 }
 
-export const AccountProfile = observer(({ content }: IProps) => {
-  const [user, setUser] = useState({
-    avatar: '/images/avatar_1.png',
-    city: '',
-    country: '',
-    jobTitle: '',
-    name: '',
-    timezone: '',
-  });
-  useEffect(() => {
-    const email = userStore.user?.email || '';
-    setUser({ ...user, name: email });
-  }, []);
 
+export const AccountProfile = observer(({ translatedContent }: IProps) => {
+  const router = useRouter();
+  const { locale } = router;
+
+  const handleUploadPicture = async (data: any) => {
+    console.log(data);
+
+    const res = await userStore.updateUserAvatar(data);
+    if (res && !res.isError) {
+      rootStore.raiseNotification(
+        content[rootStore.locale].success.update,
+        "success"
+      );
+    }
+    else {
+      rootStore.raiseError(
+        content[rootStore.locale].error.failedToLoadInitialData
+      );
+    }
+  }
   return (
     <Card>
       <CardContent>
@@ -41,33 +51,47 @@ export const AccountProfile = observer(({ content }: IProps) => {
             flexDirection: 'column',
           }}
         >
-          <Avatar
-            sx={{
-              height: 64,
-              mb: 2,
-              width: 64,
-              fontSize: '3rem',
-              backgroundColor: userStore.user?.backgroundColor || colorScheme.gray200,
-            }}
-          >
-            {userStore.user?.email?.charAt(0).toUpperCase()}
-          </Avatar>
-          <Typography color="textPrimary" gutterBottom variant="h5">
-            {user.name}
-          </Typography>
-          <Typography color="textSecondary" variant="body2">
-            {`${user.city} ${user.country}`}
-          </Typography>
-          <Typography color="textSecondary" variant="body2">
-            {user.timezone}
-          </Typography>
+          {userStore.user && userStore.user?.profileImage ?
+            <Avatar
+              src={userStore.user.profileImage}
+              sx={{
+                height: 64,
+                mb: 2,
+                width: 64,
+                fontSize: '3rem',
+              }}
+            />
+            :
+            <Avatar
+              sx={{
+                height: 64,
+                mb: 2,
+                width: 64,
+                fontSize: '3rem',
+                backgroundColor: userStore.user?.backgroundColor || colorScheme.gray200,
+              }}
+            >
+              {userStore.user?.email?.charAt(0).toUpperCase()}
+            </Avatar>
+          }
+          {userStore.user && userStore.user?.lastName && userStore.user?.firstName
+            ? (<Typography color="textPrimary" gutterBottom variant="h5">
+              {locale == 'vi'
+                ? `${userStore.user?.lastName} ${userStore.user?.firstName}`
+                : `${userStore.user?.firstName} ${userStore.user?.lastName}`
+              }
+            </Typography>) :
+            <Typography color="textSecondary" variant="h5">
+              {userStore.user?.email}
+            </Typography>
+          }
+
+
         </Box>
       </CardContent>
       <Divider />
-      <CardActions>
-        <Button color="primary" fullWidth variant="text">
-          {content.uploadPicture}
-        </Button>
+      <CardActions sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+        <ImagePicker content={translatedContent.uploadPicture} onFinish={handleUploadPicture} variant='text' color='primary' />
       </CardActions>
     </Card>
   );

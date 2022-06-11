@@ -90,6 +90,7 @@ const BSWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
                     step: 'any',
                     readOnly: true,
                 }}
+
                 sx={{ mt: 1, display: 'block' }}
                 id="outlined-cash-amount"
                 label={`${'Amount'}*`}

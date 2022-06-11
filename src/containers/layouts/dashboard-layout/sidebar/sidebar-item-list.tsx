@@ -23,19 +23,9 @@ const items = [
     title: 'Portfolio',
   },
   {
-    href: '/report',
-    icon: <PieChartOutlineIcon fontSize="small" />,
-    title: 'Report',
-  },
-  {
     href: '/profile',
     icon: <UserIcon fontSize="small" />,
     title: 'Profile',
-  },
-  {
-    href: '/settings',
-    icon: <CogIcon fontSize="small" />,
-    title: 'Settings',
   },
 ];
 

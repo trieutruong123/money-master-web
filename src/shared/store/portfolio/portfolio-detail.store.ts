@@ -147,6 +147,8 @@ class PortfolioDetailStore {
       addNewCryptoCurrency: action,
       addNewStock: action,
 
+      editPortfolioInfo: action,
+
       getStockInfoById: action,
       getCryptoInfoById: action,
       getCashAssetById: action,
@@ -375,6 +377,30 @@ class PortfolioDetailStore {
     }
   }
 
+  async editPortfolioInfo({
+    newName,
+    newCurrency,
+  }: {
+    newName: string;
+    newCurrency: string;
+  }) {
+    const url = `/portfolio/${this.portfolioId}`;
+    const res: { isError: boolean; data: any } = await httpService.put(url, {
+      newName,
+      newCurrency,
+    });
+    if (!res.isError) {
+      runInAction(() => {
+        this.portfolioInfo = res.data;
+      });
+    } else {
+      runInAction(() => {
+        this.portfolioInfo = undefined;
+      });
+    }
+    return res;
+  }
+
   async addNewRealEstate(params: NewRealEstateAsset) {
     rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/realEstate`;
@@ -428,7 +454,7 @@ class PortfolioDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
-      this.cryptoDetail?.push(res.data);
+      Promise.all([this.fetchCryptoCurrency()]);
       return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else {
       if (params.isUsingInvestFund) {

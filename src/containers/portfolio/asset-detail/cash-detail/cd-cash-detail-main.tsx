@@ -119,10 +119,6 @@ const CDCashDetail = observer(({ }: IProps) => {
                     label={PACashBreadcrumbTabs.marketData}
                     value={PACashBreadcrumbTabs.marketData}
                   />
-                  <Tab
-                    label={PACashBreadcrumbTabs.settings}
-                    value={PACashBreadcrumbTabs.settings}
-                  />
                 </TabList>
               </Box>
             </TabContext>

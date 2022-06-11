@@ -96,6 +96,7 @@ export const SDSellStockForm = observer(({ handleFormSubmit }: IProps) => {
         sx={{ mt: 1, display: 'block' }}
         id="outlined-sell-price"
         label={'Sell Price*'}
+        inputProps={{ step: 'any' }}
         {...register('sellPrice')}
         variant="outlined"
         error={typeof errors.sellPrice?.message !== 'undefined'}
@@ -107,6 +108,9 @@ export const SDSellStockForm = observer(({ handleFormSubmit }: IProps) => {
         sx={{ mt: 1, display: 'block' }}
         id="outlined-amount"
         label={'Amount*'}
+        inputProps={{
+          step: 'any',
+        }}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}

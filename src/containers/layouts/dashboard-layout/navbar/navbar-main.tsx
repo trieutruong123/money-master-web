@@ -64,11 +64,11 @@ export const DashboardNavbar = observer((props: any) => {
             <MenuIcon fontSize="small" />
           </IconButton>
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title="Contacts">
+          {/* <Tooltip title="Contacts">
             <IconButton sx={{ ml: 1 }}>
               <UsersIcon fontSize="small" />
             </IconButton>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip title="Notifications">
             <IconButton sx={{ ml: 1 }}>
               <Badge badgeContent={4} color="primary" variant="dot">

@@ -51,7 +51,7 @@ async function login(params: { email: string; password: string }) {
   if (!res.isError) {
     const encryptedToken = cryptoService.encrypt(res.data.token);
     storageService.setLocalStorage(mainConstant.TOKEN_KEY, encryptedToken);
-    userStore.updateUser({ ...res.data });
+    userStore.setUserInfo(res.data);
   }
   authStore.setAuthenticating(false);
   return res;
@@ -69,7 +69,7 @@ async function googleAuthentication() {
     });
     if (!res2?.isError) {
       storageService.setLocalStorage(mainConstant.TOKEN_KEY, res2.data.token);
-      userStore.updateUser({ ...res2.data });
+      userStore.setUserInfo(res2.data);
     }
     authStore.setAuthenticating(false);
     return res2;
@@ -91,7 +91,7 @@ async function facebookAuthentication() {
     });
     if (!res2?.isError) {
       storageService.setLocalStorage(mainConstant.TOKEN_KEY, res2.data.token);
-      userStore.updateUser({ ...res2.data });
+      userStore.setUserInfo(res2.data);
     }
     authStore.setAuthenticating(false);
     return res2;
@@ -112,7 +112,7 @@ async function fetchUserInfo() {
   const url = "/user/me";
   const res: any = await httpService.get(url);
   if (!res.isError) {
-    userStore.updateUser({ ...res.data });
+    userStore.setUserInfo(res.data);
     authStore.setAuthenticating(false);
     return true;
   } else {

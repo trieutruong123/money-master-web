@@ -67,8 +67,12 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
         </Box>
       );
     } else if (
-      Array<any>(TransactionTypeName.WithdrawValue, TransactionTypeName.WithdrawToCash).includes(transactionType)
-    ) {
+      Array<any>(
+        TransactionTypeName.WithdrawToOutside,
+        TransactionTypeName.WithdrawValue,
+        TransactionTypeName.WithdrawToCash,
+        TransactionTypeName.WithdrawToOutside,
+      ).includes(transactionType)) {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowRight fontSize="25" color={colorScheme.red400} />
@@ -107,7 +111,7 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
               boxShadow: 'none',
             }}
           >
-            <CardHeader title="Stock" sx={{ padding: '0px' }} />
+            <CardHeader title="" sx={{ padding: '0px' }} />
             <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
               <MoreHorizIcon />
             </Button>
@@ -155,7 +159,6 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                         {Array<any>(
                           TransactionTypeName.BuyFromCash,
                           TransactionTypeName.BuyFromFund,
-                          TransactionTypeName.BuyFromOutside,
                           TransactionTypeName.AddValue,
                           TransactionTypeName.NewAsset,
                         ).includes(record.singleAssetTransactionType)
@@ -166,7 +169,13 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                             TransactionTypeName.WithdrawToCash
                           ).includes(record.singleAssetTransactionType)
                             ? record.destinationAssetType?.toUpperCase()
-                            : ''}
+                            : Array<any>(
+                              TransactionTypeName.WithdrawToOutside,
+                              TransactionTypeName.BuyFromOutside,
+                            ).includes(record.singleAssetTransactionType) ?
+                              'OUTSIDE'
+                              : ''
+                        }
                       </TableBodyCellSymbol>
                     </TableRow>
                   );

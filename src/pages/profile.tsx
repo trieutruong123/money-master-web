@@ -31,10 +31,10 @@ const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
           </Typography>
           <Grid container spacing={3}>
             <Grid item lg={4} md={6} xs={12}>
-              <AccountProfile content={profilePage} />
+              <AccountProfile translatedContent={profilePage} />
             </Grid>
             <Grid item lg={8} md={6} xs={12}>
-              <AccountProfileDetails content={profilePage.editProfile} />
+              <AccountProfileDetails translatedContent={profilePage.editProfile} />
             </Grid>
           </Grid>
         </Container>

@@ -93,6 +93,9 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ mt: '10px', display: 'block' }}
         id="outlined-sell-price"
+        inputProps={{
+          step: 'any',
+        }}
         label={'*Sell Price'}
         {...register('sellPrice')}
         variant="outlined"
@@ -102,6 +105,9 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
       <TextField
         type="number"
         fullWidth
+        inputProps={{
+          step: 'any',
+        }}
         sx={{ mt: '10px', display: 'block' }}
         id="outlined-amount"
         label={'*Amount'}

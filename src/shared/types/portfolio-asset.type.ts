@@ -2,6 +2,8 @@ export type TransactionType =
   | "newAsset"
   | "addValue"
   | "withdrawValue"
+  | "withdrawToCash"
+  | "withdrawToOutside"
   | "buyFromOutside"
   | "buyFromFund"
   | "buyFromCash"
@@ -9,12 +11,16 @@ export type TransactionType =
   | "moveToFund";
 
 export type TransactionRequestType =
-  | "addvalue"
+  | "newAsset"
+  | "addValue"
+  | "withdrawValue"
   | "withdrawToCash"
-  | "moveToFund"
+  | "withdrawToOutside"
+  | "buyFromOutside"
   | "buyFromFund"
   | "buyFromCash"
-  | "buyFromOutside";
+  | "sellAsset"
+  | "moveToFund";
 
 export interface ITransactionRequest {
   amount: number;

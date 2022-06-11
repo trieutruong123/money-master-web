@@ -14,13 +14,16 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
-import { TransactionTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
-import { StockTransactionList } from 'shared/models';
+import { CashTransactionList, StockTransactionList, TransactionItem } from 'shared/models';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TransactionType } from 'shared/types';
 import { colorScheme } from 'utils';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
+import { cashDetailStore } from 'shared/store';
+import { observer } from 'mobx-react-lite';
+import es from 'date-fns/esm/locale/es/index.js';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -41,16 +44,16 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  transactionHistoryData: StockTransactionList | undefined;
+  transactionHistoryData: CashTransactionList | undefined;
 }
 
-const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
+const CDTransactionHistory = observer(({ transactionHistoryData }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = ['Date', 'Amount', 'Type', 'From/To'];
 
   const renderSingleTransactionIncon = (
-    transactionType: TransactionType | null,
+    record: TransactionItem,
   ) => {
     if (
       Array<any>(
@@ -59,26 +62,52 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
         TransactionTypeName.BuyFromOutside,
         TransactionTypeName.AddValue,
         TransactionTypeName.NewAsset,
-      ).includes(transactionType)
+      ).includes(record.singleAssetTransactionType)
     ) {
-      return (
-        <Box display="flex" alignItems="center" justifyContent={'center'}>
-          <ImArrowLeft fontSize="25" color={colorScheme.green400} />
-          &nbsp; {'BUY'}
-        </Box>
-      );
+      if (cashDetailStore.cashDetail?.id === record.destinationAssetId
+        && record.destinationAssetType === AssetTypeName.cash) {
+        return (
+          <Box display="flex" alignItems="center" justifyContent={'center'}>
+            <ImArrowLeft fontSize="25" color={colorScheme.green400} />
+            &nbsp; {'BUY'}
+          </Box>
+        );
+      }
+      else {
+        return (
+          <Box display="flex" alignItems="center" justifyContent={'center'}>
+            <ImArrowRight fontSize="25" color={colorScheme.red400} />
+            &nbsp; {'TRANSFER'}
+          </Box>
+        );
+      }
     } else if (
-      Array<any>(TransactionTypeName.WithdrawValue, TransactionTypeName.WithdrawToCash).includes(transactionType)
-    ) {
-      return (
-        <Box display="flex" alignItems="center" justifyContent={'center'}>
-          <ImArrowRight fontSize="25" color={colorScheme.red400} />
-          &nbsp;
-          {'WITHDRAW'}
-        </Box>
-      );
+      Array<any>(
+        TransactionTypeName.WithdrawValue,
+        TransactionTypeName.WithdrawToCash,
+        TransactionTypeName.WithdrawToOutside,
+      ).includes(record.singleAssetTransactionType)) {
+      if (cashDetailStore.cashDetail?.id === record.referentialAssetId
+        && record.referentialAssetType === AssetTypeName.cash) {
+        return (
+          <Box display="flex" alignItems="center" justifyContent={'center'}>
+            <ImArrowRight fontSize="25" color={colorScheme.red400} />
+            &nbsp;
+            {'WITHDRAW'}
+          </Box>
+        );
+      }
+      else {
+        return (
+          <Box display="flex" alignItems="center" justifyContent={'center'}>
+            <ImArrowLeft fontSize="25" color={colorScheme.green400} />
+            &nbsp;
+            {'TRANSFER'}
+          </Box>
+        )
+      }
     } else if (
-      Array<any>(TransactionTypeName.MoveToFund).includes(transactionType)
+      Array<any>(TransactionTypeName.MoveToFund).includes(record.singleAssetTransactionType)
     ) {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
@@ -89,6 +118,43 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
     }
     return <></>;
   };
+
+  const renderFromToAssetType = (record: TransactionItem) => {
+    if (Array<any>(
+      TransactionTypeName.BuyFromCash,
+      TransactionTypeName.BuyFromFund,
+      TransactionTypeName.AddValue,
+      TransactionTypeName.NewAsset,
+    ).includes(record.singleAssetTransactionType)) {
+      if (record.destinationAssetId === cashDetailStore.cashDetail?.id &&
+        record.destinationAssetType === AssetTypeName.cash) {
+        return record.referentialAssetType?.toUpperCase();
+      }
+      else {
+        return record.destinationAssetType?.toUpperCase();
+      }
+    }
+    else if (Array<any>(
+      TransactionTypeName.WithdrawToCash,
+      TransactionTypeName.WithdrawValue,
+      TransactionTypeName.MoveToFund,
+    ).includes(record.singleAssetTransactionType)) {
+      if (record.destinationAssetId === cashDetailStore.cashDetail?.id &&
+        record.destinationAssetType === AssetTypeName.cash) {
+        return record.referentialAssetType?.toUpperCase();
+      }
+      else {
+        return record.destinationAssetType?.toUpperCase();
+      }
+    }
+    else if (Array<any>(
+      TransactionTypeName.WithdrawToOutside,
+      TransactionTypeName.BuyFromOutside,
+    ).includes(record.singleAssetTransactionType)) {
+      return 'OUTSIDE';
+    }
+  }
+
 
   return (
     <>
@@ -108,7 +174,7 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
               boxShadow: 'none',
             }}
           >
-            <CardHeader title="Stock" sx={{ padding: '0px' }} />
+            <CardHeader title="" sx={{ padding: '0px' }} />
             <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
               <MoreHorizIcon />
             </Button>
@@ -149,25 +215,11 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                       </TableBodyCellSymbol>
                       <TableBodyCellSymbol align='right'>
                         {renderSingleTransactionIncon(
-                          record.singleAssetTransactionType,
+                          record,
                         )}
                       </TableBodyCellSymbol>
                       <TableBodyCellSymbol align="center">
-                        {Array<any>(
-                          TransactionTypeName.BuyFromCash,
-                          TransactionTypeName.BuyFromFund,
-                          TransactionTypeName.BuyFromOutside,
-                          TransactionTypeName.AddValue,
-                          TransactionTypeName.NewAsset,
-                        ).includes(record.singleAssetTransactionType)
-                          ? record.referentialAssetType?.toUpperCase()
-                          : Array<any>(
-                            TransactionTypeName.WithdrawToCash,
-                            TransactionTypeName.WithdrawValue,
-                            TransactionTypeName.MoveToFund,
-                          ).includes(record.singleAssetTransactionType)
-                            ? record.destinationAssetType?.toUpperCase()
-                            : ''}
+                        {renderFromToAssetType(record)}
                       </TableBodyCellSymbol>
                     </TableRow>
                   );
@@ -179,6 +231,6 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
       ) : null}
     </>
   );
-};
+});
 
 export default CDTransactionHistory;
