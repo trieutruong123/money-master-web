@@ -76,6 +76,7 @@ export const SDStockForm = observer(({ }: IProps) => {
 
   const withdrawToOutside = async (payload: ITransactionRequest) => {
     if (
+      payload.amountInDestinationAssetUnit &&
       stockDetailStore.stockDetail &&
       stockDetailStore.marketData?.c &&
       payload.amountInDestinationAssetUnit >

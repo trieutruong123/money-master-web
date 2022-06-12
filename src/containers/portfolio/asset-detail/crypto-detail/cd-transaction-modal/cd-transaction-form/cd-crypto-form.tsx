@@ -61,10 +61,10 @@ export const CDCryptoForm = observer(({ }: IProps) => {
 
   const sellCrypto = async (payload: ITransactionRequest) => {
     if (
+      payload.amountInDestinationAssetUnit &&
       cryptoDetailStore.cryptoDetail &&
       cryptoDetailStore.marketData?.c &&
-      payload.amountInDestinationAssetUnit >
-      cryptoDetailStore.cryptoDetail?.currentAmountHolding * cryptoDetailStore.marketData.c
+      payload.amountInDestinationAssetUnit > cryptoDetailStore.cryptoDetail?.currentAmountHolding * cryptoDetailStore.marketData.c
     ) {
       setErrorMessage('Amount is greater than your own shares');
       return;
@@ -79,7 +79,7 @@ export const CDCryptoForm = observer(({ }: IProps) => {
   };
 
   const withdrawToOutside = async (payload: ITransactionRequest) => {
-    if (
+    if (payload.amountInDestinationAssetUnit &&
       cryptoDetailStore.cryptoDetail &&
       cryptoDetailStore.marketData?.c &&
       payload.amountInDestinationAssetUnit >

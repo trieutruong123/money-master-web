@@ -1,16 +1,13 @@
 import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
 import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, useMediaQuery, useTheme } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { cashDetailStore } from 'shared/store';
 import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
 import { AssetTypeName, TransactionRequestType } from 'shared/constants';
-import { CurrencyItem } from 'shared/types';
 import { CashItem } from 'shared/models';
 
 type FormValues = {

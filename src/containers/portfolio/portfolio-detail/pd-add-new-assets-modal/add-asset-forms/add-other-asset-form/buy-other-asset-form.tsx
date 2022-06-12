@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
+import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import {
   Box,
   Button,
@@ -16,11 +16,10 @@ import {
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
 import { PersonalInterestCustomAssetItem } from 'shared/models';
 import { portfolioDetailStore } from 'shared/store';
-import CheckBoxButton from 'shared/components/checkbox';
 import { UsingMoneySource } from 'shared/constants';
 import { observer } from 'mobx-react-lite';
 

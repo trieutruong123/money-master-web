@@ -11,18 +11,18 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { lazy, Suspense, useCallback, useState } from 'react';
-import { DatePicker, LocalizationProvider } from '@mui/lab';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { BiLineChart } from 'react-icons/bi';
 import { FcCandleSticks } from 'react-icons/fc';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { stockDetailStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
 
 const AreaChart = lazy(() => import('./area-chart'));
 const CandleStickChart = lazy(() => import('./candle-stick-chart'));
 
-interface IProps {}
+interface IProps { }
 
 const calcTimeInterval = (startDate: Date | null, endDate: Date | null) => {
   const interval = ['1', '5', '15', '30', '60', 'D', 'W', 'M'];
@@ -34,7 +34,7 @@ const calcTimeInterval = (startDate: Date | null, endDate: Date | null) => {
   else return interval[6];
 };
 
-export const SDMarketChart = observer(({}: IProps) => {
+export const SDMarketChart = observer(({ }: IProps) => {
   const [chartType, setChartType] = useState('candlestick');
   const [startDate, setStartDate] = useState(
     dayjs(Date.now()).subtract(2, 'year').toDate(),
@@ -80,7 +80,7 @@ export const SDMarketChart = observer(({}: IProps) => {
 
   return (
     <>
-      {stockDetailStore.OHLC_data.length>=0 ? (
+      {stockDetailStore.OHLC_data.length >= 0 ? (
         <Card
           sx={{
             borderRadius: '12px',

@@ -18,8 +18,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { rootStore, userStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { useRouter } from 'next/router';
 import { content } from 'i18n';
 
