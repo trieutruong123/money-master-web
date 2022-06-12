@@ -27,7 +27,7 @@ const PDHoldingsTab = observer(({ }: IProps) => {
     };
 
     if (portfolioDetailStore.isMissingHoldingsData) fetchData();
-  }, []);
+  }, [portfolioDetailStore.isMissingHoldingsData]);
 
   const {
     cryptoDetail,

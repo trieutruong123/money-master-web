@@ -16,13 +16,14 @@ export enum AssetTypeName {
 
 export const AssetTypeConstants = {
   en: {
-    crypto: "crypto currency",
-    stock: "stock",
-    cash: "cash",
-    bankSaving: "bank saving",
-    realEstate: "real estate",
-    custom: "custom",
-    fund: "fund",
+    crypto: "Crypto currency",
+    stock: "Stock",
+    cash: "Cash",
+    bankSaving: "Bank saving",
+    realEstate: "Real estate",
+    custom: "Custom",
+    fund: "Fund",
+    outside: "Outside",
   },
   vi: {
     crypto: "Tiền kỹ thuật số",
@@ -32,6 +33,7 @@ export const AssetTypeConstants = {
     realEstate: "Bất động sản",
     custom: "Tài sản khác",
     fund: "Qũy đầu tư",
+    outside: "Bên ngoài",
   },
 };
 

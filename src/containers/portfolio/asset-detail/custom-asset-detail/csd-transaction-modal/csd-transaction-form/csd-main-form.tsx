@@ -6,12 +6,18 @@ import { ITransactionRequest, TransferToInvestFundType } from 'shared/types';
 import CSDSellForm from './csd-sell-form';
 import CSDWithdrawToOutside from './csd-withdraw-outside-form';
 import CSDTransferToFundForm from './csd-transfer-to-fund-form';
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
 
 
 interface IProps { }
 
 
 const CSDMainForm = observer(({ }: IProps) => {
+    const router = useRouter();
+    const { locale, query } = router;
+    const content = locale === 'vi' ? i18n['vi'].customAssetDetailPage : i18n['en'].customAssetDetailPage;
+
     const theme = useTheme();
     const [focusedButtonKey, setFocusedButtonKey] = useState(0);
     const [selectedForm, setSelectedForm] = useState<any>(null);
@@ -21,11 +27,11 @@ const CSDMainForm = observer(({ }: IProps) => {
         const fetchAssetPrice = async () => { };
         fetchAssetPrice();
         setSelectedForm(
-            <CSDSellForm key={focusedButtonKey} handleFormSubmit={sellAsset} />,
+            <CSDSellForm content={content} key={focusedButtonKey} handleFormSubmit={sellAsset} />,
         );
     }, []);
 
-    const buttonLabels = ['Sell', 'Transfer', 'Withdraw'];
+    const buttonLabels = [content.transactionForm.sell, content.transactionForm.transfer, content.transactionForm.withdraw];
 
     const handleSelectionChanged = (key: number) => {
         setFocusedButtonKey(key);
@@ -71,16 +77,16 @@ const CSDMainForm = observer(({ }: IProps) => {
     }
 
     const formArray = [
-        <CSDSellForm key={focusedButtonKey} handleFormSubmit={sellAsset} />,
-        <CSDTransferToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
-        <CSDWithdrawToOutside key={focusedButtonKey} handleFormSubmit={withdrawValue} />
+        <CSDSellForm content={content} key={focusedButtonKey} handleFormSubmit={sellAsset} />,
+        <CSDTransferToFundForm content={content} key={focusedButtonKey} handleFormSubmit={moveToFund} />,
+        <CSDWithdrawToOutside content={content} key={focusedButtonKey} handleFormSubmit={withdrawValue} />
     ];
 
     return (
         <Box sx={{ height: 'inherit' }}>
             <Box sx={{ mt: '1rem' }}>
                 <Typography align="center" id="modal-modal-title" variant="h4">
-                    Transaction
+                    {content.transactionForm.title}
                 </Typography>
             </Box>
             <Box sx={{ ml: '3rem', mt: '1rem' }}>

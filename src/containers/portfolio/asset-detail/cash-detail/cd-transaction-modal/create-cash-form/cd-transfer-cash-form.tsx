@@ -19,9 +19,10 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any
 }
 
-export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
+export const TransferCashForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
@@ -68,7 +69,7 @@ export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ my: 1, display: 'block' }}
         id="outlined-amount"
-        label={'*Amount'}
+        label={`${content.transactionForm.inputMoney}*`}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
@@ -91,7 +92,7 @@ export const TransferCashForm = observer(({ handleFormSubmit }: IProps) => {
           height: "2.5rem",
         }}
       >
-        MOVE TO INVEST FUND
+        {content.transactionForm.moveToFund}
       </Button>
     </Box>
   );

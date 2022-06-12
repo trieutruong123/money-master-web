@@ -60,7 +60,7 @@ const CDWithdrawToOutsideForm = observer(({ handleFormSubmit, content }: IProps)
       destinationAssetId: null,
       destinationAssetType: null,
       referentialAssetId: cryptoDetailStore.cryptoDetail?.id,
-      referentialAssetType: AssetTypeName.stock,
+      referentialAssetType: AssetTypeName.cryptoCurrency,
       isTransferringAll: false,
       isUsingFundAsSource: false,
       fee: 0,

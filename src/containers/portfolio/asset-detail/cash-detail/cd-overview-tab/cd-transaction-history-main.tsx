@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
-import { AssetTypeName, TransactionTypeName } from 'shared/constants';
+import { AssetTypeConstants, AssetTypeName, TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
 import { CashTransactionList, StockTransactionList, TransactionItem } from 'shared/models';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -24,6 +24,7 @@ import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
 import { cashDetailStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
 import es from 'date-fns/esm/locale/es/index.js';
+import { useRouter } from 'next/router';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -45,12 +46,17 @@ const TableBodyCell = styled(TableCell)`
 
 interface IProps {
   transactionHistoryData: CashTransactionList | undefined;
+  content: any
 }
 
-const CDTransactionHistory = observer(({ transactionHistoryData }: IProps) => {
+const CDTransactionHistory = observer(({ transactionHistoryData, content }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const headings = ['Date', 'Amount', 'Type', 'From/To'];
+  const headings = [content.transactionHistory.date, content.transactionHistory.amount, content.transactionHistory.type, content.transactionHistory.fromTo];
+
+  const router = useRouter();
+  const { locale } = router;
+  const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
 
   const renderSingleTransactionIncon = (
     record: TransactionItem,
@@ -69,7 +75,7 @@ const CDTransactionHistory = observer(({ transactionHistoryData }: IProps) => {
         return (
           <Box display="flex" alignItems="center" justifyContent={'center'}>
             <ImArrowLeft fontSize="25" color={colorScheme.green400} />
-            &nbsp; {'BUY'}
+            &nbsp; {content.transactionHistory.buy}
           </Box>
         );
       }
@@ -77,7 +83,7 @@ const CDTransactionHistory = observer(({ transactionHistoryData }: IProps) => {
         return (
           <Box display="flex" alignItems="center" justifyContent={'center'}>
             <ImArrowRight fontSize="25" color={colorScheme.red400} />
-            &nbsp; {'TRANSFER'}
+            &nbsp; {content.transactionHistory.trasfer}
           </Box>
         );
       }
@@ -93,7 +99,7 @@ const CDTransactionHistory = observer(({ transactionHistoryData }: IProps) => {
           <Box display="flex" alignItems="center" justifyContent={'center'}>
             <ImArrowRight fontSize="25" color={colorScheme.red400} />
             &nbsp;
-            {'WITHDRAW'}
+            {content.transactionHistory.withdraw}
           </Box>
         );
       }
@@ -102,7 +108,7 @@ const CDTransactionHistory = observer(({ transactionHistoryData }: IProps) => {
           <Box display="flex" alignItems="center" justifyContent={'center'}>
             <ImArrowLeft fontSize="25" color={colorScheme.green400} />
             &nbsp;
-            {'TRANSFER'}
+            {content.transactionHistory.trasfer}
           </Box>
         )
       }
@@ -112,7 +118,7 @@ const CDTransactionHistory = observer(({ transactionHistoryData }: IProps) => {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowRight fontSize="25" color={colorScheme.red400} />
-          &nbsp; {'MOVE'}
+          &nbsp;{content.transactionHistory.move}
         </Box>
       );
     }
@@ -128,10 +134,10 @@ const CDTransactionHistory = observer(({ transactionHistoryData }: IProps) => {
     ).includes(record.singleAssetTransactionType)) {
       if (record.destinationAssetId === cashDetailStore.cashDetail?.id &&
         record.destinationAssetType === AssetTypeName.cash) {
-        return record.referentialAssetType?.toUpperCase();
+        return AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom] || ""
       }
       else {
-        return record.destinationAssetType?.toUpperCase();
+        return AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom] || ""
       }
     }
     else if (Array<any>(
@@ -141,17 +147,17 @@ const CDTransactionHistory = observer(({ transactionHistoryData }: IProps) => {
     ).includes(record.singleAssetTransactionType)) {
       if (record.destinationAssetId === cashDetailStore.cashDetail?.id &&
         record.destinationAssetType === AssetTypeName.cash) {
-        return record.referentialAssetType?.toUpperCase();
+        return AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom] || ""
       }
       else {
-        return record.destinationAssetType?.toUpperCase();
+        return AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom] || ""
       }
     }
     else if (Array<any>(
       TransactionTypeName.WithdrawToOutside,
       TransactionTypeName.BuyFromOutside,
     ).includes(record.singleAssetTransactionType)) {
-      return 'OUTSIDE';
+      return content.transactionHistory.outside;
     }
   }
 

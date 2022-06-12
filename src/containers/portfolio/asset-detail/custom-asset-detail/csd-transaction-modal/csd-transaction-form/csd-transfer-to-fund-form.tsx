@@ -20,6 +20,7 @@ import * as Yup from 'yup';
 
 interface IProps {
     handleFormSubmit: Function;
+    content: any
 }
 
 type FormValues = {
@@ -27,7 +28,7 @@ type FormValues = {
     currencyCode: string;
 };
 
-const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
+const CSDTransferToFundForm = observer(({ handleFormSubmit, content }: IProps) => {
     const theme = useTheme();
     const validationSchema = Yup.object().shape({
         amount: Yup.number(),
@@ -67,7 +68,7 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
                 },
             }}
         >
-            <Typography color='primary'>* All money from asset will be transferred</Typography>
+            <Typography color='primary'>*  {content.transactionForm.allMoneyFromAssetWillBeTransferred}</Typography>
             <TextField
                 type="number"
                 fullWidth
@@ -77,7 +78,7 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
                     readOnly: true,
                 }}
                 id="outlined-amount"
-                label={'Amount*'}
+                label={`${content.transactionForm.amount}*`}
                 value={customAssetsDetailStore.customAssetDetail?.inputMoneyAmount}
                 variant="outlined"
                 error={typeof errors.amount?.message !== 'undefined'}
@@ -86,12 +87,12 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
             <Box mt='10px'></Box>
 
             <FormControl fullWidth>
-                <InputLabel id="currency-list">{'Currency*'}</InputLabel>
+                <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
                 <Select
                     variant="outlined"
                     labelId="currency-list"
                     id="stock-currency-list-select"
-                    label={`*${'Currency'}`}
+                    label={`${content.transactionForm.currency}*`}
                     value={customAssetsDetailStore.customAssetDetail?.inputCurrency || 'USD'}
                     {...register('currencyCode')}
                 >
@@ -115,7 +116,7 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
                     height: '2.5rem',
                 }}
             >
-                TRANSFER TO INVEST FUND
+                {content.transactionForm.moveToFund}
             </Button>
         </Box>
     );

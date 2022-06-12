@@ -19,6 +19,8 @@ import { getCurrencyByCode } from "shared/helpers";
 import { ITransactionRequest, TransferToInvestFundType } from "shared/types";
 import { WithdrawToOutsideForm } from "./cd-withdraw-to-outside";
 import { TransactionRequestType, TransactionTypeConstants } from "shared/constants";
+import { useRouter } from 'next/router';
+import { content as i18n } from 'i18n';
 
 interface IProps { }
 
@@ -27,13 +29,18 @@ export const CreateCashForm = observer(({ }: IProps) => {
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].cashDetailPage : i18n['en'].cashDetailPage;
+
   const assetName = getCurrencyByCode(cashDetailStore.cashDetail?.currencyCode || '')?.name;
-  const buttonLabels = ["Buy", "Sell", "Transfer", 'Withdraw'];
+  const buttonLabels = [content.transactionForm.buy, content.transactionForm.sell, content.transactionForm.transfer, content.transactionForm.withdraw];
 
   useEffect(() => {
     const fetchAssetPrice = async () => { };
     fetchAssetPrice();
-    setSelectedForm(<BuyCashForm key={focusedButtonKey} handleFormSubmit={makeBuyAction} />);
+    setSelectedForm(<BuyCashForm content={content} key={focusedButtonKey} handleFormSubmit={makeBuyAction} />);
   }, []);
 
   async function makeTransferAction(payload: TransferToInvestFundType) {
@@ -88,13 +95,14 @@ export const CreateCashForm = observer(({ }: IProps) => {
   }
 
   const formArray = [
-    <BuyCashForm key={focusedButtonKey} handleFormSubmit={makeBuyAction} />,
-    <SellCashForm key={focusedButtonKey} handleFormSubmit={makeSellAction} />,
+    <BuyCashForm content={content} key={focusedButtonKey} handleFormSubmit={makeBuyAction} />,
+    <SellCashForm content={content} key={focusedButtonKey} handleFormSubmit={makeSellAction} />,
     <TransferCashForm
+      content={content}
       key={focusedButtonKey}
       handleFormSubmit={makeTransferAction}
     />,
-    <WithdrawToOutsideForm key={focusedButtonKey} handleFormSubmit={withdrawToOutside} />
+    <WithdrawToOutsideForm content={content} key={focusedButtonKey} handleFormSubmit={withdrawToOutside} />
   ];
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
@@ -111,7 +119,7 @@ export const CreateCashForm = observer(({ }: IProps) => {
     <Box sx={{ height: "inherit" }}>
       <Box sx={{ mt: "1rem" }}>
         <Typography align="center" id="modal-modal-title" variant="h4">
-          Transaction
+          {content.transactionForm.transaction}
         </Typography>
       </Box>
       <Box sx={{ ml: "3rem", mt: "1rem" }}>

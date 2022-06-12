@@ -24,9 +24,10 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any
 }
 
-export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
+export const SellCashForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
@@ -88,7 +89,7 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ my: 1, display: "block" }}
         id="outlined-amount"
-        label={"*Amount"}
+        label={`${content.transactionForm.inputMoney}*`}
         {...register("amount")}
         variant="outlined"
         error={typeof errors.amount?.message !== "undefined"}
@@ -99,12 +100,12 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
       ></TextField>
       <Box mt='10px'></Box>
       <FormControl fullWidth>
-        <InputLabel id="destination-cash">{'Destination cash*'}</InputLabel>
+        <InputLabel id="destination-cash">{content.transactionForm.destinationCash}*</InputLabel>
         <Select
           variant="outlined"
           labelId="destination-cash"
           id="crypto-destination-cash-select"
-          label={`${'Select destination cash'}*`}
+          label={`${content.transactionForm.destinationCash}*`}
           {...register('destinationCurrencyCode')}
           defaultValue={cashDetailStore.cashList?.at(0)?.currencyCode || 'USD'}
           required
@@ -129,7 +130,7 @@ export const SellCashForm = observer(({ handleFormSubmit }: IProps) => {
           height: "2.5rem",
         }}
       >
-        SELL
+        {content.transactionForm.sellButton}
       </Button>
     </Box>
   );

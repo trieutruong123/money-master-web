@@ -14,9 +14,10 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any
 }
 
-export const WithdrawToOutsideForm = ({ handleFormSubmit }: IProps) => {
+export const WithdrawToOutsideForm = ({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
@@ -69,7 +70,7 @@ export const WithdrawToOutsideForm = ({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ my: 1, display: 'block' }}
         id="outlined-amount"
-        label={'*Amount'}
+        label={`${content.transactionForm.inputMoney}*`}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
@@ -92,7 +93,7 @@ export const WithdrawToOutsideForm = ({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        WITHDRAW TO OUTSIDE
+        {content.transactionForm.withdraw}
       </Button>
     </Box>
   );

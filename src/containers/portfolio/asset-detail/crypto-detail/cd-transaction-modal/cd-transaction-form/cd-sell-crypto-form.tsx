@@ -63,7 +63,7 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit, content }: IProps)
       destinationAssetId: cryptoDetailStore.cashDetail?.find(item => item.currencyCode === data.destinationCurrencyCode)?.id,
       destinationAssetType: AssetTypeName.cash,
       referentialAssetId: cryptoDetailStore.cryptoDetail?.id,
-      referentialAssetType: AssetTypeName.stock,
+      referentialAssetType: AssetTypeName.cryptoCurrency,
       isTransferringAll: false,
       isUsingFundAsSource: false,
       fee: data.fee,

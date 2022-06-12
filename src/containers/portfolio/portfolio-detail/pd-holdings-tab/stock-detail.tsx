@@ -73,10 +73,6 @@ export const StockInvestments = observer(({
   const { collumnsName, settingDropDownMenu } = content;
   const headings = [
     collumnsName.currentPrice,
-    // "Today's Change",
-    // "Today's Gain/Loss"
-    collumnsName.todayChange,
-    collumnsName.totalPL,
     collumnsName.shares,
     collumnsName.total,
     '',

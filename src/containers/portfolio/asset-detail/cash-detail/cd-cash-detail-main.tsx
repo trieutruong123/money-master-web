@@ -20,6 +20,7 @@ import { TabContext, TabList } from "@mui/lab";
 import { getCurrencyByCode } from "shared/helpers";
 import { useRouter } from "next/router";
 import CDAddNewTransactionModal from "./cd-transaction-modal/cd-transaction-modal-main";
+import { content as i18n } from 'i18n';
 
 const CDOverviewMain = lazy(() => import("./cd-overview-tab/cd-overview-main"));
 const CDMarketData = lazy(() => import("./cd-market-data-tab/cd-market-data-main"));
@@ -31,8 +32,9 @@ const CDCashDetail = observer(({ }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
-
   const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].cashDetailPage : i18n['en'].cashDetailPage;
+
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
     : query['portfolioId'] || '';
@@ -87,7 +89,7 @@ const CDCashDetail = observer(({ }: IProps) => {
                 `/portfolio/${cashDetailStore.portfolioId}/cash/${cashDetailStore.cashId}`,
               ]}
               displayNameArr={[
-                'Portfolio',
+                content.breadCurmbs.portfolio,
                 cashDetailStore.portfolioInfo?.name ||
                 cashDetailStore.portfolioId.toString(),
                 cashDetailStore.cashDetail?.currencyCode.toUpperCase() ||
@@ -112,11 +114,11 @@ const CDCashDetail = observer(({ }: IProps) => {
                   indicatorColor="primary"
                 >
                   <Tab
-                    label={PACashBreadcrumbTabs.overview}
+                    label={content.overview}
                     value={PACashBreadcrumbTabs.overview}
                   />
                   <Tab
-                    label={PACashBreadcrumbTabs.marketData}
+                    label={content.marketData}
                     value={PACashBreadcrumbTabs.marketData}
                   />
                 </TabList>
@@ -143,12 +145,6 @@ const CDCashDetail = observer(({ }: IProps) => {
                     <CDMarketData />
                   </Suspense>
                 ) : <></>}
-                {cashDetailStore.selectedTab ===
-                  PACashBreadcrumbTabs.settings ? (
-                  <Suspense fallback={<HypnosisLoading />}>
-                    <h1>You are in setting tab</h1>
-                  </Suspense>
-                ) : null}
               </Grid>
             </Container>
           </Box>
@@ -156,7 +152,7 @@ const CDCashDetail = observer(({ }: IProps) => {
         <Box>
           <CDAddNewTransactionModal />
         </Box>
-        <Tooltip title="Add new transaction">
+        <Tooltip title={content.addNewTransaction}>
           <IconButton
             onClick={() => {
               cashDetailStore.setOpenAddNewTransactionModal(

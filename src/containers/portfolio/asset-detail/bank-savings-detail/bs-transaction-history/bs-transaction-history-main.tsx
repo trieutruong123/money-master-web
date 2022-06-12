@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
-import { TransactionTypeName } from 'shared/constants';
+import { AssetTypeConstants, AssetTypeName, TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
 import { BankSavingsTransactionList } from 'shared/models';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -55,6 +55,7 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [content.transactionHistory.date, content.transactionHistory.amount, content.transactionHistory.type, content.transactionHistory.fromTo];
+  const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
 
   const renderSingleTransactionIncon = (
     transactionType: TransactionType | null,
@@ -169,14 +170,13 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
                           TransactionTypeName.AddValue,
                           TransactionTypeName.NewAsset,
                         ).includes(record.singleAssetTransactionType)
-                          ? record.referentialAssetType?.toUpperCase()
+                          ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom] || ""
                           : Array<any>(
                             TransactionTypeName.WithdrawValue,
                             TransactionTypeName.MoveToFund,
                             TransactionTypeName.WithdrawToCash
                           ).includes(record.singleAssetTransactionType)
-                            ? record.destinationAssetType?.toUpperCase()
-
+                            ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom] || ""
                             : Array<any>(
                               TransactionTypeName.WithdrawToOutside,
                               TransactionTypeName.BuyFromOutside,

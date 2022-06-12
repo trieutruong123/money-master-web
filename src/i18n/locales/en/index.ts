@@ -596,6 +596,7 @@ export const en = {
       title: "Transaction",
       transaction: "Transaction",
       sell: "Sell",
+      buy: "Buy",
       withdraw: "Withdraw",
       transfer: "Transfer",
       allMoneyFromAssetWillBeTransferred:
@@ -628,6 +629,9 @@ export const en = {
       name: "Name",
       inputCurrency: "Input currency",
       description: "Description",
+      interestRate: "Interest rate",
+      termRanage: "Term range",
+      category: "Category",
     },
   },
   cashDetailPage: {
@@ -643,7 +647,9 @@ export const en = {
       transaction: "Transaction",
       sell: "Sell",
       withdraw: "Withdraw",
+      buy: "Buy",
       transfer: "Transfer",
+      inputMoney: "Input money",
       allMoneyFromAssetWillBeTransferred:
         "All money from asset will be transferred",
       allMoneyFromAssetWillBeWithdrawn:

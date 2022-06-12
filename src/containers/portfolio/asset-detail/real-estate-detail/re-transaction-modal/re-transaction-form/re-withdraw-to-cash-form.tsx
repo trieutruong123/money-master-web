@@ -60,7 +60,7 @@ export const REWithdrawToCash = observer(({ handleFormSubmit, content }: IProps)
       destinationAssetType: AssetTypeName.cash,
       referentialAssetId: realEstateDetailStore.assetDetail?.id,
       referentialAssetType: AssetTypeName.realEstate,
-      isTransferringAll: false,
+      isTransferringAll: true,
       isUsingFundAsSource: false,
       fee: data.fee,
       tax: data.tax,
@@ -102,7 +102,7 @@ export const REWithdrawToCash = observer(({ handleFormSubmit, content }: IProps)
       ></TextField>
       <Box mt='10px'></Box>
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{content.transactionForm.currency}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
