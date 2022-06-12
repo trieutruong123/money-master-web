@@ -21,6 +21,9 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TransactionType } from 'shared/types';
 import { colorScheme } from 'utils';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
+
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -45,9 +48,13 @@ interface IProps {
 }
 
 const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].bankSavingDetailPage : i18n['en'].bankSavingDetailPage;
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const headings = ['Date', 'Amount', 'Type', 'From/To'];
+  const headings = [content.transactionHistory.date, content.transactionHistory.amount, content.transactionHistory.type, content.transactionHistory.fromTo];
 
   const renderSingleTransactionIncon = (
     transactionType: TransactionType | null,
@@ -64,7 +71,7 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowLeft fontSize="25" color={colorScheme.green400} />
-          &nbsp; {'BUY'}
+          &nbsp; {content.transactionHistory.buy}
         </Box>
       );
     } else if (
@@ -77,7 +84,7 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowRight fontSize="25" color={colorScheme.red400} />
           &nbsp;
-          {'WITHDRAW'}
+          {content.transactionHistory.withdraw}
         </Box>
       );
     } else if (
@@ -86,7 +93,7 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowRight fontSize="25" color={colorScheme.red400} />
-          &nbsp; {'MOVE'}
+          &nbsp; {content.transactionHistory.move}
         </Box>
       );
     }
@@ -174,7 +181,7 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
                               TransactionTypeName.WithdrawToOutside,
                               TransactionTypeName.BuyFromOutside,
                             ).includes(record.singleAssetTransactionType) ?
-                              'OUTSIDE'
+                              content.transactionHistory.outside
                               : ''
                         }
                       </TableBodyCellSymbol>

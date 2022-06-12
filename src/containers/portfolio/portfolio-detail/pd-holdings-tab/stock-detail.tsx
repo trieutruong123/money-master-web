@@ -147,7 +147,7 @@ export const StockInvestments = observer(({
             boxShadow: 'none',
           }}
         >
-          <CardHeader title="Stock" sx={{ padding: '0px' }} />
+          <CardHeader title={content.title} sx={{ padding: '0px' }} />
 
         </Card>
         {/* <Scrollbars autoHeight> */}
@@ -195,32 +195,7 @@ export const StockInvestments = observer(({
                         record.currentPrice,
                       )}
                     </TableBodyCell>
-                    <TableBodyCell
-                      onClick={() => handleItemClick(record.id.toString())}
-                    >
-                      {/* {renderPriceChange(record.priceChange)}&nbsp;
-                      {renderPercentage(record.percentChange)} */}
-                      {renderPriceChange(
-                        record.currencyCode,
-                        record.currentAmountHolding *
-                        (record.currentPrice - record.purchasePrice),
-                      )}
-                      &nbsp;
-                      {renderPercentage(
-                        (record.currentPrice - record.purchasePrice) /
-                        record.purchasePrice,
-                      )}
-                    </TableBodyCell>
-                    <TableBodyCell
-                      onClick={() => handleItemClick(record.id.toString())}
-                    >
-                      {/* {renderPriceChange(record.profitLossAmount)} */}
-                      {renderPriceChange(
-                        record.currencyCode,
-                        record.currentAmountHolding *
-                        (record.currentPrice - record.purchasePrice),
-                      )}
-                    </TableBodyCell>
+
                     <TableBodyCell
                       onClick={() => handleItemClick(record.id.toString())}
                     >

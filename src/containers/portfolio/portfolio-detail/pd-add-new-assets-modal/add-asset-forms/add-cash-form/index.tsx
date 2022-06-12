@@ -33,6 +33,14 @@ export const AddNewCashForm = observer(
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
 
     const handleFormSubmit = (data: NewCashAsset) => {
+      if (data.isUsingCash) {
+        const cashId = data.usingCashId;
+        const cashDetail = portfolioDetailStore.cashDetail?.find(item => item.id === cashId);
+        if (cashDetail && cashDetail.currencyCode === data.currencyCode) {
+          setErrorMessage("Can't buy cash by using money from itself");
+          return;
+        }
+      }
       if (isExistedCash(data)) {
         addMoreValue(data);
       }

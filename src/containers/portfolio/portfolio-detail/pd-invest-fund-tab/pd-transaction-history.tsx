@@ -27,6 +27,7 @@ import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { useRouter } from 'next/router';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -48,11 +49,15 @@ const TableBodyCell = styled(TableCell)`
 
 interface IProps {
   transactionHistory: Array<InvestFundTransactionItem> | undefined;
+  content: any
 }
 
-const PDTransactionHistory = ({ transactionHistory }: IProps) => {
+const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
+  const { locale } = router;
+  const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
   //const { collumnsName, settingDropDownMenu } = content;
   const headings = [
     // "Today's Change",
@@ -115,14 +120,14 @@ const PDTransactionHistory = ({ transactionHistory }: IProps) => {
               <TableRow>
                 <TableHeaderCell>{'Name'}</TableHeaderCell>
                 <TableHeaderCell sx={{ textAlign: 'center' }}>
-                  {'Direction'}
+                  {content.direction}
                 </TableHeaderCell>
                 <TableHeaderCell sx={{ textAlign: 'center' }}>
-                  {'Amount'}
+                  {content.amount}
                 </TableHeaderCell>
 
                 <TableHeaderCell sx={{ textAlign: 'left' }}>
-                  {'Asset Type'}
+                  {content.assetType}
                 </TableHeaderCell>
               </TableRow>
             </TableHead>
@@ -169,7 +174,7 @@ const PDTransactionHistory = ({ transactionHistory }: IProps) => {
                       {renderAssetTypeIcon(record.referentialAssetType)}
                       &nbsp;&nbsp;
                       {capitalizeFirstLetter(
-                        AssetTypeConstants[
+                        AssetTypeConstants[language][
                         record.referentialAssetType || AssetTypeName.custom
                         ],
                       )}

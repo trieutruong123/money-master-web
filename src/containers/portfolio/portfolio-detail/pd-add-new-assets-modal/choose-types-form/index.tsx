@@ -171,7 +171,7 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
               onClick={() => setOpenNewAssetType(true)}
               fullWidth
             >
-              Add new asset type+
+              {content.addNewAssetType}+
             </Button>
           </ListItem>
         )}
@@ -187,7 +187,7 @@ export const ChooseTypesForm = observer(({ openNextForm, content }: IProps) => {
             <TextField
               id="outlined-input-custom-asset-type"
               type="text"
-              label="Asset type"
+              label={content.inputAssetType}
               variant="outlined"
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}

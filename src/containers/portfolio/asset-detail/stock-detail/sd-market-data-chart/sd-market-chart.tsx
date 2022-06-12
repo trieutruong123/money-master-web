@@ -22,7 +22,6 @@ import { observer } from 'mobx-react-lite';
 const AreaChart = lazy(() => import('./area-chart'));
 const CandleStickChart = lazy(() => import('./candle-stick-chart'));
 
-interface IProps { }
 
 const calcTimeInterval = (startDate: Date | null, endDate: Date | null) => {
   const interval = ['1', '5', '15', '30', '60', 'D', 'W', 'M'];
@@ -34,7 +33,9 @@ const calcTimeInterval = (startDate: Date | null, endDate: Date | null) => {
   else return interval[6];
 };
 
-export const SDMarketChart = observer(({ }: IProps) => {
+interface IProps { content: any }
+
+export const SDMarketChart = observer(({ content }: IProps) => {
   const [chartType, setChartType] = useState('candlestick');
   const [startDate, setStartDate] = useState(
     dayjs(Date.now()).subtract(2, 'year').toDate(),
@@ -121,7 +122,7 @@ export const SDMarketChart = observer(({ }: IProps) => {
                 >
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
-                      label="Start Date"
+                      label={content.marketDataTab.startDate}
                       inputFormat="dd/MM/yyyy"
                       value={startDate}
                       onAccept={handleStartDateChange}
@@ -139,7 +140,7 @@ export const SDMarketChart = observer(({ }: IProps) => {
                 >
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
-                      label="End Date"
+                      label={content.marketDataTab.endDate}
                       inputFormat="dd/MM/yyyy"
                       value={endDate}
                       onChange={handleEndDateChange}
@@ -163,7 +164,7 @@ export const SDMarketChart = observer(({ }: IProps) => {
                     variant="outlined"
                     startIcon={<BiLineChart />}
                   >
-                    Area
+                    {content.marketDataTab.area}
                   </Button>
                   <Button
                     sx={{
@@ -176,7 +177,7 @@ export const SDMarketChart = observer(({ }: IProps) => {
                     variant="outlined"
                     startIcon={<FcCandleSticks />}
                   >
-                    Candle
+                    {content.marketDataTab.candleStick}
                   </Button>
                 </Stack>
               </Grid>

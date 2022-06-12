@@ -42,12 +42,13 @@ const TableBodyCell = styled(TableCell)`
 
 interface IProps {
   transactionHistoryData: StockTransactionList | undefined;
+  content: any
 }
 
-const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
+const CDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const headings = ['Date', 'Amount', 'Type', 'From/To'];
+  const headings = [content.transactionHistory.date, content.transactionHistory.amount, content.transactionHistory.type, content.transactionHistory.fromTo];
   const renderSingleTransactionIncon = (
     transactionType: TransactionType | null,
   ) => {
@@ -63,7 +64,7 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowLeft fontSize="25" color={colorScheme.green400} />
-          &nbsp; {'BUY'}
+          &nbsp; {content.transactionHistory.buy}
         </Box>
       );
     } else if (
@@ -77,7 +78,7 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowRight fontSize="25" color={colorScheme.red400} />
           &nbsp;
-          {'WITHDRAW'}
+          {content.transactionHistory.withdraw}
         </Box>
       );
     } else if (
@@ -86,7 +87,7 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowRight fontSize="25" color={colorScheme.red400} />
-          &nbsp; {'MOVE'}
+          &nbsp; {content.transactionHistory.move}
         </Box>
       );
     }
@@ -173,7 +174,7 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                               TransactionTypeName.WithdrawToOutside,
                               TransactionTypeName.BuyFromOutside,
                             ).includes(record.singleAssetTransactionType) ?
-                              'OUTSIDE'
+                              content.transactionHistory.outside
                               : ''
                         }
                       </TableBodyCellSymbol>

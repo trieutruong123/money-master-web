@@ -100,9 +100,11 @@ export const vi = {
     report: "Báo cáo",
     setting: "Cài đặt",
   },
-  accountDropdown: {
+  dashboardNavbar: {
+    account: "Tài khoản",
     logout: "Đăng xuất",
     settings: "Cài đặt",
+    notification: "Thông báo",
   },
   dashboardPage: {
     title: "Trang chính",
@@ -128,7 +130,10 @@ export const vi = {
   portfolioDetailPage: {
     title: "Danh mục tài sản",
     header: "Tổng quan",
-    breadCrumbs: {
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
+    tabList: {
       holding: "Danh sách",
       investFund: "Quỹ đầu tư",
       settings: "Cài đặt",
@@ -144,13 +149,19 @@ export const vi = {
       customAsset: "Tài sản khác",
     },
     sankeyChart: {
-      title: "Biểu đồ luồng tiền",
+      title: "Biểu đồ dòng tiền",
     },
     settings: {
       editPortfolioInfo: "Chỉnh sửa thông tin danh mục",
       portfolioName: "Tên danh mục",
       currency: "Tiền tệ",
       portfolio: "Danh mục",
+      save: "Lưu",
+    },
+    investFundTab: {
+      amount: "Số lượng",
+      direction: "Hướng",
+      assetType: "Loại tài sản",
     },
     cryptoTable: {
       title: "Tiền kỹ thuật số",
@@ -217,6 +228,21 @@ export const vi = {
         delete: "Xóa tài sản",
       },
     },
+    customAssetTable: {
+      title: "Tài sản khác",
+      collumnsName: {
+        category: "LOẠI",
+        assetName: "TÊN",
+        amount: "SỐ TIỀN",
+        interestRate: `LÃI SUẤT`,
+        termRange: "KỲ HẠN",
+        description: "MÔ TẢ",
+      },
+      settingDropDownMenu: {
+        transferToInvestFund: "Chuyển vào quỹ đầu tư",
+        delete: "Xóa tài sản",
+      },
+    },
     addNewAssets: {
       buttonTooltip: "Thêm tài sản",
       chooseType: {
@@ -227,12 +253,12 @@ export const vi = {
         cash: "Tiền tệ",
         bankSavings: "Tiền gửi ngân hàng",
         others: "Khác+",
+        addNewAssetType: "Thêm loại tài sản",
+        inputAssetType: "Nhập tên loại tài sản",
       },
       searchAssets: {
         title: "Tìm kiếm",
         searchYourAsset: "Tìm kiếm tài sản",
-        addNewAssetType: "Thêm loại tài sản",
-        assetType: "Loại tài sản",
       },
       usingMoneySource: {
         usingFund: "Quỹ đầu tư",
@@ -251,17 +277,19 @@ export const vi = {
         inputDay: "Ngày nhập",
         bankCode: "Mã ngân hàng",
         description: "Mô tả",
+        selectCashSource: "Chọn nguồn tiền",
         fee: "Phí",
         tax: "Thuế",
         addNew: "Thêm",
         addMore: "Thêm",
+        year: "năm",
       },
 
       otherCustomAssetTransaction: {
         title: "Thêm tài sản",
         name: "Tên",
         assetType: "Loại tài sản",
-        inputMoney: "Số tiền gửi",
+        inputMoney: "Số tiền",
         interestRate: "Lãi suất",
         termRange: "Kỳ hạn",
         months: "tháng",
@@ -281,6 +309,7 @@ export const vi = {
         currency: "Tiền tệ",
         inputDay: "Ngày nhập",
         description: "Mô tả",
+        selectCashSource: "Chọn nguồn tiền",
         fee: "Phí",
         tax: "Thuế",
         addMore: "Thêm",
@@ -323,6 +352,7 @@ export const vi = {
         currency: "Tiền tệ",
         inputDay: "Ngày nhập",
         description: "Mô tả",
+        selectCashSource: "Chọn nguồn tiền",
         fee: "Phí",
         tax: "Thuế",
         addMore: "Thêm",
@@ -335,10 +365,14 @@ export const vi = {
     addNewTransaction: "Thêm giao dich mới",
     overview: "Tổng quan",
     marketData: "Thông tin thị trường",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Giao dịch",
       transaction: "Giao dịch",
       sell: "Bán",
+      buy: "Mua",
       withdraw: "Rút",
       transfer: "Chuyển",
       allMoneyFromAssetWillBeTransferred: "Toàn bộ tài sản sẽ được chuyển đi",
@@ -375,8 +409,8 @@ export const vi = {
       currency: "Tiền tệ",
     },
     marketDataTab: {
-      area: "Biểu đồ miền",
-      candleStick: "Biểu đồ nến",
+      area: "Miền",
+      candleStick: "Nến",
       startDate: "Ngày bắt đầu ",
       endDate: "Ngày kết thúc",
       open: "Mở",
@@ -391,9 +425,13 @@ export const vi = {
     addNewTransaction: "Thêm giao dich mới",
     overview: "Tổng quan",
     marketData: "Thông tin thị trường",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Giao dịch",
       transaction: "Giao dịch",
+      buy: "Mua",
       sell: "Bán",
       withdraw: "Rút",
       transfer: "Chuyển",
@@ -433,8 +471,8 @@ export const vi = {
     marketDataTab: {
       timeRange: "Thời gian",
       interval: "Khoảng cách",
-      area: "Biểu đồ miền",
-      candleStick: "Biểu đồ nến",
+      area: "Miền",
+      candleStick: "Nến",
       startDate: "Ngày bắt đầu ",
       endDate: "Ngày kết thúc",
       open: "Mở",
@@ -442,11 +480,26 @@ export const vi = {
       high: "Cao nhất",
       low: "Thấp nhất",
       dailyChange: "Thay đổi trong ngày",
+      minute: "phút",
+      minutes: "phút",
+      hour: "tiếng",
+      hours: "tiếng",
+      day: "ngày",
+      days: "ngày",
+      week: "tuần",
+      weeks: "tuần",
+      month: "tháng",
+      months: "tháng",
+      year: "năm",
+      years: "năm",
     },
   },
   bankSavingDetailPage: {
     title: "Tiền gửi ngân hàng",
     addNewTransaction: "Thêm giao dich mới",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Giao dịch",
       transaction: "Giao dịch",
@@ -455,8 +508,10 @@ export const vi = {
       transfer: "Chuyển",
       allMoneyFromAssetWillBeTransferred: "Toàn bộ tài sản sẽ được chuyển đi",
       allMoneyFromAssetWillBeWithdrawn: "Toàn bộ tài sản sẽ được rút",
+      allMoneyFromAssetWillBeSold: "Toàn bộ tài sản sẽ được bán",
       amount: "Số lượng",
       currency: "Tiền tệ",
+      inputMoney: "Nhập số tiền",
       destinationCash: "Lựa chọn đích đến",
       fee: "Phí",
       tax: "Thuế",
@@ -486,6 +541,9 @@ export const vi = {
   realEstateDetailPage: {
     title: "Bất động sản",
     addNewTransaction: "Thêm giao dich mới",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Giao dịch",
       transaction: "Giao dịch",
@@ -494,9 +552,11 @@ export const vi = {
       transfer: "Chuyển",
       allMoneyFromAssetWillBeTransferred: "Toàn bộ tài sản sẽ được chuyển đi",
       allMoneyFromAssetWillBeWithdrawn: "Toàn bộ tài sản sẽ được rút",
+      allMoneyFromAssetWillBeSold: "Toàn bộ tài sản sẽ được bán",
       amount: "Số lượng",
       currency: "Tiền tệ",
       destinationCash: "Lựa chọn đích đến",
+      inputMoney: "Nhập số tiền",
       fee: "Phí",
       tax: "Thuế",
       sellButton: "BÁN",
@@ -524,6 +584,9 @@ export const vi = {
   customAssetDetailPage: {
     title: "Tải sản khác",
     addNewTransaction: "Thêm giao dich mới",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Giao dịch",
       transaction: "Giao dịch",
@@ -532,6 +595,7 @@ export const vi = {
       transfer: "Chuyển",
       allMoneyFromAssetWillBeTransferred: "Toàn bộ tài sản sẽ được chuyển đi",
       allMoneyFromAssetWillBeWithdrawn: "Toàn bộ tài sản sẽ được rút",
+      allMoneyFromAssetWillBeSold: "Toàn bộ tài sản sẽ được bán",
       amount: "Số lượng",
       currency: "Tiền tệ",
       destinationCash: "Lựa chọn đích đến",
@@ -564,9 +628,13 @@ export const vi = {
     addNewTransaction: "Thêm giao dich mới",
     overview: "Tổng quan",
     marketData: "Thông tin thị trường",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Giao dịch",
       transaction: "Giao dịch",
+      buy: "Mua",
       sell: "Bán",
       withdraw: "Rút",
       transfer: "Chuyển",

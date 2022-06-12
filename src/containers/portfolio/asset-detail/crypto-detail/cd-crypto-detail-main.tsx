@@ -20,6 +20,7 @@ import CDOverviewTab from './cd-overview-tab/cd-overview-main';
 import CDMarketDataTab from './cd-market-data-chart/cd-market-data-tab';
 import { CDCreateTransactionModal } from './cd-transaction-modal/cd-create-transaction-modal';
 import { useRouter } from 'next/router';
+import { content as i18n } from 'i18n';
 
 interface IProps { };
 
@@ -27,8 +28,8 @@ const CDCryptoDetail = observer(({ }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
-
   const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].cryptoDetailPage : i18n['en'].cryptoDetailPage;
 
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
@@ -88,7 +89,7 @@ const CDCryptoDetail = observer(({ }: IProps) => {
                 `/portfolio/${cryptoDetailStore.portfolioId}/crypto/${cryptoDetailStore.cryptoId}`,
               ]}
               displayNameArr={[
-                'Portfolio',
+                content.breadCurmbs.portfolio,
                 cryptoDetailStore.portfolioInfo?.name ||
                 cryptoDetailStore.portfolioId.toString(),
                 cryptoDetailStore.cryptoDetail?.cryptoCoinCode.toUpperCase() ||
@@ -112,11 +113,11 @@ const CDCryptoDetail = observer(({ }: IProps) => {
                   indicatorColor="primary"
                 >
                   <Tab
-                    label={PACryptoBreadcrumbTabs.overview}
+                    label={content.overview}
                     value={PACryptoBreadcrumbTabs.overview}
                   />
                   <Tab
-                    label={PACryptoBreadcrumbTabs.marketData}
+                    label={content.marketData}
                     value={PACryptoBreadcrumbTabs.marketData}
                   />
                 </TabList>
@@ -149,7 +150,7 @@ const CDCryptoDetail = observer(({ }: IProps) => {
         <Box>
           <CDCreateTransactionModal />
         </Box>
-        <Tooltip title="Add new transaction">
+        <Tooltip title={content.addNewTransaction}>
           <IconButton
             onClick={() => {
               cryptoDetailStore.setOpenAddNewTransactionModal(

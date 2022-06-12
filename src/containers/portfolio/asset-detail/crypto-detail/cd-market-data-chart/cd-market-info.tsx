@@ -4,7 +4,11 @@ import { getCurrencyByCode } from 'shared/helpers';
 import { cryptoDetailStore } from 'shared/store';
 import { roundAndAddDotAndCommaSeparator } from 'utils';
 
-const CDMarketInfo = observer(() => {
+interface IProps {
+  content: any
+}
+
+const CDMarketInfo = observer(({ content }: IProps) => {
   const { marketData, cryptoDetail } = cryptoDetailStore;
 
   return (
@@ -60,7 +64,7 @@ const CDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">Change: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.dailyChange}: &nbsp;</Typography>
                   <Typography
                     variant="body1"
                     color={marketData?.dp > 0 ? 'success.main' : 'error.main'}
@@ -79,7 +83,7 @@ const CDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">High: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.high}: &nbsp;</Typography>
                   <Typography variant="body1" color={'success.main'}>
                     {getCurrencyByCode('USD')?.symbol}
                     {marketData?.h}
@@ -92,7 +96,7 @@ const CDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">Low: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.low}: &nbsp;</Typography>
                   <Typography variant="body1" color={'success.main'}>
                     {getCurrencyByCode('USD')?.symbol}
                     {marketData?.l}

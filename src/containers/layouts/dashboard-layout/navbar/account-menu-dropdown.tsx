@@ -8,13 +8,14 @@ import { authStore, userStore } from 'shared/store';
 import { colorScheme } from 'utils';
 
 interface IProps {
+  content: any
   open: boolean;
   anchorEl: HTMLElement | null;
   handleClose: () => void;
 }
 
 const AccountMenuDropdown = observer(
-  ({ open, anchorEl, handleClose }: IProps) => {
+  ({ content, open, anchorEl, handleClose }: IProps) => {
     const router = useRouter();
 
     const handleLogout = () => {
@@ -88,14 +89,14 @@ const AccountMenuDropdown = observer(
             <ListItemIcon>
               <Settings fontSize="small" />
             </ListItemIcon>
-            Settings
+            {content.settings}
           </MenuItem>
         </Link>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          {content.logout}
         </MenuItem>
       </Menu>
     );

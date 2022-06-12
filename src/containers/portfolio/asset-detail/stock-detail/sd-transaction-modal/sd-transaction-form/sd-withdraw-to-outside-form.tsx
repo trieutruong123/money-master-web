@@ -21,6 +21,7 @@ import * as Yup from 'yup';
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any,
 }
 
 type FormValues = {
@@ -30,7 +31,7 @@ type FormValues = {
   tax: number;
 };
 
-const SDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
+const SDWithdrawToOutsideForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const validationSchema = Yup.object().shape({
@@ -89,19 +90,19 @@ const SDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
         sx={{ my: 1, display: 'block' }}
         id="outlined-amount"
         inputProps={{ step: 'any' }}
-        label={'*Amount'}
+        label={`${content.transactionForm.amount}*`}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
         helperText={errors.amount?.message}
       ></TextField>
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency'}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="stock-currency-list-select"
-          label={`*${'Currency'}`}
+          label={`${content.transactionForm.currency}*`}
           defaultValue={stockDetailStore.stockDetail?.currencyCode || 'USD'}
           {...register('currencyCode')}
         >
@@ -125,7 +126,7 @@ const SDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        WITHDRAW
+        {content.transactionForm.withdrawButton}
       </Button>
     </Box>
   );

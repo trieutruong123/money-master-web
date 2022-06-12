@@ -130,7 +130,7 @@ export const BankingInvestments = observer(({
           boxShadow: 'none',
         }}
       >
-        <CardHeader title="Bank Savings" sx={{ padding: '0px' }} />
+        <CardHeader title={content.title} sx={{ padding: '0px' }} />
 
       </Card>
       {/* <Scrollbars autoHide style = {{cursor:'pointer', minWidth: "100%"}}> */}
@@ -148,6 +148,9 @@ export const BankingInvestments = observer(({
           </TableHead>
           <TableBody>
             {bankingDetail.map((record, i) => {
+              if (record.inputMoneyAmount === 0) {
+                return;
+              }
               return (
                 <TableRow
                   key={i}

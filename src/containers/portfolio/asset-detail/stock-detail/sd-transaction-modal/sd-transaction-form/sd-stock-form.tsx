@@ -7,10 +7,17 @@ import SDTransferToFundForm from './sd-transfer-to-fund-form';
 import SDWithdrawToOutside from './sd-withdraw-to-outside-form';
 import { stockDetailStore } from 'shared/store';
 import { ITransactionRequest, TransferToInvestFundType } from 'shared/types';
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
+
 
 interface IProps { }
 
 export const SDStockForm = observer(({ }: IProps) => {
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].stockDetailPage : i18n['en'].stockDetailPage;
+
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
@@ -20,11 +27,15 @@ export const SDStockForm = observer(({ }: IProps) => {
     const fetchAssetPrice = async () => { };
     fetchAssetPrice();
     setSelectedForm(
-      <SDBuyStockForm key={focusedButtonKey} handleFormSubmit={buyMoreStock} />,
+      <SDBuyStockForm key={focusedButtonKey} content={content} handleFormSubmit={buyMoreStock} />,
     );
   }, []);
 
-  const buttonLabels = ['Buy', 'Sell', 'Transfer', 'Withdraw'];
+  const buttonLabels = [
+    content.transactionForm.buy,
+    content.transactionForm.sell,
+    content.transactionForm.transfer,
+    content.transactionForm.withdraw];
 
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
@@ -95,10 +106,10 @@ export const SDStockForm = observer(({ }: IProps) => {
   }
 
   const formArray = [
-    <SDBuyStockForm key={focusedButtonKey} handleFormSubmit={buyMoreStock} />,
-    <SDSellStockForm key={focusedButtonKey} handleFormSubmit={sellStock} />,
-    <SDTransferToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
-    <SDWithdrawToOutside key={focusedButtonKey} handleFormSubmit={withdrawToOutside} />
+    <SDBuyStockForm key={focusedButtonKey} content={content} handleFormSubmit={buyMoreStock} />,
+    <SDSellStockForm key={focusedButtonKey} content={content} handleFormSubmit={sellStock} />,
+    <SDTransferToFundForm key={focusedButtonKey} content={content} handleFormSubmit={moveToFund} />,
+    <SDWithdrawToOutside key={focusedButtonKey} content={content} handleFormSubmit={withdrawToOutside} />
   ];
 
   const handleClose = () => {

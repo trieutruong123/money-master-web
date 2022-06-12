@@ -27,12 +27,12 @@ type FormValues = {
   fee: number;
   tax: number;
 };
-
 interface IProps {
   handleFormSubmit: Function;
+  content: any
 }
 
-export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
+export const CDSellCryptoForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm')); const validationSchema = Yup.object().shape({
     sellPrice: Yup.number()
@@ -96,7 +96,7 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
         inputProps={{
           step: 'any',
         }}
-        label={'*Sell Price'}
+        label={`${content.transactionForm.sellPrice}*`}
         {...register('sellPrice')}
         variant="outlined"
         error={typeof errors.sellPrice?.message !== 'undefined'}
@@ -110,7 +110,7 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
         }}
         sx={{ mt: '10px', display: 'block' }}
         id="outlined-amount"
-        label={'*Amount'}
+        label={`${content.transactionForm.amount}*`}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
@@ -118,12 +118,12 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
       ></TextField>
       <Box mt='10px'></Box>
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency'}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="crypto-currency-list-select"
-          label={`*${'Currency'}`}
+          label={`${content.transactionForm.currency}*`}
           defaultValue={cryptoDetailStore.cryptoDetail?.currencyCode || 'USD'}
           {...register('currencyCode')}
         >
@@ -138,12 +138,12 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
       </FormControl>
       <Box mt='10px'></Box>
       <FormControl fullWidth>
-        <InputLabel id="destination-cash">{'Destination cash*'}</InputLabel>
+        <InputLabel id="destination-cash">{content.transactionForm.destinationCash}*</InputLabel>
         <Select
           variant="outlined"
           labelId="destination-cash"
           id="crypto-destination-cash-select"
-          label={`${'Select destination cash'}*`}
+          label={`${content.transactionForm.destinationCash}*`}
           {...register('destinationCurrencyCode')}
           defaultValue={cryptoDetailStore.cashDetail?.at(0)?.currencyCode || 'USD'}
           required
@@ -167,7 +167,7 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
             }}
             sx={{ mt: '10px', display: 'block' }}
             id="outlined-fee"
-            label={`${"Fee"}`}
+            label={`${content.transactionForm.fee}`}
             {...register('fee')}
             variant="outlined"
             defaultValue={0}
@@ -183,7 +183,7 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
             }}
             sx={{ mt: '10px', display: 'block' }}
             id="outlined-tax"
-            label={`${"Tax (%)"}`}
+            label={`${content.transactionForm.tax} (%)`}
             {...register('tax')}
             variant="outlined"
             defaultValue={0}
@@ -202,7 +202,7 @@ export const CDSellCryptoForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        SELL
+        {content.transactionForm.sellButton}
       </Button>
     </Box>
   );

@@ -68,7 +68,7 @@ export const CashInvestments = observer(({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { collumnsName, settingDropDownMenu } = content;
-  const headings = [collumnsName.total, 'Description', ''];
+  const headings = [collumnsName.total, collumnsName.description, ''];
 
   const renderCurrencyName = (code: string) => {
     if (code) {
@@ -112,7 +112,7 @@ export const CashInvestments = observer(({
           boxShadow: 'none',
         }}
       >
-        <CardHeader title="Cash" sx={{ padding: '0px' }} />
+        <CardHeader title={content.title} sx={{ padding: '0px' }} />
 
       </Card>
       {/* <Scrollbars autoHeight> */}

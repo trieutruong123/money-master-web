@@ -12,6 +12,8 @@ import { ITransactionRequest, TransferToInvestFundType } from "shared/types";
 import BSWithdrawToCash from "./bs-withdraw-to-cash-form";
 import BSWithdrawToOutside from "./bs-withdraw-to-outside";
 import { BSMoveToFundForm } from "./bs-move-to-fund-form";
+import { useRouter } from 'next/router';
+import { content as i18n } from 'i18n';
 
 interface IProps { }
 
@@ -21,12 +23,16 @@ export const CreateBankForm = observer(({ }: IProps) => {
   const [selectedForm, setSelectedForm] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].bankSavingDetailPage : i18n['en'].bankSavingDetailPage;
+
   const portfolioName = bankSavingsDetailStore.portfolioInfo?.name;
   const assetName = bankSavingsDetailStore.assetDetail?.name;
-  const buttonLabels = ["Sell", "Withdraw", "Transfer"];
+  const buttonLabels = [content.transactionForm.sell, content.transactionForm.transfer, content.transactionForm.withdraw];
 
   useEffect(() => {
-    setSelectedForm(<BSWithdrawToCash key={focusedButtonKey} handleFormSubmit={sellAsset} />);
+    setSelectedForm(<BSWithdrawToCash content={content} key={focusedButtonKey} handleFormSubmit={sellAsset} />);
   }, []);
 
   const sellAsset = async (payload: ITransactionRequest) => {
@@ -60,9 +66,9 @@ export const CreateBankForm = observer(({ }: IProps) => {
   }
 
   const formArray = [
-    <BSWithdrawToCash key={focusedButtonKey} handleFormSubmit={sellAsset} />,
-    <BSWithdrawToOutside key={focusedButtonKey} handleFormSubmit={withdrawValue} />,
-    <BSMoveToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
+    <BSWithdrawToCash content={content} key={focusedButtonKey} handleFormSubmit={sellAsset} />,
+    <BSWithdrawToOutside content={content} key={focusedButtonKey} handleFormSubmit={withdrawValue} />,
+    <BSMoveToFundForm content={content} key={focusedButtonKey} handleFormSubmit={moveToFund} />,
   ];
 
   const handleSelectionChanged = (key: number) => {
@@ -79,7 +85,7 @@ export const CreateBankForm = observer(({ }: IProps) => {
     <Box sx={{ height: "inherit" }}>
       <Box sx={{ mt: "1rem" }}>
         <Typography align="center" id="modal-modal-title" variant="h4">
-          Transaction
+          {content.transactionForm.transaction}
         </Typography>
       </Box>
       <Box sx={{ ml: "3rem", mt: "1rem" }}>

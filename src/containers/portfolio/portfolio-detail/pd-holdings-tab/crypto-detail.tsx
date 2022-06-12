@@ -70,10 +70,6 @@ export const CryptoInvestments = observer(({
   const { collumnsName, settingDropDownMenu } = content;
   const headings = [
     collumnsName.currentPrice,
-    // "Today's Change",
-    // "Today's Gain/Loss"
-    collumnsName.todayChange,
-    collumnsName.totalPL,
     collumnsName.amount,
     collumnsName.total,
     '',
@@ -150,7 +146,7 @@ export const CryptoInvestments = observer(({
             boxShadow: 'none',
           }}
         >
-          <CardHeader title="Crypto" sx={{ padding: '0px' }} />
+          <CardHeader title={content.title} sx={{ padding: '0px' }} />
 
         </Card>
         {/* <Scrollbars autoHeight> */}
@@ -196,32 +192,6 @@ export const CryptoInvestments = observer(({
                       {renderPriceWithCommas(
                         record.currencyCode,
                         record.currentPrice,
-                      )}
-                    </TableBodyCell>
-                    <TableBodyCell
-                      onClick={() => handleItemClick(record.id.toString())}
-                    >
-                      {/* {renderPriceChange(record.priceChange)}&nbsp;
-                        {renderPercentage(record.percentChange)} */}
-                      {renderPriceChange(
-                        record.currencyCode,
-                        record.currentAmountHolding *
-                        (record.currentPrice - record.purchasePrice),
-                      )}
-                      &nbsp;
-                      {renderPercentage(
-                        (record.currentPrice - record.purchasePrice) /
-                        record.currentPrice,
-                      )}
-                    </TableBodyCell>
-                    <TableBodyCell
-                      onClick={() => handleItemClick(record.id.toString())}
-                    >
-                      {/* {renderPriceChange(record.profitLossAmount)} */}
-                      {renderPriceChange(
-                        record.currencyCode,
-                        record.currentAmountHolding *
-                        (record.currentPrice - record.purchasePrice),
                       )}
                     </TableBodyCell>
                     <TableBodyCell

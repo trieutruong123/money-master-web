@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ImagePicker } from 'shared/components';
 import { rootStore, userStore } from 'shared/store';
 import { colorScheme } from 'utils';
+import { content as i18n } from 'i18n';
 
 interface IProps {
   translatedContent: any;
@@ -24,18 +25,19 @@ interface IProps {
 export const AccountProfile = observer(({ translatedContent }: IProps) => {
   const router = useRouter();
   const { locale } = router;
+  const content = locale === 'vi' ? i18n['vi'].profilePage : i18n['en'].profilePage;
 
   const handleUploadPicture = async (data: any) => {
     const res = await userStore.updateUserAvatar(data);
     if (res && !res.isError) {
       rootStore.raiseNotification(
-        content[rootStore.locale].success.update,
+        i18n[rootStore.locale].success.update,
         "success"
       );
     }
     else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
+        i18n[rootStore.locale].error.failedToLoadInitialData
       );
     }
   }
@@ -89,7 +91,7 @@ export const AccountProfile = observer(({ translatedContent }: IProps) => {
       </CardContent>
       <Divider />
       <CardActions sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-        <ImagePicker content={translatedContent.uploadPicture} onFinish={handleUploadPicture} variant='text' color='primary' />
+        <ImagePicker content={content.uploadAvatar.uploadAvatar} onFinish={handleUploadPicture} variant='text' color='primary' />
       </CardActions>
     </Card>
   );

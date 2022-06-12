@@ -15,13 +15,24 @@ export enum AssetTypeName {
 }
 
 export const AssetTypeConstants = {
-  crypto: "crypto currency",
-  stock: "stock",
-  cash: "cash",
-  bankSaving: "bank saving",
-  realEstate: "real estate",
-  custom: "custom",
-  fund: "fund",
+  en: {
+    crypto: "crypto currency",
+    stock: "stock",
+    cash: "cash",
+    bankSaving: "bank saving",
+    realEstate: "real estate",
+    custom: "custom",
+    fund: "fund",
+  },
+  vi: {
+    crypto: "Tiền kỹ thuật số",
+    stock: "Cổ phiếu",
+    cash: "Tiền mặt",
+    bankSaving: "Tiền gửi ngân hàng",
+    realEstate: "Bất động sản",
+    custom: "Tài sản khác",
+    fund: "Qũy đầu tư",
+  },
 };
 
 export const PDBreadcrumbTabs = {

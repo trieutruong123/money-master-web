@@ -13,7 +13,11 @@ import { userStore } from 'shared/store';
 import { colorScheme } from 'utils';
 import { observer } from 'mobx-react-lite';
 
-const AccountMenu = observer(() => {
+interface IProps {
+  content: any,
+}
+
+const AccountMenu = observer(({ content }: IProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const open = Boolean(anchorEl);
@@ -35,7 +39,7 @@ const AccountMenu = observer(() => {
 
   return (
     <>
-      <Tooltip title="Account">
+      <Tooltip title={content.account}>
         <IconButton
           onClick={handleClickAccountAvatar}
           aria-controls="account-menu"
@@ -75,6 +79,7 @@ const AccountMenu = observer(() => {
       </Tooltip>
       {!isSm ? (
         <AccountMenuDropdown
+          content={content}
           anchorEl={anchorEl}
           open={open}
           handleClose={handleCloseAccountMenuDropdown}

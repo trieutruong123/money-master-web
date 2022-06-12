@@ -6,6 +6,8 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { BreadcrumbsLink } from "shared/components";
 import { useRouter } from "next/router";
 import { AddNewTransactionModal } from "./re-transaction-modal/re-transaction-modal";
+import { content as i18n } from 'i18n';
+
 
 const REIntroSection = lazy(() => import("./re-intro-section/re-intro-section-main"));
 const RETransactionHistory = lazy(() => import('./re-transaction-history/re-transaction-history-main'));
@@ -18,8 +20,9 @@ const RealEstateDetail = observer(({ }: IProps) => {
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].realEstateDetailPage : i18n['en'].realEstateDetailPage;
 
-  const { query } = router;
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
     : query['portfolioId'] || '';
@@ -71,7 +74,7 @@ const RealEstateDetail = observer(({ }: IProps) => {
           <Container>
             <BreadcrumbsLink
               urlArr={[
-                '/portfolio',
+                content.breadCurmbs.portfolio,
                 `/portfolio/${realEstateDetailStore.portfolioId}`,
                 `/portfolio/${realEstateDetailStore.portfolioId}/real-estate/${realEstateDetailStore.assetDetail}`,
               ]}
@@ -112,7 +115,7 @@ const RealEstateDetail = observer(({ }: IProps) => {
       <Box>
         <AddNewTransactionModal />
       </Box>
-      <Tooltip title="Add new transaction">
+      <Tooltip title={content.addNewTransaction}>
         <IconButton
           onClick={() => {
             realEstateDetailStore.setOpenAddNewTransactionModal(

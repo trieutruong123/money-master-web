@@ -32,9 +32,10 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any
 }
 
-export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
+export const SDBuyStockForm = observer(({ handleFormSubmit, content }: IProps) => {
   const [moneySource, setMoneySource] = useState<string>('outside');
   const [destinationCashCode, setDestinationCashCode] = useState<string>('');
   const theme = useTheme();
@@ -121,7 +122,7 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ mt: '10px', display: 'block' }}
         id="outlined-buy-price"
-        label={'Purchase price*'}
+        label={`${content.transactionForm.purchasePrice}*`}
         inputProps={{ step: 'any' }}
         {...register('purchasePrice')}
         variant="outlined"
@@ -133,7 +134,7 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ mt: '10px', display: 'block' }}
         id="outlined-amount"
-        label={'Shares*'}
+        label={`${content.transactionForm.amount}*`}
         inputProps={{
           step: 'any',
         }}
@@ -144,12 +145,12 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
       ></TextField>
       <Box mt='10px' />
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency*'}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="stock-currency-list-select"
-          label={`${'Currency'}*`}
+          label={`${content.transactionForm.currency}*`}
           defaultValue={stockDetailStore.stockDetail?.currencyCode || 'USD'}
           {...register('currencyCode')}
         >
@@ -164,12 +165,12 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
       </FormControl>
       <Box mt='10px' />
       <FormControl fullWidth>
-        <InputLabel id="source-money">{'Use money from*'}</InputLabel>
+        <InputLabel id="source-money">{content.transactionForm.useMoneyFrom}*</InputLabel>
         <Select
           variant="outlined"
           labelId="source-money"
           id="stock-source-money-select"
-          label={`*${'Use money from*'}`}
+          label={`${content.transactionForm.useMoneyFrom}*`}
           onChange={handleMoneySourceChange}
           defaultValue={moneySource}
           value={moneySource}
@@ -187,12 +188,12 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
       {moneySource === 'cash' ? <>
         <Box mt='10px' />
         <FormControl fullWidth>
-          <InputLabel id="destination-cash-list">{'Select destination cash*'}</InputLabel>
+          <InputLabel id="destination-cash-list">{content.transactionForm.destinationCash}*</InputLabel>
           <Select
             variant="outlined"
             labelId="destination-cash-list"
             id="stock-destination-cash-select"
-            label={`*${'Select destination cash*'}`}
+            label={`${content.transactionForm.destinationCash}*`}
             onChange={handleDestinationCashCode}
             value={destinationCashCode}
             defaultValue={destinationCashCode}
@@ -220,7 +221,7 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
             }}
             sx={{ mt: 1, display: 'block' }}
             id="outlined-fee"
-            label={`${"Fee"}`}
+            label={`${content.transactionForm.fee}`}
             {...register('fee')}
             variant="outlined"
             defaultValue={0}
@@ -236,7 +237,7 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
             }}
             sx={{ mt: 1, display: 'block' }}
             id="outlined-tax"
-            label={`${"Tax (%)"}`}
+            label={`${content.transactionForm.tax} (%)`}
             {...register('tax')}
             variant="outlined"
             defaultValue={0}
@@ -255,7 +256,7 @@ export const SDBuyStockForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        ADD
+        {content.transactionForm.addButton}
       </Button>
     </Box>
   );

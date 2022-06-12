@@ -100,9 +100,11 @@ export const en = {
     profile: "PROFILE",
     setting: "SETTINGS",
   },
-  accountDropdown: {
+  dashboardNavbar: {
+    tooltip: "Account",
     logout: "Logout",
     settings: "Settings",
+    notification: "Notifications",
   },
   dashboardPage: {
     title: "Dashboard",
@@ -130,7 +132,10 @@ export const en = {
   portfolioDetailPage: {
     title: "PORTFOLIO DETAIL",
     header: "Overview",
-    breadCrumbs: {
+    breadCurmbs: {
+      portfolio: "Portfolio",
+    },
+    tabList: {
       holding: "Holdings",
       investFund: "Invest fund",
       settings: "Settings",
@@ -153,6 +158,7 @@ export const en = {
       portfolioName: "Portfolio name",
       currency: "Currency",
       portfolio: "Portfolio",
+      save: "Save",
     },
     cryptoTable: {
       title: "Crypto Currency",
@@ -220,6 +226,21 @@ export const en = {
         delete: "Delete",
       },
     },
+    customAssetTable: {
+      title: "Others",
+      collumnsName: {
+        category: "CATEGORY",
+        assetName: "ASSET NAME",
+        amount: "AMOUNT",
+        interestRate: `INTEREST RATE`,
+        termRange: "TERM RANGE",
+        description: "DESCRIPTION",
+      },
+      settingDropDownMenu: {
+        transferToInvestFund: "Chuyển vào quỹ đầu tư",
+        delete: "Xóa tài sản",
+      },
+    },
     addNewAssets: {
       buttonTooltip: "Add new asset",
       chooseType: {
@@ -230,12 +251,12 @@ export const en = {
         cash: "Cash",
         bankSavings: "Bank Savings",
         others: "Others+",
+        addNewAssetType: "Add new asset type",
+        inputAssetType: "Input asset type",
       },
       searchAssets: {
         title: "Search Assets",
         searchYourAsset: "Search your asset",
-        addNewAssetType: "Add new asset type",
-        assetType: "Asset type",
       },
       usingMoneySource: {
         usingFund: "Invest fund",
@@ -254,10 +275,12 @@ export const en = {
         inputDay: "Input day",
         bankCode: "Bank code",
         description: "Description",
+        selectCashSource: "Select cash source",
         fee: "Fee",
         tax: "Tax",
         addMore: "ADD",
         addNew: "ADD",
+        year: "năm",
       },
       otherCustomAssetTransaction: {
         title: "Add new asset",
@@ -339,9 +362,13 @@ export const en = {
     addNewTransaction: "Add new transaction",
     overview: "Overview",
     marketData: "Market data",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Transaction",
       transaction: "Transaction",
+      buy: "Mua",
       sell: "Sell",
       withdraw: "Withdraw",
       transfer: "Transfer",
@@ -349,7 +376,7 @@ export const en = {
         "All money from asset will be transferred",
       allMoneyFromAssetWillBeWithdrawn:
         "All money from asset will be withdrawn",
-      amount: "Amount",
+      amount: "Shares",
       purchasePrice: "Purchase price",
       sellPrice: "Sell price",
       currency: "Currency",
@@ -397,9 +424,13 @@ export const en = {
     addNewTransaction: "Add new transaction",
     overview: "Overview",
     marketData: "Market data",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Transaction",
       transaction: "Transaction",
+      buy: "Buy",
       sell: "Sell",
       withdraw: "Withdraw",
       transfer: "Transfer",
@@ -450,11 +481,26 @@ export const en = {
       high: "High",
       low: "Low",
       dailyChange: "Daily change",
+      minute: "minute",
+      minutes: "minutes",
+      hour: "hour",
+      hours: "hours",
+      day: "day",
+      days: "days",
+      week: "week",
+      weeks: "weeks",
+      month: "month",
+      months: "months",
+      year: "year",
+      years: "years",
     },
   },
   bankSavingDetailPage: {
     title: "Bank savings",
     addNewTransaction: "Add new transaction",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Transaction",
       transaction: "Transaction",
@@ -467,6 +513,7 @@ export const en = {
         "All money from asset will be withdrawn",
       allMoneyFromAssetWillBeSold: "All money from asset will be sold",
       amount: "Amount",
+      inputMoney: "Input money",
       currency: "Currency",
       destinationCash: "Detination cash",
       fee: "Fee",
@@ -497,6 +544,9 @@ export const en = {
   realEstateDetailPage: {
     title: "Real estate",
     addNewTransaction: "Add new transaction",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Transaction",
       transaction: "Transaction",
@@ -511,6 +561,7 @@ export const en = {
       amount: "Amount",
       currency: "Currency",
       destinationCash: "Detination cash",
+      inputMoney: "Input money",
       fee: "Fee",
       tax: "tax",
       sellButton: "SELL",
@@ -538,6 +589,9 @@ export const en = {
   customAssetDetailPage: {
     title: "Others",
     addNewTransaction: "Add new transaction",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Transaction",
       transaction: "Transaction",
@@ -581,6 +635,9 @@ export const en = {
     addNewTransaction: "Add new transaction",
     overview: "Overview",
     marketData: "Market data",
+    breadCurmbs: {
+      portfolio: "Danh mục",
+    },
     transactionForm: {
       title: "Transaction",
       transaction: "Transaction",

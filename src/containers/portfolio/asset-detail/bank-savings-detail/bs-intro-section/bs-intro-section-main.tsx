@@ -3,8 +3,15 @@ import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { getCurrencyByCode } from 'shared/helpers';
 import { precisionRound, roundAndAddDotAndCommaSeparator } from 'utils/number';
 import { bankSavingsDetailStore } from "shared/store";
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
+
 
 const BSIntroSection = observer(() => {
+    const router = useRouter();
+    const { locale, query } = router;
+    const content = locale === 'vi' ? i18n['vi'].bankSavingDetailPage : i18n['en'].bankSavingDetailPage;
+
     const assetDetail = bankSavingsDetailStore.assetDetail;
     const renderInterestRate = (interestRate: number) => {
         const rate = roundAndAddDotAndCommaSeparator(interestRate, 4);
@@ -67,7 +74,7 @@ const BSIntroSection = observer(() => {
                             alignItems="center"
                             justifyContent="center"
                         >
-                            <Typography variant="body1">Name: &nbsp;{assetDetail?.name}</Typography>
+                            <Typography variant="body1">{content.introSection.name}: &nbsp;{assetDetail?.name}</Typography>
                         </Grid>
                         <Grid
                             container
@@ -76,7 +83,7 @@ const BSIntroSection = observer(() => {
                             alignItems="center"
                             justifyContent="center"
                         >
-                            <Typography variant="body1">Interest rates: &nbsp;{renderInterestRate(assetDetail?.interestRate || 0)}</Typography>
+                            <Typography variant="body1">{content.introSection.interestRate}: &nbsp;{renderInterestRate(assetDetail?.interestRate || 0)}</Typography>
                         </Grid>
                         <Grid
                             container
@@ -85,7 +92,7 @@ const BSIntroSection = observer(() => {
                             alignItems="center"
                             justifyContent="center"
                         >
-                            <Typography variant="body1">Term range: &nbsp;{renderTermRange(assetDetail?.termRange || 0, 'months')}</Typography>
+                            <Typography variant="body1">{content.introSection.termRange}: &nbsp;{renderTermRange(assetDetail?.termRange || 0, 'months')}</Typography>
                         </Grid>
                         <Grid
                             container
@@ -94,7 +101,7 @@ const BSIntroSection = observer(() => {
                             alignItems="center"
                             justifyContent="center"
                         >
-                            <Typography variant="body1" width='70%'>Description: &nbsp;{assetDetail?.description}</Typography>
+                            <Typography variant="body1" width='70%'>{content.introSection.description}: &nbsp;{assetDetail?.description}</Typography>
                         </Grid>
                     </Stack>
                 </CardContent>

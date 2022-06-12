@@ -30,9 +30,10 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any
 }
 
-export const BSMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
+export const BSMoveToFundForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const validationSchema = Yup.object().shape({
     amount: Yup.number(),
@@ -73,7 +74,7 @@ export const BSMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
         },
       }}
     >
-      <Typography color='primary'>* All money from asset will be transferred</Typography>
+      <Typography color='primary'>* {content.transactionForm.allMoneyFromAssetWillBeTransferred}</Typography>
       <TextField
         type="number"
         fullWidth
@@ -83,7 +84,7 @@ export const BSMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
           readOnly: true,
         }}
         id="outlined-amount"
-        label={'Amount*'}
+        label={`${content.transactionForm.amount}*`}
         value={realEstateDetailStore.assetDetail?.inputMoneyAmount}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
@@ -92,12 +93,12 @@ export const BSMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
       <Box mt='10px'></Box>
 
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency Code*'}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="stock-currency-list-select"
-          label={`*${'Currency Code'}`}
+          label={`${content.transactionForm.currency}*`}
           value={realEstateDetailStore.assetDetail?.inputCurrency || 'USD'}
           {...register('currencyCode')}
         >
@@ -121,7 +122,7 @@ export const BSMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
           height: "2.5rem",
         }}
       >
-        TRANSFER TO FUND
+        {content.transactionForm.moveToFund}
       </Button>
     </Box>
   );

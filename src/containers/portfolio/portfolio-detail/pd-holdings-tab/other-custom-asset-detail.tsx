@@ -72,10 +72,10 @@ export const OtherCustomAssetInvestments = observer(({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { collumnsName, settingDropDownMenu } = content;
   const headings = [
-    'Amount',
-    'Interest Rate',
-    'Term Range',
-    'Description',
+    collumnsName.amount,
+    collumnsName.interestRate,
+    collumnsName.termRange,
+    collumnsName.description,
     '',
   ];
 
@@ -131,7 +131,7 @@ export const OtherCustomAssetInvestments = observer(({
           boxShadow: 'none',
         }}
       >
-        <CardHeader title="Others" sx={{ padding: '0px' }} />
+        <CardHeader title={content.title} sx={{ padding: '0px' }} />
 
       </Card>
       {/* <Scrollbars autoHide style = {{cursor:'pointer', minWidth: "100%"}}> */}
@@ -139,8 +139,8 @@ export const OtherCustomAssetInvestments = observer(({
         <Table>
           <TableHead>
             <TableRow>
-              <TableHeaderCell>Category</TableHeaderCell>
-              <TableHeaderCell>Asset Name</TableHeaderCell>
+              <TableHeaderCell>{content.collumnsName.category}</TableHeaderCell>
+              <TableHeaderCell>{content.collumnsName.assetName}</TableHeaderCell>
               {headings.map((heading, i) => (
                 <TableHeaderCell key={i} sx={{ textAlign: 'right' }}>
                   {heading}
@@ -152,7 +152,7 @@ export const OtherCustomAssetInvestments = observer(({
             {customAssetDetail.map((record, recordIdx) => {
               const { assets } = record;
               return assets.map((item, itemIdx) => {
-                if (item.inputMoneyAmount) {
+                if (item.inputMoneyAmount === 0) {
                   return;
                 }
                 return (

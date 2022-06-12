@@ -5,10 +5,10 @@ import { Sankey } from "../pd-insight-chart/sankey-chart";
 
 interface IProps {
     sankeyFlowData: SankeyDataLink[]
-
+    content: any
 }
 
-const PDSankeyChart = ({ sankeyFlowData }: IProps) => {
+const PDSankeyChart = ({ content, sankeyFlowData }: IProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -25,7 +25,7 @@ const PDSankeyChart = ({ sankeyFlowData }: IProps) => {
                 }}
             >
                 <CardHeader
-                    title={'Sankey chart'}
+                    title={`${content.title}`}
                     sx={{ height: '3rem', padding: '0px' }}
                 />
 

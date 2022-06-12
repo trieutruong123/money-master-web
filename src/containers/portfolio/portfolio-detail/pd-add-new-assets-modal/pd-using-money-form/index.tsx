@@ -32,19 +32,19 @@ export const UsingMoneySourceForm = observer(({ openNextForm, openPreviousForm, 
         {
             id: uuid(),
             type: UsingMoneySource.usingOutside,
-            label: UsingMoneyContants.usingOutside,
+            label: content.usingOutside,
             icon: <BiLinkExternal />,
         },
         {
             id: uuid(),
             type: UsingMoneySource.usingCash,
-            label: UsingMoneyContants.usingCash,
+            label: content.usingCash,
             icon: <MdOutlineMoney />,
         },
         {
             id: uuid(),
             type: UsingMoneySource.usingFund,
-            label: UsingMoneyContants.usingFund,
+            label: content.usingFund,
             icon: <AiFillFund />,
         },
     ];
@@ -72,7 +72,7 @@ export const UsingMoneySourceForm = observer(({ openNextForm, openPreviousForm, 
                         fontSize: '2rem',
                     }}
                 >
-                    {'Source'}
+                    {content.title}
                 </h2>
                 <IconButton
                     sx={{ position: 'absolute', left: '2rem', top: '1rem' }}

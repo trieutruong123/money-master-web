@@ -22,6 +22,7 @@ import * as Yup from 'yup';
 
 interface IProps {
     handleFormSubmit: Function;
+    content: any
 }
 
 type FormValues = {
@@ -31,7 +32,7 @@ type FormValues = {
     tax: number;
 };
 
-const BSWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
+const BSWithdrawToOutside = observer(({ handleFormSubmit, content }: IProps) => {
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down('sm'));
     const validationSchema = Yup.object().shape({
@@ -81,7 +82,7 @@ const BSWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
                 },
             }}
         >
-            <Typography color='primary'>* All money from asset will be withdrawn</Typography>
+            <Typography color='primary'>* {content.transactionForm.allMoneyFromAssetWillBeWithdrawn}</Typography>
 
             <TextField
                 type="number"
@@ -93,7 +94,7 @@ const BSWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
 
                 sx={{ mt: 1, display: 'block' }}
                 id="outlined-cash-amount"
-                label={`${'Amount'}*`}
+                label={`${content.transactionForm.amount}*`}
                 variant="outlined"
                 value={bankSavingsDetailStore.assetDetail?.inputMoneyAmount}
                 error={typeof errors.amount?.message !== 'undefined'}
@@ -102,12 +103,12 @@ const BSWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
             <Box mt='10px'></Box>
 
             <FormControl fullWidth>
-                <InputLabel id="currency-list">{'Currency Code'}</InputLabel>
+                <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
                 <Select
                     variant="outlined"
                     labelId="currency-list"
                     id="cash-currency-list-select"
-                    label={`${'Currency Code'}*`}
+                    label={`${content.transactionForm.currency}*`}
                     value={bankSavingsDetailStore.assetDetail?.inputCurrency.toUpperCase()}
                 >
                     {currencyList.map((item, index) => {
@@ -130,7 +131,7 @@ const BSWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
                     height: '2.5rem',
                 }}
             >
-                WITHDRAW
+                {content.transactionForm.withdrawButton}
             </Button>
         </Box>
     );

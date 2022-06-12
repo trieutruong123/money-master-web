@@ -9,8 +9,10 @@ import { portfolioDetailStore, rootStore } from 'shared/store';
 import SaveIcon from '@mui/icons-material/Save';
 import { content } from 'i18n';
 import { DataArray } from '@mui/icons-material';
+import { convertLength } from '@mui/material/styles/cssUtils';
 
 interface IProps {
+    content: any
 }
 
 type FormValues = {
@@ -18,7 +20,8 @@ type FormValues = {
     currencyCode: string;
 };
 
-const PDEditPortfolioInfo = ({ }: IProps) => {
+const PDEditPortfolioInfo = ({ content }: IProps) => {
+
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -72,7 +75,7 @@ const PDEditPortfolioInfo = ({ }: IProps) => {
                         boxShadow: 'none',
                     }}
                 >
-                    <CardHeader title="Edit portfolio info" sx={{ padding: '0px' }} />
+                    <CardHeader title={content.editPortfolioInfo} sx={{ padding: '0px' }} />
 
                 </Card>
                 <CardContent
@@ -93,7 +96,7 @@ const PDEditPortfolioInfo = ({ }: IProps) => {
                                     id="outlined-name"
                                     variant="outlined"
                                     type="text"
-                                    label={'*Name'}
+                                    label={`${content.portfolioName}*`}
                                     defaultValue={portfolioDetail.name}
                                     {...register('name')}
                                     error={typeof errors.name?.message !== 'undefined'}
@@ -103,11 +106,11 @@ const PDEditPortfolioInfo = ({ }: IProps) => {
                             </Grid>
                             <Grid item sm={12} xs={12} mt={1}>
                                 <FormControl fullWidth>
-                                    <InputLabel id="currency-list">*Currency</InputLabel>
+                                    <InputLabel id="currency-list">{content.currency}*</InputLabel>
                                     <Select
                                         id="currency-list-select"
                                         labelId="currency-list"
-                                        label="*Currency"
+                                        label={`${content.currency}*`}
                                         defaultValue={
                                             portfolioDetail.initialCurrency.toUpperCase()
                                         }
@@ -143,7 +146,7 @@ const PDEditPortfolioInfo = ({ }: IProps) => {
                             }}
                             startIcon={<SaveIcon />}
                         >
-                            Save
+                            {content.save}
                         </Button>
                     </Box>
                 </CardContent>

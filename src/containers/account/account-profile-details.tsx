@@ -21,7 +21,7 @@ import { observer } from 'mobx-react-lite';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { useRouter } from 'next/router';
-import { content } from 'i18n';
+import { content as i18n } from 'i18n';
 
 interface IProps {
   translatedContent: any,
@@ -37,6 +37,8 @@ type FormValues = {
 export const AccountProfileDetails = observer(({ translatedContent }: IProps) => {
   const router = useRouter();
   const { locale } = router;
+  const content = locale === 'vi' ? i18n['vi'].profilePage : i18n['en'].profilePage;
+
   const [date, setDate] = useState<Date | null>(new Date());
   const user = userStore.user;
   const validationSchema = Yup.object().shape({
@@ -51,9 +53,8 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
   const { errors } = formState;
 
 
-  const genders = [{ id: 'male', content: 'Male' }, { id: 'female', content: 'Female' }]
-  console.log(translatedContent);
-  const { header, body, footer } = translatedContent;
+  const genders = [{ id: 'male', content: content.editProfile.male }, { id: 'female', content: content.editProfile.female }]
+    ;
 
   const onSubmit: SubmitHandler<FormValues> = useCallback(async (data: any) => {
     const payload = {
@@ -67,13 +68,13 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
 
     if (res && !res.isError) {
       rootStore.raiseNotification(
-        content[rootStore.locale].success.update,
+        i18n[rootStore.locale].success.update,
         "success"
       );
     }
     else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
+        i18n[rootStore.locale].error.failedToLoadInitialData
       );
     }
   }, []);
@@ -90,7 +91,7 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
       onSubmit={handleSubmit(onSubmit)}
     >
       <Card>
-        <CardHeader subheader={header.content} title={header.title} />
+        <CardHeader subheader={content.editProfile.title} title={content.editProfile.content} />
         <Divider />
         <CardContent>
           <Grid container spacing={3}>
@@ -99,7 +100,7 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
                 id="outlined-email"
                 variant="outlined"
                 type="text"
-                label={'Email*'}
+                label={`${content.editProfile.email}*`}
                 InputProps={{
                   readOnly: true,
                 }}
@@ -116,7 +117,7 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
                 id="outlined-name"
                 variant="outlined"
                 type="text"
-                label={'Last name*'}
+                label={`${content.editProfile.lastName}*`}
                 defaultValue={user?.lastName}
                 {...register('lastName')}
                 error={typeof errors.lastName?.message !== 'undefined'}
@@ -129,7 +130,7 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
                 id="outlined-name"
                 variant="outlined"
                 type="text"
-                label={'First name*'}
+                label={`${content.editProfile.firstName}*`}
                 defaultValue={user?.firstName}
                 {...register('firstName')}
                 error={typeof errors.firstName?.message !== 'undefined'}
@@ -140,11 +141,11 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
 
             <Grid item sm={6} xs={12} >
               <FormControl fullWidth>
-                <InputLabel id="gender">*Gender</InputLabel>
+                <InputLabel id="gender">{content.editProfile.gender}*</InputLabel>
                 <Select
                   id="gender-select"
                   labelId="gender"
-                  label="*Gender"
+                  label={`${content.editProfile.gender}*`}
                   defaultValue={
                     user?.gender || ''
                   }
@@ -164,7 +165,7 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
             <Grid item sm={6} xs={12}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
-                  label="Birthday"
+                  label={`${content.editProfile.birthday}`}
                   inputFormat="dd/MM/yyyy"
                   value={date}
                   onChange={handleDateChange}
@@ -186,7 +187,7 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
           }}
         >
           <Button color="primary" variant="contained" type='submit'>
-            {footer.saveDetails}
+            {content.editProfile.saveDetails}
           </Button>
         </Box>
       </Card>

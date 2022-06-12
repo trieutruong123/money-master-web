@@ -4,8 +4,14 @@ import { Suspense, useEffect } from 'react';
 import { rootStore, cryptoDetailStore } from 'shared/store';
 import { CDMarketChart } from './cd-market-chart';
 import CDMarketInfo from './cd-market-info';
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
 
 const CDMarketDataTab = observer(() => {
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].cryptoDetailPage : i18n['en'].cryptoDetailPage
+
   useEffect(() => {
     const { portfolioId, cryptoId } = cryptoDetailStore;
     const fetchData = async () => {
@@ -26,11 +32,11 @@ const CDMarketDataTab = observer(() => {
   return (
     <>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
-        <CDMarketInfo />
+        <CDMarketInfo content={content} />
       </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <Suspense fallback={<></>}>
-          <CDMarketChart />
+          <CDMarketChart content={content} />
         </Suspense>
       </Grid>
     </>

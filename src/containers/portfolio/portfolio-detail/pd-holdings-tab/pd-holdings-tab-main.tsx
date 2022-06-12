@@ -10,14 +10,14 @@ import { OtherCustomAssetInvestments } from './other-custom-asset-detail';
 import { AssetType } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { useEffect } from 'react';
-
+import { content as i18n } from 'i18n';
 interface IProps {
-  content: any;
 }
 
-const PDHoldingsTab = observer(({ content }: IProps) => {
+const PDHoldingsTab = observer(({ }: IProps) => {
   const router = useRouter();
-  const { locale } = useRouter();
+  const { locale } = router;
+  const content = locale === 'vi' ? i18n['vi'].portfolioDetailPage : i18n['en'].portfolioDetailPage;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,7 +129,7 @@ const PDHoldingsTab = observer(({ content }: IProps) => {
         {typeof customAssetDetail !== undefined && customAssetDetail?.length ? (
           <Grid item lg={12} md={12} xl={12} xs={12}>
             <OtherCustomAssetInvestments
-              content={content.bankSavingsTable}
+              content={content.customAssetTable}
               customAssetDetail={customAssetDetail}
               deleteAsset={deleteAsset}
               transferAssetToInvestFund={transferAssetToInvestFund}

@@ -20,6 +20,7 @@ import { DeleteAssetModal } from './pd-delete-asset-modal';
 import { TabContext, TabList } from '@mui/lab';
 import { useRouter } from 'next/router';
 import { PDTransferAssetToInvestFundModal } from './pd-transfer-to-invest-fund-modal/pd-transfer-to-invest-fund-modal';
+import { content as i18n } from 'i18n';
 
 const PDReportTab = lazy(() => import('./pd-report-tab/pd-report-tab-main'));
 const PDHoldingsTab = lazy(() => import('./pd-holdings-tab/pd-holdings-tab-main'));
@@ -31,19 +32,21 @@ const PDSettingsTab = lazy(
 );
 
 interface IProps {
-  content: any;
 }
 
-const PortfolioDetail = observer(({ content }: IProps) => {
+const PortfolioDetail = observer(({ }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { isOpenAddNewAssetModal } = portfolioDetailStore;
-  const router = useRouter();
 
-  const { query } = router;
+  const router = useRouter();
+  const { query, locale } = router;
+  const content = locale === 'vi' ? i18n['vi'].portfolioDetailPage : i18n['en'].portfolioDetailPage;
+
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
     : query['portfolioId'] || '';
+
+  const { isOpenAddNewAssetModal } = portfolioDetailStore;
 
   useEffect(() => {
     portfolioDetailStore.resetInitialState();
@@ -105,7 +108,7 @@ const PortfolioDetail = observer(({ content }: IProps) => {
                 `/portfolio/${portfolioDetailStore.portfolioId}`,
               ]}
               displayNameArr={[
-                'Portfolio',
+                content.breadCurmbs.portfolio,
                 portfolioDetailStore.portfolioInfo?.name ||
                 portfolioDetailStore.portfolioId.toString(),
               ]}
@@ -123,13 +126,13 @@ const PortfolioDetail = observer(({ content }: IProps) => {
                   textColor="primary"
                   indicatorColor="primary"
                 >
-                  <Tab label="Holdings" value={PDBreadcrumbTabs.holdings} />
-                  <Tab label="Report" value={PDBreadcrumbTabs.report} />
+                  <Tab label={content.tabList.holding} value={PDBreadcrumbTabs.holdings} />
+                  <Tab label={content.tabList.report} value={PDBreadcrumbTabs.report} />
                   <Tab
-                    label="Invest Fund"
+                    label={content.tabList.investFund}
                     value={PDBreadcrumbTabs.investFund}
                   />
-                  <Tab label="Settings" value={PDBreadcrumbTabs.settings} />
+                  <Tab label={content.tabList.settings} value={PDBreadcrumbTabs.settings} />
                 </TabList>
               </Box>
             </TabContext>
@@ -137,12 +140,12 @@ const PortfolioDetail = observer(({ content }: IProps) => {
               {portfolioDetailStore.selectedTabs ===
                 PDBreadcrumbTabs.holdings ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                  <PDHoldingsTab content={content} />
+                  <PDHoldingsTab />
                 </Suspense>
               ) : null}
               {portfolioDetailStore.selectedTabs === PDBreadcrumbTabs.report ? (
                 <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
-                  <PDReportTab content={content} />
+                  <PDReportTab />
                 </Suspense>
               ) : null}
               {portfolioDetailStore.selectedTabs ===
@@ -161,10 +164,10 @@ const PortfolioDetail = observer(({ content }: IProps) => {
           </Container>
         </Box>
       </Box>
-      <AddNewAssetsModal content={content.addNewAssets} />
+      <AddNewAssetsModal />
       <DeleteAssetModal />
       <PDTransferAssetToInvestFundModal />
-      <Tooltip title="Add new asset">
+      <Tooltip title={content.addNewAssets.buttonTooltip}>
         <IconButton
           onClick={() => {
             portfolioDetailStore.setOpenAddNewAssetModal(

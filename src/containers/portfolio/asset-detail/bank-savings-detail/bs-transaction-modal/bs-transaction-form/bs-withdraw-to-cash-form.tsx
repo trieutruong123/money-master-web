@@ -30,9 +30,10 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any,
 }
 
-export const BSWithdrawToCash = observer(({ handleFormSubmit }: IProps) => {
+export const BSWithdrawToCash = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const validationSchema = Yup.object().shape({
@@ -83,7 +84,7 @@ export const BSWithdrawToCash = observer(({ handleFormSubmit }: IProps) => {
         },
       }}
     >
-      <Typography color='primary'>* All money from asset will be sold</Typography>
+      <Typography color='primary'>* {content.transactionForm.allMoneyFromAssetWillBeSold}</Typography>
       <TextField
         type="number"
         fullWidth
@@ -93,7 +94,7 @@ export const BSWithdrawToCash = observer(({ handleFormSubmit }: IProps) => {
         }}
         sx={{ mt: 1, display: 'block' }}
         id="outlined-cash-amount"
-        label={`${'Amount'}*`}
+        label={`${content.transactionForm.inputMoney}*`}
         variant="outlined"
         value={bankSavingsDetailStore.assetDetail?.inputMoneyAmount}
         error={typeof errors.amount?.message !== 'undefined'}
@@ -101,12 +102,12 @@ export const BSWithdrawToCash = observer(({ handleFormSubmit }: IProps) => {
       ></TextField>
       <Box mt='10px'></Box>
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency Code*'}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="cash-currency-list-select"
-          label={`${'Currency Code'}*`}
+          label={`${content.transactionForm.currency}*`}
           value={bankSavingsDetailStore.assetDetail?.inputCurrency.toUpperCase()}
         >
           {currencyList.map((item, index) => {
@@ -120,12 +121,12 @@ export const BSWithdrawToCash = observer(({ handleFormSubmit }: IProps) => {
       </FormControl>
       <Box mt='10px'></Box>
       <FormControl fullWidth>
-        <InputLabel id="destination-cash">{'Destination cash*'}</InputLabel>
+        <InputLabel id="destination-cash">{content.transactionForm.destinationCash}*</InputLabel>
         <Select
           variant="outlined"
           labelId="destination-cash"
           id="crypto-destination-cash-select"
-          label={`${'Select destination cash'}*`}
+          label={`${content.transactionForm.destinationCash}*`}
           {...register('destinationCurrencyCode')}
           defaultValue={bankSavingsDetailStore.cashDetail?.at(0)?.currencyCode || 'USD'}
           required
@@ -149,7 +150,7 @@ export const BSWithdrawToCash = observer(({ handleFormSubmit }: IProps) => {
             }}
             sx={{ mt: '10px', display: 'block' }}
             id="outlined-fee"
-            label={`${"Fee"}`}
+            label={`${content.transactionForm.fee}`}
             {...register('fee')}
             variant="outlined"
             defaultValue={0}
@@ -165,7 +166,7 @@ export const BSWithdrawToCash = observer(({ handleFormSubmit }: IProps) => {
             }}
             sx={{ mt: '10px', display: 'block' }}
             id="outlined-tax"
-            label={`${"Tax (%)"}`}
+            label={`${content.transactionForm.tax} (%)`}
             {...register('tax')}
             variant="outlined"
             defaultValue={0}
@@ -184,7 +185,7 @@ export const BSWithdrawToCash = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        SELL
+        {content.transactionForm.sellButton}
       </Button>
     </Box>
   );

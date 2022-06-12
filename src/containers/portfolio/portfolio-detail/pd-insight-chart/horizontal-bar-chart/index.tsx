@@ -81,7 +81,7 @@ export const HorizontalBarChart = ({ pieChartData, content }: IProps) => {
       },
     },
     title: {
-      text: 'Bar Chart',
+      text: '',
       align: 'center',
       floating: true,
     },

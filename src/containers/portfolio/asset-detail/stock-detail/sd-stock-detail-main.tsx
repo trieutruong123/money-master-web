@@ -20,6 +20,7 @@ import { TabContext, TabList } from '@mui/lab';
 import SDOverviewTab from './sd-overview-tab/sd-overview-main';
 import SDMarketDataTab from './sd-market-data-chart/sd-market-data-tab';
 import { SDCreateTransactionModal } from './sd-transaction-modal/sd-create-transaction-modal';
+import { content as i18n } from 'i18n';
 
 interface IProps { }
 
@@ -27,8 +28,9 @@ const SDStockDetail = observer(({ }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
-
   const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].stockDetailPage : i18n['en'].stockDetailPage;
+
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
     : query['portfolioId'] || '';
@@ -86,7 +88,7 @@ const SDStockDetail = observer(({ }: IProps) => {
                 `/portfolio/${stockDetailStore.portfolioId}/stock/${stockDetailStore.stockId}`,
               ]}
               displayNameArr={[
-                'Portfolio',
+                content.breadCurmbs.portfolio,
                 stockDetailStore.portfolioInfo?.name ||
                 stockDetailStore.portfolioId.toString(),
                 stockDetailStore.stockDetail?.stockCode ||
@@ -111,11 +113,11 @@ const SDStockDetail = observer(({ }: IProps) => {
                   indicatorColor="primary"
                 >
                   <Tab
-                    label={PAStockBreadcrumbTabs.overview}
+                    label={content.overview}
                     value={PAStockBreadcrumbTabs.overview}
                   />
                   <Tab
-                    label={PAStockBreadcrumbTabs.marketData}
+                    label={content.marketData}
                     value={PAStockBreadcrumbTabs.marketData}
                   />
                 </TabList>
@@ -148,7 +150,7 @@ const SDStockDetail = observer(({ }: IProps) => {
         <Box>
           <SDCreateTransactionModal />
         </Box>
-        <Tooltip title="Add new transaction">
+        <Tooltip title={content.addNewTransaction}>
           <IconButton
             onClick={() => {
               stockDetailStore.setOpenAddNewTransactionModal(
