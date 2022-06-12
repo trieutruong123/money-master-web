@@ -171,6 +171,7 @@ export const BuyOtherAssetForm = observer(({
               defaultValue={portfolioDetailStore.selectedAsset?.customAssetId}
               label={`${content.assetType}*`}
               {...register('customInterestAssetInfoId')}
+              required
             >
               {customAssetList.map((item, index) => {
                 return (
@@ -194,6 +195,7 @@ export const BuyOtherAssetForm = observer(({
                 label={`${content.currency}*`}
                 defaultValue="USD"
                 {...register('inputCurrency')}
+                required
               >
                 {currencyList.map((item, index) => {
                   return (

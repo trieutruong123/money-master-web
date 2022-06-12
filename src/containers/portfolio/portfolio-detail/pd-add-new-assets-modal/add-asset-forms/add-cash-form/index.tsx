@@ -4,8 +4,9 @@ import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NewCashAsset } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
-import { AssetTypeName, TransactionFormType } from 'shared/constants';
+import { AssetTypeName, TransactionFormType, TransactionRequestType, UsingMoneySource } from 'shared/constants';
 import { BuyCashForm } from './buy-cash-form';
+import { CashItem } from 'shared/models';
 
 interface IProps {
   openPreviousForm: Function;
@@ -31,13 +32,67 @@ export const AddNewCashForm = observer(
 
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
 
-    const handleFormSubmit = async (data: NewCashAsset) => {
+    const handleFormSubmit = (data: NewCashAsset) => {
+      if (isExistedCash(data)) {
+        addMoreValue(data);
+      }
+      else {
+        addNewCash(data);
+      }
+    };
+
+    const addMoreValue = async (data: NewCashAsset) => {
+      const cashItem = portfolioDetailStore.cashDetail?.find((item: CashItem) => {
+        if (item.currencyCode === data.currencyCode) {
+          return true;
+        }
+      })
+      if (!cashItem) {
+        return;
+      }
+      const moneySource = portfolioDetailStore.selectedAsset?.moneySource
+      const payload = {
+        amount: data.amount,
+        amountInDestinationAssetUnit: data.amount,
+        currencyCode: data.currencyCode || 'USD',
+        transactionType: TransactionRequestType.addValue,
+        destinationAssetId: cashItem.id,
+        destinationAssetType: AssetTypeName.cash,
+        referentialAssetId: moneySource === UsingMoneySource.usingCash ? data.usingCashId : null,
+        referentialAssetType: moneySource === UsingMoneySource.usingCash ? AssetTypeName.cash : (moneySource === UsingMoneySource.usingFund ? 'fund' : ''),
+        isTransferringAll: false,
+        isUsingFundAsSource: data.isUsingInvestFund,
+        fee: data.fee,
+        tax: data.tax,
+      };
+      const res = await portfolioDetailStore.createNewTransaction(payload);
+      if (res.isError) {
+        if (data.isUsingCash || data.isUsingInvestFund) {
+          setErrorMessage(res.data.data);
+        } else {
+          rootStore.raiseError('Error');
+          handleClose();
+        }
+      } else {
+        rootStore.raiseNotification(res.data.en, 'success');
+        if (data.isUsingInvestFund) {
+          portfolioDetailStore.setUpdateInvestFund(true);
+        } else if (data.isUsingCash) {
+          portfolioDetailStore.setUpdateCashDetail(true);
+        }
+        portfolioDetailStore.setUpdateReport(true);
+        portfolioDetailStore.fetchCash();
+        handleClose();
+      }
+    }
+
+    const addNewCash = async (data: NewCashAsset) => {
       const res = await portfolioDetailStore.addNewCash(data);
       if (res.isError) {
         if (data.isUsingInvestFund || data.isUsingCash) {
           setErrorMessage(res.data);
         } else {
-          rootStore.raiseError(res?.data.en);
+          rootStore.raiseError('Error');
           handleClose();
         }
       } else {
@@ -50,7 +105,21 @@ export const AddNewCashForm = observer(
         portfolioDetailStore.setUpdateReport(true);
         handleClose();
       }
-    };
+    }
+
+    const isExistedCash = (payload: NewCashAsset) => {
+      const cashDetail = portfolioDetailStore.cashDetail;
+      if (!cashDetail) {
+        return false;
+      }
+      const isExisted = cashDetail?.some((item: CashItem) => {
+        if (item.currencyCode === payload.currencyCode) {
+          return true;
+        }
+      })
+      return isExisted;
+    }
+
 
     return (
       <div style={{ height: 'inherit' }}>

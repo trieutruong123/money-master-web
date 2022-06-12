@@ -24,14 +24,15 @@ export type TransactionRequestType =
 
 export interface ITransactionRequest {
   amount: number;
-  amountInDestinationAssetUnit: number;
+  amountInDestinationAssetUnit: number | null;
   currencyCode: string;
   transactionType: TransactionType;
-  referentialAssetType: string;
-  referentialAssetId: number;
-  destinationAssetId: number;
-  destinationAssetType: string;
+  referentialAssetType: string | null;
+  referentialAssetId: number | null;
+  destinationAssetId: number | null;
+  destinationAssetType: string | null;
   isTransferringAll: boolean;
+  isUsingFundAsSource: boolean;
   fee: number;
   tax: number;
 }

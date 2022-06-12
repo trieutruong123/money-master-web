@@ -85,7 +85,7 @@ const CDCryptoDetail = observer(({ }: IProps) => {
               urlArr={[
                 '/portfolio',
                 `/portfolio/${cryptoDetailStore.portfolioId}`,
-                `/portfolio/${cryptoDetailStore.portfolioId}/stock/${cryptoDetailStore.cryptoId}`,
+                `/portfolio/${cryptoDetailStore.portfolioId}/crypto/${cryptoDetailStore.cryptoId}`,
               ]}
               displayNameArr={[
                 'Portfolio',
@@ -140,12 +140,6 @@ const CDCryptoDetail = observer(({ }: IProps) => {
                   PACryptoBreadcrumbTabs.marketData ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <CDMarketDataTab />
-                  </Suspense>
-                ) : null}
-                {cryptoDetailStore.selectedTab ===
-                  PACryptoBreadcrumbTabs.settings ? (
-                  <Suspense fallback={<HypnosisLoading />}>
-                    <h1>You are in setting tab</h1>
                   </Suspense>
                 ) : null}
               </Grid>

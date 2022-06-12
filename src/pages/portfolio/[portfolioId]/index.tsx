@@ -37,7 +37,7 @@ const PortfolioDetailPage = () => {
           <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
             <PortfolioDetail
               content={portfolioDetailPage}
-             ></PortfolioDetail>
+            ></PortfolioDetail>
           </Suspense>
         </Container>
       </Box>
@@ -45,7 +45,6 @@ const PortfolioDetailPage = () => {
   );
 };
 
-PortfolioDetailPage.requireAuth = true;
 PortfolioDetailPage.getLayout = (page: ReactJSXElement) => (
   <DashboardLayout>{page}</DashboardLayout>
 );

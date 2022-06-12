@@ -207,6 +207,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
                 label={`${content.currency}*`}
                 defaultValue="USD"
                 {...register('inputCurrency')}
+                required
               >
                 {currencyList.map((item, index) => {
                   return (
@@ -244,6 +245,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
                   label={`Select your cash source*`}
                   defaultValue={cashList[0].id}
                   {...register('cashId')}
+                  required
                 >
                   {cashList.map((item, index) => {
                     return (

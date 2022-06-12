@@ -26,8 +26,6 @@ export const AccountProfile = observer(({ translatedContent }: IProps) => {
   const { locale } = router;
 
   const handleUploadPicture = async (data: any) => {
-    console.log(data);
-
     const res = await userStore.updateUserAvatar(data);
     if (res && !res.isError) {
       rootStore.raiseNotification(

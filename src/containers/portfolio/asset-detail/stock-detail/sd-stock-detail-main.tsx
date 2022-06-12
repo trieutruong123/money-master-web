@@ -118,10 +118,6 @@ const SDStockDetail = observer(({ }: IProps) => {
                     label={PAStockBreadcrumbTabs.marketData}
                     value={PAStockBreadcrumbTabs.marketData}
                   />
-                  <Tab
-                    label={PAStockBreadcrumbTabs.settings}
-                    value={PAStockBreadcrumbTabs.settings}
-                  />
                 </TabList>
               </Box>
             </TabContext>
@@ -143,12 +139,6 @@ const SDStockDetail = observer(({ }: IProps) => {
                   PAStockBreadcrumbTabs.marketData ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <SDMarketDataTab />
-                  </Suspense>
-                ) : null}
-                {stockDetailStore.selectedTab ===
-                  PAStockBreadcrumbTabs.settings ? (
-                  <Suspense fallback={<HypnosisLoading />}>
-                    <h1>You are in setting tab</h1>
                   </Suspense>
                 ) : null}
               </Grid>

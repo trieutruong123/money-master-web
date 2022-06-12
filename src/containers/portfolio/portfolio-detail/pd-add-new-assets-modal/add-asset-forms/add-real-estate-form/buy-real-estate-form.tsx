@@ -165,6 +165,7 @@ export const BuyRealEstateForm = observer(({ handleFormSubmit, content }: IProps
                   label={`${content.currency}*`}
                   defaultValue="USD"
                   {...register('currency')}
+                  required
                 >
                   {currencyList.map((item, index) => {
                     return (
@@ -202,6 +203,7 @@ export const BuyRealEstateForm = observer(({ handleFormSubmit, content }: IProps
                     label={`Select your cash source*`}
                     defaultValue={cashList[0].id}
                     {...register('cashId')}
+                    required
                   >
                     {cashList.map((item, index) => {
                       return (

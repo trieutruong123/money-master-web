@@ -19,7 +19,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
 import { observer } from 'mobx-react-lite';
 import { portfolioDetailStore } from 'shared/store';
-import { UsingMoneySource } from 'shared/constants';
+import { AssetTypeName, TransactionRequestType, UsingMoneySource } from 'shared/constants';
 
 type FormValues = {
   name: string;
@@ -74,6 +74,7 @@ export const BuyStockForm = observer(({
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
+
     handleFormSubmit({
       name: data.name,
       inputDay: date,
@@ -165,6 +166,7 @@ export const BuyStockForm = observer(({
                   label={`${content.currency}*`}
                   defaultValue="USD"
                   {...register('currencyCode')}
+                  required
                 >
                   {currencyList.map((item, index) => {
                     return (
@@ -190,7 +192,8 @@ export const BuyStockForm = observer(({
               </LocalizationProvider>
             </Grid>
           </Grid>
-        </Grid>{
+        </Grid>
+        {
           portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash && cashList !== undefined && cashList.length > 0 ? (
             <Grid item xs={12} sx={{ mt: 1, display: 'block' }}>
               <FormControl fullWidth>
@@ -202,6 +205,7 @@ export const BuyStockForm = observer(({
                   label={`Select your cash source*`}
                   defaultValue={cashList[0].id}
                   {...register('cashId')}
+                  required
                 >
                   {cashList.map((item, index) => {
                     return (

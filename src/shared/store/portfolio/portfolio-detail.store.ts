@@ -35,6 +35,7 @@ import {
   NewPersonalAssetType,
   TransferToInvestFundType,
   IAddedAsset,
+  ITransactionRequest,
 } from "shared/types";
 import { AssetTypeName, PDBreadcrumbTabs } from "shared/constants";
 import { rootStore } from "shared/store";
@@ -146,6 +147,7 @@ class PortfolioDetailStore {
       addNewRealEstate: action,
       addNewCryptoCurrency: action,
       addNewStock: action,
+      createNewTransaction: action,
 
       editPortfolioInfo: action,
 
@@ -548,6 +550,22 @@ class PortfolioDetailStore {
       this.customAssetList?.push(res.data);
       return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
+  }
+
+  async createNewTransaction(params: ITransactionRequest) {
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      params
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      return res;
+    } else {
+      rootStore.raiseError(content[rootStore.locale].error.badRequest);
+      return res;
+    }
   }
 
   async searchData({

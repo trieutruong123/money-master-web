@@ -91,6 +91,7 @@ export const BuyCryptoForm = observer(({
   };
 
 
+
   return (
     <Box
       sx={{
@@ -163,6 +164,7 @@ export const BuyCryptoForm = observer(({
                 label={`${content.currency}*`}
                 defaultValue="USD"
                 {...register('currencyCode')}
+                required
               >
                 {currencyList.map((item, index) => {
                   return (
@@ -200,6 +202,7 @@ export const BuyCryptoForm = observer(({
                   label={`Select your cash source*`}
                   defaultValue={cashList[0].id}
                   {...register('cashId')}
+                  required
                 >
                   {cashList.map((item, index) => {
                     return (

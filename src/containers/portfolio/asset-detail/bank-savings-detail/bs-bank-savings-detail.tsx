@@ -84,7 +84,7 @@ const BankSavingsDetail = observer(({ }: IProps) => {
               urlArr={[
                 '/portfolio',
                 `/portfolio/${bankSavingsDetailStore.portfolioId}`,
-                `/portfolio/${bankSavingsDetailStore.portfolioId}/real-estate/${bankSavingsDetailStore.assetDetail}`,
+                `/portfolio/${bankSavingsDetailStore.portfolioId}/bank-savings/${bankSavingsDetailStore.assetDetail}`,
               ]}
               displayNameArr={[
                 'Portfolio',
