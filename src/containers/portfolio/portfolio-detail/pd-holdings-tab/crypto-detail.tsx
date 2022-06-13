@@ -204,7 +204,7 @@ export const CryptoInvestments = observer(({
                     >
                       {renderTotalValue(
                         record.currencyCode,
-                        record.currentAmountHolding
+                        record.currentAmountInCurrency
                       )}
                     </TableBodyCell>
                     <TableBodyCell>

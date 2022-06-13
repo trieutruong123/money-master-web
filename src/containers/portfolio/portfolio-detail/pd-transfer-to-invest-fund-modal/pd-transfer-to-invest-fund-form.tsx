@@ -20,7 +20,7 @@ import { MdMoveToInbox } from 'react-icons/md';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { portfolioDetailStore } from 'shared/store';
 import { TransferToInvestFundType } from 'shared/types';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionRequestType, TransactionTypeConstants } from 'shared/constants';
 import { useCallback, useState } from 'react';
 import { BankSavingItem, CustomAssetItem, RealEstateItem } from 'shared/models';
 import { observer } from 'mobx-react-lite';
@@ -118,11 +118,18 @@ export const PDTransferToInvestFundForm = observer(() => {
       typeof transferedAssetDetail !== 'undefined'
     ) {
       const res = await portfolioDetailStore.transferAssetToInvestFund({
-        referentialAssetId: transferedAssetInfo.assetId,
-        referentialAssetType: transferedAssetInfo.assetType,
         amount: data.amount,
+        amountInDestinationAssetUnit: 0,
         currencyCode: data.currencyCode,
+        transactionType: TransactionRequestType.moveToFund,
+        referentialAssetType: transferedAssetInfo.assetType,
+        referentialAssetId: transferedAssetInfo.assetId,
+        destinationAssetId: null,
+        destinationAssetType: 'fund',
         isTransferringAll: !checkWhetherAllowedPartialTransfer(),
+        isUsingFundAsSource: false,
+        fee: 0,
+        tax: 0,
       });
       if (res.isError) {
         setErrorMessage(res.data.data);

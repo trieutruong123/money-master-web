@@ -21,7 +21,7 @@ import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import { observer } from "mobx-react-lite";
-import { AssetTypeName } from "shared/constants";
+import { AssetTypeName, TransactionRequestType } from "shared/constants";
 
 type FormValues = {
   amount: number;
@@ -48,11 +48,18 @@ export const BSMoveToFundForm = observer(({ handleFormSubmit, content }: IProps)
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
-      referentialAssetId: bankSavingsDetailStore.assetDetail?.id,
-      referentialAssetType: AssetTypeName.bankSaving,
-      currencyCode: bankSavingsDetailStore.assetDetail?.inputCurrency.toUpperCase() || 'USD',
       amount: bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
-      isTransferingAll: true,
+      amountInDestinationAssetUnit: 0,
+      currencyCode: bankSavingsDetailStore.assetDetail?.inputCurrency.toUpperCase() || 'USD',
+      transactionType: TransactionRequestType.moveToFund,
+      referentialAssetType: AssetTypeName.bankSaving,
+      referentialAssetId: bankSavingsDetailStore.assetDetail?.id,
+      destinationAssetId: null,
+      destinationAssetType: 'fund',
+      isTransferringAll: true,
+      isUsingFundAsSource: false,
+      fee: 0,
+      tax: 0,
     });
   };
 

@@ -672,7 +672,7 @@ class PortfolioDetailStore {
 
   async transferAssetToInvestFund(params: TransferToInvestFundType) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/fund`;
+    const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
       params

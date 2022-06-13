@@ -11,7 +11,7 @@ import { cashDetailStore, portfolioDetailStore } from "shared/store";
 import { getCurrencyByCode, getSupportedCurrencyList } from "shared/helpers/currency-info";
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { AssetTypeName } from "shared/constants";
+import { AssetTypeName, TransactionRequestType } from "shared/constants";
 
 type FormValues = {
   amount: number;
@@ -37,11 +37,18 @@ export const TransferCashForm = observer(({ handleFormSubmit, content }: IProps)
   const { errors } = formState;
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit({
-      referentialAssetId: cashDetailStore.cashDetail?.id,
-      referentialAssetType: AssetTypeName.cash,
-      currencyCode: cashDetailStore.cashDetail?.currencyCode || 'USD',
       amount: data.amount,
-      isTransferingAll: false,
+      amountInDestinationAssetUnit: 0,
+      currencyCode: cashDetailStore.cashDetail?.currencyCode || 'USD',
+      transactionType: TransactionRequestType.moveToFund,
+      referentialAssetType: AssetTypeName.cash,
+      referentialAssetId: cashDetailStore.cashDetail?.id,
+      destinationAssetId: null,
+      destinationAssetType: 'fund',
+      isTransferringAll: false,
+      isUsingFundAsSource: false,
+      fee: 0,
+      tax: 0,
     });
   };
 

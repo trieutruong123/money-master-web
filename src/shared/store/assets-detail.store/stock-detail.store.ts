@@ -177,14 +177,12 @@ class StockDetailStore {
         );
       });
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
       runInAction(() => {
         this.cashDetail = undefined;
         this.currencyList = undefined;
       });
     }
+    return res;
   }
 
   async fetchStockTransactionHistory() {
@@ -198,9 +196,6 @@ class StockDetailStore {
         this.transactionHistory = res.data;
       });
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
     }
     return res;
   }
@@ -214,16 +209,20 @@ class StockDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
+      rootStore.raiseNotification(
+        content[rootStore.locale].success.default,
+        "success"
+      );
       return res;
     } else {
-      rootStore.raiseError(content[rootStore.locale].error.badRequest);
+      rootStore.raiseError(content[rootStore.locale].error.default);
       return res;
     }
   }
 
   async transferAssetToInvestFund(params: TransferToInvestFundType) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/fund`;
+    const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
       params
@@ -267,6 +266,7 @@ class StockDetailStore {
         this.marketData = undefined;
       });
     }
+    return res;
   }
 
   async fetchOHLC(params: any) {
@@ -292,6 +292,7 @@ class StockDetailStore {
         });
       });
       return res;
+    } else {
     }
     return res;
   }

@@ -191,12 +191,10 @@ class CashDetailStore {
       runInAction(() => {
         this.transactionHistory = res.data;
       });
+      return res;
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
+      return res;
     }
-    return res;
   }
 
   async fetchMarketData() {
@@ -225,7 +223,7 @@ class CashDetailStore {
         this.OHLC_data = res.data;
       });
     }
-    return true;
+    return res;
   }
 
   async fetchForexInfoByCode() {
@@ -249,6 +247,7 @@ class CashDetailStore {
         this.forexMarketData = res.data;
       });
     }
+    return res;
   }
 
   async makeTransaction(params: ITransactionRequest) {
@@ -260,28 +259,30 @@ class CashDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
+      rootStore.raiseNotification(
+        content[rootStore.locale].success.default,
+        "success"
+      );
       return res;
     } else {
-      rootStore.raiseError(content[rootStore.locale].error.badRequest);
+      rootStore.raiseError(content[rootStore.locale].error.default);
       return res;
     }
   }
 
   async moveToFund(payload: TransferToInvestFundType) {
-    const url = `/portfolio/${this.portfolioId}/fund`;
+    const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
       payload
     );
     if (!res.isError) {
       rootStore.raiseNotification(
-        content[rootStore.locale].success.transfer,
+        content[rootStore.locale].success.default,
         "success"
       );
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
+      rootStore.raiseError(content[rootStore.locale].error.default);
     }
     return res;
   }

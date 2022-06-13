@@ -9,10 +9,14 @@ export class TransactionItem {
   destinationAssetId: number = 0;
   destinationAssetType: AssetType | null = null;
   destinationAssetName: string = "";
+  destinationAmount: number = 0;
+  destinationCurrency: string = "";
   amount: number = 0;
   currencyCode: string = "";
   createdAt: string = "";
   lastChanged: string = "";
+  fee: number = 0;
+  tax: number = 0;
 }
 
 export type RealEstateTransactionList = Array<TransactionItem>;

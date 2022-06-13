@@ -155,29 +155,12 @@ class CustomAssetDetailStore {
         );
       });
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
       runInAction(() => {
         this.cashDetail = undefined;
         this.currencyList = undefined;
       });
     }
-  }
-  async createNewTransaction(params: ITransactionRequest) {
-    rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.post(
-      url,
-      params
-    );
-    rootStore.stopLoading();
-    if (!res.isError) {
-      return res;
-    } else {
-      rootStore.raiseError(content[rootStore.locale].error.badRequest);
-      return res;
-    }
+    return res;
   }
 
   async fetchCustomAssetTransactionHistory() {
@@ -198,9 +181,29 @@ class CustomAssetDetailStore {
     return res;
   }
 
+  async createNewTransaction(params: ITransactionRequest) {
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.post(
+      url,
+      params
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      rootStore.raiseNotification(
+        content[rootStore.locale].success.default,
+        "success"
+      );
+      return res;
+    } else {
+      rootStore.raiseError(content[rootStore.locale].error.default);
+      return res;
+    }
+  }
+
   async transferAssetToInvestFund(params: TransferToInvestFundType) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/fund`;
+    const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
       params

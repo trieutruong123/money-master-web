@@ -18,9 +18,9 @@ import { capitalizeFirstLetter, colorScheme, roundAndAddDotAndCommaSeparator } f
 import { getCurrencyByCode } from 'shared/helpers';
 import dayjs from 'dayjs';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
-import { InvestFundTransactionItem } from 'shared/models';
+import { InvestFundTransactionItem, InvestFundTransactionList } from 'shared/models';
 import { AssetType } from 'shared/types';
-import { AssetTypeConstants, AssetTypeName } from 'shared/constants';
+import { AssetTypeConstants, AssetTypeName, TransactionRequestType } from 'shared/constants';
 import { BsCashCoin } from 'react-icons/bs';
 import { RiPsychotherapyFill } from 'react-icons/ri';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
@@ -48,7 +48,7 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  transactionHistory: Array<InvestFundTransactionItem> | undefined;
+  transactionHistory: InvestFundTransactionList | undefined;
   content: any
 }
 
@@ -132,7 +132,7 @@ const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {transactionHistory.map((record, i) => {
+              {transactionHistory.map((record: InvestFundTransactionItem, i) => {
                 return (
                   <TableRow
                     key={i}
@@ -145,7 +145,7 @@ const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
                   >
                     <TableBodyCellSymbol>
                       <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
-                        {record.referentialAssetName}
+                        {record.singleAssetTransactionType === TransactionRequestType.moveToFund ? <>{record.destinationAssetType}</> : <>{record.referentialAssetType}</>}
                       </Box>
                       <Box
                         sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
@@ -155,7 +155,7 @@ const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
                     </TableBodyCellSymbol>
 
                     <TableBodyCellSymbol align="center">
-                      {!record.isIngoing ? (
+                      {record.singleAssetTransactionType === TransactionRequestType.moveToFund ? (
                         <ImArrowLeft fontSize="25" color={colorScheme.red400} />
                       ) : (
                         <ImArrowRight
@@ -171,13 +171,14 @@ const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
                       )}
                     </TableBodyCellSymbol>
                     <TableBodyCellSymbol align="left">
-                      {renderAssetTypeIcon(record.referentialAssetType)}
-                      &nbsp;&nbsp;
-                      {capitalizeFirstLetter(
-                        AssetTypeConstants[language][
-                        record.referentialAssetType || AssetTypeName.custom
-                        ],
-                      )}
+                      {record.singleAssetTransactionType === TransactionRequestType.moveToFund ?
+                        (<>{renderAssetTypeIcon(record.referentialAssetType || AssetTypeName.custom)}
+                          &nbsp;&nbsp;
+                          {capitalizeFirstLetter(AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom])}</>) :
+                        (<>{renderAssetTypeIcon(record.destinationAssetType || AssetTypeName.custom)}
+                          &nbsp;&nbsp;
+                          {capitalizeFirstLetter(AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom])}</>)
+                      }
                     </TableBodyCellSymbol>
                   </TableRow>
                 );

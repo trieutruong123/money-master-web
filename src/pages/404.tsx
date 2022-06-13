@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Box, Button, Container, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { content } from 'i18n';
-import {  DefaultLayout } from 'containers';
+import { DefaultLayout } from 'containers';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 
@@ -60,7 +60,7 @@ const NotFound = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                   alt="Under development"
                   src="/images/undraw_page_not_found_su7k.svg"
                   width={400}
-                  height = {360}
+                  height={360}
                 />
               </Box>
               <Button

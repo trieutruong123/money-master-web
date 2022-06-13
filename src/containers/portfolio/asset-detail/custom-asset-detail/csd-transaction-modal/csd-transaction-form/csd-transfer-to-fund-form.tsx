@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionRequestType } from 'shared/constants';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { customAssetsDetailStore, stockDetailStore } from 'shared/store';
 import { colorScheme } from 'utils';
@@ -43,11 +43,18 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit, content }: IProps) =
 
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
-            referentialAssetId: customAssetsDetailStore.customAssetDetail?.id,
-            referentialAssetType: AssetTypeName.custom,
-            currencyCode: customAssetsDetailStore.customAssetDetail?.inputCurrency.toUpperCase() || 'USD',
             amount: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
-            isTransferingAll: true,
+            amountInDestinationAssetUnit: 0,
+            currencyCode: customAssetsDetailStore.customAssetDetail?.inputCurrency.toUpperCase() || 'USD',
+            transactionType: TransactionRequestType.moveToFund,
+            referentialAssetType: AssetTypeName.custom,
+            referentialAssetId: customAssetsDetailStore.customAssetDetail?.id,
+            destinationAssetId: null,
+            destinationAssetType: 'fund',
+            isTransferringAll: true,
+            isUsingFundAsSource: false,
+            fee: 0,
+            tax: 0,
         });
     };
 

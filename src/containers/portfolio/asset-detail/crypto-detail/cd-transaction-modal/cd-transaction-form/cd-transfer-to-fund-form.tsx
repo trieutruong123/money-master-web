@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionRequestType } from 'shared/constants';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { cryptoDetailStore } from 'shared/store';
 import { colorScheme } from 'utils';
@@ -45,11 +45,18 @@ const CDTransferToFundForm = observer(({ handleFormSubmit, content }: IProps) =>
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
-      referentialAssetId: cryptoDetailStore.cryptoDetail?.id,
-      referentialAssetType: AssetTypeName.cryptoCurrency,
-      currencyCode: data.currencyCode || 'USD',
       amount: data.amount,
-      isTransferingAll: false,
+      amountInDestinationAssetUnit: 0,
+      currencyCode: data.currencyCode || 'USD',
+      transactionType: TransactionRequestType.moveToFund,
+      referentialAssetType: AssetTypeName.cryptoCurrency,
+      referentialAssetId: cryptoDetailStore.cryptoDetail?.id,
+      destinationAssetId: null,
+      destinationAssetType: 'fund',
+      isTransferringAll: false,
+      isUsingFundAsSource: false,
+      fee: 0,
+      tax: 0,
     });
   };
 

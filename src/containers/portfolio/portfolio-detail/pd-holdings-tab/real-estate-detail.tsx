@@ -134,7 +134,7 @@ export const RealEstateInvesments = observer(({
           </TableHead>
           <TableBody>
             {realEstateDetail.map((record, i) => {
-              if (record.currentPrice === 0 || record.buyPrice === 0) {
+              if (record.currentPrice === 0 || record.inputMoneyAmount === 0) {
                 return;
               }
               return (
