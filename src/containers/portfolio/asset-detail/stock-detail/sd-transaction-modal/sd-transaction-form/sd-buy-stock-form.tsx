@@ -16,10 +16,11 @@ import {
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
-import { AssetTypeName, TransactionRequestType } from 'shared/constants';
+import { AssetTypeName, SourceMoneyConstants, TransactionRequestType } from 'shared/constants';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { observer } from 'mobx-react-lite';
 import { stockDetailStore } from 'shared/store';
+import { useRouter } from 'next/router';
 
 type FormValues = {
   purchasePrice: number;
@@ -40,6 +41,27 @@ export const SDBuyStockForm = observer(({ handleFormSubmit, content }: IProps) =
   const [destinationCashCode, setDestinationCashCode] = useState<string>('');
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
+  const { locale } = router;
+  const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
+  const currencyList = getSupportedCurrencyList();
+  const usingMoneySourceList = [{
+    id: uuid(),
+    type: 'outside',
+    name: SourceMoneyConstants[language].outside,
+  },
+  {
+    id: uuid(),
+    type: 'fund',
+    name: SourceMoneyConstants[language].fund,
+  },
+  {
+    id: uuid(),
+    type: 'cash',
+    name: SourceMoneyConstants[language].cash,
+    },
+  ]
+  
   const validationSchema = Yup.object().shape({
     purchasePrice: Yup.number()
       .required('Price is required')
@@ -52,22 +74,6 @@ export const SDBuyStockForm = observer(({ handleFormSubmit, content }: IProps) =
     fee: Yup.number(),
     tax: Yup.number(),
   });
-  const currencyList = getSupportedCurrencyList();
-  const usingMoneySourceList = [{
-    id: uuid(),
-    type: 'outside',
-    name: 'Outside',
-  },
-  {
-    id: uuid(),
-    type: 'fund',
-    name: 'Fund',
-  },
-  {
-    id: uuid(),
-    type: 'cash',
-    name: 'Cash',
-  },]
 
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, reset, handleSubmit, formState, getValues, setError } =

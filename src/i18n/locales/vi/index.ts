@@ -95,10 +95,11 @@ export const vi = {
     },
   },
   mainSidebar: {
-    dashboard: "Trang chính",
-    portfolio: "Danh mục đầu tư",
-    report: "Báo cáo",
-    setting: "Cài đặt",
+    dashboard: "TRANH CHÍNH",
+    portfolio: "DANH MỤC ĐẦU TƯ",
+    report: "BÁO CÁO",
+    setting: "CÀI ĐẶT",
+    profile: 'TÀI KHOẢN'
   },
   dashboardNavbar: {
     account: "Tài khoản",
@@ -152,6 +153,7 @@ export const vi = {
       title: "Biểu đồ dòng tiền",
     },
     settings: {
+      buttonTooltip: 'Cài đặt',
       editPortfolioInfo: "Chỉnh sửa thông tin danh mục",
       portfolioName: "Tên danh mục",
       currency: "Tiền tệ",
@@ -159,9 +161,12 @@ export const vi = {
       save: "Lưu",
     },
     investFundTab: {
+      name:'Tên',
       amount: "Số lượng",
       direction: "Hướng",
       assetType: "Loại tài sản",
+      transactionType:'Loại giao dịch',
+      title: "Lịch sử giao dịch",
     },
     cryptoTable: {
       title: "Tiền kỹ thuật số",
@@ -172,6 +177,7 @@ export const vi = {
         total: "TỔNG CỘNG",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Cài đặt',
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -185,6 +191,7 @@ export const vi = {
         total: "TỔNG CỘNG",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Cài đặt',
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -199,6 +206,7 @@ export const vi = {
         description: "MÔ TẢ",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Cài đặt',
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -211,6 +219,7 @@ export const vi = {
         description: "MÔ TẢ",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Cài đặt',
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -224,6 +233,7 @@ export const vi = {
         description: "MÔ TẢ",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Cài đặt',
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -239,6 +249,7 @@ export const vi = {
         description: "MÔ TẢ",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Cài đặt',
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },

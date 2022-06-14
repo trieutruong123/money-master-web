@@ -37,6 +37,19 @@ export const AssetTypeConstants = {
   },
 };
 
+export const SourceMoneyConstants = {
+  en: {
+    fund: 'Fund',
+    outside: 'Outside',
+    cash: 'Cash',
+  },
+  vi: {
+    fund: 'Quỹ đầu tư',
+    outside: 'Bên ngoài',
+    cash: 'Tiền mặt',
+  }
+}
+
 export const PDBreadcrumbTabs = {
   holdings: "Holdings",
   report: "Report",

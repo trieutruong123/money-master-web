@@ -62,7 +62,7 @@ export default function SettingsMenuButton({
 
   return (
     <React.Fragment>
-      <Tooltip title="Asset settings">
+      <Tooltip title={content.buttonTooltip}>
         <IconButton
           onClick={handleClick}
           size="small"

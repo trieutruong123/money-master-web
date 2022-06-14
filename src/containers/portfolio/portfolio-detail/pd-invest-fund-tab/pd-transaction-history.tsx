@@ -62,9 +62,9 @@ const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
   const headings = [
     // "Today's Change",
     // "Today's Gain/Loss"
-    'Ammount',
-    'Direction',
-    'Asset Type',
+    content.investFundTab.amount,
+    content.investFundTab.transactionType,
+    content.investFundTab.assetType,
     '',
   ];
 
@@ -109,7 +109,7 @@ const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
             boxShadow: 'none',
           }}
         >
-          <CardHeader title="Transaction history" sx={{ padding: '0px' }} />
+          <CardHeader title={content.investFundTab.title}sx={{ padding: '0px' }} />
           <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
             <MoreHorizIcon />
           </Button>
@@ -118,16 +118,15 @@ const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
           <Table sx={{ overflowY: 'auto' }}>
             <TableHead>
               <TableRow>
-                <TableHeaderCell>{'Name'}</TableHeaderCell>
+                <TableHeaderCell>{content.investFundTab.name}</TableHeaderCell>
                 <TableHeaderCell sx={{ textAlign: 'center' }}>
-                  {content.direction}
+                  {content.investFundTab.direction}
                 </TableHeaderCell>
                 <TableHeaderCell sx={{ textAlign: 'center' }}>
-                  {content.amount}
+                  {content.investFundTab.amount}
                 </TableHeaderCell>
-
                 <TableHeaderCell sx={{ textAlign: 'left' }}>
-                  {content.assetType}
+                  {content.investFundTab.assetType}
                 </TableHeaderCell>
               </TableRow>
             </TableHead>
@@ -145,7 +144,9 @@ const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
                   >
                     <TableBodyCellSymbol>
                       <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
-                        {record.singleAssetTransactionType === TransactionRequestType.moveToFund ? <>{record.destinationAssetType}</> : <>{record.referentialAssetType}</>}
+                        {record.singleAssetTransactionType === TransactionRequestType.moveToFund ?
+                          AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom]
+                          : AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom]}
                       </Box>
                       <Box
                         sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}

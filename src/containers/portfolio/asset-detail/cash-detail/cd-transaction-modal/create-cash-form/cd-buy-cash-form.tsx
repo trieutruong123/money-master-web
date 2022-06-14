@@ -7,8 +7,9 @@ import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
 import { cashDetailStore } from 'shared/store';
 import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
-import { AssetTypeName, TransactionRequestType } from 'shared/constants';
+import { AssetTypeName, SourceMoneyConstants, TransactionRequestType } from 'shared/constants';
 import { CashItem } from 'shared/models';
+import { useRouter } from 'next/router';
 
 type FormValues = {
   amount: number;
@@ -28,6 +29,27 @@ export const BuyCashForm = ({ handleFormSubmit, content }: IProps) => {
   const [referentialCashCode, setReferentialCashCode] = useState<string>('');
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
+  const { locale } = router;
+  const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
+  const currencyList = getSupportedCurrencyList();
+  const usingMoneySourceList = [{
+    id: uuid(),
+    type: 'outside',
+    name: SourceMoneyConstants[language].outside,
+  },
+  {
+    id: uuid(),
+    type: 'fund',
+    name: SourceMoneyConstants[language].fund,
+  },
+  {
+    id: uuid(),
+    type: 'cash',
+    name: SourceMoneyConstants[language].cash,
+    },
+  ]
+
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
       .required('Amount is required')
@@ -41,23 +63,6 @@ export const BuyCashForm = ({ handleFormSubmit, content }: IProps) => {
   const { register, reset, handleSubmit, formState, getValues, setError } =
     useForm<FormValues>(formOptions);
   const { errors } = formState;
-
-  const currencyList = getSupportedCurrencyList();
-  const usingMoneySourceList = [{
-    id: uuid(),
-    type: 'outside',
-    name: 'Outside',
-  },
-  {
-    id: uuid(),
-    type: 'fund',
-    name: 'Fund',
-  },
-  {
-    id: uuid(),
-    type: 'cash',
-    name: 'Cash',
-  },]
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({

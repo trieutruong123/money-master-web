@@ -99,6 +99,7 @@ export const en = {
     portfolio: "PORTFOLIO",
     profile: "PROFILE",
     setting: "SETTINGS",
+    report: "REPORT",
   },
   dashboardNavbar: {
     tooltip: "Account",
@@ -153,7 +154,16 @@ export const en = {
     sankeyChart: {
       title: "Sankey chart",
     },
+    investFundTab: {
+      name:'Name',
+      amount: "Amount",
+      direction: "Direction",
+      assetType: "Asset Type",
+      transactionType:'Transaction Type',
+      title: "Transaction History",
+    },
     settings: {
+      buttonTooltip: 'Asset settings',
       editPortfolioInfo: "Edit portfolio info",
       portfolioName: "Portfolio name",
       currency: "Currency",
@@ -169,6 +179,7 @@ export const en = {
         total: "Total",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Asset settings',
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
       },
@@ -182,6 +193,7 @@ export const en = {
         total: "Total",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Asset settings',
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
       },
@@ -196,6 +208,7 @@ export const en = {
         description: "Description",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Asset settings',
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
       },
@@ -208,6 +221,7 @@ export const en = {
         description: "Description",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Asset settings',
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
       },
@@ -221,6 +235,7 @@ export const en = {
         description: "Description",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Asset settings',
         moveToPortfolio: "Move to portfolio",
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
@@ -237,6 +252,7 @@ export const en = {
         description: "DESCRIPTION",
       },
       settingDropDownMenu: {
+        buttonTooltip: 'Asset settings',
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
