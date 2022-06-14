@@ -40,7 +40,7 @@ import {
 import { AssetTypeName, PDBreadcrumbTabs } from "shared/constants";
 import { rootStore } from "shared/store";
 import { httpError } from "shared/helpers";
-import { getSankeyNodeType } from "shared/helpers/sankey-chart";
+import { getSankeyNodeType, standardlizeSankeyResponse } from "shared/helpers/sankey-chart";
 
 class PortfolioDetailStore {
   portfolioId: number = 0;
@@ -701,7 +701,8 @@ class PortfolioDetailStore {
 
     if (!res.isError) {
       runInAction(() => {
-        this.sankeyFlowData = res.data.map((link: SankeyDataItem) => {
+        const qualifiedData = standardlizeSankeyResponse(res.data);
+        this.sankeyFlowData = qualifiedData.map((link: SankeyDataItem) => {
           return {
             source: `${getSankeyNodeType(
               link.sourceType

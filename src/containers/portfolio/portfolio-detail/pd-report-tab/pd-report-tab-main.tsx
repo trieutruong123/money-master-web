@@ -95,7 +95,8 @@ const PDReportTab = observer(({ }: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          width: '100%'
+          width: '100%',
+          height: 'auto',
         }}
       >
         {portfolioDetailStore.sankeyFlowData && portfolioDetailStore.sankeyFlowData.length > 0 ?

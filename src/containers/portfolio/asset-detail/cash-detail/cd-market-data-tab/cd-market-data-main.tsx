@@ -5,6 +5,7 @@ import { rootStore, cashDetailStore } from 'shared/store';
 import { CurrencyConverter } from '../currency-converter';
 import { content as i18n } from 'i18n';
 import { useRouter } from 'next/router';
+import CurrencyProfile from '../currency-converter/currency-profile';
 
 const CDHistoricalMarketChart = lazy(() => import('./cd-historical-market-chart'));
 
@@ -17,6 +18,7 @@ const CDMarketData = observer(() => {
         const fetchData = async () => {
             rootStore.startLoading();
             await cashDetailStore.fetchMarketData();
+            await cashDetailStore.fetchForexDetail();
             rootStore.stopLoading();
         };
         if (cashDetailStore.OHLC_data?.length === 0 ||
@@ -29,6 +31,9 @@ const CDMarketData = observer(() => {
         <>
             <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
                 <CurrencyConverter />
+            </Grid>
+            <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
+                <CurrencyProfile />
             </Grid>
             <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
                 <Suspense fallback={<></>}>

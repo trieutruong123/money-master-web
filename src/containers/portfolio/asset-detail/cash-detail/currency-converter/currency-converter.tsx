@@ -33,15 +33,20 @@ const CurrencyConverter = observer(({ }: IProps) => {
 
   const handleSourceCurrencyChange = async (symbol: string) => {
     cashDetailStore.setSourceCurrency(symbol);
+    // use Promise.all here could get stuck, because fcs api dont allow request multiple data at the same time
     await cashDetailStore.fetchForexInfoByCode();
     await cashDetailStore.fetchOHLC_Data();
+    await cashDetailStore.fetchForexDetail();
     handleSourceValueChange(sourceAmount);
   };
 
   const handleTargetCurrencyChange = async (symbol: string) => {
     cashDetailStore.setDestCurrency(symbol);
+    // use Promise.all here could get stuck, because fcs api dont allow request multiple data at the same time
     await cashDetailStore.fetchForexInfoByCode();
     await cashDetailStore.fetchOHLC_Data();
+    await cashDetailStore.fetchForexDetail();
+
     handleTargetValueChange(targetAmount);
   };
 

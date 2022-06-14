@@ -71,7 +71,8 @@ class CashDetailStore {
       fetchOHLC_Data: action,
       fetchForexInfoByCode: action,
       fetchTransactionHistoryData: action,
-
+      fetchForexDetail: action,
+      
       setOpenAddNewTransactionModal: action,
       setCashId: action,
       setPortfolioId: action,
@@ -246,6 +247,25 @@ class CashDetailStore {
       runInAction(() => {
         this.forexMarketData = res.data;
       });
+    }
+    return res;
+  }
+
+  async fetchForexDetail() {
+    if (
+      !this.sourceCurrencyCode) {
+        return;
+    }
+    const res: any = await fcsapiService.getForexProfileDetail(this.sourceCurrencyCode);
+    if (!res.isError) {
+      runInAction(() => {
+        this.forexDetail = res.data;
+      });
+    }
+    else {
+      runInAction(() => {
+        this.forexDetail = undefined;
+      })
     }
     return res;
   }
