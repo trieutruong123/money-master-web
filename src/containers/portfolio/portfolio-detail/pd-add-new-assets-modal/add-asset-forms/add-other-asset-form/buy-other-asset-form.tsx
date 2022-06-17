@@ -60,7 +60,7 @@ export const BuyOtherAssetForm = observer(({
       .typeError('Input money must be a number')
       .positive('Input money must be greater than zero'),
     inputCurrency: Yup.string().required().default('USD'),
-    customInterestAssetInfoId: Yup.number(),
+    customInterestAssetInfoId: Yup.number().required(),
     interestRate: Yup.number()
       .nullable(true)
       .transform((_, val) => (val === Number(val) ? val : 0))
@@ -70,9 +70,13 @@ export const BuyOtherAssetForm = observer(({
       .transform((_, val) => (val === Number(val) ? val : 0))
       .default(0),
     description: Yup.string(),
-    cashId: Yup.number(),
-    fee: Yup.number(),
+    cashId: Yup.number().required(),
     tax: Yup.number()
+      .typeError('Tax must be a number')
+      .positive('Tax must be greater than zero'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .positive('Fee must be greater than zero'),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };

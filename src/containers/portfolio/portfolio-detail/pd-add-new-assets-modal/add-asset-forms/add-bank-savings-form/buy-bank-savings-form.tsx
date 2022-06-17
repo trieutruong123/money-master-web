@@ -62,9 +62,13 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
       .positive('Term range must be greater than zero'),
     inputCurrency: Yup.string().required().default('USD'),
     bankCode: Yup.string().required('Bank code is required'),
-    cashId: Yup.number(),
-    fee: Yup.number(),
-    tax: Yup.number(),
+    cashId: Yup.number().required(),
+    tax: Yup.number()
+      .typeError('Tax must be a number')
+      .positive('Tax must be greater than zero'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .positive('Fee must be greater than zero'),
     description: Yup.string(),
   });
 

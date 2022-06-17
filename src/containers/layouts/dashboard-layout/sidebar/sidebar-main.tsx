@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { userService } from 'services';
 import SidebarItemList from './sidebar-item-list';
+import { rootStore } from 'shared/store';
 
 export const DashboardSidebar = (props: any) => {
   const { open, onClose } = props;
@@ -30,6 +31,11 @@ export const DashboardSidebar = (props: any) => {
     [router.asPath],
   );
 
+  useEffect(() => {
+    const lang = router.locale === 'vi' ? 'vi' : 'en';
+    rootStore.setLocale(lang);
+  }, [router.locale])
+
   const handleLogout = () => {
     userService.logout();
     router.push('/sign-in');
@@ -49,7 +55,7 @@ export const DashboardSidebar = (props: any) => {
         }}
         variant="permanent"
       >
-        <SidebarItemList/>
+        <SidebarItemList />
       </Drawer>
     );
   }
@@ -69,7 +75,7 @@ export const DashboardSidebar = (props: any) => {
       sx={{ zIndex: (theme) => theme.zIndex.appBar + 100 }}
       variant="temporary"
     >
-      <SidebarItemList/>
+      <SidebarItemList />
     </Drawer>
   );
 };

@@ -56,9 +56,13 @@ export const BuyCryptoForm = observer(({
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
     currencyCode: Yup.string().required().default('USD'),
-    cashId: Yup.number(),
-    fee: Yup.number(),
-    tax: Yup.number(),
+    cashId: Yup.number().required(),
+    tax: Yup.number()
+      .typeError('Tax must be a number')
+      .positive('Tax must be greater than zero'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .positive('Fee must be greater than zero'),
     description: Yup.string(),
   });
   const currencyList = getSupportedCurrencyList();

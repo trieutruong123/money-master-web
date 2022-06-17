@@ -34,9 +34,10 @@ type FormValues = {
   gender?: string,
 };
 
-export const AccountProfileDetails = observer(({ translatedContent }: IProps) => {
+export const APEditProfile = observer(({ translatedContent }: IProps) => {
   const router = useRouter();
   const { locale } = router;
+  const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
   const content = locale === 'vi' ? i18n['vi'].profilePage : i18n['en'].profilePage;
 
   const [date, setDate] = useState<Date | null>(new Date());
@@ -68,13 +69,13 @@ export const AccountProfileDetails = observer(({ translatedContent }: IProps) =>
 
     if (res && !res.isError) {
       rootStore.raiseNotification(
-        i18n[rootStore.locale].success.update,
+        i18n[language].success.update,
         "success"
       );
     }
     else {
       rootStore.raiseError(
-        i18n[rootStore.locale].error.failedToLoadInitialData
+        i18n[language].error.failedToLoadInitialData
       );
     }
   }, []);

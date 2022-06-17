@@ -99,7 +99,7 @@ export const vi = {
     portfolio: "DANH MỤC ĐẦU TƯ",
     report: "BÁO CÁO",
     setting: "CÀI ĐẶT",
-    profile: 'TÀI KHOẢN'
+    profile: "TÀI KHOẢN",
   },
   dashboardNavbar: {
     account: "Tài khoản",
@@ -127,6 +127,21 @@ export const vi = {
       birthday: "Ngày sinh",
       saveDetails: "Lưu",
     },
+    resetPassword: {
+      title: "Cập nhật lại mật khẩu",
+      oldPassword: "Mật khẩu cũ",
+      newPassword: "Mật khẩu mới",
+      confirmPassword: "Xác nhận lại mật khẩu",
+      passwordRequired: "Vui lòng nhập mật khẩu",
+      passwordMin: "Mật khẩu phải có ít nhất 8 ký tự",
+      newPasswordRequired: "Vui lòng nhập mật khẩu mới",
+      newPasswordMin: "Mật khẩu phải có ít nhất 8 ký tự ",
+      confirmPasswordRequired: "Vui lòng nhập mật khẩu xác nhận",
+      confirmPasswordNotMatch: "Mật khẩu xác nhận không khớp",
+      oldPasswordNotCorrect: "Mật khẩu cũ không chính xác",
+      oldNewPasswordMustBeDifferent: "Mật khẩu mới phải khác mật khẩu cũ",
+      update: "Cập nhật",
+    },
   },
   portfolioDetailPage: {
     title: "Danh mục tài sản",
@@ -153,7 +168,7 @@ export const vi = {
       title: "Biểu đồ dòng tiền",
     },
     settings: {
-      buttonTooltip: 'Cài đặt',
+      buttonTooltip: "Cài đặt",
       editPortfolioInfo: "Chỉnh sửa thông tin danh mục",
       portfolioName: "Tên danh mục",
       currency: "Tiền tệ",
@@ -161,11 +176,11 @@ export const vi = {
       save: "Lưu",
     },
     investFundTab: {
-      name:'Tên',
+      name: "Tên",
       amount: "Số lượng",
       direction: "Hướng",
       assetType: "Loại tài sản",
-      transactionType:'Loại giao dịch',
+      transactionType: "Loại giao dịch",
       title: "Lịch sử giao dịch",
     },
     cryptoTable: {
@@ -177,7 +192,7 @@ export const vi = {
         total: "TỔNG CỘNG",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Cài đặt',
+        buttonTooltip: "Cài đặt",
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -191,7 +206,7 @@ export const vi = {
         total: "TỔNG CỘNG",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Cài đặt',
+        buttonTooltip: "Cài đặt",
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -206,7 +221,7 @@ export const vi = {
         description: "MÔ TẢ",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Cài đặt',
+        buttonTooltip: "Cài đặt",
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -219,7 +234,7 @@ export const vi = {
         description: "MÔ TẢ",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Cài đặt',
+        buttonTooltip: "Cài đặt",
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -233,7 +248,7 @@ export const vi = {
         description: "MÔ TẢ",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Cài đặt',
+        buttonTooltip: "Cài đặt",
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -249,7 +264,7 @@ export const vi = {
         description: "MÔ TẢ",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Cài đặt',
+        buttonTooltip: "Cài đặt",
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -725,6 +740,7 @@ export const vi = {
     addNewItem: "Thêm mới thành công",
     addMore: "Thêm thành công",
     transferItem: "Chuyển thành công",
+    updatePassword: "Cập nhật mật khẩu thành công",
     default: "Đã hoàn thành",
   },
   error: {
@@ -737,6 +753,7 @@ export const vi = {
     alreadyEmailExist: "Lỗi! Email đã được đăng ký",
     default: "Lỗi! Thất bại.",
     error: "Lỗi! Thất bại",
+    oldPasswordNotCorrect: "Mật khẩu cũ không chính xác",
   },
   portfolioListPage: {
     title: "Danh mục tài sản",

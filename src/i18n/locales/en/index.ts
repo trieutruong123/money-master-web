@@ -1,4 +1,5 @@
 export const en = {
+  pageTitle: {},
   landingPage: {
     sidebar: {
       home: "HOME",
@@ -84,7 +85,7 @@ export const en = {
     or: "or",
     facebookSignUp: "Sign up with Facebook",
     googleSignUp: "Sign up with Google",
-    register: "Đăng ký",
+    register: "Sign up",
     error: {
       passwordRequired: "Password is required",
       passwordMin: "Password must be at least 8 characters",
@@ -129,6 +130,22 @@ export const en = {
       country: "Country",
       saveDetails: "SAVE",
     },
+    resetPassword: {
+      title: "Reset password",
+      oldPassword: "Old password",
+      newPassword: "New password",
+      confirmPassword: "Confirm password",
+      passwordRequired: "Password is required",
+      passwordMin: "Password must be at least 8 characters",
+      confirmPasswordRequired: "Confirm password is required",
+      confirmPasswordNotMatch: "Confirm password must match",
+      oldPasswordNotCorrect: "Old password is not correct",
+      newPasswordRequired: "New password is required",
+      newPasswordMin: "Password must be at least 8 characters",
+      oldNewPasswordMustBeDifferent:
+        "New password must be differ from old password",
+      update: "Update",
+    },
   },
   portfolioDetailPage: {
     title: "PORTFOLIO DETAIL",
@@ -155,15 +172,15 @@ export const en = {
       title: "Sankey chart",
     },
     investFundTab: {
-      name:'Name',
+      name: "Name",
       amount: "Amount",
       direction: "Direction",
       assetType: "Asset Type",
-      transactionType:'Transaction Type',
+      transactionType: "Transaction Type",
       title: "Transaction History",
     },
     settings: {
-      buttonTooltip: 'Asset settings',
+      buttonTooltip: "Asset settings",
       editPortfolioInfo: "Edit portfolio info",
       portfolioName: "Portfolio name",
       currency: "Currency",
@@ -179,7 +196,7 @@ export const en = {
         total: "Total",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Asset settings',
+        buttonTooltip: "Asset settings",
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
       },
@@ -193,7 +210,7 @@ export const en = {
         total: "Total",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Asset settings',
+        buttonTooltip: "Asset settings",
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
       },
@@ -208,7 +225,7 @@ export const en = {
         description: "Description",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Asset settings',
+        buttonTooltip: "Asset settings",
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
       },
@@ -221,7 +238,7 @@ export const en = {
         description: "Description",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Asset settings',
+        buttonTooltip: "Asset settings",
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
       },
@@ -235,7 +252,7 @@ export const en = {
         description: "Description",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Asset settings',
+        buttonTooltip: "Asset settings",
         moveToPortfolio: "Move to portfolio",
         transferToInvestFund: "Transfer to invest fund",
         delete: "Delete",
@@ -252,7 +269,7 @@ export const en = {
         description: "DESCRIPTION",
       },
       settingDropDownMenu: {
-        buttonTooltip: 'Asset settings',
+        buttonTooltip: "Asset settings",
         transferToInvestFund: "Chuyển vào quỹ đầu tư",
         delete: "Xóa tài sản",
       },
@@ -739,6 +756,7 @@ export const en = {
     addNewItem: "Add new item successfully",
     addMore: "Add successfully",
     transferItem: "Transfer item successfully",
+    updatePassword: "Update password successfully",
     default: "Done",
   },
 
@@ -753,6 +771,7 @@ export const en = {
     alreadyEmailExist: "Already email exist",
     default: "Error! Failed",
     error: "Error! Failed",
+    oldPasswordNotCorrect: "Old password not correct",
   },
   portfolioListPage: {
     title: "Portfolio",

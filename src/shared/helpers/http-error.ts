@@ -1,27 +1,28 @@
-import { mainConstant } from 'shared/constants';
-import { content } from 'i18n';
+import { mainConstant } from "shared/constants";
+import { content } from "i18n";
 
 export const httpError = {
   handleErrorCode,
   getSignInError,
   getSignUpError,
   handleSuccessMessage,
+  getResetPasswordError,
 };
 
-type IMessageType = 'edit' | 'update' | 'delete' | 'create' | 'add';
+type IMessageType = "edit" | "update" | "delete" | "create" | "add";
 function handleSuccessMessage(type: IMessageType) {
   const { en, vi } = content;
 
   switch (type) {
-    case 'edit':
+    case "edit":
       return { en: en.success.edit, vi: vi.success.edit };
-    case 'update':
+    case "update":
       return { en: en.success.update, vi: vi.success.update };
-    case 'delete':
+    case "delete":
       return { en: en.success.delete, vi: vi.success.delete };
-    case 'create':
+    case "create":
       return { en: en.success.create, vi: vi.success.create };
-    case 'add':
+    case "add":
       return { en: en.success.add, vi: vi.success.add };
 
     default:
@@ -30,10 +31,10 @@ function handleSuccessMessage(type: IMessageType) {
 }
 
 function handleErrorCode(res: { isError: boolean; data: any }) {
-  if (typeof res.data === 'undefined')
+  if (typeof res.data === "undefined")
     return {
-      en: '',
-      vi: '',
+      en: "",
+      vi: "",
     };
 
   const {
@@ -75,10 +76,10 @@ function handleErrorCode(res: { isError: boolean; data: any }) {
 }
 
 function getSignUpError(res: { isError: boolean; data: any }) {
-  if (typeof res.data === 'undefined')
+  if (typeof res.data === "undefined")
     return {
-      en: '',
-      vi: '',
+      en: "",
+      vi: "",
     };
 
   const {
@@ -88,21 +89,21 @@ function getSignUpError(res: { isError: boolean; data: any }) {
   const { en, vi } = content;
 
   switch (data) {
-    case 'User already existed':
+    case "User already existed":
       return { en: en.error.alreadyEmailExist, vi: vi.error.alreadyEmailExist };
     default:
       return {
-        en: '',
-        vi: '',
+        en: "",
+        vi: "",
       };
   }
 }
 
 function getSignInError(res: { isError: boolean; data: any }) {
-  if (typeof res.data === 'undefined')
+  if (typeof res.data === "undefined")
     return {
-      en: '',
-      vi: '',
+      en: "",
+      vi: "",
     };
 
   const {
@@ -112,12 +113,39 @@ function getSignInError(res: { isError: boolean; data: any }) {
   const { en, vi } = content;
 
   switch (data) {
-    case 'Credential failed':
+    case "Credential failed":
       return { en: en.error.credentialFailed, vi: vi.error.credentialFailed };
     default:
       return {
-        en: '',
-        vi: '',
+        en: "",
+        vi: "",
+      };
+  }
+}
+
+function getResetPasswordError(res: { isError: boolean; data: any }) {
+  if (typeof res.data === "undefined")
+    return {
+      en: "",
+      vi: "",
+    };
+
+  const {
+    data: { status, statusText, data },
+  } = res;
+
+  const { en, vi } = content;
+
+  switch (data) {
+    case "Old password not correct":
+      return {
+        en: en.error.oldPasswordNotCorrect,
+        vi: vi.error.oldPasswordNotCorrect,
+      };
+    default:
+      return {
+        en: "",
+        vi: "",
       };
   }
 }

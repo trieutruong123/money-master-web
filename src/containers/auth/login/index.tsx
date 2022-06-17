@@ -163,7 +163,7 @@ export const LoginForm = observer(({ content }: IProps) => {
                 variant="outlined"
               >
                 <InputLabel htmlFor="outlined-adornment-password">
-                  Password
+                  {content.password}
                 </InputLabel>
                 <OutlinedInput
                   fullWidth

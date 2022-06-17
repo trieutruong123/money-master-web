@@ -36,6 +36,11 @@ export const DashboardNavbar = observer((props: any) => {
     }
   }, [isNotified]);
 
+  useEffect(() => {
+    const lang = router.locale === 'vi' ? 'vi' : 'en';
+    rootStore.setLocale(lang);
+  }, [router.locale])
+
   return (
     <>
       <DashboardNavbarRoot

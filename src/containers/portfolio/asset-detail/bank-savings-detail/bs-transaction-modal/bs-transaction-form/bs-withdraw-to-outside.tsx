@@ -36,10 +36,17 @@ const BSWithdrawToOutside = observer(({ handleFormSubmit, content }: IProps) => 
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down('sm'));
     const validationSchema = Yup.object().shape({
-        amount: Yup.number(),
+        amount: Yup.number()
+            .required('Amount is required')
+            .typeError('Amount must be a number')
+            .positive('Amount must be greater than zero'),
         currencyCode: Yup.string().required().default('USD'),
-        tax: Yup.number(),
-        fee: Yup.number(),
+        tax: Yup.number()
+            .typeError('Tax must be a number')
+            .positive('Tax must be greater than zero'),
+        fee: Yup.number()
+            .typeError('Fee must be a number')
+            .positive('Fee must be greater than zero'),
     });
 
     const formOptions = { resolver: yupResolver(validationSchema) };

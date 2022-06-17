@@ -1,9 +1,11 @@
+import { rootStore } from "./root.store";
 import { runInAction } from "mobx";
 import { httpService } from "./../../services/http-service";
 import { validateFirstLastName } from "./../../utils/regex";
 import { action, makeAutoObservable, observable } from "mobx";
 import { UserInfo } from "shared/models";
 import { getRandomAvatarColor } from "utils";
+import { content } from "i18n";
 
 class UserStore {
   user: UserInfo | undefined = undefined;
@@ -70,6 +72,26 @@ class UserStore {
     } else {
     }
     return res;
+  }
+
+  async updatePassword(payload: { newPassword: string; oldPassword: string }) {
+    if (this.user === undefined) {
+      return;
+    }
+    const url = "/account/password";
+    const res: { isError: boolean; data: any } = await httpService.put(
+      url,
+      payload
+    );
+    if (!res.isError) {
+      rootStore.raiseNotification(
+        content[rootStore.locale].success.updatePassword,
+        "success"
+      );
+      return res;
+    } else {
+      return res;
+    }
   }
 
   deleteUser() {
