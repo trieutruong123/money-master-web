@@ -6,7 +6,7 @@ import { Box, Container } from '@mui/material';
 import { DefaultLayout } from 'containers';
 import RPResetPasswordPage from 'containers/reset-password/rp-reset-password-main';
 
-const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+const ResetPassword = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     const { locale } = props.context;
 
     return (
@@ -29,7 +29,7 @@ const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     );
 };
 
-Profile.getLayout = (page: ReactJSXElement) => (
+ResetPassword.getLayout = (page: ReactJSXElement) => (
     <DefaultLayout>{page}</DefaultLayout>
 );
 
@@ -40,3 +40,5 @@ export const getStaticProps: GetStaticProps = async (context) => {
         },
     };
 };
+
+export default ResetPassword;

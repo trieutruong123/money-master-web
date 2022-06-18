@@ -5,6 +5,7 @@ import {
   Box,
   TextField,
   Button,
+  CircularProgress,
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
@@ -20,7 +21,11 @@ type FormValues = {
   email: string;
 };
 
-const RPSendEmail = observer(() => {
+interface IProps{
+  openNextForm:Function;
+}
+
+const RPSendEmail = observer(({openNextForm}:IProps) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const content = i18n[rootStore.locale].resetPassword;
 
@@ -34,21 +39,23 @@ const RPSendEmail = observer(() => {
     useForm<FormValues>(formOptions);
   const { errors } = formState;
 
-  const onSubmit : SubmitHandler<FormValues> = async (data: any) => {
+  const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
     const res = await accountStore.sendEmail({
       email: data.email,
-      lang:rootStore.locale,
+      lang: rootStore.locale,
     });
     if (res.isError) {
-      setErrorMessage(res.data.data);
+      setErrorMessage(content.error.emailNotExist);
     } else {
+      openNextForm(RPFormContants.verifyOTP);
       accountStore.setNextForm(RPFormContants.verifyOTP);
+
     }
   };
 
   return (
     <>
-      <Card sx={{ my: 5, mx: 1 }}>
+      <Card sx={{ my: 5, mx: 1, width: 'inherit' }}>
         <Typography
           sx={{
             pt: 2,
@@ -58,14 +65,7 @@ const RPSendEmail = observer(() => {
         >
           {content.enterYourEmail}
         </Typography>
-        <Typography
-          variant="body1"
-          align="center"
-          sx={{ display: 'static', height: '1.2rem' }}
-          color={colorScheme.red500}
-        >
-          {errorMessage}
-        </Typography>
+
         <CardContent
           sx={{
             display: 'flex',
@@ -73,6 +73,14 @@ const RPSendEmail = observer(() => {
             justifyContent: 'center',
           }}
         >
+          <Typography
+            variant="body1"
+            align="center"
+            sx={{ display: 'static', height: '1rem' }}
+            color={colorScheme.red500}
+          >
+            {errorMessage}
+          </Typography>
           <Box
             component="form"
             autoComplete="off"
@@ -93,19 +101,15 @@ const RPSendEmail = observer(() => {
               error={typeof errors.email?.message !== 'undefined'}
               helperText={errors.email?.message}
             ></TextField>
+            <br/>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ bg: colorScheme.theme, textTransform: 'uppercase' }}
+            >
+              {content.send}
+            </Button>
           </Box>
-          <Button
-            variant="contained"
-            sx={{
-              bgcolor: colorScheme.blue400,
-              mt: 1,
-              '&:hover': {
-                bgcolor: colorScheme.blue400,
-              },
-            }}
-          >
-            {content.send}
-          </Button>
         </CardContent>
       </Card>
     </>
