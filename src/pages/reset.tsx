@@ -4,7 +4,7 @@ import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
 import { Box, Container } from '@mui/material';
 import { DefaultLayout } from 'containers';
-import APAccountProfile from 'containers/account-profile/ap-account-profile-main';
+import RPResetPasswordPage from 'containers/reset-password/rp-reset-password-main';
 
 const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
     const { locale } = props.context;
@@ -22,6 +22,7 @@ const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
                 }}
             >
                 <Container maxWidth="lg">
+                    <RPResetPasswordPage/>
                 </Container>
             </Box>
         </>

@@ -1,27 +1,38 @@
-import { httpService } from "../../services/http-service";
-import { action, observable, runInAction } from "mobx";
-import { makeAutoObservable } from "mobx";
-import { RPFormContants } from "shared/constants";
+import { httpService } from '../../services/http-service';
+import { action, observable, runInAction } from 'mobx';
+import { makeAutoObservable } from 'mobx';
+import { RPFormContants } from 'shared/constants';
 
 class AccountStore {
   currentForm: string = RPFormContants.sendEmail;
-  email: string = "";
+  email: string = '';
   constructor() {
     makeAutoObservable({
       currentForm: observable,
       email: observable,
+
+      setNextForm: action,
+      setEmail: action,
       sendEmail: action,
-      verifyToken: action,
+      verifyOTPCode: action,
       resetNewPassword: action,
       resetInitialState: action,
     });
   }
 
+  setNextForm(type: string) {
+    this.currentForm = type;
+  }
+
+  setEmail(email: string) {
+    this.email = email;
+  }
+
   async sendEmail(payload: { email: string; lang: string }) {
-    const url = "/account/forgetPassword";
+    const url = '/account/forgetPassword';
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      payload
+      payload,
     );
     if (!res.isError) {
       runInAction(() => {
@@ -32,27 +43,27 @@ class AccountStore {
     return res;
   }
 
-  async verifyToken(payload: { otpCode: string; email: string }) {
-    const url = "/account/otp";
+  async verifyOTPCode(payload: { otpCode: string; email: string }) {
+    const url = '/account/otp';
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      payload
+      payload,
     );
     return res;
   }
 
   async resetNewPassword(payload: { email: string; newPassword: string }) {
-    const url = "/account/resetPassword";
+    const url = '/account/resetPassword';
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      payload
+      payload,
     );
     return res;
   }
 
   resetInitialState() {
     this.currentForm = RPFormContants.sendEmail;
-    this.email = "";
+    this.email = '';
   }
 }
 

@@ -1,10 +1,52 @@
-import { Card, Typography, CardContent, Box, TextField, FormControl, Button } from '@mui/material';
+import { Card, Typography, CardContent, Box, InputLabel,OutlinedInput,FormHelperText, FormControl, Button } from '@mui/material';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';import { useState } from 'react';
 import { colorScheme } from 'utils/color-scheme';
+import { httpService } from 'services';
+import { accountStore, rootStore } from 'shared/store';
+import {content as i18n} from 'i18n';
+import { useRouter } from 'next/router';
+
+type FormValues = {
+    confirmPassword: string;
+    newPassword: string;
+  };
+
 const RPResetPasswordForm = observer(() => {
     const [errorMessage, setErrorMessage] = useState<string>('');
-
+    const content = i18n[rootStore.locale].resetPassword;
+    const router = useRouter();
+    
+    const validationSchema = Yup.object().shape({
+        newPassword: Yup.string()
+        .required(String(content.error.passwordRequired))
+        .min(8, String(content.error.passwordMin)),
+        confirmPassword: Yup.string()
+            .required(String(content.error.passwordRequired))
+            .oneOf(
+                [Yup.ref('newPassword'), null],
+                String(content.error.confirmPasswordNotMatch),
+            ),
+    });
+    const formOptions = { resolver: yupResolver(validationSchema) };
+    const { register, reset, handleSubmit, formState, getValues, setError } =
+      useForm<FormValues>(formOptions);
+    const { errors } = formState;
+  
+    const onSubmit: SubmitHandler<FormValues> = async (data: any) => {
+      const res = await accountStore.resetNewPassword({
+        newPassword: data.newPassword,
+        email: accountStore.email
+      });
+      if (res.isError) {
+        setErrorMessage(res.data.data);
+      } else {
+        rootStore.raiseNotification(content.success.resetPassword,'success');
+        router.push('/sign-in');
+      }
+    };
 
     return <>
         <Card sx={{ my: 5, mx: 1 }}>
@@ -42,35 +84,63 @@ const RPResetPasswordForm = observer(() => {
                         flexDirection: 'column',
                     }}
                 >
-                    <TextField
+                                    <FormControl
+                    error={typeof errors.newPassword?.message !== 'undefined'}
+                    sx={{ mt: 1, display: 'block' }}
+                    variant="outlined"
+                >
+                    <InputLabel htmlFor="outlined-adornment-password">
+                        {content.newPassword}
+                    </InputLabel>
+                    <OutlinedInput
                         fullWidth
-                        sx={{ my: 1, display: 'block' }}
-                        id="outlined-email-address"
-                        label={content.email}
-                        {...register('email')}
-                        variant="outlined"
-                        error={typeof errors.email?.message !== 'undefined'}
-                        helperText={errors.email?.message}
-                    ></TextField>
+                        id="outlined-adornment-password"
+                        type={'password'}
+                        {...register('newPassword')}
+                        label={content.newPassword}
+                        aria-describedby="password-error-text"
+                    />
+                    <FormHelperText id="password-error-text">
+                        {errors.newPassword?.message}
+                    </FormHelperText>
+                </FormControl>
+                <FormControl
+                    error={typeof errors.confirmPassword?.message !== 'undefined'}
+                    sx={{ mt: 1, display: 'block' }}
+                    variant="outlined"
+                >
+                    <InputLabel htmlFor="outlined-adornment-password">
+                        {content.confirmPassword}
+                    </InputLabel>
+                    <OutlinedInput
+                        fullWidth
+                        id="outlined-adornment-password"
+                        type={'password'}
+                        {...register('confirmPassword')}
+                        label={content.confirmPassword}
+                        aria-describedby="password-error-text"
+                    />
+                    <FormHelperText id="password-error-text">
+                        {errors.confirmPassword?.message}
+                    </FormHelperText>
+                </FormControl>
 
                 </Box>
                 <Button
+                type = 'submit'
                     variant="contained"
                     sx={{
-                        bgcolor: colorScheme.red400,
+                        bgcolor: colorScheme.blue400,
                         mt: 1,
                         '&:hover': {
-                            bgcolor: colorScheme.red500,
+                            bgcolor: colorScheme.blue400,
                         },
                     }}
-                    onClick={googleSignIn}
-                    startIcon={<GoogleIcon />}
                 >
-                    {content.googleSignIn}
+                    {content.resetPassword}
                 </Button>
             </CardContent>
         </Card></>
-})
-})
+});
 
 export default RPResetPasswordForm;
