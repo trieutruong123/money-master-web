@@ -2,7 +2,7 @@ import { Card, Typography, CardContent, Box, TextField, FormControl, Button } fr
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
 import { colorScheme } from 'utils/color-scheme';
-const RPResetPasswordForm = observer(() => {
+const RPSendEmail = observer(() => {
     const [errorMessage, setErrorMessage] = useState<string>('');
 
 
@@ -15,7 +15,7 @@ const RPResetPasswordForm = observer(() => {
                 }}
                 align="center"
             >
-                Reset Password
+                Send email
             </Typography>
             <Typography
                 variant="body1"
@@ -71,6 +71,5 @@ const RPResetPasswordForm = observer(() => {
             </CardContent>
         </Card></>
 })
-})
 
-export default RPResetPasswordForm;
+export default RPSendEmail;

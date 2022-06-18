@@ -1,7 +1,7 @@
 import { rootStore } from "./root.store";
 import { runInAction } from "mobx";
-import { httpService } from "./../../services/http-service";
-import { validateFirstLastName } from "./../../utils/regex";
+import { httpService } from "../../services/http-service";
+import { validateFirstLastName } from "../../utils/regex";
 import { action, makeAutoObservable, observable } from "mobx";
 import { UserInfo } from "shared/models";
 import { getRandomAvatarColor } from "utils";
