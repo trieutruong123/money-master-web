@@ -2,10 +2,9 @@ import Head from 'next/head';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { content } from 'i18n';
-import { Box, Container, Grid, Typography } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import { DashboardLayout } from 'containers';
-import { AccountProfile, AccountProfileDetails } from 'containers/account';
-import { BreadcrumbsLink } from 'shared/components';
+import APAccountProfile from 'containers/account-profile/ap-account-profile-main';
 
 const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;
@@ -25,18 +24,7 @@ const Profile = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         }}
       >
         <Container maxWidth="lg">
-          <BreadcrumbsLink urlArr={['/profile']} displayNameArr={['Profile']} />
-          <Typography sx={{ mb: 3 }} variant="h4">
-            {profilePage.title}
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item lg={4} md={6} xs={12}>
-              <AccountProfile translatedContent={profilePage} />
-            </Grid>
-            <Grid item lg={8} md={6} xs={12}>
-              <AccountProfileDetails translatedContent={profilePage.editProfile} />
-            </Grid>
-          </Grid>
+          <APAccountProfile />
         </Container>
       </Box>
     </>

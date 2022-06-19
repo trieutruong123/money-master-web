@@ -22,7 +22,7 @@ interface IProps {
 }
 
 
-export const AccountProfile = observer(({ translatedContent }: IProps) => {
+export const APUploadAvatar = observer(({ translatedContent }: IProps) => {
   const router = useRouter();
   const { locale } = router;
   const content = locale === 'vi' ? i18n['vi'].profilePage : i18n['en'].profilePage;

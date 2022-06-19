@@ -163,7 +163,7 @@ export const LoginForm = observer(({ content }: IProps) => {
                 variant="outlined"
               >
                 <InputLabel htmlFor="outlined-adornment-password">
-                  Password
+                  {content.password}
                 </InputLabel>
                 <OutlinedInput
                   fullWidth
@@ -189,7 +189,7 @@ export const LoginForm = observer(({ content }: IProps) => {
                   {errors.password?.message}
                 </FormHelperText>
               </FormControl>
-              <Link href="/reset-password" locale={locale}>
+              <Link href="/reset" locale={locale}>
                 <a style={{ marginLeft: '1rem' }} color={colorScheme.theme}>
                   {content.forgotPassword}
                 </a>

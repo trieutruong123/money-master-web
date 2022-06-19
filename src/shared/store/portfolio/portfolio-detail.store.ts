@@ -478,7 +478,7 @@ class PortfolioDetailStore {
     );
     rootStore.stopLoading();
     if (!res.isError) {
-      this.stockDetail?.push(res.data);
+      Promise.all([this.fetchStock()]);
       return { isError: false, data: httpError.handleSuccessMessage("add") };
     } else {
       if (params.isUsingInvestFund) {
@@ -890,6 +890,33 @@ class PortfolioDetailStore {
       default:
         break;
     }
+
+  }
+
+  async fetchDataAfterMakingTransaction(assetType:AssetType){
+    switch (assetType) {
+      case AssetTypeName.cryptoCurrency:
+        Promise.all([this.fetchCryptoCurrency()]);
+        break;
+      case AssetTypeName.stock:
+        Promise.all([this.fetchStock()]);
+        break;
+      case AssetTypeName.bankSaving:
+        Promise.all([this.fetchBankSaving()]);
+        break;
+      case AssetTypeName.realEstate:
+        Promise.all([this.fetchRealEstate()]);
+        break;
+      case AssetTypeName.cash:
+        Promise.all([this.fetchCash()]);
+        break;
+      case AssetTypeName.custom:
+        Promise.all([this.fetchOtherCustomAsset()]);
+        break;
+      default:
+        break;
+    }
+
   }
 
   resetInitialState() {

@@ -47,8 +47,12 @@ export const SDSellStockForm = observer(({ handleFormSubmit, content }: IProps) 
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
     destinationCurrencyCode: Yup.string().required(''),
-    fee: Yup.number(),
-    tax: Yup.number(),
+    tax: Yup.number()
+      .positive('Tax must be greater than zero')
+      .typeError('Tax must be a number'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .positive('Fee must be greater than zero'),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };

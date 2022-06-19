@@ -3,9 +3,16 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { Box, Typography, Button } from '@mui/material';
 
-export const MultipleLanguage: React.FunctionComponent = (props: any) => {
+interface IProps {
+  style?: Object
+};
+
+export const MultipleLanguage: React.FunctionComponent<IProps> = ({ style }: IProps) => {
   const { locale, locales, asPath, pathname, query } = useRouter();
   const router = useRouter();
+  const handleClick = (lang: string) => {
+    router.push({ pathname, query }, asPath, { locale: lang });
+  }
 
   const links = locales?.map((lang) => {
     if (lang !== locale) {
@@ -13,10 +20,8 @@ export const MultipleLanguage: React.FunctionComponent = (props: any) => {
         <Button
           key={lang}
           variant="text"
-          onClick={() => {
-            router.push({ pathname, query }, asPath, { locale: lang });
-          }}
-          sx={{ p:'1',...props }}
+          onClick={() => handleClick(lang)}
+          sx={{ p: '1', ...style }}
         >
           <Box
             flexDirection="row"

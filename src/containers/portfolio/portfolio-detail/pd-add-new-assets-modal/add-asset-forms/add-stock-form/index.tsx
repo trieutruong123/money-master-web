@@ -68,7 +68,6 @@ export const AddNewStockForm = observer(
     };
 
     const addMoreValue = async (data: ITransactionRequest) => {
-      console.log(data);
       const res = await portfolioDetailStore.createNewTransaction(data);
       if (res.isError) {
         if (data.isUsingFundAsSource || portfolioDetailStore?.selectedAsset?.moneySource === UsingMoneySource.usingCash) {

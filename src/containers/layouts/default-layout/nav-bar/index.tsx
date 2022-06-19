@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Router, useRouter } from 'next/router';
 import Image from 'next/image';
 import {
@@ -19,6 +19,7 @@ import { colorScheme } from 'utils/color-scheme';
 import DrawerComponent from './drawer-component';
 import styled from './style/header.module.css';
 import { MultipleLanguage } from 'shared/components'
+import { rootStore } from 'shared/store';
 
 interface IProps {
   content: any;
@@ -27,13 +28,18 @@ interface IProps {
 export default function DefaultNavbar({ content }: IProps) {
   const [value, setValue] = useState<any>('home');
   const [openDrawer, setOpenDrawer] = useState(false);
-  const { locale, pathname, query, asPath } = useRouter();
+  const { locale } = useRouter();
   const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const matchAuthPage: boolean = ['/sign-in', '/sign-up', '/'].includes(
+  const matchAuthPage: boolean = ['/sign-in', '/sign-up', '/','/reset'].includes(
     router.pathname,
   );
+
+  useEffect(() => {
+    const lang = router.locale === 'vi' ? 'vi' : 'en';
+    rootStore.setLocale(lang);
+  }, [router.locale])
 
   const matchSpecificPage: boolean = ['/', 'docs'].includes(router.pathname);
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
@@ -50,6 +56,9 @@ export default function DefaultNavbar({ content }: IProps) {
       .getElementById('top-of-page')
       ?.scrollIntoView({ behavior: 'smooth' });
   };
+
+
+
 
   return (
     <Box sx={{ flexGrow: 1 }} className="section">
@@ -163,7 +172,7 @@ export default function DefaultNavbar({ content }: IProps) {
                 variant="contained"
                 sx={{ bg: colorScheme.theme, mr: 1, ml: 'auto' }}
               >
-                {router.pathname === '/sign-in' ? (
+                {router.pathname === '/sign-in'? (
                   <Link href="/sign-up" locale={locale}>
                     {content.register}
                   </Link>

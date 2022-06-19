@@ -35,8 +35,12 @@ export const SellCashForm = observer(({ handleFormSubmit, content }: IProps) => 
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
     destinationCurrencyCode: Yup.string().required(''),
-    fee: Yup.number(),
-    tax: Yup.number(),
+    tax: Yup.number()
+      .typeError('Tax must be a number')
+      .positive('Tax must be greater than zero'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .positive('Fee must be greater than zero'),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };

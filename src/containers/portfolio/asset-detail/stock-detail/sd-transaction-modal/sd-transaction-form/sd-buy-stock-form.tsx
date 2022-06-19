@@ -59,9 +59,9 @@ export const SDBuyStockForm = observer(({ handleFormSubmit, content }: IProps) =
     id: uuid(),
     type: 'cash',
     name: SourceMoneyConstants[language].cash,
-    },
+  },
   ]
-  
+
   const validationSchema = Yup.object().shape({
     purchasePrice: Yup.number()
       .required('Price is required')
@@ -71,8 +71,12 @@ export const SDBuyStockForm = observer(({ handleFormSubmit, content }: IProps) =
       .required('Amount is required')
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
-    fee: Yup.number(),
-    tax: Yup.number(),
+    tax: Yup.number()
+      .positive('Tax must be greater than zero')
+      .typeError('Tax must be a number'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .positive('Fee must be greater than zero'),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };

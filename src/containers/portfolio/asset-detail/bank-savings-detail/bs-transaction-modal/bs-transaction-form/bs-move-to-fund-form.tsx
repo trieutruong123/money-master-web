@@ -36,7 +36,10 @@ interface IProps {
 export const BSMoveToFundForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const validationSchema = Yup.object().shape({
-    amount: Yup.number(),
+    amount: Yup.number()
+      .required('Amount is required')
+      .typeError('Amount must be a number')
+      .positive('Amount must be greater than zero'),
     currencyCode: Yup.string().required().default('USD'),
   });
 

@@ -7,10 +7,8 @@ import { useCallback } from 'react';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import SaveIcon from '@mui/icons-material/Save';
-import { content } from 'i18n';
-import { DataArray } from '@mui/icons-material';
-import { convertLength } from '@mui/material/styles/cssUtils';
-
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
 interface IProps {
     content: any
 }
@@ -21,6 +19,9 @@ type FormValues = {
 };
 
 const PDEditPortfolioInfo = ({ content }: IProps) => {
+    const router = useRouter();
+    const { locale } = router;
+    const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -44,7 +45,7 @@ const PDEditPortfolioInfo = ({ content }: IProps) => {
 
         if (!res.isError) {
             rootStore.raiseNotification(
-                content[rootStore.locale].success.update,
+                i18n[language].success.update,
                 "success"
             );
             portfolioDetailStore.setUpdateInvestFund(true);
@@ -52,7 +53,7 @@ const PDEditPortfolioInfo = ({ content }: IProps) => {
         }
         else {
             rootStore.raiseError(
-                content[rootStore.locale].error.failedToLoadInitialData
+                i18n[language].error.failedToLoadInitialData
             );
         }
     }, []);
