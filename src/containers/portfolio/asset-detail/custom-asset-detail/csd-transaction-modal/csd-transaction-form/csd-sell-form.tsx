@@ -47,11 +47,11 @@ export const CSDSellForm = observer(({ handleFormSubmit, content }: IProps) => {
         currencyCode: Yup.string().required().default('USD'),
         destinationCurrencyCode: Yup.string().required(''),
         tax: Yup.number()
-            .positive('Tax must be greater than zero')
+            .min(0,'Tax must be greater than zero')
             .typeError('Tax must be a number'),
         fee: Yup.number()
             .typeError('Fee must be a number')
-            .positive('Fee must be greater than zero'),
+            .min(0,'Fee must be greater than zero'),
     });
 
     const formOptions = { resolver: yupResolver(validationSchema) };
