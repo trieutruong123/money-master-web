@@ -7,6 +7,7 @@ export const finhubService = {
   getStockInfoByCode,
   searchForStock,
   getStockOHCL,
+  getMarketNews
 };
 
 const BASE_URL = mainConstant.STOCK_API_URL;
@@ -86,3 +87,23 @@ const parseSearchingData = (searchingResult: any): Array<SearchingDataItem> => {
     return [];
   }
 };
+
+async function getMarketNews(){
+  const url = `/news?category=general&token=${ACCESS_TOKEN}`;
+  console.log(`${BASE_URL}${url}`)
+  try {
+    const response = await axios.get(`${BASE_URL}${url}`, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return {
+      isError: false,
+      data: response.data,
+    };
+  } catch (error: any) {
+    return {
+      isError: true,
+      data: error.response,
+    };
+  }
+}

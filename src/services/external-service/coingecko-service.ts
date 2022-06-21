@@ -7,6 +7,7 @@ export const coinGeckoService = {
   getCoinInfoByCode,
   searchForCoin,
   getCoinOHCL,
+  getTopCoins
 };
 
 const BASE_URL = mainConstant.CRYPTO_API_URL;
@@ -93,3 +94,22 @@ const parseSearchingData = (searchingResult: any): Array<SearchingDataItem> => {
     return [];
   }
 };
+
+async function getTopCoins() {
+  const url = `/search/trending`;
+  try {
+    const response = await axios.get(`${BASE_URL}${url}`, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    return {
+      isError: false,
+      data: response.data,
+    };
+  } catch (error: any) {
+    return {
+      isError: true,
+      data: error.response,
+    };
+  }
+}
