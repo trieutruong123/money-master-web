@@ -21,9 +21,10 @@ import {
   YourWallet,
 } from "containers/dashboard";
 import { BreadcrumbsLink } from "shared/components";
-import { dummyNews } from "shared/store/dummyNews";
 import NewsCard from "containers/dashboard/news-card";
 import TopStock from "containers/dashboard/top-stock";
+import { useEffect, useState } from "react";
+import { finhubService } from "services";
 
 function srcset(image: string, size: number, rows = 1, cols = 1) {
   return {
@@ -34,7 +35,19 @@ function srcset(image: string, size: number, rows = 1, cols = 1) {
   };
 }
 
+
+
 const Dashboard = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const [marketNews,setMarketNews]=useState<Array<any>>([])
+  const fetchData=async function(){
+    var rawNews=await finhubService.getMarketNews();
+    console.log(rawNews)
+    setMarketNews(rawNews.data.slice(0,7))
+  }
+  useEffect(()=>{
+    fetchData();
+  },[])
+
   const { locale } = props.context;
   const detail = locale === "vi" ? content["vi"] : content["en"];
   const { dashboardPage } = detail;
@@ -69,7 +82,7 @@ const Dashboard = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
               Market News
             </Typography>
             <Grid container spacing={3}>
-              {dummyNews.map((news: any, index: number) => (
+              {marketNews && marketNews.map((news: any, index: number) => (
                 <NewsCard key={news.id} news={news} index={index} />
               ))}
             </Grid>
