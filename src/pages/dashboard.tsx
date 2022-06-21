@@ -1,9 +1,17 @@
-import Head from 'next/head';
-import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { GetStaticProps, InferGetStaticPropsType } from 'next';
-import { content } from 'i18n';
-import { Box, Container, Grid, Typography } from '@mui/material';
-import { DashboardLayout } from 'containers';
+import Head from "next/head";
+import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
+import { content } from "i18n";
+import {
+  Box,
+  Container,
+  Grid,
+  ImageList,
+  ImageListItem,
+  Typography,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { DashboardLayout } from "containers";
 import {
   TotalAssets,
   TotalProfit,
@@ -11,13 +19,26 @@ import {
   PlanProgress,
   RecentlyAdded,
   YourWallet,
-} from 'containers/dashboard';
-import { BreadcrumbsLink } from 'shared/components';
+} from "containers/dashboard";
+import { BreadcrumbsLink } from "shared/components";
+import { dummyNews } from "shared/store/dummyNews";
+import NewsCard from "containers/dashboard/news-card";
+import TopStock from "containers/dashboard/top-stock";
+
+function srcset(image: string, size: number, rows = 1, cols = 1) {
+  return {
+    src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
+    srcSet: `${image}?w=${size * cols}&h=${
+      size * rows
+    }&fit=crop&auto=format&dpr=2 2x`,
+  };
+}
 
 const Dashboard = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const { locale } = props.context;
-  const detail = locale === 'vi' ? content['vi'] : content['en'];
+  const detail = locale === "vi" ? content["vi"] : content["en"];
   const { dashboardPage } = detail;
+  const theme = useTheme();
 
   return (
     <>
@@ -33,34 +54,26 @@ const Dashboard = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
       >
         <Container maxWidth="lg">
           <BreadcrumbsLink
-            urlArr={['/dashboard']}
-            displayNameArr={['Dashboard']}
+            urlArr={["/dashboard"]}
+            displayNameArr={["Dashboard"]}
           />
           <Typography sx={{ mb: 3 }} variant="h4">
             {dashboardPage.title}
           </Typography>
-        </Container>
-        <Container maxWidth={false}>
-          <Grid container spacing={3}>
-            <Grid item lg={3} sm={6} xl={3} xs={12}>
-              <YourWallet sx={{ height: '100%' }} />
+
+          <Container maxWidth={false}>
+            <Grid container spacing={3}>
+              <TopStock />
             </Grid>
-            <Grid item xl={3} lg={3} sm={6} xs={12}>
-              <TotalProfit sx={{ height: '100%' }} />
+            <Typography variant="h5" sx={{ mt: 3, mb: 2 }}>
+              Market News
+            </Typography>
+            <Grid container spacing={3}>
+              {dummyNews.map((news: any, index: number) => (
+                <NewsCard key={news.id} news={news} index={index} />
+              ))}
             </Grid>
-            <Grid item xl={3} lg={3} sm={6} xs={12}>
-              <PlanProgress sx={{ height: '100%' }} />
-            </Grid>
-            <Grid item xl={3} lg={3} sm={6} xs={12}>
-              <TotalAssets sx={{ height: '100%' }} />
-            </Grid>
-            <Grid item lg={4} md={6} xl={3} xs={12}>
-              <InvestmentChannel sx={{ height: '100%' }} />
-            </Grid>
-            <Grid item lg={8} md={12} xl={9} xs={12}>
-              <RecentlyAdded sx={{ height: '100%' }} />
-            </Grid>
-          </Grid>
+          </Container>
         </Container>
       </Box>
     </>
