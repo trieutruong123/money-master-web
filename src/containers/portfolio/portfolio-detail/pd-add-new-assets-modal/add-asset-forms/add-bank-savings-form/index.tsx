@@ -34,7 +34,7 @@ export const AddNewBankSavingsForm = observer(
       const res = await portfolioDetailStore.addNewBankSaving(data);
       if (res.isError) {
         if (data.isUsingInvestFund || data.isUsingCash) {
-          setErrorMessage(res.data);
+          setErrorMessage(res.data.data);
         } else {
           rootStore.raiseError(res?.data.en);
           handleClose();

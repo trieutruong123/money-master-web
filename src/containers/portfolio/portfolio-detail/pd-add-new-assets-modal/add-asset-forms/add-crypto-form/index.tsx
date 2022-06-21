@@ -44,7 +44,7 @@ export const AddNewCryptoForm = observer(
       const res = await portfolioDetailStore.createNewTransaction(data);
       if (res.isError) {
         if (data.isUsingFundAsSource || portfolioDetailStore?.selectedAsset?.moneySource === UsingMoneySource.usingCash) {
-          setErrorMessage(res.data);
+          setErrorMessage(res.data.data);
         }
         else {
           rootStore.raiseError('Error');
@@ -67,7 +67,7 @@ export const AddNewCryptoForm = observer(
       const res = await portfolioDetailStore.addNewCryptoCurrency(data);
       if (res.isError) {
         if (data.isUsingInvestFund || data.isUsingCash) {
-          setErrorMessage(res.data);
+          setErrorMessage(res.data.data);
         } else {
           rootStore.raiseError('Error');
           handleClose();

@@ -50,7 +50,7 @@ export const AddNewStockForm = observer(
       const res: any = await portfolioDetailStore.addNewStock(data);
       if (res.isError) {
         if (data.isUsingInvestFund || data.isUsingCash) {
-          setErrorMessage(res.data);
+          setErrorMessage(res.data.data);
         } else {
           rootStore.raiseError('Error');
           handleClose();
@@ -71,7 +71,7 @@ export const AddNewStockForm = observer(
       const res = await portfolioDetailStore.createNewTransaction(data);
       if (res.isError) {
         if (data.isUsingFundAsSource || portfolioDetailStore?.selectedAsset?.moneySource === UsingMoneySource.usingCash) {
-          setErrorMessage(res.data);
+          setErrorMessage(res.data.data);
         } else {
           rootStore.raiseError('Error');
           handleClose();

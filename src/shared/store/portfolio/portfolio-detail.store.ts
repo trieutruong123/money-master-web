@@ -706,10 +706,10 @@ class PortfolioDetailStore {
           return {
             source: `${getSankeyNodeType(
               link.sourceType
-            ).toUpperCase()}@@${link.sourceName.toUpperCase()}`,
+            ).toUpperCase()}_${link.sourceId||''}@@${link.sourceName.toUpperCase()}`,
             target: `${getSankeyNodeType(
               link.targetType
-            ).toUpperCase()}@@${link.targetName.toUpperCase()}`,
+            ).toUpperCase()}_${link.targetId||''}@@${link.targetName.toUpperCase()}`,
             value: link.amount,
           };
         });

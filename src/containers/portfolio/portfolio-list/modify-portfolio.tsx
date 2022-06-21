@@ -11,6 +11,7 @@ const ModifyPortfolio = (
   const [initialCurrency, setCurrency] = useState<string>("");
   const [currencyList, setCurrencyList] = React.useState<any>({});
   React.useEffect(() => {
+    
     getSupportedCurrencyList().forEach(currency => {
       setCurrencyList((prevState: any) => ({ ...prevState, [currency.code]: currency.name })
       )
@@ -22,7 +23,7 @@ const ModifyPortfolio = (
 
     props.onModifyPortfolio({
       name: portfolioName,
-      initialCurrency: initialCurrency,
+      initialCurrency: initialCurrency.toUpperCase()||'USD',
       initialCash: 0,
     });
   }

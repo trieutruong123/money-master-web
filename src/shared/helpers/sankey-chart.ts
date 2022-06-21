@@ -13,8 +13,12 @@ export function getSankeyNodeType(type: string) {
       return SankeyNodeConstants.stock;
     case SankeyNodeType.custom:
       return SankeyNodeConstants.custom;
+    case SankeyNodeType.cash:
+      return SankeyNodeConstants.cash;
     case SankeyNodeType.outsideIn:
+      return SankeyNodeConstants.outsideIn;
     case SankeyNodeType.outsideOut:
+      return SankeyNodeConstants.outsideOut;
     default:
       return "";
   }

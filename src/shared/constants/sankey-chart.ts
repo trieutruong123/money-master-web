@@ -16,4 +16,6 @@ export enum SankeyNodeConstants {
     crypto = "crypto",
     stock = "stock",
     custom = "custom",
+    outsideIn = 'outside in',
+    outsideOut = 'outside out',
   }
