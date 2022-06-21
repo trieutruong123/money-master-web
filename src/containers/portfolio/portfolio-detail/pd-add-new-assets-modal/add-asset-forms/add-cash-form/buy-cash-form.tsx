@@ -49,11 +49,11 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
     description: Yup.string(),
     cashId: Yup.number().required(),
     tax: Yup.number()
-      .typeError('Tax must be a number')
-      .positive('Tax must be greater than zero'),
+    .typeError('Tax must be a number')
+      .min(0,'Tax must be greater than zero'),
     fee: Yup.number()
       .typeError('Fee must be a number')
-      .positive('Fee must be greater than zero'),
+      .min(0,'Fee must be greater than zero'),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };

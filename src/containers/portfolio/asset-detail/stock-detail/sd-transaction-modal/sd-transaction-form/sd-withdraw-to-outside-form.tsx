@@ -40,8 +40,12 @@ const SDWithdrawToOutsideForm = observer(({ handleFormSubmit, content }: IProps)
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
     currencyCode: Yup.string().required().default('USD'),
-    tax: Yup.number(),
-    fee: Yup.number(),
+    tax: Yup.number()
+    .typeError('Tax must be a number')
+      .min(0,'Tax must be greater than zero'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .min(0,'Fee must be greater than zero'),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
