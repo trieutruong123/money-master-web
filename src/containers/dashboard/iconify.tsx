@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import { Icon } from '@iconify/react';
 
 interface IProps{
     icon:any,

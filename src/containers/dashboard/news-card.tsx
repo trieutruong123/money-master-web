@@ -33,13 +33,6 @@ const AvatarStyle = styled(Avatar)(({ theme }) => ({
   bottom: theme.spacing(-2),
 }));
 
-const CoverImgStyle = styled('img')({
-  top: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'image',
-  position: 'absolute',
-});
 
 function fDate(datetime:number):string{
   return dayjs(datetime).format('DD/MM/YYYY')
@@ -134,7 +127,17 @@ export default function NewsCard({ news, index }:IProps) {
             }}
           /> */}
 
-          <CoverImgStyle alt={headline} src={image} />
+
+          <img 
+            style = {{
+                top: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'fill',
+                position: 'absolute',
+            }} 
+            alt={headline} 
+            src={image} />
         </CardMediaStyle>
 
         <CardContent
