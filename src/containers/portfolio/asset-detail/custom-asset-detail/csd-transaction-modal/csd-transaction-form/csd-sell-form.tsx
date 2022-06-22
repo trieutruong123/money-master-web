@@ -63,7 +63,7 @@ export const CSDSellForm = observer(({ handleFormSubmit, content }: IProps) => {
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
             amount: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
-            amountInDestinationAssetUnit: 0,
+            amountInDestinationAssetUnit: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
             currencyCode: data.currencyCode || 'USD',
             transactionType: TransactionRequestType.withdrawToCash,
             destinationAssetId: customAssetsDetailStore.cashDetail?.find(item => item.currencyCode === data.destinationCurrencyCode)?.id,

@@ -1,19 +1,22 @@
-import { ITransactionRequest } from "./../../types/portfolio-asset.type";
-import { TransactionItem } from "./../../models/transaction.model";
-import { PACashBreadcrumbTabs } from "./../../constants/portfolio-asset";
-import { fcsapiService, httpService } from "services";
-import { action, makeAutoObservable, observable, runInAction } from "mobx";
-import { portfolioData } from "shared/store/portfolio/portfolio-data";
-import { CashItem } from "shared/models";
-import { rootStore } from "shared/store";
-import { content } from "i18n";
-import { AssetTypeName, TransactionTypeName } from "shared/constants";
+import {
+  ITransactionListRequest,
+  ITransactionRequest,
+} from './../../types/portfolio-asset.type';
+import { TransactionItem } from './../../models/transaction.model';
+import { PACashBreadcrumbTabs } from './../../constants/portfolio-asset';
+import { fcsapiService, httpService } from 'services';
+import { action, makeAutoObservable, observable, runInAction } from 'mobx';
+import { portfolioData } from 'shared/store/portfolio/portfolio-data';
+import { CashItem } from 'shared/models';
+import { rootStore } from 'shared/store';
+import { content } from 'i18n';
+import { AssetTypeName, TransactionTypeName } from 'shared/constants';
 import {
   CurrencyItem,
   Portfolio,
   TransferToInvestFundType,
-} from "shared/types";
-import { getCurrencyByCode } from "shared/helpers";
+} from 'shared/types';
+import { getCurrencyByCode } from 'shared/helpers';
 
 export interface IMoveToFundPayload {
   referentialAssetId: number;
@@ -32,18 +35,21 @@ class CashDetailStore {
   cashList: CashItem[] | undefined = [];
   transactionHistory: Array<TransactionItem> | undefined = undefined;
   currencyList: Array<CurrencyItem> | undefined = undefined;
-  destCurrencyCode: string = "";
-  sourceCurrencyCode: string = "";
+  destCurrencyCode: string = '';
+  sourceCurrencyCode: string = '';
 
   OHLC_data: Array<any> = [];
   forexMarketData: any = undefined;
   forexDetail: any = undefined;
   timeInterval: number = 1;
-  timeFrame: string = "1w";
+  timeFrame: string = '1w';
 
   selectedTab: string = PACashBreadcrumbTabs.overview;
   isOpenAddNewTransactionModal: boolean = false;
   needUpdateOverviewData: boolean = false;
+
+  currentPage: number = 1;
+  itemsPerPage: number = 5;
 
   constructor() {
     makeAutoObservable(this, {
@@ -57,7 +63,7 @@ class CashDetailStore {
       transactionHistory: observable,
       destCurrencyCode: observable,
       sourceCurrencyCode: observable,
-
+      currentPage: observable,
       OHLC_data: observable,
       forexDetail: observable,
       forexMarketData: observable,
@@ -72,7 +78,7 @@ class CashDetailStore {
       fetchForexInfoByCode: action,
       fetchTransactionHistoryData: action,
       fetchForexDetail: action,
-      
+
       setOpenAddNewTransactionModal: action,
       setCashId: action,
       setPortfolioId: action,
@@ -89,6 +95,10 @@ class CashDetailStore {
     });
   }
 
+  setCurrentPage(pageNumber: number) {
+    this.currentPage = pageNumber;
+  }
+
   setOpenAddNewTransactionModal(isOpen: boolean) {
     this.isOpenAddNewTransactionModal = isOpen;
   }
@@ -103,10 +113,10 @@ class CashDetailStore {
 
   setTimeInterval(interval: number) {
     this.timeInterval = interval;
-    if (interval >= 1 && interval <= 2) this.timeFrame = "30m";
-    if (interval >= 3 && interval <= 30) this.timeFrame = "4h";
-    if (interval >= 31 && interval <= 180) this.timeFrame = "1d";
-    if (interval > 180) this.timeFrame = "1w";
+    if (interval >= 1 && interval <= 2) this.timeFrame = '30m';
+    if (interval >= 3 && interval <= 30) this.timeFrame = '4h';
+    if (interval >= 31 && interval <= 180) this.timeFrame = '1d';
+    if (interval > 180) this.timeFrame = '1w';
   }
 
   setSourceCurrency(source: string) {
@@ -126,11 +136,7 @@ class CashDetailStore {
   }
 
   async fetchOverviewData() {
-    Promise.all([
-      this.fetchPortfolioInfo(),
-      this.fetchCashDetail(),
-      this.fetchTransactionHistoryData(),
-    ]);
+    Promise.all([this.fetchPortfolioInfo(), this.fetchCashDetail()]);
   }
 
   async fetchPortfolioInfo() {
@@ -142,7 +148,7 @@ class CashDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.find(
-        (item: Portfolio) => item.id === this.portfolioId
+        (item: Portfolio) => item.id === this.portfolioId,
       );
       runInAction(() => {
         this.portfolioInfo = currentPortfolio;
@@ -151,7 +157,7 @@ class CashDetailStore {
     } else {
       runInAction(() => {
         this.portfolioInfo = undefined;
-        this.destCurrencyCode = "";
+        this.destCurrencyCode = '';
       });
     }
   }
@@ -163,30 +169,41 @@ class CashDetailStore {
       runInAction(() => {
         this.cashList = res.data;
         this.currencyList = res.data.map((item: CashItem) =>
-          getCurrencyByCode(item.currencyCode)
+          getCurrencyByCode(item.currencyCode),
         );
         this.cashDetail = res.data.find(
-          (item: CashItem) => item.id === this.cashId
+          (item: CashItem) => item.id === this.cashId,
         );
-        this.sourceCurrencyCode = this.cashDetail?.currencyCode || "USD";
+        this.sourceCurrencyCode = this.cashDetail?.currencyCode || 'USD';
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
+        content[rootStore.locale].error.failedToLoadInitialData,
       );
       runInAction(() => {
         this.cashDetail = undefined;
         this.currencyList = undefined;
-        this.sourceCurrencyCode = "";
+        this.sourceCurrencyCode = '';
       });
     }
   }
 
-  async fetchTransactionHistoryData() {
+  async fetchTransactionHistoryData({
+    itemsPerPage,
+    nextPage,
+    startDate,
+    endDate,
+    type,
+  }: ITransactionListRequest) {
     if (!this.portfolioId || !this.cashId) {
       return;
     }
-    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transactions`;
+    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transactions
+                      ?PageSize=${itemsPerPage}
+                      &PageNumber=${nextPage}
+                      ${startDate ? `&StartDate=${startDate}` : ''}
+                      ${endDate ? `&EtartDate=${endDate}` : ''}
+                      ${type ? `&Type=${type}` : ''}`;
     const res: { isError: boolean; data: any } = await httpService.get(url);
     if (!res.isError) {
       runInAction(() => {
@@ -212,7 +229,7 @@ class CashDetailStore {
     }
     const symbol =
       this.sourceCurrencyCode?.toUpperCase() +
-      "/" +
+      '/' +
       this.destCurrencyCode?.toUpperCase();
     const res: any = await fcsapiService.getForexOHCL({
       symbol,
@@ -237,7 +254,7 @@ class CashDetailStore {
     }
     const symbol =
       this.sourceCurrencyCode?.toUpperCase() +
-      "/" +
+      '/' +
       this.destCurrencyCode?.toUpperCase();
 
     const res: any = await fcsapiService.getForexInfoByCode({
@@ -252,20 +269,20 @@ class CashDetailStore {
   }
 
   async fetchForexDetail() {
-    if (
-      !this.sourceCurrencyCode) {
-        return;
+    if (!this.sourceCurrencyCode) {
+      return;
     }
-    const res: any = await fcsapiService.getForexProfileDetail(this.sourceCurrencyCode);
+    const res: any = await fcsapiService.getForexProfileDetail(
+      this.sourceCurrencyCode,
+    );
     if (!res.isError) {
       runInAction(() => {
         this.forexDetail = res.data;
       });
-    }
-    else {
+    } else {
       runInAction(() => {
         this.forexDetail = undefined;
-      })
+      });
     }
     return res;
   }
@@ -275,13 +292,13 @@ class CashDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.default,
-        "success"
+        'success',
       );
       return res;
     } else {
@@ -294,12 +311,12 @@ class CashDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      payload
+      payload,
     );
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.default,
-        "success"
+        'success',
       );
     } else {
       rootStore.raiseError(content[rootStore.locale].error.default);
@@ -313,17 +330,19 @@ class CashDetailStore {
     this.currencyList = undefined;
     this.transactionHistory = [];
 
-    this.sourceCurrencyCode = "";
-    this.destCurrencyCode = "";
+    this.sourceCurrencyCode = '';
+    this.destCurrencyCode = '';
 
     this.forexMarketData = undefined;
     this.forexDetail = undefined;
 
     this.OHLC_data = [];
-    this.timeFrame = "1w";
+    this.timeFrame = '1w';
 
     this.needUpdateOverviewData = true;
     this.selectedTab = PACashBreadcrumbTabs.overview;
+
+    this.currentPage = 1;
   }
 }
 

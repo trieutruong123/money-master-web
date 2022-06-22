@@ -46,7 +46,12 @@ const CSDMainForm = observer(({ }: IProps) => {
         customAssetsDetailStore.setOpenAddNewTransactionModal(false);
     };
 
+
     const sellAsset = async (payload: ITransactionRequest) => {
+        if(customAssetsDetailStore.customAssetDetail?.inputMoneyAmount==0){
+            setErrorMessage("Can't sell asset. Money is insufficient");
+            return;
+        }
         const res = await customAssetsDetailStore.createNewTransaction(payload);
         if (res.isError) {
             setErrorMessage(res.data.data);
@@ -57,6 +62,10 @@ const CSDMainForm = observer(({ }: IProps) => {
     };
 
     const moveToFund = async (payload: TransferToInvestFundType) => {
+        if(customAssetsDetailStore.customAssetDetail?.inputMoneyAmount==0){
+            setErrorMessage("Can't transfer asset. Money is insufficient");
+            return;
+        }
         const res = await customAssetsDetailStore.transferAssetToInvestFund(payload);
         if (res.isError) {
             setErrorMessage(res.data.data);
@@ -67,6 +76,10 @@ const CSDMainForm = observer(({ }: IProps) => {
     };
 
     const withdrawValue = async (payload: ITransactionRequest) => {
+        if(customAssetsDetailStore.customAssetDetail?.inputMoneyAmount==0){
+            setErrorMessage("Can't withdraw asset. Money is insufficient");
+            return;
+        }
         const res = await customAssetsDetailStore.createNewTransaction(payload);
         if (res.isError) {
             setErrorMessage(res.data.data);

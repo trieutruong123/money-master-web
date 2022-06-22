@@ -1,26 +1,26 @@
 export type TransactionType =
-  | "newAsset"
-  | "addValue"
-  | "withdrawValue"
-  | "withdrawToCash"
-  | "withdrawToOutside"
-  | "buyFromOutside"
-  | "buyFromFund"
-  | "buyFromCash"
-  | "sellAsset"
-  | "moveToFund";
+  | 'newAsset'
+  | 'addValue'
+  | 'withdrawValue'
+  | 'withdrawToCash'
+  | 'withdrawToOutside'
+  | 'buyFromOutside'
+  | 'buyFromFund'
+  | 'buyFromCash'
+  | 'sellAsset'
+  | 'moveToFund';
 
 export type TransactionRequestType =
-  | "newAsset"
-  | "addValue"
-  | "withdrawValue"
-  | "withdrawToCash"
-  | "withdrawToOutside"
-  | "buyFromOutside"
-  | "buyFromFund"
-  | "buyFromCash"
-  | "sellAsset"
-  | "moveToFund";
+  | 'newAsset'
+  | 'addValue'
+  | 'withdrawValue'
+  | 'withdrawToCash'
+  | 'withdrawToOutside'
+  | 'buyFromOutside'
+  | 'buyFromFund'
+  | 'buyFromCash'
+  | 'sellAsset'
+  | 'moveToFund';
 
 export interface ITransactionRequest {
   amount: number;
@@ -35,4 +35,12 @@ export interface ITransactionRequest {
   isUsingFundAsSource: boolean;
   fee: number;
   tax: number;
+}
+
+export interface ITransactionListRequest {
+  itemsPerPage: number;
+  nextPage: number;
+  startDate?: Date;
+  endDate?: Date;
+  type?: 'all' | 'in' | 'out';
 }

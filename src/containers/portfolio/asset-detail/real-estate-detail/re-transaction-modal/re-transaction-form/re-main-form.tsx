@@ -35,6 +35,10 @@ export const CreateEstateForm = observer(({ }: IProps) => {
   }, []);
 
   const sellAsset = async (payload: ITransactionRequest) => {
+    if(realEstateDetailStore.assetDetail?.inputMoneyAmount==0){
+      setErrorMessage("Can't sell asset. Money is insufficient");
+      return;
+  }
     const res = await realEstateDetailStore.createNewTransaction(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
@@ -45,6 +49,10 @@ export const CreateEstateForm = observer(({ }: IProps) => {
   };
 
   const moveToFund = async (payload: TransferToInvestFundType) => {
+    if(realEstateDetailStore.assetDetail?.inputMoneyAmount==0){
+      setErrorMessage("Can't transfer asset. Money is insufficient");
+      return;
+  }
     const res = await realEstateDetailStore.transferAssetToInvestFund(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
@@ -55,6 +63,10 @@ export const CreateEstateForm = observer(({ }: IProps) => {
   };
 
   const withdrawValue = async (payload: ITransactionRequest) => {
+    if(realEstateDetailStore.assetDetail?.inputMoneyAmount==0){
+      setErrorMessage("Can't withdraw asset. Money is insufficient");
+      return;
+    }
     const res = await realEstateDetailStore.createNewTransaction(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);

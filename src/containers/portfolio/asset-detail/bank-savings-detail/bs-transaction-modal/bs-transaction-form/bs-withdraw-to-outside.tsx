@@ -58,7 +58,7 @@ const BSWithdrawToOutside = observer(({ handleFormSubmit, content }: IProps) => 
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
             amount: bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
-            amountInDestinationAssetUnit: 0,
+            amountInDestinationAssetUnit: bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
             currencyCode: bankSavingsDetailStore.assetDetail?.inputCurrency || 'USD',
             transactionType: TransactionRequestType.withdrawToOutside,
             destinationAssetId: null,

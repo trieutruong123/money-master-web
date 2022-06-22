@@ -1,0 +1,107 @@
+
+.sweetPagination {
+    display: flex;
+    justify-content: center;
+}
+
+.sweetPagination .paginationUL {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.sweetPagination .paginationUL .pageItem {
+    list-style: none;
+}
+
+.sweetPagination .paginationUL .pageItem .pageButton {
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 5rem;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    margin: 5px;
+    background-color: #ddd;
+}
+
+.sweetPagination .paginationUL .pageItem .pageButton:hover {
+    color: #f1f2f6;
+    background-color: #14B8A6;
+    fill: #f1f2f6;
+}
+
+.sweetPagination .paginationUL .pageItem .activeButton {
+    color: #f1f2f6;
+    background-color: #14B8A6;
+}
+
+.navigationIcon {
+    width: 12px;
+}
+
+.dottedIcon {
+    width: 20px;
+}
+
+.sweetPagination .pageItem .commonButtonStyle {
+    outline: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+}
+
+.contentCenter{
+    display: 'flex';
+    align-items:center;
+    flex-direction: row;
+    
+}
+
+.arrowIcon {
+    width:'30px';
+    height:'30px';
+    color:'white';
+    fill:'white';
+}
+
+.arrowIcon:hover{
+    color: #4DAD16;
+    fill:#4DAD16;
+}
+
+.arrowButton{
+    background-color: transparent;
+    border: 0px;
+    width:30px;
+    height:30px;
+    margin-left: 5px;
+    margin-right:5px;
+    -moz-border-radius: 5rem;
+    -webkit-border-radius: 5rem;
+    border-radius: 5rem;
+}
+
+.arrowButton:hover{
+    background-color: #f1f2f6;
+
+}
+
+/* Media Quary  */
+
+@media only screen and (max-width:576px) {
+    .sweetPagination .paginationUL .pageItem .pageButton {
+        width: 25px;
+        height:25px;
+        margin:3px;
+    }
+    .style-2 .paginationUL .pageItem .pageButton{
+        margin: -1px;
+        margin-top:5px; 
+    }
+}
+

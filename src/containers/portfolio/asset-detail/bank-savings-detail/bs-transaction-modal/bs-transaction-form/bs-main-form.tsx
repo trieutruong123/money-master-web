@@ -36,6 +36,10 @@ export const CreateBankForm = observer(({ }: IProps) => {
   }, []);
 
   const sellAsset = async (payload: ITransactionRequest) => {
+    if(bankSavingsDetailStore.assetDetail?.inputMoneyAmount==0){
+      setErrorMessage("Can't sell asset. Money is insufficient");
+      return;
+    }
     const res = await bankSavingsDetailStore.createNewTransaction(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
@@ -46,6 +50,10 @@ export const CreateBankForm = observer(({ }: IProps) => {
   };
 
   const moveToFund = async (payload: TransferToInvestFundType) => {
+    if(bankSavingsDetailStore.assetDetail?.inputMoneyAmount==0){
+      setErrorMessage("Can't transfer asset. Money is insufficient");
+      return;
+    }
     const res = await bankSavingsDetailStore.transferAssetToInvestFund(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
@@ -56,6 +64,10 @@ export const CreateBankForm = observer(({ }: IProps) => {
   };
 
   const withdrawValue = async (payload: ITransactionRequest) => {
+    if(bankSavingsDetailStore.assetDetail?.inputMoneyAmount==0){
+      setErrorMessage("Can't withdraw asset. Money is insufficient");
+      return;
+    }
     const res = await bankSavingsDetailStore.createNewTransaction(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);

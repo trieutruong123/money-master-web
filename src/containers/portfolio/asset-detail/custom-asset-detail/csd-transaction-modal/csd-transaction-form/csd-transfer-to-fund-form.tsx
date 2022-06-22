@@ -47,7 +47,7 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit, content }: IProps) =
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
             amount: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
-            amountInDestinationAssetUnit: 0,
+            amountInDestinationAssetUnit: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
             currencyCode: customAssetsDetailStore.customAssetDetail?.inputCurrency.toUpperCase() || 'USD',
             transactionType: TransactionRequestType.moveToFund,
             referentialAssetType: AssetTypeName.custom,

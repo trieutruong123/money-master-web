@@ -57,9 +57,9 @@ const REWithdrawToOutside = observer(({ handleFormSubmit, content }: IProps) => 
 
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
-            amount: realEstateDetailStore.assetDetail?.inputMoneyAmount,
+            amount: realEstateDetailStore.assetDetail?.currentPrice,
             amountInDestinationAssetUnit: 0,
-            currencyCode: realEstateDetailStore.assetDetail?.inputCurrency || 'USD',
+            currencyCode: realEstateDetailStore.assetDetail?.currentPrice || 'USD',
             transactionType: TransactionRequestType.withdrawToOutside,
             destinationAssetId: null,
             destinationAssetType: null,

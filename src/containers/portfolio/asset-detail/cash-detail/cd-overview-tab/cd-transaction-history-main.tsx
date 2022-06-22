@@ -25,6 +25,8 @@ import { cashDetailStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
 import es from 'date-fns/esm/locale/es/index.js';
 import { useRouter } from 'next/router';
+import { Pagination } from 'shared/components';
+import { useEffect, useState } from 'react';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -53,10 +55,31 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [content.transactionHistory.date, content.transactionHistory.amount, content.transactionHistory.type, content.transactionHistory.fromTo];
-
+  const [pageNumbers,setPageNumbers] = useState<Array<number>>([]);
   const router = useRouter();
   const { locale } = router;
   const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
+
+  useEffect(()=>{
+    cashDetailStore.fetchTransactionHistoryData({itemsPerPage:15,nextPage:1,type:'all'});
+    cashDetailStore.setCurrentPage(1);
+  },[])
+
+  useEffect(()=>{ 
+    if(!cashDetailStore.transactionHistory){
+      return;
+    }
+    const count = cashDetailStore.transactionHistory.length/5;
+    if(count==0&&cashDetailStore.currentPage==1){
+      setPageNumbers([1]);
+      cashDetailStore.setCurrentPage(1);
+    }
+  },[cashDetailStore.transactionHistory])
+
+  const handlePageChange = (pageNumber:number)=>{
+    cashDetailStore.fetchTransactionHistoryData({itemsPerPage:10,nextPage:pageNumber,type:'all'});
+
+  }
 
   const renderSingleTransactionIncon = (
     record: TransactionItem,
@@ -232,6 +255,7 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
                 })}
               </TableBody>
             </Table>
+            <Pagination pageNumbers={pageNumbers} currentPage = {cashDetailStore.currentPage} handleCurrentPage = {handlePageChange}/>
           </Box>
         </Card>
       ) : null}
