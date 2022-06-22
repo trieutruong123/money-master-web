@@ -1,4 +1,4 @@
-import { coinGeckoService, httpService } from "services";
+import { coinGeckoService, fcsapiService, httpService } from "services";
 import {
   action,
   computed,
@@ -33,6 +33,7 @@ class CryptoDetailStore {
   portfolioInfo: Portfolio | undefined = undefined;
 
   cryptoId: number = 0;
+  cryptoProfile:any;
   cryptoDetail: CryptoItem | undefined = undefined;
   transactionHistory: Array<TransactionItem> | undefined = [];
   cashDetail: Array<CashItem> | undefined = [];
@@ -62,6 +63,7 @@ class CryptoDetailStore {
       selectedTab: observable,
       isOpenAddNewTransactionModal: observable,
       needUpdateOverviewData: observable,
+      cryptoProfile: observable,
 
       setCryptoId: action,
       setCurrency: action,
@@ -72,6 +74,7 @@ class CryptoDetailStore {
       setUpdateOverviewData: action,
 
       fetchCryptoDetail: action,
+      fetchCryptoProfile: action,
       fetchOHLC: action,
       fetchCryptoTransactionHistory: action,
       fetchPortfolioInfo: action,
@@ -309,6 +312,25 @@ class CryptoDetailStore {
       this.needUpdateOverviewData = true;
       this.selectedTab = PACryptoBreadcrumbTabs.overview;
     });
+  }
+
+  async fetchCryptoProfile() {
+    if (
+      !this.cryptoDetail?.cryptoCoinCode) {
+        return;
+    }
+    const res: any = await fcsapiService.getCryptoProfile(this.cryptoDetail?.cryptoCoinCode);
+    if (!res.isError) {
+      runInAction(() => {
+        this.cryptoProfile = res.data.response[0];
+      });
+    }
+    else {
+      runInAction(() => {
+        this.cryptoProfile = undefined;
+      })
+    }
+    return res;
   }
 }
 
