@@ -6,6 +6,7 @@ import { CDMarketChart } from './cd-market-chart';
 import CDMarketInfo from './cd-market-info';
 import { content as i18n } from 'i18n';
 import { useRouter } from 'next/router';
+import CryptoProfile from './crypto-profile';
 
 const CDMarketDataTab = observer(() => {
   const router = useRouter();
@@ -17,13 +18,15 @@ const CDMarketDataTab = observer(() => {
     const fetchData = async () => {
       rootStore.startLoading();
       await cryptoDetailStore.fetchMarketData();
+      await cryptoDetailStore.fetchCryptoProfile();
       rootStore.stopLoading();
     };
     if (
       portfolioId &&
       cryptoId &&
       (cryptoDetailStore.OHLC_data.length === 0 ||
-        cryptoDetailStore.marketData == undefined)
+        cryptoDetailStore.marketData == undefined||
+        cryptoDetailStore.cryptoProfile==undefined)
     ) {
       fetchData();
     }
@@ -34,6 +37,9 @@ const CDMarketDataTab = observer(() => {
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <CDMarketInfo content={content} />
       </Grid>
+      <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
+                <CryptoProfile />
+            </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <Suspense fallback={<></>}>
           <CDMarketChart content={content} />
