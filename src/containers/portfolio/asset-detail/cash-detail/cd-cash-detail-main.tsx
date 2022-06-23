@@ -51,7 +51,7 @@ const CDCashDetail = observer(({ }: IProps) => {
 
     cashDetailStore.setCashId(assetId);
     cashDetailStore.setPortfolioId(portfolioId);
-
+    
   }, [router.query.portfolioId, router.query.assetId]);
 
   const {

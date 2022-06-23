@@ -33,10 +33,12 @@ class CashDetailStore {
   cashId: number = 0;
   cashDetail: CashItem | undefined = undefined;
   cashList: CashItem[] | undefined = [];
-  transactionHistory: Array<TransactionItem> | undefined = undefined;
   currencyList: Array<CurrencyItem> | undefined = undefined;
   destCurrencyCode: string = '';
   sourceCurrencyCode: string = '';
+
+  transactionHistory: Array<TransactionItem> | undefined = undefined;
+  selectedType: 'all'|'in'|'out' = 'all';
 
   OHLC_data: Array<any> = [];
   forexMarketData: any = undefined;
@@ -49,7 +51,8 @@ class CashDetailStore {
   needUpdateOverviewData: boolean = false;
 
   currentPage: number = 1;
-  itemsPerPage: number = 5;
+  
+
 
   constructor() {
     makeAutoObservable(this, {
@@ -87,7 +90,9 @@ class CashDetailStore {
       setDestCurrency: action,
       setSelectedTab: action,
       setUpdateOverviewData: action,
-
+      setTransactionHistory: action,
+      setSelectedTransactionType:action,
+      
       resetInitialState: action,
 
       makeTransaction: action,
@@ -127,12 +132,20 @@ class CashDetailStore {
     this.destCurrencyCode = dest;
   }
 
+  setSelectedTransactionType(type:'all'|'in'|'out'){
+    this.selectedType = type;
+  }
+
   setSelectedTab(tab: string) {
     this.selectedTab = tab;
   }
 
   setUpdateOverviewData(isUpdate: boolean) {
     this.needUpdateOverviewData = isUpdate;
+  }
+
+  setTransactionHistory(history: TransactionItem[]) {
+    this.transactionHistory = history;
   }
 
   async fetchOverviewData() {
@@ -198,20 +211,21 @@ class CashDetailStore {
     if (!this.portfolioId || !this.cashId) {
       return;
     }
-    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transactions
-                      ?PageSize=${itemsPerPage}
-                      &PageNumber=${nextPage}
-                      ${startDate ? `&StartDate=${startDate}` : ''}
-                      ${endDate ? `&EtartDate=${endDate}` : ''}
-                      ${type ? `&Type=${type}` : ''}`;
-    const res: { isError: boolean; data: any } = await httpService.get(url);
+    const params = {
+                      PageSize:itemsPerPage,
+                      PageNumber:nextPage,
+                      Type:type,
+                    };
+    if(startDate&& endDate){
+      params.StartDate=startDate;
+      params.EndDate = endDate;
+    }
+    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.get(url,params);
     if (!res.isError) {
-      runInAction(() => {
-        this.transactionHistory = res.data;
-      });
-      return res;
+      return res.data;
     } else {
-      return res;
+      return [];
     }
   }
 
@@ -322,6 +336,12 @@ class CashDetailStore {
       rootStore.raiseError(content[rootStore.locale].error.default);
     }
     return res;
+  }
+
+  async resetTransaction(){
+    const data = await cashDetailStore.fetchTransactionHistoryData({itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, nextPage:1, type:'all'});
+    cashDetailStore.setTransactionHistory(data);
+    cashDetailStore.setCurrentPage(1);
   }
 
   resetInitialState() {

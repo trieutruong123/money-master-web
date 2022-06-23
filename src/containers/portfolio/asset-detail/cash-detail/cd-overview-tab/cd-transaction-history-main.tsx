@@ -11,19 +11,22 @@ import {
   TableBody,
   styled,
   TableCell,
+  FormControl, 
+  InputLabel, 
+  Select,
+  MenuItem,
+  SelectChangeEvent
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
-import { AssetTypeConstants, AssetTypeName, TransactionTypeName } from 'shared/constants';
+import { AssetTypeConstants, AssetTypeName, TransactionHistoryContants, TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
-import { CashTransactionList, StockTransactionList, TransactionItem } from 'shared/models';
+import { CashTransactionList, TransactionItem } from 'shared/models';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { TransactionType } from 'shared/types';
 import { colorScheme } from 'utils';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
 import { cashDetailStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
-import es from 'date-fns/esm/locale/es/index.js';
 import { useRouter } from 'next/router';
 import { Pagination } from 'shared/components';
 import { useEffect, useState } from 'react';
@@ -60,25 +63,82 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
   const { locale } = router;
   const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
 
-  useEffect(()=>{
-    cashDetailStore.fetchTransactionHistoryData({itemsPerPage:15,nextPage:1,type:'all'});
-    cashDetailStore.setCurrentPage(1);
-  },[])
+  const transactionType = [{
+      label:'All',
+      tyle: TransactionHistoryContants.all,
+    },
+    {
+      label:'Go in',
+      type: TransactionHistoryContants.in
+    },
+    {
+      label:'Go out',
+      type:TransactionHistoryContants.out
+    }   
+  ]
 
-  useEffect(()=>{ 
-    if(!cashDetailStore.transactionHistory){
-      return;
-    }
-    const count = cashDetailStore.transactionHistory.length/5;
-    if(count==0&&cashDetailStore.currentPage==1){
-      setPageNumbers([1]);
-      cashDetailStore.setCurrentPage(1);
-    }
+  const resetTransaction = async()=>{
+    const data = await cashDetailStore.fetchTransactionHistoryData({itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, nextPage:1, type:'all'});
+    cashDetailStore.setTransactionHistory(data);
+    cashDetailStore.setCurrentPage(1);
+    resetPageNumbers();
+  }
+
+  useEffect(()=>{
+    resetPageNumbers();
   },[cashDetailStore.transactionHistory])
 
-  const handlePageChange = (pageNumber:number)=>{
-    cashDetailStore.fetchTransactionHistoryData({itemsPerPage:10,nextPage:pageNumber,type:'all'});
 
+  const resetPageNumbers = () => {
+    if (!cashDetailStore.transactionHistory) {
+      return;
+    }
+    const currentPage = cashDetailStore.currentPage;
+    const total = cashDetailStore.transactionHistory.length;
+    const count = Math.round(total / TransactionHistoryContants.itemsPerPage) + 1;
+    let arrPagination:Array<number> = [];
+
+    if (count < 4 || currentPage <= 2) {
+      arrPagination = Array.from({ length: count}, (_, i) => i + 1).slice(0, count);
+    }
+    else if (count >= 4 && currentPage === count ) {
+      arrPagination =   Array.from({ length: count}, (_, i) => i + 1).slice(count-3, count);
+    }
+    else if (count >= 4 && currentPage < count) {
+      arrPagination =   Array.from({ length: count}, (_, i) => i + 1).slice(currentPage-2, currentPage+1);
+    }
+    console.log(arrPagination);
+    setPageNumbers(arrPagination);
+  }
+
+  const handlePageChange = async (pageNumber: number) => {
+    const transactionHistory = cashDetailStore.transactionHistory&&cashDetailStore.transactionHistory.slice() || [];
+    const total = transactionHistory.length;
+    const count = Math.round(total / 10) + 1;
+
+    if (pageNumber < count && pageNumber > 0) {
+      cashDetailStore.setCurrentPage(pageNumber);
+      resetPageNumbers()
+    }
+
+    if(pageNumber == count ){
+      const data = await cashDetailStore.fetchTransactionHistoryData({ itemsPerPage: 10, nextPage: pageNumber + 1, type: cashDetailStore.selectedType, });
+      if (data && data.length > 0) {
+        transactionHistory.push(...data);
+        cashDetailStore.setTransactionHistory(transactionHistory);
+      }
+    }
+  }
+
+  const handleDateChange = async()=>{
+
+  }
+  
+  const handleSelectedTypeChange = async (event: SelectChangeEvent) => {
+    cashDetailStore.setSelectedTransactionType(event.target.value as any);
+    const data = await cashDetailStore.fetchTransactionHistoryData({itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, nextPage:1, type:event.target.value as any});
+    cashDetailStore.setTransactionHistory(data);
+    cashDetailStore.setCurrentPage(1);
   }
 
   const renderSingleTransactionIncon = (
@@ -204,6 +264,22 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
             }}
           >
             <CardHeader title="" sx={{ padding: '0px' }} />
+            {/* <FormControl sx={{ minWidth: 80, px: '.2rem', pb: '.2rem' }}>
+                <InputLabel id="type-select-label">Type</InputLabel>
+                <Select
+                  labelId="type-select-label"
+                  id="type-select"
+                  value={cashDetailStore.selectedType}
+                  label={'Type'}
+                  onChange={handleSelectedTypeChange}
+                >
+                  {transactionType.map((item, index) => (
+                    <MenuItem key={index.toString()} value={item.type}>
+                      {item.label}
+                    </MenuItem>
+                  ))}1
+                </Select>
+              </FormControl> */}
             <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
               <MoreHorizIcon />
             </Button>
@@ -220,7 +296,7 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
                 </TableRow>
               </TableHead>
               <TableBody>
-                {transactionHistoryData.map((record, i) => {
+                {transactionHistoryData.slice((cashDetailStore.currentPage-1)*10,cashDetailStore.currentPage*10).map((record, i) => {
                   return (
                     <TableRow
                       key={i}

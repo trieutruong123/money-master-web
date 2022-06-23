@@ -22,7 +22,7 @@ export const AddNewStockForm = observer(
   }: IProps) => {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const theme = useTheme();
-
+ 
     const selectedAsset = portfolioDetailStore.selectedAsset;
 
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';

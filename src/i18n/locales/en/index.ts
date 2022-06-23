@@ -136,7 +136,7 @@ export const en = {
     report: 'REPORT',
   },
   dashboardNavbar: {
-    tooltip: 'Account',
+    account: 'Account',
     logout: 'Logout',
     settings: 'Settings',
     notification: 'Notifications',

@@ -19,9 +19,11 @@ const CDOverviewMain = observer(() => {
         const fetchData = async () => {
             rootStore.startLoading();
             await cashDetailStore.fetchOverviewData();
+            await cashDetailStore.resetTransaction();
             rootStore.stopLoading();
         };
         if (cashDetailStore.needUpdateOverviewData) {
+
             fetchData();
             cashDetailStore.setUpdateOverviewData(false);
         }

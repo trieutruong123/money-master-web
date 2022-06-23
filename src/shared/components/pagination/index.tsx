@@ -12,15 +12,15 @@
 
  const Pagination:React.FunctionComponent<IProps> = (props:IProps)=>{
     const [pageNumbers,setPageNumbers]  = useState<Array<number>>([]);
-
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const{handleCurrentPage} = props;
 
     useEffect(()=>{
         setPageNumbers(props.pageNumbers);
         setCurrentPage(props.currentPage);
     },[])
 
-    const handleCurrentPage = (pageNumber:number)=>{
+    const onPageSelectionChanged = (pageNumber:number)=>{
         setCurrentPage (pageNumber);
         handleCurrentPage(pageNumber);
     }
@@ -31,10 +31,10 @@
         <ArrowLeftIcon fontSize = 'large'  className = {styled.arrowIcon}/>
       </button>
       <ul className={styled.paginationUL}>
-        {pageNumbers.map((number) => (
+        {pageNumbers.map((number,index) => (
           <li key={number} className={styled.pageItem}>
             <button
-              onClick={() => handleCurrentPage(number)}
+              onClick={() => onPageSelectionChanged(number)}
               className={
                 currentPage === number
                   ? `${styled.pageButton} ${styled.activeButton} ${styled.commonButtonStyle}`

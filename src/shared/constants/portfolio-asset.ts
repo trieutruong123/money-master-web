@@ -27,3 +27,10 @@ export const PAEstateBreadcrumbTabs = {
   transactions: 'Transactions',
   settings: 'Settings',
 };
+
+export const TransactionHistoryContants  = {
+  itemsPerPage: 10,
+  all:'all',
+  in:'in',
+  out:'out',
+}
