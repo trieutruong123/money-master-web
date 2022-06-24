@@ -37,6 +37,7 @@ import {GrPowerReset } from 'react-icons/gr';
 import { v4 as uuid } from 'uuid';
 import { cryptoDetailStore } from 'shared/store';
 import { useEffect, useState } from 'react';
+import { convertUTCToLocalTimeZone2 } from 'utils/time';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -115,11 +116,16 @@ const CDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
     }
 
     if(pageNumber == count ){
+      const startDate = cryptoDetailStore.transactionSelection.startDate
+      ? dayjs(cryptoDetailStore.transactionSelection.startDate).startOf('day').format(): null;
+    const endDate = cryptoDetailStore.transactionSelection.endDate
+      ? dayjs(cryptoDetailStore.transactionSelection.endDate).endOf('day').format(): null;
       const data = await cryptoDetailStore.fetchTransactionHistoryData({ 
                                                                   itemsPerPage: TransactionHistoryContants.itemsPerPage, 
                                                                   nextPage: pageNumber + 1, 
-                                                                  ...cryptoDetailStore.transactionSelection
-                                                                  });
+                                                                  type:cryptoDetailStore.transactionSelection.type,
+                                                                  startDate:startDate,
+                                                                  endDate:endDate});
       if (data && data.length > 0) {
         transactionHistory.push(...data);
         cryptoDetailStore.setTransactionHistory(transactionHistory);
@@ -130,43 +136,18 @@ const CDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
 
   const handleStartDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
     cryptoDetailStore.setSelectedTransaction('startDate',value);
-    const startDate = dayjs(new Date(cryptoDetailStore.transactionSelection.startDate||Date.now())).startOf('day').toDate();
-    const endDate = dayjs(new Date(cryptoDetailStore.transactionSelection.endDate||Date.now())).endOf('day').toDate();
-    const data = await cryptoDetailStore.fetchTransactionHistoryData({
-                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
-                                                                  nextPage:1,
-                                                                  type:cryptoDetailStore.transactionSelection.type,
-                                                                  startDate: startDate,
-                                                                  endDate: endDate});
-    cryptoDetailStore.setTransactionHistory(data);
-    cryptoDetailStore.setCurrentPage(1);
+    await cryptoDetailStore.refreshTransactionHistory();
   }
 
   const handleEndDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
     cryptoDetailStore.setSelectedTransaction("endDate",value);
-    const startDate = dayjs(new Date(cryptoDetailStore.transactionSelection.startDate||Date.now())).startOf('day').toDate();
-    const endDate = dayjs(new Date(cryptoDetailStore.transactionSelection.endDate||Date.now())).endOf('day').toDate();
-    const data = await cryptoDetailStore.fetchTransactionHistoryData({
-                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
-                                                                  nextPage:1,
-                                                                  type:cryptoDetailStore.transactionSelection.type,
-                                                                  startDate: startDate,
-                                                                  endDate: endDate});
-    cryptoDetailStore.setTransactionHistory(data);
-    cryptoDetailStore.setCurrentPage(1);
+    await cryptoDetailStore.refreshTransactionHistory();
   }
   
   const handleSelectedTypeChange = async (event: SelectChangeEvent) => {
     cryptoDetailStore.setSelectedTransaction('type',event.target.value as any);
-    const data = await cryptoDetailStore.fetchTransactionHistoryData({
-                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
-                                                                  nextPage:1,
-                                                                  ...cryptoDetailStore.transactionSelection
-                                                                  });
-    cryptoDetailStore.setTransactionHistory(data);
-    cryptoDetailStore.setCurrentPage(1);
+    await cryptoDetailStore.refreshTransactionHistory();
   }
-
 
   const renderSingleTransactionIncon = (
     transactionType: TransactionType | null,
@@ -341,13 +322,13 @@ const CDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
                           TransactionTypeName.AddValue,
                           TransactionTypeName.NewAsset,
                         ).includes(record.singleAssetTransactionType)
-                          ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom] || ""
+                          ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.outside] || ""
                           : Array<any>(
                             TransactionTypeName.WithdrawValue,
                             TransactionTypeName.MoveToFund,
                             TransactionTypeName.WithdrawToCash
                           ).includes(record.singleAssetTransactionType)
-                            ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom] || ""
+                            ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.outside] || ""
                             : Array<any>(
                               TransactionTypeName.WithdrawToOutside,
                               TransactionTypeName.BuyFromOutside,

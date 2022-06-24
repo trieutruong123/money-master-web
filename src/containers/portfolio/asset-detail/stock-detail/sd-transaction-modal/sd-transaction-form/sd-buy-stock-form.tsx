@@ -85,15 +85,21 @@ export const SDBuyStockForm = observer(({ handleFormSubmit, content }: IProps) =
   const { errors } = formState;
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
+    const valueOfReferentialAsset = moneySource === 'cash'
+                                    ? stockDetailStore.cashDetail?.find(item => item.currencyCode === destinationCashCode)?.amount||0
+                                    : moneySource === 'fund'
+                                    ? 0
+                                    : 0;
     const res = handleFormSubmit({
       amount: data.purchasePrice * data.amount,
+      valueOfReferentialAssetBeforeCreatingTransaction: valueOfReferentialAsset,
       amountInDestinationAssetUnit: data.amount,
       currencyCode: data.currencyCode || 'USD',
       transactionType: TransactionRequestType.addValue,
       destinationAssetId: stockDetailStore?.stockDetail?.id,
       destinationAssetType: AssetTypeName.stock,
       referentialAssetId: moneySource === 'cash' ? stockDetailStore.cashDetail?.find(item => item.currencyCode === destinationCashCode)?.id : null,
-      referentialAssetType: moneySource === 'cash' ? AssetTypeName.cash : (moneySource === 'fund' ? 'fund' : null),
+      referentialAssetType: moneySource === 'cash' ? AssetTypeName.cash : (moneySource === 'fund' ? 'fund' : 'outside'),
       isTransferringAll: false,
       isUsingFundAsSource: moneySource === 'fund',
       fee: data.fee,

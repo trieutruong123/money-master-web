@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const convertMilisecondsToString = (miliseconds: number): string => {
   const seconds = Math.floor((miliseconds / 1000) % 60);
   const minutes = Math.floor((miliseconds / (1000 * 60)) % 60);
@@ -11,15 +13,49 @@ export const convertMilisecondsToString = (miliseconds: number): string => {
   else return hoursInString + ':' + minutesInString + ':' + secondsInString;
 };
 
-export const convertUTCToLocalTimeZone = (date: string | Date | null) => {
+//DD//MM/YYYY HH:mm:ss
+export const convertUTCToLocalTimeZone = (
+  date: string | Date | null | undefined,
+) => {
   if (!date) {
     return new Date();
-  } else if (typeof date === 'string') {
-    var offset = new Date().getTimezoneOffset();
-
-    return new Date();
-  } else if (typeof date === 'object') {
-    var offset = new Date().getTimezoneOffset();
-    return new Date();
   }
+  if (typeof date === 'string') {
+    const time = new Date();
+
+    return dayjs(
+      Date.parse(date) - time.getTimezoneOffset() * 60 * 1000,
+    ).toDate();
+  } else if (typeof date === 'object') {
+    const time = new Date();
+
+    return dayjs(
+      date.getTime() - time.getTimezoneOffset() * 60 * 1000,
+    ).toDate();
+  }
+  return new Date();
+};
+
+//MM/DD/YYYY HH:mm:ss
+export const convertUTCToLocalTimeZone2 = (
+  date: string | Date | null | undefined,
+) => {
+  if (!date) {
+    return null;
+  }
+  const time = new Date();
+  if (typeof date === 'string') {
+    const time = new Date();
+
+    return dayjs(
+      Date.parse(date) - time.getTimezoneOffset() * 60 * 1000,
+    ).toDate();
+  } else if (typeof date === 'object') {
+    const time = new Date();
+
+    return dayjs(
+      date.getTime() - time.getTimezoneOffset() * 60 * 1000,
+    ).toDate();
+  }
+  return null;
 };

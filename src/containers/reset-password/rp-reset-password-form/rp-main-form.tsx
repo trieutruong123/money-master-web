@@ -15,7 +15,6 @@ const RPResetPasswordMainForm = observer(() => {
   },[])
 
   const onClick = (formType:string)=>{
-    console.log(formType);
     setForm(formList[formType])
   }
 

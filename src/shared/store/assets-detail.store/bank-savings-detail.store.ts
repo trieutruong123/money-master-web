@@ -1,28 +1,41 @@
-import { BankSavingItem } from "./../../models/portfolio-asset.model";
-import { rootStore } from "shared/store";
-import { getCurrencyByCode, httpError } from "shared/helpers";
-import { action, makeAutoObservable, observable, runInAction } from "mobx";
-import { httpService } from "services";
-import { CashItem, RealEstateItem, TransactionItem } from "shared/models";
-import { content } from "i18n";
-import { AssetTypeName, TransactionTypeName } from "shared/constants";
+import { BankSavingItem } from './../../models/portfolio-asset.model';
+import { rootStore } from 'shared/store';
+import { getCurrencyByCode, httpError } from 'shared/helpers';
+import { action, makeAutoObservable, observable, runInAction } from 'mobx';
+import { httpService } from 'services';
+import { CashItem, RealEstateItem, TransactionItem } from 'shared/models';
+import { content } from 'i18n';
+import {
+  AssetTypeName,
+  TransactionHistoryContants,
+  TransactionTypeName,
+} from 'shared/constants';
 import {
   CurrencyItem,
+  ITransactionListRequest,
   ITransactionRequest,
   Portfolio,
   TransferToInvestFundType,
-} from "shared/types";
+} from 'shared/types';
+import dayjs from 'dayjs';
 
 class BankSavingsDetailStore {
   portfolioId: number = 0;
-  currencyCode: string = "usd";
+  currencyCode: string = 'usd';
   portfolioInfo: Portfolio | undefined = undefined;
 
-  bankSavingsName: string | undefined = "";
+  bankSavingsName: string | undefined = '';
   assetId: number = 0;
   assetDetail: BankSavingItem | undefined = undefined;
 
-  transactionHistory: Array<TransactionItem> | undefined = [];
+  transactionHistory: Array<TransactionItem> | undefined = undefined;
+  transactionSelection: {
+    type: 'all' | 'in' | 'out';
+    startDate: Date | null;
+    endDate: Date | null;
+  } = { type: 'all', startDate: null, endDate: null };
+  currentPage: number = 1;
+
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
   needUpdateOverviewData: boolean = true;
@@ -42,23 +55,43 @@ class BankSavingsDetailStore {
       currencyList: observable,
       needUpdateOverviewData: observable,
       isOpenAddNewTransactionModal: observable,
+      transactionSelection: observable,
+      currentPage: observable,
 
       setOpenAddNewTransactionModal: action,
       setPortfolioId: action,
       setAssetId: action,
       setCurrency: action,
       setUpdateOverviewData: action,
+      setTransactionHistory: action,
+      setSelectedTransaction: action,
+      setCurrentPage: action,
 
       fetchPortfolioInfo: action,
       fetchCash: action,
       fetchBankSavingsDetail: action,
-      fetchBankSavingTransactionHistory: action,
+      fetchTransactionHistoryData: action,
 
       resetInitialState: action,
 
       createNewTransaction: action,
       transferAssetToInvestFund: action,
     });
+  }
+
+  setSelectedTransaction(key: string, value: any) {
+    this.transactionSelection = {
+      ...this.transactionSelection,
+      [key]: value,
+    };
+  }
+
+  setCurrentPage(pageNumber: number) {
+    this.currentPage = pageNumber;
+  }
+
+  setTransactionHistory(history: TransactionItem[]) {
+    this.transactionHistory = history;
   }
 
   setPortfolioId(portfolioId: string) {
@@ -86,29 +119,28 @@ class BankSavingsDetailStore {
       this.fetchPortfolioInfo(),
       this.fetchCash(),
       this.fetchBankSavingsDetail(),
-      this.fetchBankSavingTransactionHistory(),
     ]);
   }
 
   async withdrawAllToCash(cashId: number, currencyCode: string) {
     var payload = {
       currencyCode,
-      transactionType: "withdrawToCash",
+      transactionType: 'withdrawToCash',
       destinationAssetId: cashId,
-      destinationAssetType: "cash",
+      destinationAssetType: 'cash',
       referentialAssetId: this.assetId,
-      referentialAssetType: "bankSaving",
+      referentialAssetType: 'bankSaving',
       isTransferringAll: true,
     };
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      payload
+      payload,
     );
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.default,
-        "success"
+        'success',
       );
       return res;
     } else {
@@ -122,13 +154,13 @@ class BankSavingsDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.default,
-        "success"
+        'success',
       );
       return res;
     } else {
@@ -142,13 +174,13 @@ class BankSavingsDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.default,
-        "success"
+        'success',
       );
       return res;
     } else {
@@ -166,10 +198,10 @@ class BankSavingsDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.find(
-        (item: Portfolio) => item.id === this.portfolioId
+        (item: Portfolio) => item.id === this.portfolioId,
       );
       runInAction(() => {
-        this.currencyCode = this.portfolioInfo?.initialCurrency || "usd";
+        this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
         this.portfolioInfo = currentPortfolio;
       });
     } else {
@@ -189,7 +221,7 @@ class BankSavingsDetailStore {
       runInAction(() => {
         this.cashDetail = res.data;
         this.currencyList = res.data.map((item: CashItem) =>
-          getCurrencyByCode(item.currencyCode)
+          getCurrencyByCode(item.currencyCode),
         );
       });
     } else {
@@ -206,33 +238,48 @@ class BankSavingsDetailStore {
     if (!res.isError) {
       runInAction(() => {
         this.assetDetail = res.data.find(
-          (item: any) => item.id == this.assetId
+          (item: any) => item.id == this.assetId,
         );
         this.bankSavingsName = res.data.find(
-          (item: any) => item.id == this.assetId
+          (item: any) => item.id == this.assetId,
         )?.name;
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
+        content[rootStore.locale].error.failedToLoadInitialData,
       );
       this.assetDetail = undefined;
     }
   }
 
-  async fetchBankSavingTransactionHistory() {
+  async fetchTransactionHistoryData({
+    itemsPerPage,
+    nextPage,
+    startDate,
+    endDate,
+    type,
+  }: ITransactionListRequest) {
     if (!this.portfolioId || !this.assetId) {
       return;
     }
+    let params: any = {
+      PageSize: itemsPerPage,
+      PageNumber: nextPage,
+      Type: type,
+    };
+    if (endDate) params.EndDate = endDate;
+    if (startDate) params.StartDate = startDate;
+
     const url = `/portfolio/${this.portfolioId}/bankSaving/${this.assetId}/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.get(url);
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
     if (!res.isError) {
-      runInAction(() => {
-        this.transactionHistory = res.data;
-      });
+      return res.data;
     } else {
+      return [];
     }
-    return res;
   }
 
   async updateAssetDetail(params: any) {
@@ -248,13 +295,46 @@ class BankSavingsDetailStore {
       description: params.description,
       interestRate: params.interestRate,
       termRange: params.termRange,
-      changeInterestRateType: "CONTINUE_WITH_RATE",
+      changeInterestRateType: 'CONTINUE_WITH_RATE',
     });
     rootStore.stopLoading();
     if (!res.isError) {
       this.assetDetail = res.data;
-      return { isError: false, data: httpError.handleSuccessMessage("update") };
+      return { isError: false, data: httpError.handleSuccessMessage('update') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
+  }
+
+  async resetTransaction() {
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: 'all',
+      startDate: null,
+      endDate: null,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
+    this.setSelectedTransaction('type', 'all');
+    this.setSelectedTransaction('startDate', null);
+    this.setSelectedTransaction('endDate', null);
+  }
+
+  async refreshTransactionHistory() {
+    const startDate = this.transactionSelection.startDate
+      ? dayjs(this.transactionSelection.startDate).startOf('day').format()
+      : null;
+    const endDate = this.transactionSelection.endDate
+      ? dayjs(this.transactionSelection.endDate).endOf('day').format()
+      : null;
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: this.transactionSelection.type,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
   }
 
   resetInitialState() {
@@ -268,6 +348,13 @@ class BankSavingsDetailStore {
 
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
+
+      this.currentPage = 1;
+      this.transactionSelection = {
+        startDate: null,
+        endDate: null,
+        type: 'all',
+      };
     });
   }
 }

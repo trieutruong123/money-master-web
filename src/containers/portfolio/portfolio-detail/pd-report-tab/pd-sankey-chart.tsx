@@ -36,7 +36,7 @@ const PDSankeyChart = observer(({ content }: IProps) => {
   ) => {
     const startDate = dayjs(new Date(value || Date.now()))
       .startOf('day')
-      .toDate();
+      .format();
     portfolioDetailStore.setSankeySelection('startDate', startDate);
     const data = await portfolioDetailStore.fetchSankeyFlowData();
   };
@@ -47,7 +47,7 @@ const PDSankeyChart = observer(({ content }: IProps) => {
   ) => {
     const endDate = dayjs(new Date(value || Date.now()))
       .endOf('day')
-      .toDate();
+      .format();
     portfolioDetailStore.setSankeySelection('endDate', endDate);
 
     const data = await portfolioDetailStore.fetchSankeyFlowData();

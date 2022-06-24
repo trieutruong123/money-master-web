@@ -51,12 +51,14 @@ const PDHoldingsTab = observer(({ }: IProps) => {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAssetBeforeCreatingTransaction:number
   ) => {
     portfolioDetailStore.setOpenTransferToInvestFundModal(true);
     portfolioDetailStore.setTransferedAssetInfo(
       assetType,
       assetId,
       portfolioId,
+      valueOfReferentialAssetBeforeCreatingTransaction,
     );
   };
 

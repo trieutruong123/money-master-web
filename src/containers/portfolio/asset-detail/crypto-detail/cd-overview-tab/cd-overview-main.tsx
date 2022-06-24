@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { lazy, Suspense, useEffect } from 'react';
-import { cryptoDetailStore, rootStore } from 'shared/store';
+import { cashDetailStore, cryptoDetailStore, rootStore } from 'shared/store';
 import { content as i18n } from 'i18n';
 import { useRouter } from 'next/router';
 
@@ -15,12 +15,15 @@ const CDOverviewTab = observer(() => {
   const { locale, query } = router;
   const content = locale === 'vi' ? i18n['vi'].cryptoDetailPage : i18n['en'].cryptoDetailPage;
 
+  useEffect(()=>{
+    cryptoDetailStore.resetTransaction();
+  },[])
 
   useEffect(() => {
     async function fetchData() {
       rootStore.startLoading();
       await cryptoDetailStore.fetchOverviewTabData();
-      await cryptoDetailStore.resetTransaction();
+      await cryptoDetailStore.refreshTransactionHistory();
       rootStore.stopLoading();
     };
     if (portfolioId && cryptoId && cryptoDetailStore.needUpdateOverviewData) {

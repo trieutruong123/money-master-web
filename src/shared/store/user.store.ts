@@ -1,11 +1,11 @@
-import { rootStore } from "./root.store";
-import { runInAction } from "mobx";
-import { httpService } from "../../services/http-service";
-import { validateFirstLastName } from "../../utils/regex";
-import { action, makeAutoObservable, observable } from "mobx";
-import { UserInfo } from "shared/models";
-import { getRandomAvatarColor } from "utils";
-import { content } from "i18n";
+import { rootStore } from './root.store';
+import { runInAction } from 'mobx';
+import { httpService } from '../../services/http-service';
+import { validateFirstLastName } from '../../utils/regex';
+import { action, makeAutoObservable, observable } from 'mobx';
+import { UserInfo } from 'shared/models';
+import { getRandomAvatarColor } from 'utils';
+import { content } from 'i18n';
 
 class UserStore {
   user: UserInfo | undefined = undefined;
@@ -22,7 +22,6 @@ class UserStore {
 
   setUserInfo(userInfo: UserInfo) {
     this.user = userInfo;
-    console.log(userInfo);
     if (userInfo.profileImage) {
       this.user.backgroundColor = getRandomAvatarColor();
     }
@@ -38,10 +37,10 @@ class UserStore {
     if (this.user === undefined) {
       return;
     }
-    const url = "/user";
+    const url = '/user';
     const res: { isError: boolean; data: any } = await httpService.put(
       url,
-      newUser
+      newUser,
     );
     if (!res.isError) {
       runInAction(() => {
@@ -57,10 +56,10 @@ class UserStore {
       return;
     }
 
-    const url = "/user/avatar";
+    const url = '/user/avatar';
     const res: { isError: boolean; data: any } = await httpService.put(
       url,
-      image
+      image,
     );
     if (!res.isError) {
       runInAction(() => {
@@ -78,15 +77,15 @@ class UserStore {
     if (this.user === undefined) {
       return;
     }
-    const url = "/account/password";
+    const url = '/account/password';
     const res: { isError: boolean; data: any } = await httpService.put(
       url,
-      payload
+      payload,
     );
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.updatePassword,
-        "success"
+        'success',
       );
       return res;
     } else {

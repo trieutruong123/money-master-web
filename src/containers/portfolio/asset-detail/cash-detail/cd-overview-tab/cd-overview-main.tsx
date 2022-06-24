@@ -13,13 +13,15 @@ const CDOverviewMain = observer(() => {
     const router = useRouter();
     const { locale, query } = router;
     const content = locale === 'vi' ? i18n['vi'].cashDetailPage : i18n['en'].cashDetailPage;
-
+    useEffect(()=>{
+        cashDetailStore.resetTransaction();
+      },[])
 
     useEffect(() => {
         const fetchData = async () => {
             rootStore.startLoading();
             await cashDetailStore.fetchOverviewData();
-            await cashDetailStore.resetTransaction();
+            await cashDetailStore.refreshTransactionHistory();
             rootStore.stopLoading();
         };
         if (cashDetailStore.needUpdateOverviewData) {

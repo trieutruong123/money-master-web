@@ -1,37 +1,47 @@
-import { content } from "i18n";
+import dayjs from 'dayjs';
+import { content } from 'i18n';
 import {
   action,
   computed,
   makeAutoObservable,
   observable,
   runInAction,
-} from "mobx";
-import { httpService } from "services";
-import { getCurrencyByCode } from "shared/helpers";
+} from 'mobx';
+import { httpService } from 'services';
+import { TransactionHistoryContants } from 'shared/constants';
+import { getCurrencyByCode } from 'shared/helpers';
 import {
   CashItem,
   CustomAssetItem,
   CustomAssetItemByCategory,
   TransactionItem,
-} from "shared/models";
+} from 'shared/models';
 import {
   CurrencyItem,
+  ITransactionListRequest,
   ITransactionRequest,
   Portfolio,
   TransferToInvestFundType,
-} from "shared/types";
-import { rootStore } from "../root.store";
+} from 'shared/types';
+import { rootStore } from '../root.store';
 
 class CustomAssetDetailStore {
   portfolioId: number = 0;
-  currencyCode: string = "usd";
+  currencyCode: string = 'usd';
   portfolioInfo: Portfolio | undefined = undefined;
 
   categoryInfo: CustomAssetItemByCategory | undefined = undefined;
   customAssetId: number = 0;
   customAssetDetail: CustomAssetItem | undefined = undefined;
 
-  transactionHistory: Array<TransactionItem> | undefined = [];
+  transactionHistory: Array<TransactionItem> | undefined = undefined;
+  transactionSelection: {
+    type: 'all' | 'in' | 'out';
+    startDate: Date | null;
+    endDate: Date | null;
+  } = { type: 'all', startDate: null, endDate: null };
+  currentPage: number = 1;
+
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
   needUpdateOverviewData: boolean = true;
@@ -50,19 +60,39 @@ class CustomAssetDetailStore {
       currencyList: observable,
       needUpdateOverviewData: observable,
       isOpenAddNewTransactionModal: observable,
+      transactionSelection: observable,
+      currentPage: observable,
 
       setPortfolioId: action,
       setCustomAssetId: action,
       setOpenAddNewTransactionModal: action,
       setCurrency: action,
       setUpdateOverviewData: action,
+      setTransactionHistory: action,
+      setSelectedTransaction: action,
+      setCurrentPage: action,
 
       resetInitialState: action,
 
       fetchCash: action,
       fetchPortfolioInfo: action,
-      fetchCustomAssetTransactionHistory: action,
+      fetchTransactionHistoryData: action,
     });
+  }
+
+  setSelectedTransaction(key: string, value: any) {
+    this.transactionSelection = {
+      ...this.transactionSelection,
+      [key]: value,
+    };
+  }
+
+  setCurrentPage(pageNumber: number) {
+    this.currentPage = pageNumber;
+  }
+
+  setTransactionHistory(history: TransactionItem[]) {
+    this.transactionHistory = history;
   }
 
   setPortfolioId(portfolioId: string) {
@@ -89,7 +119,6 @@ class CustomAssetDetailStore {
     Promise.all([
       this.fetchPortfolioInfo(),
       this.fetchCustomAssetDetail(),
-      this.fetchCustomAssetTransactionHistory(),
       this.fetchCash(),
     ]);
   }
@@ -103,10 +132,10 @@ class CustomAssetDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.find(
-        (item: Portfolio) => item.id === this.portfolioId
+        (item: Portfolio) => item.id === this.portfolioId,
       );
       runInAction(() => {
-        this.currencyCode = this.portfolioInfo?.initialCurrency || "usd";
+        this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
         this.portfolioInfo = currentPortfolio;
       });
     } else {
@@ -127,15 +156,15 @@ class CustomAssetDetailStore {
       runInAction(() => {
         this.categoryInfo = res.data.find(
           (categoryInfo: CustomAssetItemByCategory) =>
-            categoryInfo.assets.some((item) => item.id === this.customAssetId)
+            categoryInfo.assets.some((item) => item.id === this.customAssetId),
         );
         this.customAssetDetail = this.categoryInfo?.assets.find(
-          (item) => item.id === this.customAssetId
+          (item) => item.id === this.customAssetId,
         );
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
+        content[rootStore.locale].error.failedToLoadInitialData,
       );
     }
     return res;
@@ -151,7 +180,7 @@ class CustomAssetDetailStore {
       runInAction(() => {
         this.cashDetail = res.data;
         this.currencyList = res.data.map((item: CashItem) =>
-          getCurrencyByCode(item.currencyCode)
+          getCurrencyByCode(item.currencyCode),
         );
       });
     } else {
@@ -163,22 +192,34 @@ class CustomAssetDetailStore {
     return res;
   }
 
-  async fetchCustomAssetTransactionHistory() {
+  async fetchTransactionHistoryData({
+    itemsPerPage,
+    nextPage,
+    startDate,
+    endDate,
+    type,
+  }: ITransactionListRequest) {
     if (!this.portfolioId || !this.customAssetId) {
       return;
     }
+    let params: any = {
+      PageSize: itemsPerPage,
+      PageNumber: nextPage,
+      Type: type,
+    };
+    if (endDate) params.EndDate = endDate;
+    if (startDate) params.StartDate = startDate;
+
     const url = `/portfolio/${this.portfolioId}/custom/${this.customAssetId}/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.get(url);
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
     if (!res.isError) {
-      runInAction(() => {
-        this.transactionHistory = res.data;
-      });
+      return res.data;
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
+      return [];
     }
-    return res;
   }
 
   async createNewTransaction(params: ITransactionRequest) {
@@ -186,13 +227,13 @@ class CustomAssetDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.default,
-        "success"
+        'success',
       );
       return res;
     } else {
@@ -206,19 +247,52 @@ class CustomAssetDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.transfer,
-        "success"
+        'success',
       );
       return res;
     } else {
       rootStore.raiseError(content[rootStore.locale].error.default);
       return res;
     }
+  }
+
+  async resetTransaction() {
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: 'all',
+      startDate: null,
+      endDate: null,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
+    this.setSelectedTransaction('type', 'all');
+    this.setSelectedTransaction('startDate', null);
+    this.setSelectedTransaction('endDate', null);
+  }
+
+  async refreshTransactionHistory() {
+    const startDate = this.transactionSelection.startDate
+      ? dayjs(this.transactionSelection.startDate).startOf('day').format()
+      : null;
+    const endDate = this.transactionSelection.endDate
+      ? dayjs(this.transactionSelection.endDate).endOf('day').format()
+      : null;
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: this.transactionSelection.type,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
   }
 
   resetInitialState() {
@@ -234,6 +308,13 @@ class CustomAssetDetailStore {
 
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
+
+      this.currentPage = 1;
+      this.transactionSelection = {
+        startDate: null,
+        endDate: null,
+        type: 'all',
+      };
     });
   }
 }

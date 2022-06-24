@@ -14,11 +14,15 @@ const SDOverviewTab = observer(() => {
   const { locale, query } = router;
   const content = locale === 'vi' ? i18n['vi'].stockDetailPage : i18n['en'].stockDetailPage;
 
+  useEffect(()=>{
+    stockDetailStore.resetTransaction();
+  },[])
+
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
       await stockDetailStore.fetchOverviewTabData();
-      await stockDetailStore.resetTransaction();
+      await stockDetailStore.refreshTransactionHistory();
       rootStore.stopLoading();
     };
     if (stockDetailStore.needUpdateOverviewData) {

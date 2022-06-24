@@ -35,6 +35,7 @@ import { v4 as uuid } from 'uuid';
 import { stockDetailStore } from 'shared/store';
 import { useEffect, useState } from 'react';
 import { Pagination } from 'shared/components';
+import { convertUTCToLocalTimeZone2 } from 'utils/time';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -115,11 +116,16 @@ const SDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
     }
 
     if(pageNumber == count ){
+      const startDate = stockDetailStore.transactionSelection.startDate
+      ? dayjs(stockDetailStore.transactionSelection.startDate).startOf('day').format(): null;
+    const endDate = stockDetailStore.transactionSelection.endDate
+      ? dayjs(stockDetailStore.transactionSelection.endDate).endOf('day').format(): null;
       const data = await stockDetailStore.fetchTransactionHistoryData({ 
                                                                   itemsPerPage: TransactionHistoryContants.itemsPerPage, 
                                                                   nextPage: pageNumber + 1, 
-                                                                  ...stockDetailStore.transactionSelection
-                                                                  });
+                                                                  type:stockDetailStore.transactionSelection.type,
+                                                                  startDate:startDate,
+                                                                  endDate:endDate});
       if (data && data.length > 0) {
         transactionHistory.push(...data);
         stockDetailStore.setTransactionHistory(transactionHistory);
@@ -130,41 +136,17 @@ const SDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
 
   const handleStartDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
     stockDetailStore.setSelectedTransaction('startDate',value);
-    const startDate = dayjs(new Date(stockDetailStore.transactionSelection.startDate||Date.now())).startOf('day').toDate();
-    const endDate = dayjs(new Date(stockDetailStore.transactionSelection.endDate||Date.now())).endOf('day').toDate();
-    const data = await stockDetailStore.fetchTransactionHistoryData({
-                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
-                                                                  nextPage:1,
-                                                                  type:stockDetailStore.transactionSelection.type,
-                                                                  startDate: startDate,
-                                                                  endDate: endDate});
-    stockDetailStore.setTransactionHistory(data);
-    stockDetailStore.setCurrentPage(1);
+    await stockDetailStore.refreshTransactionHistory();
   }
 
   const handleEndDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
     stockDetailStore.setSelectedTransaction("endDate",value);
-    const startDate = dayjs(new Date(stockDetailStore.transactionSelection.startDate||Date.now())).startOf('day').toDate();
-    const endDate = dayjs(new Date(stockDetailStore.transactionSelection.endDate||Date.now())).endOf('day').toDate();
-    const data = await stockDetailStore.fetchTransactionHistoryData({
-                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
-                                                                  nextPage:1,
-                                                                  type:stockDetailStore.transactionSelection.type,
-                                                                  startDate: startDate,
-                                                                  endDate: endDate});
-    stockDetailStore.setTransactionHistory(data);
-    stockDetailStore.setCurrentPage(1);
+    await stockDetailStore.refreshTransactionHistory();
   }
   
   const handleSelectedTypeChange = async (event: SelectChangeEvent) => {
     stockDetailStore.setSelectedTransaction('type',event.target.value as any);
-    const data = await stockDetailStore.fetchTransactionHistoryData({
-                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
-                                                                  nextPage:1,
-                                                                  ...stockDetailStore.transactionSelection
-                                                                  });
-    stockDetailStore.setTransactionHistory(data);
-    stockDetailStore.setCurrentPage(1);
+    await stockDetailStore.refreshTransactionHistory();
   }
 
   const renderSingleTransactionIncon = (
@@ -341,13 +323,13 @@ const SDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
                           TransactionTypeName.AddValue,
                           TransactionTypeName.NewAsset,
                         ).includes(record.singleAssetTransactionType)
-                          ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom] || ""
+                          ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.outside] || ""
                           : Array<any>(
                             TransactionTypeName.WithdrawToCash,
                             TransactionTypeName.WithdrawValue,
                             TransactionTypeName.MoveToFund,
                           ).includes(record.singleAssetTransactionType)
-                            ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom] || ""
+                            ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.outside] || ""
                             : Array<any>(
                               TransactionTypeName.WithdrawToOutside,
                               TransactionTypeName.BuyFromOutside,

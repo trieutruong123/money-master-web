@@ -21,6 +21,7 @@ interface IProps {
   assetId: string;
   portfolioId: string;
   content: any;
+  valueOfReferentialAssetBeforeCreatingTransaction:number;
   deleteAsset: (
     assetType: AssetType,
     assetId: string,
@@ -30,6 +31,7 @@ interface IProps {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAsset:number,
   ) => void;
 }
 
@@ -38,6 +40,7 @@ export default function SettingsMenuButton({
   assetId,
   portfolioId,
   content,
+  valueOfReferentialAssetBeforeCreatingTransaction,
   deleteAsset,
   transferAssetToInvestFund,
 }: IProps) {
@@ -51,7 +54,7 @@ export default function SettingsMenuButton({
   };
 
   const handleTransferAssetToInvestFund = () => {
-    transferAssetToInvestFund(assetType, assetId, portfolioId);
+    transferAssetToInvestFund(assetType, assetId, portfolioId, valueOfReferentialAssetBeforeCreatingTransaction );
     handleClose();
   };
 

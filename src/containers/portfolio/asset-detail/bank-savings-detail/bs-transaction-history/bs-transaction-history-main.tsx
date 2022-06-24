@@ -4,17 +4,23 @@ import {
   useTheme,
   useMediaQuery,
   CardHeader,
-  Button,
   Table,
   TableHead,
   TableRow,
   TableBody,
   styled,
   TableCell,
+  FormControl, 
+  InputLabel, 
+  Select,
+  MenuItem,
+  TextField,
+  SelectChangeEvent,
+  IconButton,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
-import { AssetTypeConstants, AssetTypeName, TransactionTypeName } from 'shared/constants';
+import { AssetTypeConstants, AssetTypeName, TransactionHistoryContants, TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
 import { BankSavingsTransactionList } from 'shared/models';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -23,6 +29,13 @@ import { colorScheme } from 'utils';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
 import { content as i18n } from 'i18n';
 import { useRouter } from 'next/router';
+import { Pagination } from 'shared/components';
+import { useEffect, useState } from 'react';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import {GrPowerReset } from 'react-icons/gr';
+import { v4 as uuid } from 'uuid';
+import { bankSavingsDetailStore } from 'shared/store';
 
 
 const TableHeaderCell = styled(TableCell)`
@@ -51,11 +64,90 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
   const router = useRouter();
   const { locale, query } = router;
   const content = locale === 'vi' ? i18n['vi'].bankSavingDetailPage : i18n['en'].bankSavingDetailPage;
-
+  const [pageNumbers,setPageNumbers] = useState<Array<number>>([]);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const headings = [content.transactionHistory.date, content.transactionHistory.amount, content.transactionHistory.type, content.transactionHistory.fromTo];
   const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
+
+  const resetTransaction = async()=>{
+    await bankSavingsDetailStore.resetTransaction();
+    resetPageNumbers();
+  }
+
+  useEffect(()=>{
+    resetPageNumbers();
+  },[bankSavingsDetailStore.transactionHistory])
+
+
+  const resetPageNumbers = () => {
+    if (!bankSavingsDetailStore.transactionHistory) {
+      return;
+    }
+    const currentPage = bankSavingsDetailStore.currentPage;
+    const total = bankSavingsDetailStore.transactionHistory.length;
+    const plus = total % TransactionHistoryContants.itemsPerPage? 1:0;
+    const count = Math.floor(total / TransactionHistoryContants.itemsPerPage) + plus ;
+    let arrPagination:Array<number> = [];
+
+    if (count < 4 || currentPage <= 2) {
+      arrPagination = Array.from({ length: count}, (_, i) => i + 1).slice(0, count);
+    }
+    else if (count >= 4 && currentPage === count ) {
+      arrPagination =   Array.from({ length: count}, (_, i) => i + 1).slice(count-3, count);
+    }
+    else if (count >= 4 && currentPage < count) {
+      arrPagination =   Array.from({ length: count}, (_, i) => i + 1).slice(currentPage-2, currentPage+1);
+    }
+    setPageNumbers(arrPagination);
+  }
+
+  const handlePageChange = async (pageNumber: number) => {
+    const transactionHistory = bankSavingsDetailStore.transactionHistory&&bankSavingsDetailStore.transactionHistory.slice() || [];
+    const total = transactionHistory.length;
+    const plus = total % TransactionHistoryContants.itemsPerPage? 1:0
+    const count = Math.floor(total / TransactionHistoryContants.itemsPerPage) + plus;
+    if(pageNumber ===bankSavingsDetailStore.currentPage){
+      return;
+    }
+    if (pageNumber < count && pageNumber > 0) {
+      bankSavingsDetailStore.setCurrentPage(pageNumber);
+      resetPageNumbers()
+    }
+
+    if(pageNumber == count ){
+      const startDate = bankSavingsDetailStore.transactionSelection.startDate
+      ? dayjs(bankSavingsDetailStore.transactionSelection.startDate).startOf('day').format(): null;
+      const endDate = bankSavingsDetailStore.transactionSelection.endDate
+      ? dayjs(bankSavingsDetailStore.transactionSelection.endDate).endOf('day').format(): null;
+      const data = await bankSavingsDetailStore.fetchTransactionHistoryData({ 
+                                                                  itemsPerPage: TransactionHistoryContants.itemsPerPage, 
+                                                                  nextPage: pageNumber + 1, 
+                                                                  type:bankSavingsDetailStore.transactionSelection.type,
+                                                                  startDate:startDate,
+                                                                  endDate:endDate});
+      if (data && data.length > 0) {
+        transactionHistory.push(...data);
+        bankSavingsDetailStore.setTransactionHistory(transactionHistory);
+      }
+      bankSavingsDetailStore.setCurrentPage(pageNumber);
+    }
+  }
+
+  const handleStartDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
+    bankSavingsDetailStore.setSelectedTransaction('startDate',value);
+    await bankSavingsDetailStore.refreshTransactionHistory();
+  }
+
+  const handleEndDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
+    bankSavingsDetailStore.setSelectedTransaction("endDate",value);
+    await bankSavingsDetailStore.refreshTransactionHistory();
+  }
+  
+  const handleSelectedTypeChange = async (event: SelectChangeEvent) => {
+    bankSavingsDetailStore.setSelectedTransaction('type',event.target.value as any);
+    await bankSavingsDetailStore.refreshTransactionHistory();
+  }
 
   const renderSingleTransactionIncon = (
     transactionType: TransactionType | null,
@@ -119,10 +211,68 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
               boxShadow: 'none',
             }}
           >
-            <CardHeader title="" sx={{ padding: '0px' }} />
-            <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-              <MoreHorizIcon />
-            </Button>
+            <CardHeader title="" sx={{padding: '0px', marginRight:'auto' }} />
+            <FormControl sx={{ minWidth: '6rem', height:'4rem', px: '.2rem', mt:'10px'}}>
+                <InputLabel id="type-select-label">Type</InputLabel>
+                <Select
+                  labelId="type-select-label"
+                  id="type-select"
+                  value={bankSavingsDetailStore.transactionSelection.type||'all'}
+                  label={'Type'}
+                  onChange={handleSelectedTypeChange}
+                >
+                    <MenuItem key={uuid()} value={TransactionHistoryContants.all}>
+                      All
+                    </MenuItem>
+                    <MenuItem key={uuid()} value={TransactionHistoryContants.in}>
+                      In
+                    </MenuItem>
+                    <MenuItem key={uuid()} value={TransactionHistoryContants.out}>
+                      Out
+                    </MenuItem>
+                </Select>
+            </FormControl>
+            <Box
+                sx={{
+                  mt:'10px',
+                  height:'4rem'
+                }}
+              >
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label={'Start date'}
+                    inputFormat="dd/MM/yyyy"
+                    value = {bankSavingsDetailStore.transactionSelection.startDate}
+                    onAccept={()=>true}
+                    onChange={handleStartDateChange}
+                    renderInput={(params) => (
+                      <TextField {...params} sx={{ width: '10rem' }} />
+                    )}
+                  />
+                </LocalizationProvider>
+            </Box>
+            <Box
+              sx={{
+                mt:'10px',
+                height:'4rem',
+                ml:'5px',
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label={'End date'}
+                  inputFormat="dd/MM/yyyy"
+                  value = {bankSavingsDetailStore.transactionSelection.endDate}
+                  onChange={handleEndDateChange}
+                  renderInput={(params) => (
+                    <TextField {...params} sx={{ width: '10rem' }} />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
+            <IconButton onClick = {resetTransaction} sx={{ padding: '0px', color: '#CBCBCD',marginLeft:'auto', width:'3rem', height:'3rem' }}>
+              <GrPowerReset />
+            </IconButton>
           </Card>
           <Box>
             <Table>
@@ -170,13 +320,13 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
                           TransactionTypeName.AddValue,
                           TransactionTypeName.NewAsset,
                         ).includes(record.singleAssetTransactionType)
-                          ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom] || ""
+                          ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.outside] || ""
                           : Array<any>(
                             TransactionTypeName.WithdrawValue,
                             TransactionTypeName.MoveToFund,
                             TransactionTypeName.WithdrawToCash
                           ).includes(record.singleAssetTransactionType)
-                            ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom] || ""
+                            ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.outside] || ""
                             : Array<any>(
                               TransactionTypeName.WithdrawToOutside,
                               TransactionTypeName.BuyFromOutside,
@@ -190,6 +340,8 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
                 })}
               </TableBody>
             </Table>
+            <Pagination pageNumbers={pageNumbers} currentPage = {bankSavingsDetailStore.currentPage} handleCurrentPage = {handlePageChange}/>
+
           </Box>
         </Card>
       ) : null}

@@ -32,6 +32,8 @@ const RealEstateDetail = observer(({ }: IProps) => {
 
   useEffect(() => {
     realEstateDetailStore.resetInitialState();
+    realEstateDetailStore.resetTransaction();
+
   }, []);
 
   useEffect(() => {
@@ -45,6 +47,7 @@ const RealEstateDetail = observer(({ }: IProps) => {
     const fetchData = async () => {
       rootStore.startLoading();
       Promise.all([realEstateDetailStore.fetchOverviewData()]);
+      await realEstateDetailStore.refreshTransactionHistory();
       rootStore.stopLoading();
     };
     if (portfolioId && assetId && realEstateDetailStore.needUpdateOverviewData) {

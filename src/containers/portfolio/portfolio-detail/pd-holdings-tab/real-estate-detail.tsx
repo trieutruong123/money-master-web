@@ -55,6 +55,7 @@ interface IProps {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAssetBeforeCreatingTransaction:number
   ) => void;
 }
 
@@ -180,6 +181,7 @@ export const RealEstateInvesments = observer(({
                           ? portfolioId[0]
                           : portfolioId || ''
                       }
+                      valueOfReferentialAssetBeforeCreatingTransaction = {record.currentPrice}
                       content={settingDropDownMenu}
                       deleteAsset={deleteAsset}
                       transferAssetToInvestFund={transferAssetToInvestFund}

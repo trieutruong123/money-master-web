@@ -60,6 +60,7 @@ export const BSWithdrawToCash = observer(({ handleFormSubmit, content }: IProps)
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
       amount: bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
+      valueOfReferentialAssetBeforeCreatingTransaction:bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
       amountInDestinationAssetUnit: bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
       currencyCode: data.currencyCode || 'USD',
       transactionType: TransactionRequestType.withdrawToCash,

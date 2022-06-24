@@ -40,6 +40,7 @@ const CSDCustomAssetDetail = observer(({ }: IProps) => {
 
     useEffect(() => {
         customAssetsDetailStore.resetInitialState();
+        customAssetsDetailStore.resetTransaction();
     }, []);
 
 
@@ -54,6 +55,7 @@ const CSDCustomAssetDetail = observer(({ }: IProps) => {
         const fetchData = async () => {
             rootStore.startLoading();
             await customAssetsDetailStore.fetchOverviewTabData();
+            await customAssetsDetailStore.refreshTransactionHistory();
             rootStore.stopLoading();
         };
         if (portfolioId && assetId && customAssetsDetailStore.needUpdateOverviewData) {

@@ -69,15 +69,21 @@ export const BuyCashForm = ({ handleFormSubmit, content }: IProps) => {
   const { errors } = formState;
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
+    const valueOfReferentialAsset = moneySource === 'cash'
+                                    ? cashDetailStore.cashList?.find(item => item.currencyCode === referentialCashCode)?.amount||0
+                                    : moneySource === 'fund'
+                                    ? 0
+                                    : 0;
     const res = handleFormSubmit({
       amount: data.amount,
+      valueOfReferentialAssetBeforeCreatingTransaction: valueOfReferentialAsset,
       amountInDestinationAssetUnit: data.amount,
       currencyCode: cashDetailStore.cashDetail?.currencyCode || 'USD',
       transactionType: TransactionRequestType.addValue,
       destinationAssetId: cashDetailStore?.cashDetail?.id,
       destinationAssetType: AssetTypeName.cash,
       referentialAssetId: moneySource === 'cash' ? cashDetailStore.cashList?.find((item: CashItem) => item.currencyCode === referentialCashCode)?.id : null,
-      referentialAssetType: moneySource === 'cash' ? AssetTypeName.cash : (moneySource === 'fund' ? 'fund' : null),
+      referentialAssetType: moneySource === 'cash' ? AssetTypeName.cash : (moneySource === 'fund' ? 'fund' : 'outside'),
       isTransferringAll: false,
       isUsingFundAsSource: moneySource === 'fund',
       fee: data.fee,

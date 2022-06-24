@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { NewCashAsset } from 'shared/types';
+import { ITransactionListRequest, ITransactionRequest, NewCashAsset } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { AssetTypeName, TransactionFormType, TransactionRequestType, UsingMoneySource } from 'shared/constants';
 import { BuyCashForm } from './buy-cash-form';
@@ -33,7 +33,6 @@ export const AddNewCashForm = observer(
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
 
     const handleFormSubmit = async (data: NewCashAsset) => {
-      console.log('handleFormSubmit');
       if (data.isUsingCash) {
         const cashId = data.usingCashId;
         const cashDetail = portfolioDetailStore.cashDetail?.find(item => item.id === cashId);
@@ -42,7 +41,6 @@ export const AddNewCashForm = observer(
           return;
         }
       }
-      console.log('xuong day roi');
       if (isExistedCash(data)) {
         await addMoreValue(data);
       }
@@ -60,10 +58,15 @@ export const AddNewCashForm = observer(
       if (!cashItem) {
         return;
       }
-      console.log('vo day ne');
       const moneySource = portfolioDetailStore.selectedAsset?.moneySource
-      const payload = {
+      const valueOfReferentialAsset = moneySource === UsingMoneySource.usingFund
+                                      ? portfolioDetailStore.investFundDetail?.currentAmount
+                                      : moneySource === UsingMoneySource.usingCash
+                                      ? portfolioDetailStore.cashDetail?.find(item=>item.id===data.usingCashId)?.amount||0
+                                      :0;
+      const payload :ITransactionRequest= {
         amount: data.amount,
+        valueOfReferentialAssetBeforeCreatingTransaction: valueOfReferentialAsset||0,
         amountInDestinationAssetUnit: data.amount,
         currencyCode: data.currencyCode || 'USD',
         transactionType: TransactionRequestType.addValue,
@@ -76,7 +79,6 @@ export const AddNewCashForm = observer(
         fee: data.fee,
         tax: data.tax,
       };
-      console.log('mua ori ne')
       const res = await portfolioDetailStore.createNewTransaction(payload);
       if (res.isError) {
         if (data.isUsingCash || data.isUsingInvestFund) {
@@ -99,7 +101,6 @@ export const AddNewCashForm = observer(
     }
 
     const addNewCash = async (data: NewCashAsset) => {
-      console.log('add new cash');
       const res = await portfolioDetailStore.addNewCash(data);
       if (res.isError) {
         if (data.isUsingInvestFund || data.isUsingCash) {

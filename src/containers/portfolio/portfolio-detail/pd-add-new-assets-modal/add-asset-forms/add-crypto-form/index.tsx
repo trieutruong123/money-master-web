@@ -6,7 +6,7 @@ import { ITransactionRequest, NewCryptoCurrencyAsset } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { AssetTypeName, TransactionFormType, UsingMoneySource } from 'shared/constants';
 import { BuyCryptoForm } from './buy-cryto-form';
-import { AddMoreValueForm } from './add-new-value-form';
+import { AddMoreValueForm } from './add-more-value-form';
 
 interface IProps {
   openPreviousForm: Function;
@@ -40,7 +40,6 @@ export const AddNewCryptoForm = observer(
     const currentPrice = portfolioDetailStore.searchedCryptoDetail?.usd;
 
     const addMoreValue = async (data: ITransactionRequest) => {
-      console.log(data);
       const res = await portfolioDetailStore.createNewTransaction(data);
       if (res.isError) {
         if (data.isUsingFundAsSource || portfolioDetailStore?.selectedAsset?.moneySource === UsingMoneySource.usingCash) {

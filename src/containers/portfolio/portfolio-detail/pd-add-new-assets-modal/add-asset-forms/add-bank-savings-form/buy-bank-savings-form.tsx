@@ -89,7 +89,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
       inputDay: date,
       inputMoneyAmount: data.inputMoneyAmount,
       isGoingReinState: true,
-      interestRate: data.interestRate,
+      interestRate: data.interestRate/100,
       termRange: data.termRange,
       description: data?.description || '',
       isUsingInvestFund: portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingFund,

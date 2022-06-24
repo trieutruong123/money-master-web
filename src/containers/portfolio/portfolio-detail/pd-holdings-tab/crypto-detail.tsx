@@ -53,6 +53,7 @@ interface IProps {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAssetBeforeCreatingTransaction:number
   ) => void;
 }
 
@@ -216,6 +217,7 @@ export const CryptoInvestments = observer(({
                             ? portfolioId[0]
                             : portfolioId || ''
                         }
+                        valueOfReferentialAssetBeforeCreatingTransaction = {record.currentPrice*record.currentAmountHolding}
                         content={settingDropDownMenu}
                         deleteAsset={deleteAsset}
                         transferAssetToInvestFund={transferAssetToInvestFund}

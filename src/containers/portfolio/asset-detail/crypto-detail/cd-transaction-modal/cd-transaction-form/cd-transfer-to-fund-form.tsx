@@ -46,6 +46,10 @@ const CDTransferToFundForm = observer(({ handleFormSubmit, content }: IProps) =>
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
       amount: data.amount,
+      valueOfReferentialAssetBeforeCreatingTransaction:cryptoDetailStore.cryptoDetail
+                                                      ?cryptoDetailStore.cryptoDetail.currentPrice
+                                                      *cryptoDetailStore.cryptoDetail.currentAmountHolding
+                                                      :0,
       amountInDestinationAssetUnit: 0,
       currencyCode: data.currencyCode || 'USD',
       transactionType: TransactionRequestType.moveToFund,

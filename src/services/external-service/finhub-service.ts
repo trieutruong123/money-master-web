@@ -1,13 +1,13 @@
-import { SearchingStockItem } from "../../shared/models/portfolio-asset.model";
-import axios from "axios";
-import { mainConstant } from "shared/constants";
-import { SearchingDataItem } from "shared/types";
+import { SearchingStockItem } from '../../shared/models/portfolio-asset.model';
+import axios from 'axios';
+import { mainConstant } from 'shared/constants';
+import { SearchingDataItem } from 'shared/types';
 
 export const finhubService = {
   getStockInfoByCode,
   searchForStock,
   getStockOHCL,
-  getMarketNews
+  getMarketNews,
 };
 
 const BASE_URL = mainConstant.STOCK_API_URL;
@@ -17,7 +17,7 @@ async function getStockInfoByCode(params: any) {
   const url = `/quote?symbol=${params.symbol}&token=${ACCESS_TOKEN}`;
   try {
     const response = await axios.get(`${BASE_URL}${url}`, {
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
 
     return {
@@ -36,7 +36,7 @@ async function searchForStock(searchingText: string) {
   const url = `/search?q=${searchingText}&token=${ACCESS_TOKEN}`;
   try {
     const response = await axios.get(`${BASE_URL}${url}`, {
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
 
     return {
@@ -55,7 +55,7 @@ async function getStockOHCL(params: any) {
   const url = `/stock/candle?symbol=${params?.stockId}&resolution=${params.resolution}&from=${params.startDate}&to=${params.endDate}&token=${ACCESS_TOKEN}`;
   try {
     const response = await axios.get(`${BASE_URL}${url}`, {
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
 
     return {
@@ -80,7 +80,7 @@ const parseSearchingData = (searchingResult: any): Array<SearchingDataItem> => {
           name: item.description,
           symbol: item.symbol,
         };
-      }
+      },
     );
     return searchingData;
   } catch (ex: any) {
@@ -88,12 +88,11 @@ const parseSearchingData = (searchingResult: any): Array<SearchingDataItem> => {
   }
 };
 
-async function getMarketNews(){
+async function getMarketNews() {
   const url = `/news?category=general&token=${ACCESS_TOKEN}`;
-  console.log(`${BASE_URL}${url}`)
   try {
     const response = await axios.get(`${BASE_URL}${url}`, {
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
 
     return {
