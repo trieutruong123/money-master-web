@@ -44,6 +44,7 @@ import {
   getSankeyNodeType,
   standardlizeSankeyResponse,
 } from 'shared/helpers/sankey-chart';
+import dayjs from 'dayjs';
 
 class PortfolioDetailStore {
   portfolioId: number = 0;
@@ -85,7 +86,12 @@ class PortfolioDetailStore {
 
   isOpenTransferToInvestFundModal: boolean = false;
   transferedAssetInfo:
-    | { assetType: AssetType; assetId: number; portfolioId: number }
+    | {
+        assetType: AssetType;
+        assetId: number;
+        portfolioId: number;
+        valueOfReferentialAsset: number;
+      }
     | undefined = undefined;
 
   isOpenDeleteAssetModal: boolean = false;
@@ -200,11 +206,13 @@ class PortfolioDetailStore {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAsset: number,
   ) {
     this.transferedAssetInfo = {
       assetType: assetType,
       assetId: Number.parseInt(assetId),
       portfolioId: Number.parseInt(portfolioId),
+      valueOfReferentialAsset: valueOfReferentialAsset,
     };
   }
 
@@ -714,10 +722,13 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/sankey`;
     const params: any = {};
     if (this.sankeySelection.startDate)
-      params.StartDate = this.sankeySelection.startDate;
+      params.StartDate = dayjs(this.sankeySelection.startDate)
+        .startOf('date')
+        .format();
     if (this.sankeySelection.endDate)
-      params.EndDate = this.sankeySelection.endDate;
-
+      params.EndDate = dayjs(this.sankeySelection.endDate)
+        .endOf('date')
+        .format();
     const res: { isError: boolean; data: any } = await httpService.get(
       url,
       params,

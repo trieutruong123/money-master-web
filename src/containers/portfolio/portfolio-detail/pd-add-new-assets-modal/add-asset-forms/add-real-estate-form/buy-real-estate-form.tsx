@@ -57,7 +57,7 @@ export const BuyRealEstateForm = observer(({ handleFormSubmit, content }: IProps
       .required('Current price is required')
       .typeError('Current price must be a number')
       .positive('Price must be greater than zero'),
-    cashId: Yup.number().required(),
+    cashId: Yup.number(),
     tax: Yup.number()
     .typeError('Tax must be a number')
       .min(0,'Tax must be greater than zero'),

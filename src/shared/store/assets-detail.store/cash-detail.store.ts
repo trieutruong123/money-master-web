@@ -20,6 +20,8 @@ import {
   TransferToInvestFundType,
 } from 'shared/types';
 import { getCurrencyByCode } from 'shared/helpers';
+import { convertUTCToLocalTimeZone2 } from 'utils/time';
+import dayjs from 'dayjs';
 
 export interface IMoveToFundPayload {
   referentialAssetId: number;
@@ -225,10 +227,9 @@ class CashDetailStore {
       PageNumber: nextPage,
       Type: type,
     };
-    if (startDate && endDate) {
-      params.StartDate = startDate;
-      params.EndDate = endDate;
-    }
+    if (endDate) params.EndDate = endDate;
+    if (startDate) params.StartDate = startDate;
+
     const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.get(
       url,
@@ -363,6 +364,24 @@ class CashDetailStore {
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
     this.setSelectedTransaction('endDate', null);
+  }
+
+  async refreshTransactionHistory() {
+    const startDate = this.transactionSelection.startDate
+      ? dayjs(this.transactionSelection.startDate).startOf('day').format()
+      : null;
+    const endDate = this.transactionSelection.endDate
+      ? dayjs(this.transactionSelection.endDate).endOf('day').format()
+      : null;
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: this.transactionSelection.type,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
   }
 
   resetInitialState() {

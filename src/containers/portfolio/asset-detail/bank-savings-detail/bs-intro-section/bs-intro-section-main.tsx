@@ -14,7 +14,7 @@ const BSIntroSection = observer(() => {
 
     const assetDetail = bankSavingsDetailStore.assetDetail;
     const renderInterestRate = (interestRate: number) => {
-        const rate = roundAndAddDotAndCommaSeparator(interestRate, 4);
+        const rate = roundAndAddDotAndCommaSeparator(interestRate*100, 4);
         return <span style={{ color: '#0d6f3f' }}>&#43;{rate + '%'}</span>;
     };
 

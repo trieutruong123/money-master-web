@@ -41,7 +41,6 @@ const Dashboard = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   const [marketNews,setMarketNews]=useState<Array<any>>([])
   const fetchData=async function(){
     var rawNews=await finhubService.getMarketNews();
-    console.log(rawNews)
     setMarketNews(rawNews.data.slice(0,7))
   }
   useEffect(()=>{

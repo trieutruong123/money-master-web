@@ -42,6 +42,7 @@ const BankSavingsDetail = observer(({ }: IProps) => {
 
   useEffect(() => {
     bankSavingsDetailStore.resetInitialState();
+    bankSavingsDetailStore.resetTransaction();
   }, []);
 
   useEffect(() => {
@@ -55,6 +56,7 @@ const BankSavingsDetail = observer(({ }: IProps) => {
     const fetchData = async () => {
       rootStore.startLoading();
       Promise.all([bankSavingsDetailStore.fetchOverviewData()]);
+      await bankSavingsDetailStore.refreshTransactionHistory();
       rootStore.stopLoading();
     };
     if (portfolioId && assetId && bankSavingsDetailStore.needUpdateOverviewData) {

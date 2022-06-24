@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import classes from './modify-portfolio.module.css';
-import { getSupportedCurrencyList } from 'shared/helpers/currency-info';
+import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers/currency-info';
 import React from 'react';
 
 const ModifyPortfolio = (
@@ -25,6 +25,8 @@ const ModifyPortfolio = (
       name: portfolioName,
       initialCurrency: initialCurrency.toUpperCase()||'USD',
       initialCash: 0,
+      initalCashName: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
+      initialCashDescription: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
     });
   }
 

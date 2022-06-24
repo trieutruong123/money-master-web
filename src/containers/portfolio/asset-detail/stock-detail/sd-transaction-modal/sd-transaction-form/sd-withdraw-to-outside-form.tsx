@@ -57,6 +57,10 @@ const SDWithdrawToOutsideForm = observer(({ handleFormSubmit, content }: IProps)
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
       amount: data.amount,
+      valueOfReferentialAssetBeforeCreatingTransaction:stockDetailStore.stockDetail
+                                                      ?stockDetailStore.stockDetail.currentPrice
+                                                      *stockDetailStore.stockDetail.currentAmountHolding
+                                                      :0,
       amountInDestinationAssetUnit: 0,
       currencyCode: data.currencyCode || 'USD',
       transactionType: TransactionRequestType.withdrawToOutside,

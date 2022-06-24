@@ -55,8 +55,7 @@ const APResetPassword = ({ }: IProps) => {
             newPassword: data.newPassword,
         });
         if (res && res.isError) {
-            console.log(res);
-            console.log(httpError.getResetPasswordError(res)[rootStore.locale]);
+            
             setErrorMessage(httpError.getResetPasswordError(res)[rootStore.locale]);
         }
     }, []);

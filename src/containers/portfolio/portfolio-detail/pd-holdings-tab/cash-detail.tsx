@@ -53,6 +53,7 @@ interface IProps {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAssetBeforeCreatingTransaction :number
   ) => void;
 }
 
@@ -92,6 +93,9 @@ export const CashInvestments = observer(({
   };
 
   const renderDescription = (description: any) => {
+    if(!description){
+      return '';
+    }
     return description.toString().slice(0, 25) + '...';
   };
 
@@ -162,6 +166,7 @@ export const CashInvestments = observer(({
                     <SettingsMenuButton
                       assetType={AssetTypeName.cash}
                       assetId={record.id.toString()}
+                      valueOfReferentialAssetBeforeCreatingTransaction={record.amount}
                       portfolioId={
                         Array.isArray(portfolioId)
                           ? portfolioId[0]

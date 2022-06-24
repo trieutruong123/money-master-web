@@ -51,6 +51,7 @@ export const REMoveToFundForm = observer(({ handleFormSubmit, content }: IProps)
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
       amount: realEstateDetailStore.assetDetail?.currentPrice,
+      valueOfReferentialAssetBeforeCreatingTransaction:realEstateDetailStore.assetDetail?.currentPrice,
       amountInDestinationAssetUnit: realEstateDetailStore.assetDetail?.currentPrice,
       currencyCode: realEstateDetailStore.assetDetail?.inputCurrency.toUpperCase() || 'USD',
       transactionType: TransactionRequestType.moveToFund,

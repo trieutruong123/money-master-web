@@ -16,6 +16,7 @@ import {
   TransferToInvestFundType,
 } from 'shared/types';
 import dayjs from 'dayjs';
+import { convertUTCToLocalTimeZone2 } from 'utils/time';
 
 interface IStockMarketData {
   c: number;
@@ -231,10 +232,9 @@ class StockDetailStore {
       PageNumber: nextPage,
       Type: type,
     };
-    if (startDate && endDate) {
-      params.StartDate = startDate;
-      params.EndDate = endDate;
-    }
+    if (endDate) params.EndDate = endDate;
+    if (startDate) params.StartDate = startDate;
+
     const url = `/portfolio/${this.portfolioId}/stock/${this.stockId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.get(
       url,
@@ -359,6 +359,24 @@ class StockDetailStore {
     this.setSelectedTransaction('endDate', null);
   }
 
+  async refreshTransactionHistory() {
+    const startDate = this.transactionSelection.startDate
+      ? dayjs(this.transactionSelection.startDate).startOf('day').format()
+      : null;
+    const endDate = this.transactionSelection.endDate
+      ? dayjs(this.transactionSelection.endDate).endOf('day').format()
+      : null;
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: this.transactionSelection.type,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
+  }
+
   resetInitialState() {
     runInAction(() => {
       this.portfolioInfo = undefined;
@@ -374,6 +392,13 @@ class StockDetailStore {
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
       this.selectedTab = PAStockBreadcrumbTabs.overview;
+
+      this.currentPage = 1;
+      this.transactionSelection = {
+        startDate: null,
+        endDate: null,
+        type: 'all',
+      };
     });
   }
 }

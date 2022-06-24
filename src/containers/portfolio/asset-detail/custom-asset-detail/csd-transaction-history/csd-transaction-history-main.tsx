@@ -170,13 +170,13 @@ const CSDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                                                     TransactionTypeName.AddValue,
                                                     TransactionTypeName.NewAsset,
                                                 ).includes(record.singleAssetTransactionType)
-                                                    ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom] || ""
+                                                    ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.outside] || ""
                                                     : Array<any>(
                                                         TransactionTypeName.WithdrawValue,
                                                         TransactionTypeName.MoveToFund,
                                                         TransactionTypeName.WithdrawToCash
                                                     ).includes(record.singleAssetTransactionType)
-                                                        ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom] || ""
+                                                        ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.outside] || ""
 
                                                         : Array<any>(
                                                             TransactionTypeName.WithdrawToOutside,

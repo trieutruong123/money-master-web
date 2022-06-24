@@ -57,6 +57,7 @@ const CSDWithdrawToOutside = observer(({ handleFormSubmit, content }: IProps) =>
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
             amount: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
+            valueOfReferentialAssetBeforeCreatingTransaction:customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
             amountInDestinationAssetUnit: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
             currencyCode: customAssetsDetailStore.customAssetDetail?.inputCurrency || 'USD',
             transactionType: TransactionRequestType.withdrawToOutside,

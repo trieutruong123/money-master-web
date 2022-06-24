@@ -56,7 +56,6 @@ function getRandomBgColor():string {
 function stringAvatar(name: string) {
   var shortName:string;
   shortName=name.split(' ').map(name=>name[0]).join('')
-  console.log(shortName)
   return {
     sx: {
       bgcolor: deepOrange[500],

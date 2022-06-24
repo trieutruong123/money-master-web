@@ -24,6 +24,7 @@ export type TransactionRequestType =
 
 export interface ITransactionRequest {
   amount: number;
+  valueOfReferentialAssetBeforeCreatingTransaction: number | null;
   amountInDestinationAssetUnit: number | null;
   currencyCode: string;
   transactionType: TransactionType;
@@ -40,7 +41,7 @@ export interface ITransactionRequest {
 export interface ITransactionListRequest {
   itemsPerPage: number;
   nextPage: number;
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: Date | string | null;
+  endDate: Date | string | null;
   type: 'all' | 'in' | 'out';
 }

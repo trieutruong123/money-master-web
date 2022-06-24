@@ -60,6 +60,7 @@ export const REWithdrawToCash = observer(({ handleFormSubmit, content }: IProps)
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
       amount: realEstateDetailStore.assetDetail?.currentPrice,
+      valueOfReferentialAssetBeforeCreatingTransaction:realEstateDetailStore.assetDetail?.currentPrice,
       amountInDestinationAssetUnit: realEstateDetailStore.assetDetail?.currentPrice,
       currencyCode: data.currencyCode || 'USD',
       transactionType: TransactionRequestType.withdrawToCash,

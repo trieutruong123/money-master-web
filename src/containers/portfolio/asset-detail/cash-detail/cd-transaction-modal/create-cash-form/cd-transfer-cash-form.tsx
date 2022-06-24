@@ -38,6 +38,7 @@ export const TransferCashForm = observer(({ handleFormSubmit, content }: IProps)
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit({
       amount: data.amount,
+      valueOfReferentialAssetBeforeCreatingTransaction:cashDetailStore.cashDetail?.amount||0,
       amountInDestinationAssetUnit: 0,
       currencyCode: cashDetailStore.cashDetail?.currencyCode || 'USD',
       transactionType: TransactionRequestType.moveToFund,

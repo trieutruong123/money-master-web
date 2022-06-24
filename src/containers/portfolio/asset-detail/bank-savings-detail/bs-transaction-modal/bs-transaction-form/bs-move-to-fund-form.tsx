@@ -52,6 +52,7 @@ export const BSMoveToFundForm = observer(({ handleFormSubmit, content }: IProps)
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
       amount: bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
+      valueOfReferentialAssetBeforeCreatingTransaction:bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
       amountInDestinationAssetUnit: bankSavingsDetailStore.assetDetail?.inputMoneyAmount,
       currencyCode: bankSavingsDetailStore.assetDetail?.inputCurrency.toUpperCase() || 'USD',
       transactionType: TransactionRequestType.moveToFund,

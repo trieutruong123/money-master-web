@@ -116,11 +116,16 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
     }
 
     if(pageNumber == count ){
+      const startDate = cashDetailStore.transactionSelection.startDate
+      ? dayjs(cashDetailStore.transactionSelection.startDate).startOf('day').format(): null;
+      const endDate = cashDetailStore.transactionSelection.endDate
+      ? dayjs(cashDetailStore.transactionSelection.endDate).endOf('day').format(): null;
       const data = await cashDetailStore.fetchTransactionHistoryData({ 
                                                                   itemsPerPage: TransactionHistoryContants.itemsPerPage, 
                                                                   nextPage: pageNumber + 1, 
-                                                                  ...cashDetailStore.transactionSelection
-                                                                  });
+                                                                  type:cashDetailStore.transactionSelection.type,
+                                                                  startDate:startDate,
+                                                                  endDate:endDate});
       if (data && data.length > 0) {
         transactionHistory.push(...data);
         cashDetailStore.setTransactionHistory(transactionHistory);
@@ -131,41 +136,17 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
 
   const handleStartDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
     cashDetailStore.setSelectedTransaction('startDate',value);
-    const startDate = dayjs(new Date(cashDetailStore.transactionSelection.startDate||Date.now())).startOf('day').toDate();
-    const endDate = dayjs(new Date(cashDetailStore.transactionSelection.endDate||Date.now())).endOf('day').toDate();
-    const data = await cashDetailStore.fetchTransactionHistoryData({
-                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
-                                                                  nextPage:1,
-                                                                  type:cashDetailStore.transactionSelection.type,
-                                                                  startDate: startDate,
-                                                                  endDate: endDate});
-    cashDetailStore.setTransactionHistory(data);
-    cashDetailStore.setCurrentPage(1);
+    await cashDetailStore.refreshTransactionHistory();
   }
 
   const handleEndDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
     cashDetailStore.setSelectedTransaction("endDate",value);
-    const startDate = dayjs(new Date(cashDetailStore.transactionSelection.startDate||Date.now())).startOf('day').toDate();
-    const endDate = dayjs(new Date(cashDetailStore.transactionSelection.endDate||Date.now())).endOf('day').toDate();
-    const data = await cashDetailStore.fetchTransactionHistoryData({
-                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
-                                                                  nextPage:1,
-                                                                  type:cashDetailStore.transactionSelection.type,
-                                                                  startDate: startDate,
-                                                                  endDate: endDate});
-    cashDetailStore.setTransactionHistory(data);
-    cashDetailStore.setCurrentPage(1);
+    await cashDetailStore.refreshTransactionHistory();
   }
   
   const handleSelectedTypeChange = async (event: SelectChangeEvent) => {
     cashDetailStore.setSelectedTransaction('type',event.target.value as any);
-    const data = await cashDetailStore.fetchTransactionHistoryData({
-                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
-                                                                  nextPage:1,
-                                                                  ...cashDetailStore.transactionSelection
-                                                                  });
-    cashDetailStore.setTransactionHistory(data);
-    cashDetailStore.setCurrentPage(1);
+    await cashDetailStore.refreshTransactionHistory();
   }
 
   const renderSingleTransactionIncon = (
@@ -244,10 +225,10 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
     ).includes(record.singleAssetTransactionType)) {
       if (record.destinationAssetId === cashDetailStore.cashDetail?.id &&
         record.destinationAssetType === AssetTypeName.cash) {
-        return AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom] || ""
+        return AssetTypeConstants[language][record.referentialAssetType|| AssetTypeName.outside ] || ''
       }
       else {
-        return AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom] || ""
+        return AssetTypeConstants[language][record.destinationAssetType ||AssetTypeName.outside ] || ''
       }
     }
     else if (Array<any>(
@@ -257,10 +238,10 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
     ).includes(record.singleAssetTransactionType)) {
       if (record.destinationAssetId === cashDetailStore.cashDetail?.id &&
         record.destinationAssetType === AssetTypeName.cash) {
-        return AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom] || ""
+        return AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.outside] || ''
       }
       else {
-        return AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom] || ""
+        return AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.outside] || ''
       }
     }
     else if (Array<any>(

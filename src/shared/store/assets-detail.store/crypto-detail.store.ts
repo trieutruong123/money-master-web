@@ -22,6 +22,8 @@ import {
   TransactionHistoryContants,
 } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
+import { convertUTCToLocalTimeZone2 } from 'utils/time';
+import dayjs from 'dayjs';
 
 interface ICryptoMarketData {
   c: number;
@@ -77,6 +79,7 @@ class CryptoDetailStore {
       needUpdateOverviewData: observable,
       cryptoProfile: observable,
       transactionSelection: observable,
+      currentPage: observable,
 
       setCryptoId: action,
       setCurrency: action,
@@ -233,10 +236,9 @@ class CryptoDetailStore {
       PageNumber: nextPage,
       Type: type,
     };
-    if (startDate && endDate) {
-      params.StartDate = startDate;
-      params.EndDate = endDate;
-    }
+    if (endDate) params.EndDate = endDate;
+    if (startDate) params.StartDate = startDate;
+
     const url = `/portfolio/${this.portfolioId}/crypto/${this.cryptoId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.get(
       url,
@@ -358,6 +360,12 @@ class CryptoDetailStore {
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
       this.selectedTab = PACryptoBreadcrumbTabs.overview;
+      this.currentPage = 1;
+      this.transactionSelection = {
+        startDate: null,
+        endDate: null,
+        type: 'all',
+      };
     });
   }
 
@@ -374,6 +382,24 @@ class CryptoDetailStore {
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
     this.setSelectedTransaction('endDate', null);
+  }
+
+  async refreshTransactionHistory() {
+    const startDate = this.transactionSelection.startDate
+      ? dayjs(this.transactionSelection.startDate).startOf('day').format()
+      : null;
+    const endDate = this.transactionSelection.endDate
+      ? dayjs(this.transactionSelection.endDate).endOf('day').format()
+      : null;
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: this.transactionSelection.type,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
   }
 
   async fetchCryptoProfile() {

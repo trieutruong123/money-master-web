@@ -23,7 +23,6 @@ class AccountStore {
 
   setNextForm(type: string) {
     this.currentForm = type;
-    console.log(type);
   }
 
   setEmail(email: string) {

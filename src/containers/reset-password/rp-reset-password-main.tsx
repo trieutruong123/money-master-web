@@ -7,11 +7,8 @@ import { accountStore } from 'shared/store';
 const RPResetPasswordPage = observer(() => {
   useEffect(() => {
     accountStore.resetInitialState();
-    console.log('reset inital state');
   }, []);
-  console.log('RPResetPasswordPage');
   useEffect(()=>{
-    console.log(accountStore.currentForm);
   },[accountStore.currentForm]);
   return (
     <>

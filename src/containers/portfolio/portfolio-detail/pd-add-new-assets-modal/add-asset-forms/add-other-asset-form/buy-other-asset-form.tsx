@@ -70,7 +70,7 @@ export const BuyOtherAssetForm = observer(({
       .transform((_, val) => (val === Number(val) ? val : 0))
       .default(0),
     description: Yup.string(),
-    cashId: Yup.number().required(),
+    cashId: Yup.number(),
     tax: Yup.number()
     .typeError('Tax must be a number')
       .min(0,'Tax must be greater than zero'),

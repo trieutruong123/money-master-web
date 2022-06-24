@@ -53,13 +53,13 @@ export const AddMoreValueForm = observer(({
             .typeError('Shares must be a number')
             .positive('Shares must be greater than zero'),
         currencyCode: Yup.string().required().default('USD'),
-        cashId: Yup.number().required(),
+        cashId: Yup.number(),
         tax: Yup.number()
-    .typeError('Tax must be a number')
-      .min(0,'Tax must be greater than zero'),
-    fee: Yup.number()
-      .typeError('Fee must be a number')
-      .min(0,'Fee must be greater than zero'),
+            .typeError('Tax must be a number')
+            .min(0,'Tax must be greater than zero'),
+        fee: Yup.number()
+        .typeError('Fee must be a number')
+        .min(0,'Fee must be greater than zero'),
     });
     const currencyList = getSupportedCurrencyList();
 
@@ -78,16 +78,24 @@ export const AddMoreValueForm = observer(({
                 return true;
             }
         })
+
         const moneySource = portfolioDetailStore?.selectedAsset?.moneySource;
+        const valueOfReferentialAsset = moneySource === UsingMoneySource.usingFund
+                                        ? portfolioDetailStore.investFundDetail?.currentAmount
+                                        : moneySource === UsingMoneySource.usingCash
+                                        ? portfolioDetailStore.cashDetail?.find(item=>item.id===data.cashId)?.amount||0
+                                        :0;
+
         handleFormSubmit({
             amount: data.purchasePrice * data.amount,
+            valueOfReferentialAssetBeforeCreatingTransaction:valueOfReferentialAsset,
             amountInDestinationAssetUnit: data.amount,
             currencyCode: data.currencyCode || 'USD',
             transactionType: TransactionRequestType.addValue,
             destinationAssetId: stockItem?.id,
             destinationAssetType: AssetTypeName.stock,
             referentialAssetId: moneySource === UsingMoneySource.usingCash ? data.cashId : null,
-            referentialAssetType: moneySource === UsingMoneySource.usingCash ? AssetTypeName.cash : (moneySource === UsingMoneySource.usingFund ? 'fund' : null),
+            referentialAssetType: moneySource === UsingMoneySource.usingCash ? AssetTypeName.cash : (moneySource === UsingMoneySource.usingFund ? 'fund' : 'outside'),
             isTransferringAll: false,
             isUsingFundAsSource: moneySource === UsingMoneySource.usingFund,
             fee: data.fee,
