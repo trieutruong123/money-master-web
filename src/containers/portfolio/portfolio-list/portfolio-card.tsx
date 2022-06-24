@@ -30,7 +30,7 @@ function PortfolioCard(props: any) {
       <div className={classes.infoPannel}>
         <h2 className={classes.name}>{portfolio.name}</h2>
         <div className={classes.balance}>
-          <h3>{`${portfolio.initialCash} ${portfolio.initialCurrency}`}</h3>
+          <h3>{`${portfolio.initialCurrency}`}</h3>
         </div>
       </div>
       <div className={classes.buttonPanel}>
