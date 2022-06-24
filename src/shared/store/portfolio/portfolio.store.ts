@@ -13,6 +13,8 @@ class PortfolioStore {
       setOpenAddNewPortfolioModal: action,
       fetchPortfolioData: action,
       addNewPortfolio: action,
+      updatePortfolio: action,
+      deletePortfolio: action,
     });
   }
 
@@ -29,6 +31,21 @@ class PortfolioStore {
     portfolioService
       .addNewPortfolio(data)
       .then((portfolio) => this.portfolio.push(portfolio));
+    rootStore.stopLoading();
+  }
+
+  async updatePortfolio(data: any) {
+    rootStore.startLoading();
+    await portfolioService.updatePortfolio(data)
+    await this.fetchPortfolioData()
+    rootStore.stopLoading();
+  }
+
+  async deletePortfolio(portfolioId: string) {
+    rootStore.startLoading();
+    await portfolioService.deletePortfolio(portfolioId)
+    await this.fetchPortfolioData()
+      
     rootStore.stopLoading();
   }
 }
