@@ -59,7 +59,6 @@ export const BuyStockForm = observer(({
       .positive('Shares must be greater than zero'),
     currencyCode: Yup.string().required().default('USD'),
     description: Yup.string(),
-    cashId: Yup.number().required(),
     tax: Yup.number()
     .typeError('Tax must be a number')
       .min(0,'Tax must be greater than zero'),
