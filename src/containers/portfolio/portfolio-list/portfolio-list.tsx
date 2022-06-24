@@ -52,12 +52,13 @@ const PortfolioList = observer(({ context }: IProps) => {
     setOpenCreateModal(false);
   };
 
-  const updateHandler = (data: any) => {
-    // call update API
+  const updateHandler = async(data: any) => {
+    await portfolioStore.updatePortfolio(data);
   };
 
-  const deleteHandler = (portfolioId: string) => {
-    // call delete APi
+  const deleteHandler = async(portfolioId: string) => {
+    console.log(portfolioId)
+    await portfolioStore.deletePortfolio(portfolioId);
   };
 
   return (
@@ -98,6 +99,7 @@ const PortfolioList = observer(({ context }: IProps) => {
             content={pageContent}
             portfolio={portfolio}
             key={portfolio.id}
+            portfolioId={portfolio.id}
             onUpdate={updateHandler}
             onDelete={deleteHandler}
           />
