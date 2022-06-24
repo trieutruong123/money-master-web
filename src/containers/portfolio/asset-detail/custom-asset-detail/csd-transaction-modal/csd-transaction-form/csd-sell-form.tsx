@@ -31,19 +31,27 @@ type FormValues = {
 
 interface IProps {
     handleFormSubmit: Function;
+    content: any
 }
 
 
 
-export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
+export const CSDSellForm = observer(({ handleFormSubmit, content }: IProps) => {
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down('sm'));
     const validationSchema = Yup.object().shape({
-        amount: Yup.number(),
+        amount: Yup.number()
+            .required('Amount is required')
+            .typeError('Amount must be a number')
+            .positive('Amount must be greater than zero'),
         currencyCode: Yup.string().required().default('USD'),
         destinationCurrencyCode: Yup.string().required(''),
-        fee: Yup.number(),
-        tax: Yup.number(),
+        tax: Yup.number()
+            .min(0,'Tax must be greater than zero')
+            .typeError('Tax must be a number'),
+        fee: Yup.number()
+            .typeError('Fee must be a number')
+            .min(0,'Fee must be greater than zero'),
     });
 
     const formOptions = { resolver: yupResolver(validationSchema) };
@@ -55,14 +63,15 @@ export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
             amount: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
-            amountInDestinationAssetUnit: 0,
+            valueOfReferentialAssetBeforeCreatingTransaction:customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
+            amountInDestinationAssetUnit: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
             currencyCode: data.currencyCode || 'USD',
             transactionType: TransactionRequestType.withdrawToCash,
             destinationAssetId: customAssetsDetailStore.cashDetail?.find(item => item.currencyCode === data.destinationCurrencyCode)?.id,
             destinationAssetType: AssetTypeName.cash,
             referentialAssetId: customAssetsDetailStore.customAssetDetail?.id,
             referentialAssetType: AssetTypeName.custom,
-            isTransferringAll: false,
+            isTransferringAll: true,
             isUsingFundAsSource: false,
             fee: data.fee,
             tax: data.tax,
@@ -86,7 +95,7 @@ export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
                 },
             }}
         >
-            <Typography color='primary'>* All money from asset will be sold</Typography>
+            <Typography color='primary'>*  {content.transactionForm.allMoneyFromAssetWillBeSold}</Typography>
             <TextField
                 type="number"
                 fullWidth
@@ -96,7 +105,7 @@ export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
                 }}
                 sx={{ mt: 1, display: 'block' }}
                 id="outlined-cash-amount"
-                label={`${'Amount'}*`}
+                label={`${content.transactionForm.amount}*`}
                 variant="outlined"
                 value={customAssetsDetailStore.customAssetDetail?.inputMoneyAmount}
                 error={typeof errors.amount?.message !== 'undefined'}
@@ -104,12 +113,12 @@ export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
             ></TextField>
             <Box mt='10px'></Box>
             <FormControl fullWidth>
-                <InputLabel id="currency-list">{'Currency Code*'}</InputLabel>
+                <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
                 <Select
                     variant="outlined"
                     labelId="currency-list"
                     id="cash-currency-list-select"
-                    label={`${'Currency Code'}*`}
+                    label={`${content.transactionForm.currency}*`}
                     value={customAssetsDetailStore.customAssetDetail?.inputCurrency.toUpperCase()}
                 >
                     {currencyList.map((item, index) => {
@@ -123,12 +132,12 @@ export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
             </FormControl>
             <Box mt='10px'></Box>
             <FormControl fullWidth>
-                <InputLabel id="destination-cash">{'Destination cash*'}</InputLabel>
+                <InputLabel id="destination-cash">{content.transactionForm.destinationCash}*</InputLabel>
                 <Select
                     variant="outlined"
                     labelId="destination-cash"
                     id="crypto-destination-cash-select"
-                    label={`${'Select destination cash'}*`}
+                    label={`${content.transactionForm.destinationCash}*`}
                     {...register('destinationCurrencyCode')}
                     defaultValue={customAssetsDetailStore.cashDetail?.at(0)?.currencyCode || 'USD'}
                     required
@@ -152,7 +161,7 @@ export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
                         }}
                         sx={{ mt: '10px', display: 'block' }}
                         id="outlined-fee"
-                        label={`${"Fee"}`}
+                        label={`${content.transactionForm.fee}`}
                         {...register('fee')}
                         variant="outlined"
                         defaultValue={0}
@@ -168,7 +177,7 @@ export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
                         }}
                         sx={{ mt: '10px', display: 'block' }}
                         id="outlined-tax"
-                        label={`${"Tax (%)"}`}
+                        label={`${content.transactionForm.tax} (%)`}
                         {...register('tax')}
                         variant="outlined"
                         defaultValue={0}
@@ -187,7 +196,7 @@ export const CSDSellForm = observer(({ handleFormSubmit }: IProps) => {
                     height: '2.5rem',
                 }}
             >
-                SELL
+                {content.transactionForm.sellButton}
             </Button>
         </Box>
     );

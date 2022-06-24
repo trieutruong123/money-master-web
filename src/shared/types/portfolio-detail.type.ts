@@ -72,9 +72,9 @@ export type NewCryptoCurrencyAsset = {
 
 export type NewCashAsset = {
   name: string;
-  amount: string;
+  amount: number;
   description: string;
-  currencyCode: number;
+  currencyCode: string;
   inputDay: string;
   isUsingInvestFund: boolean;
   isUsingCash: boolean;
@@ -146,6 +146,7 @@ export interface IAddedAsset {
   formType?: string;
   cryptoInfo?: SearchingDataItem;
   stockInfo?: SearchingDataItem;
+  addMoreValue?: boolean;
 }
 
 export interface CurrencyItem {

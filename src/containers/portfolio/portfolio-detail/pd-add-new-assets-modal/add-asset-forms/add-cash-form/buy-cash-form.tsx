@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
+import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import {
   Box,
   Button,
@@ -15,10 +15,8 @@ import {
 } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
-import { colorScheme } from 'utils/color-scheme';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
-import CheckBoxButton from 'shared/components/checkbox';
 import { portfolioDetailStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
 import { UsingMoneySource } from 'shared/constants';
@@ -50,8 +48,12 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
       .positive('Amount must be greater than zero'),
     description: Yup.string(),
     cashId: Yup.number(),
-    fee: Yup.number(),
     tax: Yup.number()
+    .typeError('Tax must be a number')
+      .min(0,'Tax must be greater than zero'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .min(0,'Fee must be greater than zero'),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -121,7 +123,7 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
           <Grid container spacing={isXs ? 1 : 2}>
             <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
               <FormControl fullWidth>
-                <InputLabel id="currency-list">{content.currency}</InputLabel>
+                <InputLabel id="currency-list">{content.currency}*</InputLabel>
                 <Select
                   variant="outlined"
                   labelId="currency-list"
@@ -129,6 +131,7 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
                   label={`${content.currency}*`}
                   defaultValue="USD"
                   {...register('currencyCode')}
+                  required
                 >
                   {currencyList.map((item, index) => {
                     return (
@@ -158,14 +161,15 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
             portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash && cashList !== undefined && cashList.length > 0 ? (
               <Grid item xs={12} sx={{ mt: 1, display: 'block' }}>
                 <FormControl fullWidth>
-                  <InputLabel id="select-cash-source">Select your cash source</InputLabel>
+                  <InputLabel id="select-cash-source">{content.selectCashSource}</InputLabel>
                   <Select
                     variant="outlined"
                     labelId="your-cash"
                     id="bank-savings-your-cash-select"
-                    label={`Select your cash source*`}
+                    label={`${content.selectCashSource}*`}
                     defaultValue={cashList[0].id}
                     {...register('cashId')}
+                    required
                   >
                     {cashList.map((item, index) => {
                       return (
@@ -191,7 +195,7 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
                 }}
                 sx={{ mt: 1, display: 'block' }}
                 id="outlined-bank-savings-fee"
-                label={`${"Fee"}`}
+                label={`${content.fee}`}
                 {...register('fee')}
                 variant="outlined"
                 defaultValue={0}
@@ -207,7 +211,7 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
                 }}
                 sx={{ mt: 1, display: 'block' }}
                 id="outlined-bank-savings-tax"
-                label={`${"Tax (%)"}`}
+                label={`${content.tax} (%)`}
                 {...register('tax')}
                 variant="outlined"
                 defaultValue={0}

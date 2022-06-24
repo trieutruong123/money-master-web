@@ -11,16 +11,33 @@ import {
   TableBody,
   styled,
   TableCell,
+
+  FormControl, 
+  InputLabel, 
+  Select,
+  MenuItem,
+  TextField,
+  SelectChangeEvent,
+  IconButton,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
-import { TransactionTypeName } from 'shared/constants';
+import { AssetTypeConstants, AssetTypeName, TransactionHistoryContants, TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
 import { StockTransactionList } from 'shared/models';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TransactionType } from 'shared/types';
 import { colorScheme } from 'utils';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
+import { useRouter } from 'next/router';
+import { Pagination } from 'shared/components';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import {GrPowerReset } from 'react-icons/gr';
+import { v4 as uuid } from 'uuid';
+import { cryptoDetailStore } from 'shared/store';
+import { useEffect, useState } from 'react';
+import { convertUTCToLocalTimeZone2 } from 'utils/time';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -42,12 +59,96 @@ const TableBodyCell = styled(TableCell)`
 
 interface IProps {
   transactionHistoryData: StockTransactionList | undefined;
+  content: any
 }
 
-const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
+const CDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const headings = ['Date', 'Amount', 'Type', 'From/To'];
+  const headings = [content.transactionHistory.date, content.transactionHistory.amount, content.transactionHistory.type, content.transactionHistory.fromTo];
+  const router = useRouter();
+  const [pageNumbers,setPageNumbers] = useState<Array<number>>([]);
+  const { locale } = router;
+  const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
+
+
+  const resetTransaction = async()=>{
+    await cryptoDetailStore.resetTransaction();
+    resetPageNumbers();
+  }
+
+  useEffect(()=>{
+    resetPageNumbers();
+  },[cryptoDetailStore.transactionHistory])
+
+
+  const resetPageNumbers = () => {
+    if (!cryptoDetailStore.transactionHistory) {
+      return;
+    }
+    const currentPage = cryptoDetailStore.currentPage;
+    const total = cryptoDetailStore.transactionHistory.length;
+    const count = Math.floor(total / TransactionHistoryContants.itemsPerPage) + (total % TransactionHistoryContants.itemsPerPage? 1:0);
+    let arrPagination:Array<number> = [];
+
+    if (count < 4 || currentPage <= 2) {
+      arrPagination = Array.from({ length: count}, (_, i) => i + 1).slice(0, count);
+    }
+    else if (count >= 4 && currentPage === count ) {
+      arrPagination =   Array.from({ length: count}, (_, i) => i + 1).slice(count-3, count);
+    }
+    else if (count >= 4 && currentPage < count) {
+      arrPagination =   Array.from({ length: count}, (_, i) => i + 1).slice(currentPage-2, currentPage+1);
+    }
+    setPageNumbers(arrPagination);
+  }
+
+  const handlePageChange = async (pageNumber: number) => {
+    const transactionHistory = cryptoDetailStore.transactionHistory&&cryptoDetailStore.transactionHistory.slice() || [];
+    const total = transactionHistory.length;
+    const count = Math.floor(total / TransactionHistoryContants.itemsPerPage) + (total % TransactionHistoryContants.itemsPerPage? 1:0);
+    if(pageNumber ===cryptoDetailStore.currentPage){
+      return;
+    }
+    if (pageNumber < count && pageNumber > 0) {
+      cryptoDetailStore.setCurrentPage(pageNumber);
+      resetPageNumbers()
+    }
+
+    if(pageNumber == count ){
+      const startDate = cryptoDetailStore.transactionSelection.startDate
+      ? dayjs(cryptoDetailStore.transactionSelection.startDate).startOf('day').format(): null;
+    const endDate = cryptoDetailStore.transactionSelection.endDate
+      ? dayjs(cryptoDetailStore.transactionSelection.endDate).endOf('day').format(): null;
+      const data = await cryptoDetailStore.fetchTransactionHistoryData({ 
+                                                                  itemsPerPage: TransactionHistoryContants.itemsPerPage, 
+                                                                  nextPage: pageNumber + 1, 
+                                                                  type:cryptoDetailStore.transactionSelection.type,
+                                                                  startDate:startDate,
+                                                                  endDate:endDate});
+      if (data && data.length > 0) {
+        transactionHistory.push(...data);
+        cryptoDetailStore.setTransactionHistory(transactionHistory);
+      }
+      cryptoDetailStore.setCurrentPage(pageNumber);
+    }
+  }
+
+  const handleStartDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
+    cryptoDetailStore.setSelectedTransaction('startDate',value);
+    await cryptoDetailStore.refreshTransactionHistory();
+  }
+
+  const handleEndDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
+    cryptoDetailStore.setSelectedTransaction("endDate",value);
+    await cryptoDetailStore.refreshTransactionHistory();
+  }
+  
+  const handleSelectedTypeChange = async (event: SelectChangeEvent) => {
+    cryptoDetailStore.setSelectedTransaction('type',event.target.value as any);
+    await cryptoDetailStore.refreshTransactionHistory();
+  }
+
   const renderSingleTransactionIncon = (
     transactionType: TransactionType | null,
   ) => {
@@ -63,17 +164,21 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowLeft fontSize="25" color={colorScheme.green400} />
-          &nbsp; {'BUY'}
+          &nbsp; {content.transactionHistory.buy}
         </Box>
       );
     } else if (
-      Array<any>(TransactionTypeName.WithdrawValue, TransactionTypeName.WithdrawToCash).includes(transactionType)
-    ) {
+      Array<any>(
+        TransactionTypeName.WithdrawToOutside,
+        TransactionTypeName.WithdrawValue,
+        TransactionTypeName.WithdrawToCash,
+        TransactionTypeName.WithdrawToOutside,
+      ).includes(transactionType)) {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowRight fontSize="25" color={colorScheme.red400} />
           &nbsp;
-          {'WITHDRAW'}
+          {content.transactionHistory.withdraw}
         </Box>
       );
     } else if (
@@ -82,7 +187,7 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
       return (
         <Box display="flex" alignItems="center" justifyContent={'center'}>
           <ImArrowRight fontSize="25" color={colorScheme.red400} />
-          &nbsp; {'MOVE'}
+          &nbsp; {content.transactionHistory.move}
         </Box>
       );
     }
@@ -102,15 +207,74 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
           <Card
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
-              height: '3rem',
+              justifyContent: 'center',
+              alignItems:'center',
+              height: '5rem',
               boxShadow: 'none',
             }}
           >
-            <CardHeader title="Stock" sx={{ padding: '0px' }} />
-            <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-              <MoreHorizIcon />
-            </Button>
+            <CardHeader title="" sx={{padding: '0px', marginRight:'auto' }} />
+            <FormControl sx={{ minWidth: '6rem', height:'4rem', px: '.2rem', mt:'10px'}}>
+                <InputLabel id="type-select-label">Type</InputLabel>
+                <Select
+                  labelId="type-select-label"
+                  id="type-select"
+                  value={cryptoDetailStore.transactionSelection.type||'all'}
+                  label={'Type'}
+                  onChange={handleSelectedTypeChange}
+                >
+                    <MenuItem key={uuid()} value={TransactionHistoryContants.all}>
+                      All
+                    </MenuItem>
+                    <MenuItem key={uuid()} value={TransactionHistoryContants.in}>
+                      In
+                    </MenuItem>
+                    <MenuItem key={uuid()} value={TransactionHistoryContants.out}>
+                      Out
+                    </MenuItem>
+                </Select>
+            </FormControl>
+            <Box
+                sx={{
+                  mt:'10px',
+                  height:'4rem'
+                }}
+              >
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label={'Start date'}
+                    inputFormat="dd/MM/yyyy"
+                    value = {cryptoDetailStore.transactionSelection.startDate}
+                    onAccept={()=>true}
+                    onChange={handleStartDateChange}
+                    renderInput={(params) => (
+                      <TextField {...params} sx={{ width: '10rem' }} />
+                    )}
+                  />
+                </LocalizationProvider>
+            </Box>
+            <Box
+              sx={{
+                mt:'10px',
+                height:'4rem',
+                ml:'5px',
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label={'End date'}
+                  inputFormat="dd/MM/yyyy"
+                  value = {cryptoDetailStore.transactionSelection.endDate}
+                  onChange={handleEndDateChange}
+                  renderInput={(params) => (
+                    <TextField {...params} sx={{ width: '10rem' }} />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
+            <IconButton onClick = {resetTransaction} sx={{ padding: '0px', color: '#CBCBCD',marginLeft:'auto', width:'3rem', height:'3rem' }}>
+              <GrPowerReset />
+            </IconButton>
           </Card>
           <Box>
             <Table>
@@ -155,24 +319,31 @@ const CDTransactionHistory = ({ transactionHistoryData }: IProps) => {
                         {Array<any>(
                           TransactionTypeName.BuyFromCash,
                           TransactionTypeName.BuyFromFund,
-                          TransactionTypeName.BuyFromOutside,
                           TransactionTypeName.AddValue,
                           TransactionTypeName.NewAsset,
                         ).includes(record.singleAssetTransactionType)
-                          ? record.referentialAssetType?.toUpperCase()
+                          ? AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.outside] || ""
                           : Array<any>(
                             TransactionTypeName.WithdrawValue,
                             TransactionTypeName.MoveToFund,
                             TransactionTypeName.WithdrawToCash
                           ).includes(record.singleAssetTransactionType)
-                            ? record.destinationAssetType?.toUpperCase()
-                            : ''}
+                            ? AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.outside] || ""
+                            : Array<any>(
+                              TransactionTypeName.WithdrawToOutside,
+                              TransactionTypeName.BuyFromOutside,
+                            ).includes(record.singleAssetTransactionType) ?
+                              content.transactionHistory.outside
+                              : ''
+                        }
                       </TableBodyCellSymbol>
                     </TableRow>
                   );
                 })}
               </TableBody>
             </Table>
+            <Pagination pageNumbers={pageNumbers} currentPage = {cryptoDetailStore.currentPage} handleCurrentPage = {handlePageChange}/>
+
           </Box>
         </Card>
       ) : null}

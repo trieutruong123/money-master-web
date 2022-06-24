@@ -4,7 +4,11 @@ import { getCurrencyByCode } from 'shared/helpers';
 import { stockDetailStore } from 'shared/store';
 import { roundAndAddDotAndCommaSeparator } from 'utils';
 
-const SDMarketInfo = observer(() => {
+interface IProps {
+  content: any
+}
+
+const SDMarketInfo = observer(({ content }: IProps) => {
   const { marketData, stockDetail } = stockDetailStore;
 
   return (
@@ -60,7 +64,7 @@ const SDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">Change: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.dailyChange}: &nbsp;</Typography>
                   <Typography
                     variant="body1"
                     color={marketData?.dp > 0 ? 'success.main' : 'error.main'}
@@ -79,7 +83,7 @@ const SDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">Open: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.open}: &nbsp;</Typography>
                   <Typography variant="body1" color={'success.main'}>
                     {getCurrencyByCode('USD')?.symbol}
                     {marketData?.o}
@@ -92,7 +96,7 @@ const SDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">High: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.high}: &nbsp;</Typography>
                   <Typography variant="body1" color={'success.main'}>
                     {getCurrencyByCode('USD')?.symbol}
                     {marketData?.h}
@@ -105,7 +109,7 @@ const SDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">Low: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.low}: &nbsp;</Typography>
                   <Typography variant="body1" color={'success.main'}>
                     {getCurrencyByCode('USD')?.symbol}
                     {marketData?.l}

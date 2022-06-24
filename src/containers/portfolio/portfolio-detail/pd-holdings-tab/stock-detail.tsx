@@ -56,6 +56,7 @@ interface IProps {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAssetBeforeCreatingTransaction:number
   ) => void;
 }
 
@@ -73,10 +74,6 @@ export const StockInvestments = observer(({
   const { collumnsName, settingDropDownMenu } = content;
   const headings = [
     collumnsName.currentPrice,
-    // "Today's Change",
-    // "Today's Gain/Loss"
-    collumnsName.todayChange,
-    collumnsName.totalPL,
     collumnsName.shares,
     collumnsName.total,
     '',
@@ -147,10 +144,8 @@ export const StockInvestments = observer(({
             boxShadow: 'none',
           }}
         >
-          <CardHeader title="Stock" sx={{ padding: '0px' }} />
-          <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-            <MoreHorizIcon />
-          </Button>
+          <CardHeader title={content.title} sx={{ padding: '0px' }} />
+
         </Card>
         {/* <Scrollbars autoHeight> */}
         <Box>
@@ -197,32 +192,7 @@ export const StockInvestments = observer(({
                         record.currentPrice,
                       )}
                     </TableBodyCell>
-                    <TableBodyCell
-                      onClick={() => handleItemClick(record.id.toString())}
-                    >
-                      {/* {renderPriceChange(record.priceChange)}&nbsp;
-                      {renderPercentage(record.percentChange)} */}
-                      {renderPriceChange(
-                        record.currencyCode,
-                        record.currentAmountHolding *
-                        (record.currentPrice - record.purchasePrice),
-                      )}
-                      &nbsp;
-                      {renderPercentage(
-                        (record.currentPrice - record.purchasePrice) /
-                        record.purchasePrice,
-                      )}
-                    </TableBodyCell>
-                    <TableBodyCell
-                      onClick={() => handleItemClick(record.id.toString())}
-                    >
-                      {/* {renderPriceChange(record.profitLossAmount)} */}
-                      {renderPriceChange(
-                        record.currencyCode,
-                        record.currentAmountHolding *
-                        (record.currentPrice - record.purchasePrice),
-                      )}
-                    </TableBodyCell>
+
                     <TableBodyCell
                       onClick={() => handleItemClick(record.id.toString())}
                     >
@@ -246,6 +216,7 @@ export const StockInvestments = observer(({
                             ? portfolioId[0]
                             : portfolioId || ''
                         }
+                        valueOfReferentialAssetBeforeCreatingTransaction = {record.currentPrice*record.currentAmountHolding}
                         content={settingDropDownMenu}
                         deleteAsset={deleteAsset}
                         transferAssetToInvestFund={transferAssetToInvestFund}

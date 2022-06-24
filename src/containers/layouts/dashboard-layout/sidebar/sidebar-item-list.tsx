@@ -10,41 +10,36 @@ import { useRouter } from 'next/router';
 import { Logout } from '@mui/icons-material';
 import Image from 'next/image';
 import { Selector as SelectorIcon } from 'assets/icons/selector';
+import { content as i18n } from 'i18n';
 
-const items = [
-  {
-    href: '/dashboard',
-    icon: <MdDashboard fontSize="small" />,
-    title: 'Dashboard',
-  },
-  {
-    href: '/portfolio',
-    icon: <BsFillBagFill fontSize="small" />,
-    title: 'Portfolio',
-  },
-  {
-    href: '/report',
-    icon: <PieChartOutlineIcon fontSize="small" />,
-    title: 'Report',
-  },
-  {
-    href: '/profile',
-    icon: <UserIcon fontSize="small" />,
-    title: 'Profile',
-  },
-  {
-    href: '/settings',
-    icon: <CogIcon fontSize="small" />,
-    title: 'Settings',
-  },
-];
 
 const SidebarItemList = () => {
+  const router = useRouter();
+  const { locale } = router;
+  const content = locale === 'vi' ? i18n['vi'].mainSidebar : i18n['en'].mainSidebar;
+
+  const items = [
+    {
+      href: '/dashboard',
+      icon: <MdDashboard fontSize="small" />,
+      title: content.dashboard,
+    },
+    {
+      href: '/portfolio',
+      icon: <BsFillBagFill fontSize="small" />,
+      title: content.portfolio,
+    },
+    {
+      href: '/profile',
+      icon: <UserIcon fontSize="small" />,
+      title: content.profile,
+    },
+  ];
+
   const smDown = useMediaQuery((theme: any) => theme.breakpoints.down('sm'), {
     defaultMatches: true,
     noSsr: false,
   });
-  const router = useRouter();
 
   const handleLogout = () => {
     userService.logout();

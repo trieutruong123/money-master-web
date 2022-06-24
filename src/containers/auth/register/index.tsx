@@ -109,10 +109,6 @@ export const RegisterForm = observer(({ content }: IProps) => {
     const res: any = await googleAuth.googleLogin();
   };
 
-  const facebookSignUp = async () => {
-    const res: any = await facebookAuth.facebookLogin();
-  };
-
   return (
     <Grid container spacing={1} alignItems="center" justifyContent="center">
       <Grid item xs={12} sm={8} md={5} xl={3}>
@@ -255,14 +251,14 @@ export const RegisterForm = observer(({ content }: IProps) => {
             >
               {content.googleSignUp}{' '}
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               sx={{ bg: colorScheme.facebook, mt: 1 }}
               startIcon={<FacebookIcon />}
               onClick={facebookSignUp}
             >
               {content.facebookSignUp}{' '}
-            </Button>
+            </Button> */}
           </CardContent>
         </Card>
       </Grid>

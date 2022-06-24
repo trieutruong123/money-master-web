@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
+import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import {
   Box,
   Button,
@@ -15,11 +15,11 @@ import {
 } from '@mui/material';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
 import { observer } from 'mobx-react-lite';
 import { portfolioDetailStore } from 'shared/store';
-import { UsingMoneySource } from 'shared/constants';
+import { AssetTypeName, TransactionRequestType, UsingMoneySource } from 'shared/constants';
 
 type FormValues = {
   name: string;
@@ -60,8 +60,12 @@ export const BuyStockForm = observer(({
     currencyCode: Yup.string().required().default('USD'),
     description: Yup.string(),
     cashId: Yup.number(),
-    fee: Yup.number(),
-    tax: Yup.number(),
+    tax: Yup.number()
+    .typeError('Tax must be a number')
+      .min(0,'Tax must be greater than zero'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .min(0,'Fee must be greater than zero'),
   });
   const currencyList = getSupportedCurrencyList();
 
@@ -74,6 +78,7 @@ export const BuyStockForm = observer(({
     setDate(newValue);
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
+
     handleFormSubmit({
       name: data.name,
       inputDay: date,
@@ -157,7 +162,7 @@ export const BuyStockForm = observer(({
           <Grid container spacing={isXs ? 1 : 2}>
             <Grid item xs={12} sm={6} sx={{ mt: 1, display: 'block' }}>
               <FormControl fullWidth>
-                <InputLabel id="currency-list">{content.currency}</InputLabel>
+                <InputLabel id="currency-list">{content.currency}*</InputLabel>
                 <Select
                   variant="outlined"
                   labelId="currency-list"
@@ -165,6 +170,7 @@ export const BuyStockForm = observer(({
                   label={`${content.currency}*`}
                   defaultValue="USD"
                   {...register('currencyCode')}
+                  required
                 >
                   {currencyList.map((item, index) => {
                     return (
@@ -190,18 +196,20 @@ export const BuyStockForm = observer(({
               </LocalizationProvider>
             </Grid>
           </Grid>
-        </Grid>{
+        </Grid>
+        {
           portfolioDetailStore.selectedAsset?.moneySource === UsingMoneySource.usingCash && cashList !== undefined && cashList.length > 0 ? (
             <Grid item xs={12} sx={{ mt: 1, display: 'block' }}>
               <FormControl fullWidth>
-                <InputLabel id="select-cash-source">Select your cash source*</InputLabel>
+                <InputLabel id="select-cash-source">{content.selectCashSource}*</InputLabel>
                 <Select
                   variant="outlined"
                   labelId="your-cash"
                   id="bank-savings-your-cash-select"
-                  label={`Select your cash source*`}
+                  label={`${content.selectCashSource}*`}
                   defaultValue={cashList[0].id}
                   {...register('cashId')}
+                  required
                 >
                   {cashList.map((item, index) => {
                     return (
@@ -225,7 +233,7 @@ export const BuyStockForm = observer(({
               }}
               sx={{ mt: 1, display: 'block' }}
               id="outlined-bank-savings-fee"
-              label={`${"Fee"}`}
+              label={`${content.fee}`}
               {...register('fee')}
               variant="outlined"
               defaultValue={0}
@@ -241,7 +249,7 @@ export const BuyStockForm = observer(({
               }}
               sx={{ mt: 1, display: 'block' }}
               id="outlined-bank-savings-tax"
-              label={`${"Tax (%)"}`}
+              label={`${content.tax} (%)`}
               {...register('tax')}
               variant="outlined"
               defaultValue={0}

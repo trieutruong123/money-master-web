@@ -16,6 +16,8 @@ import { MultipleLanguage } from 'shared/components';
 import { rootStore } from 'shared/store';
 import { useEffect } from 'react';
 import AccountMenu from './account-menu';
+import { useRouter } from 'next/router';
+import { content as i18n } from 'i18n';
 
 const DashboardNavbarRoot = styled(AppBar)(({ theme }: any) => ({
   backgroundColor: theme.palette.background.paper,
@@ -25,11 +27,19 @@ const DashboardNavbarRoot = styled(AppBar)(({ theme }: any) => ({
 export const DashboardNavbar = observer((props: any) => {
   const { onSidebarOpen, ...other } = props;
   const { isLoading, isNotified, variant, message } = rootStore;
+  const router = useRouter();
+  const { query, locale } = router;
+  const content = locale === 'vi' ? i18n['vi'].dashboardNavbar : i18n['en'].dashboardNavbar;
 
   useEffect(() => {
     if (isNotified) {
     }
   }, [isNotified]);
+
+  useEffect(() => {
+    const lang = router.locale === 'vi' ? 'vi' : 'en';
+    rootStore.setLocale(lang);
+  }, [router.locale])
 
   return (
     <>
@@ -64,19 +74,19 @@ export const DashboardNavbar = observer((props: any) => {
             <MenuIcon fontSize="small" />
           </IconButton>
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title="Contacts">
+          {/* <Tooltip title="Contacts">
             <IconButton sx={{ ml: 1 }}>
               <UsersIcon fontSize="small" />
             </IconButton>
-          </Tooltip>
-          <Tooltip title="Notifications">
+          </Tooltip> */}
+          <Tooltip title={content.notification}>
             <IconButton sx={{ ml: 1 }}>
               <Badge badgeContent={4} color="primary" variant="dot">
                 <BellIcon fontSize="small" />
               </Badge>
             </IconButton>
           </Tooltip>
-          <AccountMenu />
+          <AccountMenu content={content} />
           <MultipleLanguage></MultipleLanguage>
         </Toolbar>
         {isLoading && (

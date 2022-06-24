@@ -1,86 +1,115 @@
-import { AssetType } from "shared/types";
+import { AssetType } from 'shared/types';
 
 export interface IAssetType {
   [index: string]: AssetType;
 }
 
 export enum AssetTypeName {
-  cryptoCurrency = "crypto",
-  stock = "stock",
-  cash = "cash",
-  bankSaving = "bankSaving",
-  realEstate = "realEstate",
-  custom = "custom",
-  fund = "fund",
+  cryptoCurrency = 'crypto',
+  stock = 'stock',
+  cash = 'cash',
+  bankSaving = 'bankSaving',
+  realEstate = 'realEstate',
+  custom = 'custom',
+  fund = 'fund',
+  outside = 'outside',
 }
 
 export const AssetTypeConstants = {
-  crypto: "crypto currency",
-  stock: "stock",
-  cash: "cash",
-  bankSaving: "bank saving",
-  realEstate: "real estate",
-  custom: "custom",
-  fund: "fund",
+  en: {
+    crypto: 'Crypto currency',
+    stock: 'Stock',
+    cash: 'Cash',
+    bankSaving: 'Bank saving',
+    realEstate: 'Real estate',
+    custom: 'Custom',
+    fund: 'Fund',
+    outside: 'Outside',
+  },
+  vi: {
+    crypto: 'Tiền kỹ thuật số',
+    stock: 'Cổ phiếu',
+    cash: 'Tiền mặt',
+    bankSaving: 'Tiền gửi ngân hàng',
+    realEstate: 'Bất động sản',
+    custom: 'Tài sản khác',
+    fund: 'Qũy đầu tư',
+    outside: 'Bên ngoài',
+  },
+};
+
+export const SourceMoneyConstants = {
+  en: {
+    fund: 'Fund',
+    outside: 'Outside',
+    cash: 'Cash',
+  },
+  vi: {
+    fund: 'Quỹ đầu tư',
+    outside: 'Bên ngoài',
+    cash: 'Tiền mặt',
+  },
 };
 
 export const PDBreadcrumbTabs = {
-  holdings: "Holdings",
-  report: "Report",
-  investFund: "InvestFund",
-  settings: "Settings",
+  holdings: 'Holdings',
+  report: 'Report',
+  investFund: 'InvestFund',
+  settings: 'Settings',
 };
 
 export enum TransactionTypeName {
-  NewAsset = "newAsset",
-  AddValue = "addValue",
-  WithdrawValue = "withdrawValue",
-  SellAsset = "sellAsset",
-  MoveToFund = "moveToFund",
-  BuyFromFund = "buyFromFund",
-  BuyFromCash = "buyFromCash",
-  BuyFromOutside = "buyFromOutside",
-  WithdrawToCash = "withdrawToCash",
+  NewAsset = 'newAsset',
+  AddValue = 'addValue',
+  WithdrawValue = 'withdrawValue',
+  WithdrawToCash = 'withdrawToCash',
+  WithdrawToOutside = 'withdrawToOutside',
+  SellAsset = 'sellAsset',
+  MoveToFund = 'moveToFund',
+  BuyFromFund = 'buyFromFund',
+  BuyFromCash = 'buyFromCash',
+  BuyFromOutside = 'buyFromOutside',
 }
 
 export const TransactionTypeConstants = {
-  newAsset: "new asset",
-  addValue: "add value",
-  withdrawValue: "withdraw value",
-  withdrawToOutside: "withdraw to outside",
-  sellAsset: "sell asset",
-  moveToFund: "move to fund",
-  buyFromFund: "buy from fund",
-  buyFromCash: "buy from cash",
-  buyFromOutside: "buy from outside",
+  newAsset: 'new asset',
+  addValue: 'add value',
+  withdrawValue: 'withdraw value',
+  withdrawToOutside: 'withdraw to outside',
+  withdrawToCash: 'withdraw to cash',
+  sellAsset: 'sell asset',
+  moveToFund: 'move to fund',
+  buyFromFund: 'buy from fund',
+  buyFromCash: 'buy from cash',
+  buyFromOutside: 'buy from outside',
 };
 
 export enum UsingMoneySource {
-  usingOutside = "usingMoneyFromOutside",
-  usingFund = "usingMoneyFromFund",
-  usingCash = "usingMoneyFromCash",
+  usingOutside = 'usingMoneyFromOutside',
+  usingFund = 'usingMoneyFromFund',
+  usingCash = 'usingMoneyFromCash',
 }
 
 export const UsingMoneyContants = {
-  usingOutside: "Using money from outside",
-  usingFund: "Using money from fund",
-  usingCash: "Using money from cash",
+  usingOutside: 'Using money from outside',
+  usingFund: 'Using money from fund',
+  usingCash: 'Using money from cash',
 };
 
 export enum TransactionFormType {
-  transaction = "transaction",
-  search = "search",
-  selectType = "selectType",
-  selectMoneySource = "selectMoneySource",
+  transaction = 'transaction',
+  search = 'search',
+  selectType = 'selectType',
+  selectMoneySource = 'selectMoneySource',
 }
 
 export enum TransactionRequestType {
-  addValue = "addValue",
-  withdrawToCash = "withdrawToCash",
-  moveToFund = "moveToFund",
-  buyFromCash = "buyFromCash",
-  buyFromFund = "buyFromFund",
-  buyFromOutside = "buyFromOutside",
-  withdrawToOutside = "withdrawToOutside",
-  withdrawValue = "withdrawValue",
+  addValue = 'addValue',
+  withdrawToCash = 'withdrawToCash',
+  moveToFund = 'moveToFund',
+  buyFromCash = 'buyFromCash',
+  buyFromFund = 'buyFromFund',
+  buyFromOutside = 'buyFromOutside',
+  withdrawToOutside = 'withdrawToOutside',
+  withdrawValue = 'withdrawValue',
 }

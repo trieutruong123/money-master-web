@@ -1,47 +1,54 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import classes from './modify-portfolio.module.css';
-import { getSupportedCurrencyList } from 'shared/helpers/currency-info';
+import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers/currency-info';
 import React from 'react';
 
 const ModifyPortfolio = (
   props: any,
-  ref: React.ForwardedRef<HTMLDivElement>,
 ) => {
   const pageContent = props.content;
+  const [portfolioName, setPortfolioName] = useState<string>("");
+  const [initialCurrency, setCurrency] = useState<string>("");
+  const [currencyList, setCurrencyList] = React.useState<any>({});
+  React.useEffect(() => {
+    
+    getSupportedCurrencyList().forEach(currency => {
+      setCurrencyList((prevState: any) => ({ ...prevState, [currency.code]: currency.name })
+      )
+    })
+  }, [])
 
-  const nameRef: any = useRef();
-  const currencyRef: any = useRef();
   function submitHandler(event: any) {
     event.preventDefault();
 
-    const portfolioName = nameRef.current.value;
-    const currency = currencyRef.current.value;
-
     props.onModifyPortfolio({
       name: portfolioName,
-      initialCurrency: currency,
+      initialCurrency: initialCurrency.toUpperCase()||'USD',
       initialCash: 0,
+      initalCashName: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
+      initialCashDescription: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
     });
   }
 
-  const [currencyList,setCurrencyList]=React.useState<any>({});
-  React.useEffect(()=>{
-    getSupportedCurrencyList().forEach(currency=>{
-      setCurrencyList((prevState:any)=>({...prevState,[currency.code]:currency.name})
-    )})
-  },[])
+  const handlePortfolioNameChanged = (event: any) => {
+    setPortfolioName(event.target.value);
+  }
+
+  const handleCurrencySelectionChanged = (event: any) => {
+    setCurrency(event.target.value);
+  }
 
   return (
-    <div ref={ref} className={classes.body}>
+    <div className={classes.body}>
       <h1 className={classes.title}>{pageContent.title}</h1>
       <form className={classes.form} onSubmit={submitHandler}>
         <div className={classes.control}>
           <label htmlFor="name">{pageContent.name}</label>
-          <input id="name" required ref={nameRef} />
+          <input id="name" onChange={handlePortfolioNameChanged} required />
         </div>
         <div className={classes.control}>
           <label htmlFor="currency">{pageContent.currency}</label>
-          <select id="currency" required ref={currencyRef}>
+          <select id="currency" onChange={handleCurrencySelectionChanged} required >
             {Object.keys(currencyList).map((currency, index) => (
               <option
                 key={index}
@@ -56,4 +63,4 @@ const ModifyPortfolio = (
   );
 };
 
-export default React.forwardRef(ModifyPortfolio);
+export default ModifyPortfolio

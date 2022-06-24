@@ -3,16 +3,21 @@ import { observer } from 'mobx-react-lite';
 import { Grid } from '@mui/material';
 import { portfolioDetailStore, rootStore } from 'shared/store';
 import { lazy, Suspense, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { content as i18n } from 'i18n';
 
 const PDDonutchart = lazy(() => import('./pd-donut-chart'));
 const PDHorizontalBarChart = lazy(() => import('./pd-horizontal-bar-chart'));
 const PDSankeyChart = lazy(() => import('./pd-sankey-chart'));
 
 interface IProps {
-  content: any;
 }
 
-const PDReportTab = observer(({ content }: IProps) => {
+const PDReportTab = observer(({ }: IProps) => {
+  const router = useRouter();
+  const { locale } = router;
+  const content = locale === 'vi' ? i18n['vi'].portfolioDetailPage : i18n['en'].portfolioDetailPage;
+
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
@@ -51,6 +56,7 @@ const PDReportTab = observer(({ content }: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          mt: '1rem',
         }}
       >
         {typeof portfolioDetailStore.pieChartData !== 'undefined' ?
@@ -71,6 +77,8 @@ const PDReportTab = observer(({ content }: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          mt: '1rem',
+
         }}
       >
         {typeof portfolioDetailStore.pieChartData !== 'undefined' ?
@@ -87,12 +95,13 @@ const PDReportTab = observer(({ content }: IProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          width: '100%'
+          width: '100%',
+          height: 'auto',
         }}
       >
-        {typeof portfolioDetailStore.sankeyFlowData !== 'undefined' ?
+        {portfolioDetailStore.sankeyFlowData && portfolioDetailStore.sankeyFlowData.length > 0 ?
           <Suspense fallback={<></>}>
-            <PDSankeyChart sankeyFlowData={portfolioDetailStore.sankeyFlowData} />
+            <PDSankeyChart content={content.sankeyChart} />
           </Suspense>
           : <></>
         }

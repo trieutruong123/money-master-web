@@ -3,8 +3,15 @@ import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { getCurrencyByCode } from 'shared/helpers';
 import { precisionRound, roundAndAddDotAndCommaSeparator } from 'utils/number';
 import { realEstateDetailStore } from "shared/store";
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
+
 
 const REIntroSection = observer(() => {
+    const router = useRouter();
+    const { locale, query } = router;
+    const content = locale === 'vi' ? i18n['vi'].bankSavingDetailPage : i18n['en'].bankSavingDetailPage;
+
     const realEstateDetail = realEstateDetailStore.assetDetail;
     const renderTermRange = (termRange: number, unit: string) => {
         const years = Math.floor(termRange / 12);
@@ -61,7 +68,7 @@ const REIntroSection = observer(() => {
                             alignItems="center"
                             justifyContent="center"
                         >
-                            <Typography variant="body1">Name: &nbsp;{realEstateDetail?.name}</Typography>
+                            <Typography variant="body1">{content.introSection.name}: &nbsp;{realEstateDetail?.name}</Typography>
                         </Grid>
                         <Grid
                             container
@@ -70,7 +77,7 @@ const REIntroSection = observer(() => {
                             alignItems="center"
                             justifyContent="center"
                         >
-                            <Typography variant="body1">Description: &nbsp;{realEstateDetail?.description}</Typography>
+                            <Typography variant="body1">{content.introSection.description}: &nbsp;{realEstateDetail?.description}</Typography>
                         </Grid>
                     </Stack>
                 </CardContent>

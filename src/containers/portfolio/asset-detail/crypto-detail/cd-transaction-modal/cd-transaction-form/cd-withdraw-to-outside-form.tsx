@@ -21,6 +21,7 @@ import * as Yup from 'yup';
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any,
 }
 
 type FormValues = {
@@ -31,7 +32,7 @@ type FormValues = {
 };
 
 
-const CDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
+const CDWithdrawToOutsideForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
   const validationSchema = Yup.object().shape({
@@ -40,8 +41,12 @@ const CDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
     currencyCode: Yup.string().required().default('USD'),
-    tax: Yup.number(),
-    fee: Yup.number(),
+    tax: Yup.number()
+      .min(0,'Tax must be greater than zero')
+      .typeError('Tax must be a number'),
+    fee: Yup.number()
+      .typeError('Fee must be a number')
+      .min(0,'Fee must be greater than zero'),
   });
 
   const formOptions = { resolver: yupResolver(validationSchema) };
@@ -53,13 +58,17 @@ const CDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
       amount: data.amount,
+      valueOfReferentialAssetBeforeCreatingTransaction:cryptoDetailStore.cryptoDetail
+                                                      ?cryptoDetailStore.cryptoDetail.currentPrice
+                                                      *cryptoDetailStore.cryptoDetail.currentAmountHolding
+                                                      :0,
       amountInDestinationAssetUnit: 0,
       currencyCode: data.currencyCode || 'USD',
       transactionType: TransactionRequestType.withdrawToOutside,
       destinationAssetId: null,
       destinationAssetType: null,
       referentialAssetId: cryptoDetailStore.cryptoDetail?.id,
-      referentialAssetType: AssetTypeName.stock,
+      referentialAssetType: AssetTypeName.cryptoCurrency,
       isTransferringAll: false,
       isUsingFundAsSource: false,
       fee: 0,
@@ -89,19 +98,22 @@ const CDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ my: 1, display: 'block' }}
         id="outlined-amount"
-        label={'*Amount'}
+        inputProps={{
+          step: 'any',
+        }}
+        label={`${content.transactionForm.amount}*`}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
         helperText={errors.amount?.message}
       ></TextField>
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency'}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="crypto-currency-list-select"
-          label={`*${'Currency'}`}
+          label={`${content.transactionForm.currency}*`}
           defaultValue={cryptoDetailStore.cryptoDetail?.currencyCode || 'USD'}
           {...register('currencyCode')}
         >
@@ -125,7 +137,7 @@ const CDWithdrawToOutsideForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        WITHDRAW
+        {content.transactionForm.withdrawButton}
       </Button>
     </Box>
   );

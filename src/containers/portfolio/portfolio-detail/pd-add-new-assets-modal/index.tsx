@@ -16,6 +16,8 @@ import {
 import { AssetTypeName, TransactionFormType } from "shared/constants";
 import { AssetType } from "shared/types";
 import { UsingMoneySourceForm } from "./pd-using-money-form";
+import { useRouter } from "next/router";
+import { content as i18n } from 'i18n';
 
 const StyledModal = styled(Box)(({ theme }: any) => ({
   position: "absolute",
@@ -50,7 +52,6 @@ const StyledModal = styled(Box)(({ theme }: any) => ({
 }));
 
 interface IProps {
-  content: any;
 }
 
 const fetchData = async () => {
@@ -61,8 +62,13 @@ const fetchData = async () => {
   rootStore.stopLoading();
 };
 
-export const AddNewAssetsModal = observer(({ content }: IProps) => {
+export const AddNewAssetsModal = observer(({ }: IProps) => {
   const [current, setCurrent] = useState<any>(null);
+
+  const router = useRouter();
+  const { locale } = router;
+  const content = locale === 'vi' ? i18n['vi'].portfolioDetailPage.addNewAssets : i18n['en'].portfolioDetailPage.addNewAssets;
+
   useEffect(() => {
     //set initial form
     setCurrent(
@@ -220,7 +226,7 @@ export const AddNewAssetsModal = observer(({ content }: IProps) => {
   const openSourceMoneyForm = () => {
     setCurrent(
       <UsingMoneySourceForm
-        content={content.searchAssets}
+        content={content.usingMoneySource}
         openNextForm={openNextForm}
         openPreviousForm={openPreviousForm}
       />

@@ -12,6 +12,7 @@ import { format } from 'd3-format';
 import { RectNode } from './sankey-rect';
 import { PathLink } from './sankey-link';
 import { SankeyDataLink, SankeyDataNode } from 'shared/types';
+import { getCurrencyByCode } from 'shared/helpers';
 
 export interface SankeyData {
   nodes: SankeyDataNode[];
@@ -44,8 +45,8 @@ const d3format = format(',.0f');
 
 export const formatRectTitleFunc = (dataPoint: RectNode) => {
   if (!dataPoint.value) return dataPoint.name;
-
-  return `${dataPoint.name}\n${d3format(dataPoint.value)} TWh`;
+  const currencyCode = getCurrencyByCode(portfolioDetailStore.portfolioInfo?.initialCurrency||"USD")?.symbol||'';
+  return `${dataPoint.name}\n${d3format(dataPoint.value)} ${currencyCode}`;
 };
 
 export const formatLinkTitleFunc = ({

@@ -1,23 +1,29 @@
-import { coinGeckoService, httpService } from "services";
+import { coinGeckoService, fcsapiService, httpService } from 'services';
 import {
   action,
   computed,
   makeAutoObservable,
   observable,
   runInAction,
-} from "mobx";
-import { content } from "i18n";
-import { rootStore } from "shared/store";
-import { CashItem, CryptoItem, TransactionItem } from "shared/models";
-import { portfolioData } from "../portfolio/portfolio-data";
+} from 'mobx';
+import { content } from 'i18n';
+import { rootStore } from 'shared/store';
+import { CashItem, CryptoItem, TransactionItem } from 'shared/models';
+import { portfolioData } from '../portfolio/portfolio-data';
 import {
   CurrencyItem,
+  ITransactionListRequest,
   ITransactionRequest,
   Portfolio,
   TransferToInvestFundType,
-} from "shared/types";
-import { PACryptoBreadcrumbTabs } from "shared/constants";
-import { getCurrencyByCode } from "shared/helpers";
+} from 'shared/types';
+import {
+  PACryptoBreadcrumbTabs,
+  TransactionHistoryContants,
+} from 'shared/constants';
+import { getCurrencyByCode } from 'shared/helpers';
+import { convertUTCToLocalTimeZone2 } from 'utils/time';
+import dayjs from 'dayjs';
 
 interface ICryptoMarketData {
   c: number;
@@ -29,23 +35,32 @@ interface ICryptoMarketData {
 
 class CryptoDetailStore {
   portfolioId: number = 0;
-  currencyCode: string = "usd";
+  currencyCode: string = 'usd';
   portfolioInfo: Portfolio | undefined = undefined;
 
   cryptoId: number = 0;
+  cryptoProfile: any;
   cryptoDetail: CryptoItem | undefined = undefined;
-  transactionHistory: Array<TransactionItem> | undefined = [];
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
 
   needUpdateOverviewData: boolean = true;
 
-  timeInterval: string = "1";
+  transactionHistory: Array<TransactionItem> | undefined = undefined;
+  transactionSelection: {
+    type: 'all' | 'in' | 'out';
+    startDate: Date | null;
+    endDate: Date | null;
+  } = { type: 'all', startDate: null, endDate: null };
+
+  timeInterval: string = '1';
   OHLC_data: Array<any> = [];
   marketData: ICryptoMarketData | undefined = undefined;
 
   selectedTab: string = PACryptoBreadcrumbTabs.overview;
   isOpenAddNewTransactionModal: boolean = false;
+
+  currentPage: number = 1;
 
   constructor() {
     makeAutoObservable(this, {
@@ -62,6 +77,9 @@ class CryptoDetailStore {
       selectedTab: observable,
       isOpenAddNewTransactionModal: observable,
       needUpdateOverviewData: observable,
+      cryptoProfile: observable,
+      transactionSelection: observable,
+      currentPage: observable,
 
       setCryptoId: action,
       setCurrency: action,
@@ -70,10 +88,15 @@ class CryptoDetailStore {
       setPortfolioId: action,
       setSelectedTab: action,
       setUpdateOverviewData: action,
+      setSelectedTransaction: action,
+      setCurrentPage: action,
+      setTransactionHistory: action,
 
       fetchCryptoDetail: action,
+      fetchCryptoProfile: action,
       fetchOHLC: action,
-      fetchCryptoTransactionHistory: action,
+      fetchTransactionHistoryData: action,
+
       fetchPortfolioInfo: action,
       fetchCryptoInfoByCode: action,
 
@@ -81,6 +104,17 @@ class CryptoDetailStore {
 
       createNewTransaction: action,
     });
+  }
+
+  setCurrentPage(pageNumber: number) {
+    this.currentPage = pageNumber;
+  }
+
+  setSelectedTransaction(key: string, value: any) {
+    this.transactionSelection = {
+      ...this.transactionSelection,
+      [key]: value,
+    };
   }
 
   setCryptoId(cryptoId: string) {
@@ -111,16 +145,16 @@ class CryptoDetailStore {
     this.selectedTab = tab;
   }
 
+  setTransactionHistory(history: TransactionItem[]) {
+    this.transactionHistory = history;
+  }
+
   async fetchOverviewTabData() {
     Promise.all([
       this.fetchCryptoDetail(),
-      this.fetchCryptoTransactionHistory(),
       this.fetchPortfolioInfo(),
       this.fetchCash(),
     ]);
-    if (this.marketData === undefined) {
-      await this.fetchCryptoInfoByCode();
-    }
   }
 
   async fetchPortfolioInfo() {
@@ -133,10 +167,10 @@ class CryptoDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.find(
-        (item: Portfolio) => item.id === this.portfolioId
+        (item: Portfolio) => item.id === this.portfolioId,
       );
       runInAction(() => {
-        this.currencyCode = this.portfolioInfo?.initialCurrency || "usd";
+        this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
         this.portfolioInfo = currentPortfolio;
       });
     } else {
@@ -156,13 +190,10 @@ class CryptoDetailStore {
       runInAction(() => {
         this.cashDetail = res.data;
         this.currencyList = res.data.map((item: CashItem) =>
-          getCurrencyByCode(item.currencyCode)
+          getCurrencyByCode(item.currencyCode),
         );
       });
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
       runInAction(() => {
         this.cashDetail = undefined;
         this.currencyList = undefined;
@@ -179,33 +210,45 @@ class CryptoDetailStore {
     if (!res.isError) {
       runInAction(() => {
         this.cryptoDetail = res.data.find(
-          (item: CryptoItem) => item.id === this.cryptoId
+          (item: CryptoItem) => item.id === this.cryptoId,
         );
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
+        content[rootStore.locale].error.failedToLoadInitialData,
       );
     }
     return res;
   }
 
-  async fetchCryptoTransactionHistory() {
+  async fetchTransactionHistoryData({
+    itemsPerPage,
+    nextPage,
+    startDate,
+    endDate,
+    type,
+  }: ITransactionListRequest) {
     if (!this.portfolioId || !this.cryptoId) {
       return;
     }
+    let params: any = {
+      PageSize: itemsPerPage,
+      PageNumber: nextPage,
+      Type: type,
+    };
+    if (endDate) params.EndDate = endDate;
+    if (startDate) params.StartDate = startDate;
+
     const url = `/portfolio/${this.portfolioId}/crypto/${this.cryptoId}/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.get(url);
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
     if (!res.isError) {
-      runInAction(() => {
-        this.transactionHistory = res.data;
-      });
+      return res.data;
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
+      return [];
     }
-    return res;
   }
 
   async createNewTransaction(params: ITransactionRequest) {
@@ -213,29 +256,33 @@ class CryptoDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
+      rootStore.raiseNotification(
+        content[rootStore.locale].success.default,
+        'success',
+      );
       return res;
     } else {
-      rootStore.raiseError(content[rootStore.locale].error.badRequest);
+      rootStore.raiseError(content[rootStore.locale].error.default);
       return res;
     }
   }
 
   async transferAssetToInvestFund(params: TransferToInvestFundType) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/fund`;
+    const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.transfer,
-        "success"
+        'success',
       );
       return res;
     } else {
@@ -249,7 +296,7 @@ class CryptoDetailStore {
   }
 
   async fetchCryptoInfoByCode() {
-    if (this.cryptoDetail?.cryptoCoinCode === undefined) {
+    if (!this.cryptoDetail || !this.cryptoDetail?.cryptoCoinCode) {
       return;
     }
     const res: any = await coinGeckoService.getCoinInfoByCode({
@@ -262,20 +309,17 @@ class CryptoDetailStore {
       },
     });
     if (!res.isError) {
+      const marketData = res.data.market_data;
+      const h = marketData.high_24h.usd;
+      const l = marketData.low_24h.usd;
+      const c = marketData.current_price.usd;
+      const d = marketData.price_change_24h;
+      const dp = marketData.price_change_24h / c;
+      const pc = marketData.price_change_24h;
       runInAction(() => {
-        const marketData = res.data.market_data;
-        const h = marketData.high_24h.usd;
-        const l = marketData.low_24h.usd;
-        const c = marketData.current_price.usd;
-        const d = marketData.price_change_24h;
-        const dp = marketData.price_change_24h / c;
-        const pc = marketData.price_change_24h;
         this.marketData = { h, l, c, d, dp };
       });
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
       runInAction(() => {
         this.marketData = undefined;
       });
@@ -297,11 +341,8 @@ class CryptoDetailStore {
       });
       return res;
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
+      return res;
     }
-    return res;
   }
 
   resetInitialState() {
@@ -319,7 +360,65 @@ class CryptoDetailStore {
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
       this.selectedTab = PACryptoBreadcrumbTabs.overview;
+      this.currentPage = 1;
+      this.transactionSelection = {
+        startDate: null,
+        endDate: null,
+        type: 'all',
+      };
     });
+  }
+
+  async resetTransaction() {
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: 'all',
+      startDate: null,
+      endDate: null,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
+    this.setSelectedTransaction('type', 'all');
+    this.setSelectedTransaction('startDate', null);
+    this.setSelectedTransaction('endDate', null);
+  }
+
+  async refreshTransactionHistory() {
+    const startDate = this.transactionSelection.startDate
+      ? dayjs(this.transactionSelection.startDate).startOf('day').format()
+      : null;
+    const endDate = this.transactionSelection.endDate
+      ? dayjs(this.transactionSelection.endDate).endOf('day').format()
+      : null;
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: this.transactionSelection.type,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
+  }
+
+  async fetchCryptoProfile() {
+    if (!this.cryptoDetail?.cryptoCoinCode) {
+      return;
+    }
+    const res: any = await fcsapiService.getCryptoProfile(
+      this.cryptoDetail?.cryptoCoinCode,
+    );
+    if (!res.isError) {
+      runInAction(() => {
+        this.cryptoProfile = res.data.response[0];
+      });
+    } else {
+      runInAction(() => {
+        this.cryptoProfile = undefined;
+      });
+    }
+    return res;
   }
 }
 

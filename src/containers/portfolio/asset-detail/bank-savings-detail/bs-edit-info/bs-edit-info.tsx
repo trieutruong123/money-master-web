@@ -21,8 +21,8 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/lab';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { BankSavingItem } from 'shared/models';

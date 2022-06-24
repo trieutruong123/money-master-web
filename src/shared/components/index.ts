@@ -11,6 +11,8 @@ import {
 } from './loading';
 import CustomNoRowsOverlay from './custom-no-rows-overlay';
 import TabPanel from './tab-panel';
+import { ImagePicker } from './image-picker';
+import Pagination from './pagination';
 
 export {
   Link,
@@ -24,4 +26,6 @@ export {
   TransactionTypeIcon,
   CustomNoRowsOverlay,
   TabPanel,
+  ImagePicker,
+  Pagination,
 };

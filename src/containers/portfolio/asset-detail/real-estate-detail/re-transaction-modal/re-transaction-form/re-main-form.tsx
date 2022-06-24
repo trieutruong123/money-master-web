@@ -12,6 +12,8 @@ import { REMoveToFundForm } from "./re-move-to-fund-form";
 import { realEstateDetailStore } from "shared/store";
 import { ITransactionRequest, TransferToInvestFundType } from "shared/types";
 import REWithdrawToOutside from "./re-withdraw-outside";
+import { useRouter } from 'next/router';
+import { content as i18n } from 'i18n';
 
 interface IProps { }
 
@@ -20,16 +22,23 @@ export const CreateEstateForm = observer(({ }: IProps) => {
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].realEstateDetailPage : i18n['en'].realEstateDetailPage;
 
   const portfolioName = realEstateDetailStore.portfolioInfo?.name;
   const assetName = realEstateDetailStore.assetDetail?.name;
-  const buttonLabels = ["Sell", "Withdraw", "Transfer"];
+  const buttonLabels = [content.transactionForm.sell, content.transactionForm.transfer, content.transactionForm.withdraw];
 
   useEffect(() => {
-    setSelectedForm(<REWithdrawToCash key={focusedButtonKey} handleFormSubmit={sellAsset} />);
+    setSelectedForm(<REWithdrawToCash content={content} key={focusedButtonKey} handleFormSubmit={sellAsset} />);
   }, []);
 
   const sellAsset = async (payload: ITransactionRequest) => {
+    if(realEstateDetailStore.assetDetail?.inputMoneyAmount==0){
+      setErrorMessage("Can't sell asset. Money is insufficient");
+      return;
+  }
     const res = await realEstateDetailStore.createNewTransaction(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
@@ -40,6 +49,10 @@ export const CreateEstateForm = observer(({ }: IProps) => {
   };
 
   const moveToFund = async (payload: TransferToInvestFundType) => {
+    if(realEstateDetailStore.assetDetail?.inputMoneyAmount==0){
+      setErrorMessage("Can't transfer asset. Money is insufficient");
+      return;
+  }
     const res = await realEstateDetailStore.transferAssetToInvestFund(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
@@ -50,6 +63,10 @@ export const CreateEstateForm = observer(({ }: IProps) => {
   };
 
   const withdrawValue = async (payload: ITransactionRequest) => {
+    if(realEstateDetailStore.assetDetail?.inputMoneyAmount==0){
+      setErrorMessage("Can't withdraw asset. Money is insufficient");
+      return;
+    }
     const res = await realEstateDetailStore.createNewTransaction(payload);
     if (res.isError) {
       setErrorMessage(res.data.data);
@@ -60,9 +77,9 @@ export const CreateEstateForm = observer(({ }: IProps) => {
   }
 
   const formArray = [
-    <REWithdrawToCash key={focusedButtonKey} handleFormSubmit={sellAsset} />,
-    <REWithdrawToOutside key={focusedButtonKey} handleFormSubmit={withdrawValue} />,
-    <REMoveToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
+    <REWithdrawToCash content={content} key={focusedButtonKey} handleFormSubmit={sellAsset} />,
+    <REMoveToFundForm content={content} key={focusedButtonKey} handleFormSubmit={moveToFund} />,
+    <REWithdrawToOutside content={content} key={focusedButtonKey} handleFormSubmit={withdrawValue} />,
   ];
 
   const handleSelectionChanged = (key: number) => {
@@ -79,7 +96,7 @@ export const CreateEstateForm = observer(({ }: IProps) => {
     <Box sx={{ height: "inherit" }}>
       <Box sx={{ mt: "1rem" }}>
         <Typography align="center" id="modal-modal-title" variant="h4">
-          Transaction
+          {content.transactionForm.transaction}
         </Typography>
       </Box>
       <Box sx={{ ml: "3rem", mt: "1rem" }}>

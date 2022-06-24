@@ -20,6 +20,7 @@ import { TabContext, TabList } from '@mui/lab';
 import SDOverviewTab from './sd-overview-tab/sd-overview-main';
 import SDMarketDataTab from './sd-market-data-chart/sd-market-data-tab';
 import { SDCreateTransactionModal } from './sd-transaction-modal/sd-create-transaction-modal';
+import { content as i18n } from 'i18n';
 
 interface IProps { }
 
@@ -27,8 +28,9 @@ const SDStockDetail = observer(({ }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
-
   const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].stockDetailPage : i18n['en'].stockDetailPage;
+
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
     : query['portfolioId'] || '';
@@ -47,6 +49,14 @@ const SDStockDetail = observer(({ }: IProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.portfolioId, router.query.assetId]);
 
+  useEffect(() => {
+    async function fetchData() {
+      if (stockDetailStore.stockDetail && stockDetailStore.marketData === undefined) {
+        await stockDetailStore.fetchStockInfoByCode();
+      }
+    }
+    fetchData();
+  }, [stockDetailStore.marketData, stockDetailStore.stockDetail])
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     stockDetailStore.setSelectedTab(newValue);
@@ -78,7 +88,7 @@ const SDStockDetail = observer(({ }: IProps) => {
                 `/portfolio/${stockDetailStore.portfolioId}/stock/${stockDetailStore.stockId}`,
               ]}
               displayNameArr={[
-                'Portfolio',
+                content.breadCurmbs.portfolio,
                 stockDetailStore.portfolioInfo?.name ||
                 stockDetailStore.portfolioId.toString(),
                 stockDetailStore.stockDetail?.stockCode ||
@@ -103,16 +113,12 @@ const SDStockDetail = observer(({ }: IProps) => {
                   indicatorColor="primary"
                 >
                   <Tab
-                    label={PAStockBreadcrumbTabs.overview}
+                    label={content.overview}
                     value={PAStockBreadcrumbTabs.overview}
                   />
                   <Tab
-                    label={PAStockBreadcrumbTabs.marketData}
+                    label={content.marketData}
                     value={PAStockBreadcrumbTabs.marketData}
-                  />
-                  <Tab
-                    label={PAStockBreadcrumbTabs.settings}
-                    value={PAStockBreadcrumbTabs.settings}
                   />
                 </TabList>
               </Box>
@@ -137,12 +143,6 @@ const SDStockDetail = observer(({ }: IProps) => {
                     <SDMarketDataTab />
                   </Suspense>
                 ) : null}
-                {stockDetailStore.selectedTab ===
-                  PAStockBreadcrumbTabs.settings ? (
-                  <Suspense fallback={<HypnosisLoading />}>
-                    <h1>You are in setting tab</h1>
-                  </Suspense>
-                ) : null}
               </Grid>
             </Container>
           </Box>
@@ -150,7 +150,7 @@ const SDStockDetail = observer(({ }: IProps) => {
         <Box>
           <SDCreateTransactionModal />
         </Box>
-        <Tooltip title="Add new transaction">
+        <Tooltip title={content.addNewTransaction}>
           <IconButton
             onClick={() => {
               stockDetailStore.setOpenAddNewTransactionModal(

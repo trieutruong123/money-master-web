@@ -5,9 +5,10 @@ import { precisionRound, roundAndAddDotAndCommaSeparator } from 'utils/number';
 
 interface IProps {
   assetDetail: StockItem | undefined;
+  content: any
 }
 
-const SDIntroSection = ({ assetDetail }: IProps) => {
+const SDIntroSection = ({ assetDetail, content }: IProps) => {
   const render24HChange = () => {
     //const priceChange24h = assetDetail?._24HChange;
     //const priceChangePercentage24h = assetDetail?._24HChangePercentage;
@@ -93,7 +94,7 @@ const SDIntroSection = ({ assetDetail }: IProps) => {
 
               <Typography variant="h2" fontWeight="bold">
                 {getCurrencyByCode(assetDetail?.currencyCode || '')?.symbol}
-                {roundAndAddDotAndCommaSeparator(assetDetail?.currentAmountInCurrency||0, 4)}
+                {roundAndAddDotAndCommaSeparator(assetDetail?.currentAmountInCurrency || 0, 4)}
               </Typography>
             </Grid>
             <Grid
@@ -103,9 +104,9 @@ const SDIntroSection = ({ assetDetail }: IProps) => {
               alignItems="center"
               justifyContent="center"
             >
-              <Typography variant="body1">Open @ avg. price: &nbsp;</Typography>
+              <Typography variant="body1">{content.introSection.open} @ {content.introSection.avgPrice}: &nbsp;</Typography>
               <Typography variant="body1" color={'success.main'}>
-                {roundAndAddDotAndCommaSeparator(assetDetail?.currentAmountHolding||0,4)} 
+                {roundAndAddDotAndCommaSeparator(assetDetail?.currentAmountHolding || 0, 4)}
                 &nbsp; @ &nbsp;
                 {getCurrencyByCode(assetDetail?.currencyCode || '')?.symbol}
                 {assetDetail?.currentPrice}

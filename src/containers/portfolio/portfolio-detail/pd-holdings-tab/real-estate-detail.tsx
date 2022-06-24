@@ -55,10 +55,11 @@ interface IProps {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAssetBeforeCreatingTransaction:number
   ) => void;
 }
 
-export const RealEstateInvesments =observer( ({
+export const RealEstateInvesments = observer(({
   realEstateDetail,
   content,
   deleteAsset,
@@ -117,9 +118,7 @@ export const RealEstateInvesments =observer( ({
         }}
       >
         <CardHeader title={content.title} sx={{ padding: '0px' }} />
-        <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-          <MoreHorizIcon />
-        </Button>
+
       </Card>
       {/* <Scrollbars autoHeight > */}
       <Box>
@@ -136,6 +135,9 @@ export const RealEstateInvesments =observer( ({
           </TableHead>
           <TableBody>
             {realEstateDetail.map((record, i) => {
+              if (record.currentPrice === 0 || record.inputMoneyAmount === 0) {
+                return;
+              }
               return (
                 <TableRow
                   key={i}
@@ -179,6 +181,7 @@ export const RealEstateInvesments =observer( ({
                           ? portfolioId[0]
                           : portfolioId || ''
                       }
+                      valueOfReferentialAssetBeforeCreatingTransaction = {record.currentPrice}
                       content={settingDropDownMenu}
                       deleteAsset={deleteAsset}
                       transferAssetToInvestFund={transferAssetToInvestFund}

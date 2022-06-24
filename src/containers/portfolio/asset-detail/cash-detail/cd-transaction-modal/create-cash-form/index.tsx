@@ -8,14 +8,19 @@ import {
   useTheme,
 } from "@mui/material";
 import { observer } from "mobx-react-lite";
-import { BuyCashForm } from "./buy-cash-form";
-import { SellCashForm } from "./sell-cash-form";
-import { TransferCashForm } from "./transfer-cash-form";
+import { BuyCashForm } from "./cd-buy-cash-form";
+import { SellCashForm } from "./cd-sell-cash-form";
+import { TransferCashForm } from "./cd-transfer-cash-form";
 import {
   cashDetailStore,
   portfolioDetailStore,
 } from "shared/store";
 import { getCurrencyByCode } from "shared/helpers";
+import { ITransactionRequest, TransferToInvestFundType } from "shared/types";
+import { WithdrawToOutsideForm } from "./cd-withdraw-to-outside";
+import { TransactionRequestType, TransactionTypeConstants } from "shared/constants";
+import { useRouter } from 'next/router';
+import { content as i18n } from 'i18n';
 
 interface IProps { }
 
@@ -23,69 +28,98 @@ export const CreateCashForm = observer(({ }: IProps) => {
   const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
-  const [assetPrice, setAssetPrice] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].cashDetailPage : i18n['en'].cashDetailPage;
+
+  const assetName = getCurrencyByCode(cashDetailStore.cashDetail?.currencyCode || '')?.name;
+  const buttonLabels = [content.transactionForm.buy, content.transactionForm.sell, content.transactionForm.transfer, content.transactionForm.withdraw];
 
   useEffect(() => {
     const fetchAssetPrice = async () => { };
     fetchAssetPrice();
-    setSelectedForm(<BuyCashForm key={focusedButtonKey} handleFormSubmit />);
+    setSelectedForm(<BuyCashForm content={content} key={focusedButtonKey} handleFormSubmit={makeBuyAction} />);
   }, []);
 
-  async function makeTransferAction(data: any) {
-    const { currencyCode, destinationAssetId, amount } = data;
-    await cashDetailStore.makeTransaction(currencyCode, destinationAssetId, amount);
-  }
-
-  async function makeBuyAction(data: any) {
-    console.log(" BUY ACTIONN");
-    console.log(data);
-  }
-
-  async function makeSellAction(data: any) {
-    const { currencyCode, amount, sellingDestination } = data;
-    switch (sellingDestination) {
-      case 'toFund': {
-        const payload = {
-          referentialAssetId: cashDetailStore.cashId,
-          referentialAssetType: 'cash',
-          amount,
-          currencyCode,
-          isTransferringAll: false
-        };
-        await cashDetailStore.moveToFund(payload);
-        break;
-      }
-      case 'toOutside': {
-
-        break;
-      }
+  async function makeTransferAction(payload: TransferToInvestFundType) {
+    const res = await cashDetailStore.moveToFund(payload);
+    if (res.isError) {
+      setErrorMessage(res.data.data);
+    } else {
+      cashDetailStore.setUpdateOverviewData(true);
+      handleClose();
     }
-
   }
 
-  const buttonLabels = ["Buy", "Sell", "Transfer"];
+  async function makeBuyAction(payload: ITransactionRequest) {
+
+    if (payload.transactionType === TransactionRequestType.addValue
+      && payload.destinationAssetId === payload.referentialAssetId) {
+      setErrorMessage("Can't buy cash by using money from itself");
+      return;
+    }
+    const res = await cashDetailStore.makeTransaction(payload);
+    if (res.isError) {
+      setErrorMessage(res.data.data);
+    } else {
+      cashDetailStore.setUpdateOverviewData(true);
+      handleClose();
+    }
+  }
+
+  async function makeSellAction(payload: ITransactionRequest) {
+    if (payload.transactionType === TransactionRequestType.withdrawToCash
+      && payload.destinationAssetId === payload.referentialAssetId) {
+      setErrorMessage("Error! Transaction can't execute");
+      return;
+    }
+    const res = await cashDetailStore.makeTransaction(payload);
+    if (res.isError) {
+      setErrorMessage(res.data.data);
+    } else {
+      cashDetailStore.setUpdateOverviewData(true);
+      handleClose();
+    }
+  }
+
+  async function withdrawToOutside(payload: ITransactionRequest) {
+    const res = await cashDetailStore.makeTransaction(payload);
+    if (res.isError) {
+      setErrorMessage(res.data.data);
+    } else {
+      cashDetailStore.setUpdateOverviewData(true);
+      handleClose();
+    }
+  }
+
   const formArray = [
-    <BuyCashForm key={focusedButtonKey} handleFormSubmit={makeBuyAction} />,
-    <SellCashForm key={focusedButtonKey} handleFormSubmit={makeSellAction} />,
+    <BuyCashForm content={content} key={focusedButtonKey} handleFormSubmit={makeBuyAction} />,
+    <SellCashForm content={content} key={focusedButtonKey} handleFormSubmit={makeSellAction} />,
     <TransferCashForm
+      content={content}
       key={focusedButtonKey}
       handleFormSubmit={makeTransferAction}
     />,
+    <WithdrawToOutsideForm content={content} key={focusedButtonKey} handleFormSubmit={withdrawToOutside} />
   ];
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
     setSelectedForm(formArray[key]);
+    setErrorMessage('');
   };
 
-  const assetName = getCurrencyByCode(cashDetailStore.cashDetail?.currencyCode || '')?.name;
 
-  const handleFormSubmit = async (data: any) => { };
+  const handleClose = () => {
+    cashDetailStore.setOpenAddNewTransactionModal(false);
+  };
 
   return (
     <Box sx={{ height: "inherit" }}>
       <Box sx={{ mt: "1rem" }}>
         <Typography align="center" id="modal-modal-title" variant="h4">
-          Transaction
+          {content.transactionForm.transaction}
         </Typography>
       </Box>
       <Box sx={{ ml: "3rem", mt: "1rem" }}>
@@ -119,12 +153,16 @@ export const CreateCashForm = observer(({ }: IProps) => {
           {assetName}
         </Typography>
       </Box>
+
+      <Typography variant="body1" color="error" align="center" height="1.5rem">
+        {errorMessage}
+      </Typography>
       <Box
         sx={{
-          [theme.breakpoints.down("sm")]: { height: "410px" },
+          [theme.breakpoints.down("sm")]: { height: "390px" },
 
           [theme.breakpoints.up("sm")]: {
-            height: "480px",
+            height: "460px",
           },
         }}
       >

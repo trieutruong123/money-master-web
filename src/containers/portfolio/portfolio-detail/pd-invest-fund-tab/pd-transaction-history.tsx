@@ -18,15 +18,16 @@ import { capitalizeFirstLetter, colorScheme, roundAndAddDotAndCommaSeparator } f
 import { getCurrencyByCode } from 'shared/helpers';
 import dayjs from 'dayjs';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
-import { InvestFundTransactionItem } from 'shared/models';
+import { InvestFundTransactionItem, InvestFundTransactionList } from 'shared/models';
 import { AssetType } from 'shared/types';
-import { AssetTypeConstants, AssetTypeName } from 'shared/constants';
+import { AssetTypeConstants, AssetTypeName, TransactionRequestType } from 'shared/constants';
 import { BsCashCoin } from 'react-icons/bs';
 import { RiPsychotherapyFill } from 'react-icons/ri';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { useRouter } from 'next/router';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -47,19 +48,23 @@ const TableBodyCell = styled(TableCell)`
 `;
 
 interface IProps {
-  transactionHistory: Array<InvestFundTransactionItem> | undefined;
+  transactionHistory: InvestFundTransactionList | undefined;
+  content: any
 }
 
-const PDTransactionHistory = ({ transactionHistory }: IProps) => {
+const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
+  const { locale } = router;
+  const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
   //const { collumnsName, settingDropDownMenu } = content;
   const headings = [
     // "Today's Change",
     // "Today's Gain/Loss"
-    'Ammount',
-    'Direction',
-    'Asset Type',
+    content.investFundTab.amount,
+    content.investFundTab.transactionType,
+    content.investFundTab.assetType,
     '',
   ];
 
@@ -104,7 +109,7 @@ const PDTransactionHistory = ({ transactionHistory }: IProps) => {
             boxShadow: 'none',
           }}
         >
-          <CardHeader title="Transaction history" sx={{ padding: '0px' }} />
+          <CardHeader title={content.investFundTab.title}sx={{ padding: '0px' }} />
           <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
             <MoreHorizIcon />
           </Button>
@@ -113,21 +118,20 @@ const PDTransactionHistory = ({ transactionHistory }: IProps) => {
           <Table sx={{ overflowY: 'auto' }}>
             <TableHead>
               <TableRow>
-                <TableHeaderCell>{'Name'}</TableHeaderCell>
+                <TableHeaderCell>{content.investFundTab.name}</TableHeaderCell>
                 <TableHeaderCell sx={{ textAlign: 'center' }}>
-                  {'Direction'}
+                  {content.investFundTab.direction}
                 </TableHeaderCell>
                 <TableHeaderCell sx={{ textAlign: 'center' }}>
-                  {'Amount'}
+                  {content.investFundTab.amount}
                 </TableHeaderCell>
-
                 <TableHeaderCell sx={{ textAlign: 'left' }}>
-                  {'Asset Type'}
+                  {content.investFundTab.assetType}
                 </TableHeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {transactionHistory.map((record, i) => {
+              {transactionHistory.map((record: InvestFundTransactionItem, i) => {
                 return (
                   <TableRow
                     key={i}
@@ -140,7 +144,9 @@ const PDTransactionHistory = ({ transactionHistory }: IProps) => {
                   >
                     <TableBodyCellSymbol>
                       <Box sx={{ fontWeight: 700, textTransform: 'uppercase' }}>
-                        {record.referentialAssetName}
+                        {record.singleAssetTransactionType === TransactionRequestType.moveToFund ?
+                          AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom]
+                          : AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom]}
                       </Box>
                       <Box
                         sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
@@ -150,7 +156,7 @@ const PDTransactionHistory = ({ transactionHistory }: IProps) => {
                     </TableBodyCellSymbol>
 
                     <TableBodyCellSymbol align="center">
-                      {!record.isIngoing ? (
+                      {record.singleAssetTransactionType === TransactionRequestType.moveToFund ? (
                         <ImArrowLeft fontSize="25" color={colorScheme.red400} />
                       ) : (
                         <ImArrowRight
@@ -166,13 +172,14 @@ const PDTransactionHistory = ({ transactionHistory }: IProps) => {
                       )}
                     </TableBodyCellSymbol>
                     <TableBodyCellSymbol align="left">
-                      {renderAssetTypeIcon(record.referentialAssetType)}
-                      &nbsp;&nbsp;
-                      {capitalizeFirstLetter(
-                        AssetTypeConstants[
-                        record.referentialAssetType || AssetTypeName.custom
-                        ],
-                      )}
+                      {record.singleAssetTransactionType === TransactionRequestType.moveToFund ?
+                        (<>{renderAssetTypeIcon(record.referentialAssetType || AssetTypeName.custom)}
+                          &nbsp;&nbsp;
+                          {capitalizeFirstLetter(AssetTypeConstants[language][record.referentialAssetType || AssetTypeName.custom])}</>) :
+                        (<>{renderAssetTypeIcon(record.destinationAssetType || AssetTypeName.custom)}
+                          &nbsp;&nbsp;
+                          {capitalizeFirstLetter(AssetTypeConstants[language][record.destinationAssetType || AssetTypeName.custom])}</>)
+                      }
                     </TableBodyCellSymbol>
                   </TableRow>
                 );

@@ -54,6 +54,7 @@ interface IProps {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAssetBeforeCreatingTransaction:number
   ) => void;
 }
 
@@ -89,7 +90,7 @@ export const BankingInvestments = observer(({
   };
 
   const renderInterestRate = (interestRate: number) => {
-    const rate = roundAndAddDotAndCommaSeparator(interestRate, 4);
+    const rate = roundAndAddDotAndCommaSeparator(interestRate*100, 4);
     return <span style={{ color: '#0d6f3f' }}>&#43;{rate + '%'}</span>;
   };
 
@@ -130,10 +131,8 @@ export const BankingInvestments = observer(({
           boxShadow: 'none',
         }}
       >
-        <CardHeader title="Bank Savings" sx={{ padding: '0px' }} />
-        <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-          <MoreHorizIcon />
-        </Button>
+        <CardHeader title={content.title} sx={{ padding: '0px' }} />
+
       </Card>
       {/* <Scrollbars autoHide style = {{cursor:'pointer', minWidth: "100%"}}> */}
       <Box>
@@ -150,6 +149,9 @@ export const BankingInvestments = observer(({
           </TableHead>
           <TableBody>
             {bankingDetail.map((record, i) => {
+              if (record.inputMoneyAmount === 0) {
+                return;
+              }
               return (
                 <TableRow
                   key={i}
@@ -200,6 +202,7 @@ export const BankingInvestments = observer(({
                           : portfolioId || ''
                       }
                       content={settingDropDownMenu}
+                      valueOfReferentialAssetBeforeCreatingTransaction = {record.inputMoneyAmount}
                       deleteAsset={deleteAsset}
                       transferAssetToInvestFund={transferAssetToInvestFund}
                     />

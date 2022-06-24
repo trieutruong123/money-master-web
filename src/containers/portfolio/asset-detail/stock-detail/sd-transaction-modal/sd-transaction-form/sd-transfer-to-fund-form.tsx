@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionRequestType } from 'shared/constants';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { stockDetailStore } from 'shared/store';
 import { colorScheme } from 'utils';
@@ -19,6 +19,7 @@ import * as Yup from 'yup';
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any
 }
 
 type FormValues = {
@@ -26,7 +27,7 @@ type FormValues = {
   currencyCode: string;
 };
 
-const SDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
+const SDTransferToFundForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const validationSchema = Yup.object().shape({
     amount: Yup.number()
@@ -44,11 +45,22 @@ const SDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
-      referentialAssetId: stockDetailStore.stockDetail?.id,
-      referentialAssetType: AssetTypeName.stock,
-      currencyCode: data.currencyCode || 'USD',
       amount: data.amount,
-      isTransferingAll: false,
+      valueOfReferentialAssetBeforeCreatingTransaction:stockDetailStore.stockDetail
+                                                      ?stockDetailStore.stockDetail.currentPrice
+                                                      *stockDetailStore.stockDetail.currentAmountHolding
+                                                      :0,
+      amountInDestinationAssetUnit: 0,
+      currencyCode: data.currencyCode || 'USD',
+      transactionType: TransactionRequestType.moveToFund,
+      referentialAssetType: AssetTypeName.stock,
+      referentialAssetId: stockDetailStore.stockDetail?.id,
+      destinationAssetId: null,
+      destinationAssetType: 'fund',
+      isTransferringAll: false,
+      isUsingFundAsSource: false,
+      fee: 0,
+      tax: 0,
     });
   };
 
@@ -74,19 +86,20 @@ const SDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ my: 1, display: 'block' }}
         id="outlined-amount"
-        label={'*Amount'}
+        inputProps={{ step: 'any' }}
+        label={`${content.transactionForm.amount}*`}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
         helperText={errors.amount?.message}
       ></TextField>
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency'}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="stock-currency-list-select"
-          label={`*${'Currency'}`}
+          label={`${content.transactionForm.currency}*`}
           defaultValue={stockDetailStore.stockDetail?.currencyCode || 'USD'}
           {...register('currencyCode')}
         >
@@ -110,7 +123,7 @@ const SDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        TRANSFER TO INVEST FUND
+        {content.transactionForm.moveToFund}
       </Button>
     </Box>
   );

@@ -2,12 +2,14 @@ import { Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { getCurrencyByCode } from 'shared/helpers';
 import { CashItem } from 'shared/models';
 import { precisionRound } from 'utils/number';
+import { observer } from 'mobx-react-lite';
 
 interface IProps {
   assetDetail: CashItem | undefined;
+  content: any
 }
 
-const CDIntroSection = ({ assetDetail }: IProps) => {
+const CDIntroSection = observer(({ assetDetail, content }: IProps) => {
 
   return (
     <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
@@ -58,7 +60,7 @@ const CDIntroSection = ({ assetDetail }: IProps) => {
                 justifyContent="center"
               >
                 <Typography variant="body1">
-                  Name: &nbsp;
+                  {content.introSection.name}: &nbsp;
                 </Typography>
                 <Typography variant="body1" color={'success.main'}>
                   {assetDetail?.name || '--'}
@@ -71,7 +73,7 @@ const CDIntroSection = ({ assetDetail }: IProps) => {
                 alignItems="center"
                 justifyContent="center"
               >
-                <Typography variant="body1">Currency: &nbsp;</Typography>
+                <Typography variant="body1">{content.introSection.currency}: &nbsp;</Typography>
                 {getCurrencyByCode(assetDetail?.currencyCode || '')?.name}
               </Grid>
             </Stack>
@@ -80,7 +82,7 @@ const CDIntroSection = ({ assetDetail }: IProps) => {
       </Card>
     </Grid>
   );
-};
+});
 
 
 export default CDIntroSection;

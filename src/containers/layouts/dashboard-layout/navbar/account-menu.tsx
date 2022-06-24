@@ -11,8 +11,13 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { userStore } from 'shared/store';
 import { colorScheme } from 'utils';
+import { observer } from 'mobx-react-lite';
 
-const AccountMenu = () => {
+interface IProps {
+  content: any,
+}
+
+const AccountMenu = observer(({ content }: IProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const open = Boolean(anchorEl);
@@ -34,7 +39,7 @@ const AccountMenu = () => {
 
   return (
     <>
-      <Tooltip title="Account">
+      <Tooltip title={content.account}>
         <IconButton
           onClick={handleClickAccountAvatar}
           aria-controls="account-menu"
@@ -46,22 +51,35 @@ const AccountMenu = () => {
             ml: '1rem',
           }}
         >
-          <Avatar
-            sx={{
-              backgroundColor:
-                userStore.user?(userStore.user?.backgroundColor):undefined || colorScheme.gray200,
-              color: 'white',
-              fontSize: '1.4rem',
-              height: 32,
-              width: 32,
-            }}
-          >
-            {userStore.user?userStore.user?.email?.charAt(0).toUpperCase():undefined}
-          </Avatar>
+          {userStore.user && userStore.user?.profileImage ?
+            <Avatar
+              src={userStore.user.profileImage}
+              sx={{
+                color: 'white',
+                fontSize: '1.4rem',
+                height: 32,
+                width: 32,
+              }}
+            />
+            :
+            <Avatar
+              sx={{
+                backgroundColor:
+                  userStore.user ? (userStore.user?.backgroundColor) : undefined || colorScheme.gray200,
+                color: 'white',
+                fontSize: '1.4rem',
+                height: 32,
+                width: 32,
+              }}
+            >
+              {userStore.user?.email?.charAt(0).toUpperCase()}
+            </Avatar>
+          }
         </IconButton>
       </Tooltip>
       {!isSm ? (
         <AccountMenuDropdown
+          content={content}
           anchorEl={anchorEl}
           open={open}
           handleClose={handleCloseAccountMenuDropdown}
@@ -69,6 +87,6 @@ const AccountMenu = () => {
       ) : null}
     </>
   );
-};
+});
 
 export default AccountMenu;

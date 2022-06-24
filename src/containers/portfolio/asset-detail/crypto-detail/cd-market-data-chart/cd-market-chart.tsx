@@ -22,9 +22,11 @@ import { AreaChart } from './area-chart';
 import { cryptoDetailStore } from 'shared/store';
 import { observer } from 'mobx-react-lite';
 
-interface IProps {}
+interface IProps {
+  content: any
+}
 
-export const CDMarketChart = observer(({}: IProps) => {
+export const CDMarketChart = observer(({ content }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [rangeSelection, setTimeRangeSelection] = useState('0');
@@ -32,15 +34,15 @@ export const CDMarketChart = observer(({}: IProps) => {
   const [chartType, setChartType] = useState('candlestick');
 
   const timeRangeList = [
-    { timeRange: '1 day', intervalId: 0, amount: 1 },
-    { timeRange: '1 week', intervalId: 1, amount: 7 },
-    { timeRange: '2 weeks', intervalId: 1, amount: 14 },
-    { timeRange: '1 month', intervalId: 1, amount: 30 },
-    { timeRange: '6 months', intervalId: 2, amount: 180 },
-    { timeRange: '1 year', intervalId: 2, amount: 365 },
+    { timeRange: `1 ${content.marketDataTab.day}`, intervalId: 0, amount: 1 },
+    { timeRange: `1 ${content.marketDataTab.week}`, intervalId: 1, amount: 7 },
+    { timeRange: `2 ${content.marketDataTab.weeks}`, intervalId: 1, amount: 14 },
+    { timeRange: `1 ${content.marketDataTab.month}`, intervalId: 1, amount: 30 },
+    { timeRange: `6 ${content.marketDataTab.months}`, intervalId: 2, amount: 180 },
+    { timeRange: `1 ${content.marketDataTab.year}`, intervalId: 2, amount: 365 },
   ];
 
-  const timeIntervalList = ['30 minutes', '4 hours', '4 days'];
+  const timeIntervalList = [`30 ${content.marketDataTab.minutes}`, `4 ${content.marketDataTab.hours}`, `4 ${content.marketDataTab.days}`];
 
   const handeTimeRangeChange = (event: SelectChangeEvent) => {
     setTimeRangeSelection(event.target.value as string);
@@ -99,12 +101,12 @@ export const CDMarketChart = observer(({}: IProps) => {
               paddingLeft={'10px'}
             >
               <FormControl sx={{ minWidth: 80, pb: '.2rem' }}>
-                <InputLabel id="time-range-select-label">Range</InputLabel>
+                <InputLabel id="time-range-select-label">{content.marketDataTab.timeRange}</InputLabel>
                 <Select
                   labelId="time-range-select-label"
                   id="time-range-select"
                   value={rangeSelection}
-                  label="Range"
+                  label={content.marketDataTab.timeRange}
                   onChange={handeTimeRangeChange}
                   sx={{ width: 110 }}
                 >
@@ -116,13 +118,13 @@ export const CDMarketChart = observer(({}: IProps) => {
                 </Select>
               </FormControl>
               <FormControl sx={{ minWidth: 80, px: '.2rem', pb: '.2rem' }}>
-                <InputLabel id="interval-select-label">Interval</InputLabel>
+                <InputLabel id="interval-select-label">{content.marketDataTab.interval}</InputLabel>
                 <Select
                   sx={{ width: 120 }}
                   labelId="interval-select-label"
                   id="interva-select"
                   value={intervalSelection}
-                  label="Interval"
+                  label={content.marketDataTab.interval}
                   onChange={handleTimeIntervalChange}
                 >
                   {timeIntervalList.map((item, index) => (
@@ -145,7 +147,7 @@ export const CDMarketChart = observer(({}: IProps) => {
                   variant="outlined"
                   startIcon={<BiLineChart />}
                 >
-                  Area
+                  {content.marketDataTab.area}
                 </Button>
                 <Button
                   sx={{
@@ -158,7 +160,7 @@ export const CDMarketChart = observer(({}: IProps) => {
                   variant="outlined"
                   startIcon={<FcCandleSticks />}
                 >
-                  Candle
+                  {content.marketDataTab.candleStick}
                 </Button>
               </Stack>
             </Grid>

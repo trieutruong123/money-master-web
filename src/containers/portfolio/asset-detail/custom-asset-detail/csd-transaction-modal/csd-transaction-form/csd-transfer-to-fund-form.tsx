@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { AssetTypeName } from 'shared/constants';
+import { AssetTypeName, TransactionRequestType } from 'shared/constants';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { customAssetsDetailStore, stockDetailStore } from 'shared/store';
 import { colorScheme } from 'utils';
@@ -20,6 +20,7 @@ import * as Yup from 'yup';
 
 interface IProps {
     handleFormSubmit: Function;
+    content: any
 }
 
 type FormValues = {
@@ -27,10 +28,13 @@ type FormValues = {
     currencyCode: string;
 };
 
-const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
+const CSDTransferToFundForm = observer(({ handleFormSubmit, content }: IProps) => {
     const theme = useTheme();
     const validationSchema = Yup.object().shape({
-        amount: Yup.number(),
+        amount: Yup.number()
+            .required('Amount is required')
+            .typeError('Amount must be a number')
+            .positive('Amount must be greater than zero'),
         currencyCode: Yup.string().required().default('USD'),
     });
 
@@ -42,11 +46,19 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
 
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
-            referentialAssetId: customAssetsDetailStore.customAssetDetail?.id,
-            referentialAssetType: AssetTypeName.custom,
-            currencyCode: customAssetsDetailStore.customAssetDetail?.inputCurrency.toUpperCase() || 'USD',
             amount: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
-            isTransferingAll: true,
+            valueOfReferentialAssetBeforeCreatingTransaction:customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
+            amountInDestinationAssetUnit: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
+            currencyCode: customAssetsDetailStore.customAssetDetail?.inputCurrency.toUpperCase() || 'USD',
+            transactionType: TransactionRequestType.moveToFund,
+            referentialAssetType: AssetTypeName.custom,
+            referentialAssetId: customAssetsDetailStore.customAssetDetail?.id,
+            destinationAssetId: null,
+            destinationAssetType: 'fund',
+            isTransferringAll: true,
+            isUsingFundAsSource: false,
+            fee: 0,
+            tax: 0,
         });
     };
 
@@ -67,7 +79,7 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
                 },
             }}
         >
-            <Typography color='primary'>* All money from asset will be transferred</Typography>
+            <Typography color='primary'>*  {content.transactionForm.allMoneyFromAssetWillBeTransferred}</Typography>
             <TextField
                 type="number"
                 fullWidth
@@ -77,7 +89,7 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
                     readOnly: true,
                 }}
                 id="outlined-amount"
-                label={'Amount*'}
+                label={`${content.transactionForm.amount}*`}
                 value={customAssetsDetailStore.customAssetDetail?.inputMoneyAmount}
                 variant="outlined"
                 error={typeof errors.amount?.message !== 'undefined'}
@@ -86,12 +98,12 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
             <Box mt='10px'></Box>
 
             <FormControl fullWidth>
-                <InputLabel id="currency-list">{'Currency*'}</InputLabel>
+                <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
                 <Select
                     variant="outlined"
                     labelId="currency-list"
                     id="stock-currency-list-select"
-                    label={`*${'Currency'}`}
+                    label={`${content.transactionForm.currency}*`}
                     value={customAssetsDetailStore.customAssetDetail?.inputCurrency || 'USD'}
                     {...register('currencyCode')}
                 >
@@ -115,7 +127,7 @@ const CSDTransferToFundForm = observer(({ handleFormSubmit }: IProps) => {
                     height: '2.5rem',
                 }}
             >
-                TRANSFER TO INVEST FUND
+                {content.transactionForm.moveToFund}
             </Button>
         </Box>
     );

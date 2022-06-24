@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, Suspense, lazy } from 'react';
 import { Box, Container, useTheme, useMediaQuery } from '@mui/material';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { content } from 'i18n';
+import { content as i18n } from 'i18n';
 import { DashboardLayout } from 'containers';
 import { HypnosisLoading } from 'shared/components';
 
@@ -17,14 +17,13 @@ const PortfolioDetailPage = () => {
   const router = useRouter();
 
   const { locale } = router;
-  const detail = locale === 'vi' ? content['vi'] : content['en'];
-  const { portfolioDetailPage } = detail;
+  const content = locale === 'vi' ? i18n['vi'].portfolioDetailPage : i18n['en'].portfolioDetailPage;
 
 
   return (
     <>
       <Head>
-        <title>{portfolioDetailPage.title} | Money Master</title>
+        <title>{content.title} | Money Master</title>
       </Head>
       <Box
         component="main"
@@ -36,8 +35,7 @@ const PortfolioDetailPage = () => {
         <Container maxWidth="lg">
           <Suspense fallback={<HypnosisLoading></HypnosisLoading>}>
             <PortfolioDetail
-              content={portfolioDetailPage}
-             ></PortfolioDetail>
+            ></PortfolioDetail>
           </Suspense>
         </Container>
       </Box>

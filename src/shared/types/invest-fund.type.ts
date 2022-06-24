@@ -1,9 +1,18 @@
+import { TransactionType } from "shared/types";
+
 export type TransferToInvestFundType = {
-  referentialAssetId: number;
-  referentialAssetType: string;
   amount: number;
+  amountInDestinationAssetUnit: number | null;
   currencyCode: string;
+  transactionType: TransactionType;
+  referentialAssetType: string | null;
+  referentialAssetId: number | null;
+  destinationAssetId: number | null;
+  destinationAssetType: string | null;
   isTransferringAll: boolean;
+  isUsingFundAsSource: boolean;
+  fee: number;
+  tax: number;
 };
 
 export type InvestFundItem = {

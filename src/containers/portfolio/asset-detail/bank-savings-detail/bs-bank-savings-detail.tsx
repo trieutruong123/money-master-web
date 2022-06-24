@@ -16,6 +16,8 @@ import { BreadcrumbsLink } from "shared/components";
 import React from "react";
 import { useRouter } from "next/router";
 import { AddNewTransactionModal } from "./bs-transaction-modal/bs-transaction-modal-main.tsx";
+import { content as i18n } from 'i18n';
+
 
 const BSTransactionHistory = lazy(() => import('./bs-transaction-history/bs-transaction-history-main'));
 const BSIntroSection = lazy(() => import('./bs-intro-section/bs-intro-section-main'));
@@ -28,8 +30,9 @@ const BankSavingsDetail = observer(({ }: IProps) => {
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].bankSavingDetailPage : i18n['en'].bankSavingDetailPage;
 
-  const { query } = router;
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
     : query['portfolioId'] || '';
@@ -39,6 +42,7 @@ const BankSavingsDetail = observer(({ }: IProps) => {
 
   useEffect(() => {
     bankSavingsDetailStore.resetInitialState();
+    bankSavingsDetailStore.resetTransaction();
   }, []);
 
   useEffect(() => {
@@ -52,6 +56,7 @@ const BankSavingsDetail = observer(({ }: IProps) => {
     const fetchData = async () => {
       rootStore.startLoading();
       Promise.all([bankSavingsDetailStore.fetchOverviewData()]);
+      await bankSavingsDetailStore.refreshTransactionHistory();
       rootStore.stopLoading();
     };
     if (portfolioId && assetId && bankSavingsDetailStore.needUpdateOverviewData) {
@@ -82,9 +87,9 @@ const BankSavingsDetail = observer(({ }: IProps) => {
           <Container>
             <BreadcrumbsLink
               urlArr={[
-                '/portfolio',
+                content.breadCurmbs.portfolio,
                 `/portfolio/${bankSavingsDetailStore.portfolioId}`,
-                `/portfolio/${bankSavingsDetailStore.portfolioId}/real-estate/${bankSavingsDetailStore.assetDetail}`,
+                `/portfolio/${bankSavingsDetailStore.portfolioId}/bank-savings/${bankSavingsDetailStore.assetDetail}`,
               ]}
               displayNameArr={[
                 'Portfolio',
@@ -123,7 +128,7 @@ const BankSavingsDetail = observer(({ }: IProps) => {
       <Box>
         <AddNewTransactionModal />
       </Box>
-      <Tooltip title="Add new transaction">
+      <Tooltip title={content.addNewTransaction}>
         <IconButton
           onClick={() => {
             bankSavingsDetailStore.setOpenAddNewTransactionModal(

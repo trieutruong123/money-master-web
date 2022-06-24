@@ -16,10 +16,11 @@ import {
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as Yup from 'yup';
 import { colorScheme } from 'utils/color-scheme';
-import { AssetTypeName, TransactionRequestType } from 'shared/constants';
+import { AssetTypeName, SourceMoneyConstants, TransactionRequestType } from 'shared/constants';
 import { getSupportedCurrencyList } from 'shared/helpers';
 import { observer } from 'mobx-react-lite';
 import { cryptoDetailStore } from 'shared/store';
+import { useRouter } from 'next/router';
 
 type FormValues = {
   purchasePrice: number;
@@ -32,13 +33,34 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any
 }
 
-export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
+export const CDBuyCryptoForm = observer(({ handleFormSubmit, content }: IProps) => {
   const [moneySource, setMoneySource] = useState<string>('outside');
   const [destinationCashCode, setDestinationCashCode] = useState<string>('');
   const theme = useTheme();
   const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const router = useRouter();
+  const { locale } = router;
+  const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
+  const currencyList = getSupportedCurrencyList();
+  const usingMoneySourceList = [{
+    id: uuid(),
+    type: 'outside',
+    name: SourceMoneyConstants[language].outside,
+  },
+  {
+    id: uuid(),
+    type: 'fund',
+    name: SourceMoneyConstants[language].fund,
+  },
+  {
+    id: uuid(),
+    type: 'cash',
+    name: SourceMoneyConstants[language].cash,
+  },
+  ]
 
   const validationSchema = Yup.object().shape({
     purchasePrice: Yup.number()
@@ -49,25 +71,11 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
       .required('Amount is required')
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
-    fee: Yup.number(),
-    tax: Yup.number(),
+    tax: Yup.number()
+      .min(0,'Tax must be greater than zero'),
+    fee: Yup.number()
+      .min(0,'Fee must be greater than zero'),
   });
-  const currencyList = getSupportedCurrencyList();
-  const usingMoneySourceList = [{
-    id: uuid(),
-    type: 'outside',
-    name: 'Using money from outside',
-  },
-  {
-    id: uuid(),
-    type: 'fund',
-    name: 'Using money from fund',
-  },
-  {
-    id: uuid(),
-    type: 'cash',
-    name: 'Using money from cash',
-  },]
 
   const formOptions = { resolver: yupResolver(validationSchema) };
   const { register, reset, handleSubmit, formState, getValues, setError } =
@@ -75,15 +83,21 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
   const { errors } = formState;
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
+    const valueOfReferentialAsset = moneySource === 'cash'
+                                    ? cryptoDetailStore.cashDetail?.find(item => item.currencyCode === destinationCashCode)?.amount||0
+                                    : moneySource === 'fund'
+                                    ? 0
+                                    : 0;
     const res = handleFormSubmit({
       amount: data.purchasePrice * data.amount,
+      valueOfReferentialAssetBeforeCreatingTransaction: valueOfReferentialAsset,
       amountInDestinationAssetUnit: data.amount,
       currencyCode: data.currencyCode || 'USD',
       transactionType: TransactionRequestType.addValue,
       destinationAssetId: cryptoDetailStore?.cryptoDetail?.id,
       destinationAssetType: AssetTypeName.cryptoCurrency,
       referentialAssetId: moneySource === 'cash' ? cryptoDetailStore.cashDetail?.find(item => item.currencyCode === destinationCashCode)?.id : null,
-      referentialAssetType: moneySource === 'cash' ? AssetTypeName.cash : (moneySource === 'fund' ? 'fund' : null),
+      referentialAssetType: moneySource === 'cash' ? AssetTypeName.cash : (moneySource === 'fund' ? 'fund' : 'outside'),
       isTransferringAll: false,
       isUsingFundAsSource: moneySource === 'fund',
       fee: data.fee,
@@ -124,7 +138,8 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ mt: '10px', display: 'block' }}
         id="outlined-buy-price"
-        label={'*Purchase Price'}
+        inputProps={{ step: 'any' }}
+        label={`${content.transactionForm.purchasePrice}*`}
         {...register('purchasePrice')}
         variant="outlined"
         error={typeof errors.purchasePrice?.message !== 'undefined'}
@@ -135,7 +150,8 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
         fullWidth
         sx={{ mt: '10px', display: 'block' }}
         id="outlined-amount"
-        label={'*Amount'}
+        inputProps={{ step: 'any' }}
+        label={`${content.transactionForm.amount}*`}
         {...register('amount')}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
@@ -143,12 +159,12 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
       ></TextField>
       <Box mt='10px' />
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency'}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="crypto-currency-list-select"
-          label={`*${'Currency'}`}
+          label={`${content.transactionForm.currency}*`}
           defaultValue={cryptoDetailStore.cryptoDetail?.currencyCode || 'USD'}
           {...register('currencyCode')}
         >
@@ -163,12 +179,12 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
       </FormControl>
       <Box mt='10px' />
       <FormControl fullWidth>
-        <InputLabel id="source-money">{'Select source money*'}</InputLabel>
+        <InputLabel id="source-money">{content.transactionForm.useMoneyFrom}*</InputLabel>
         <Select
           variant="outlined"
           labelId="source-money"
           id="crypto-source-money-select"
-          label={`*${'Select source money*'}`}
+          label={`${content.transactionForm.useMoneyFrom}*`}
           onChange={handleMoneySourceChange}
           defaultValue={moneySource}
           value={moneySource}
@@ -186,12 +202,12 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
       {moneySource === 'cash' ? <>
         <Box mt='10px' />
         <FormControl fullWidth>
-          <InputLabel id="destination-cash-list">{'Select destination cash*'}</InputLabel>
+          <InputLabel id="destination-cash-list">{content.transactionForm.destinationCash}*</InputLabel>
           <Select
             variant="outlined"
             labelId="destination-cash-list"
             id="crypto-destination-cash-select"
-            label={`*${'Select destination cash*'}`}
+            label={`${content.transactionForm.destinationCash}*`}
             onChange={handleDestinationCashCode}
             value={destinationCashCode}
             defaultValue={destinationCashCode}
@@ -218,7 +234,7 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
             }}
             sx={{ mt: 1, display: 'block' }}
             id="outlined-fee"
-            label={`${"Fee"}`}
+            label={`${content.transactionForm.fee}`}
             {...register('fee')}
             variant="outlined"
             defaultValue={0}
@@ -234,7 +250,7 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
             }}
             sx={{ mt: 1, display: 'block' }}
             id="outlined-tax"
-            label={`${"Tax (%)"}`}
+            label={`${content.transactionForm.tax} (%)`}
             {...register('tax')}
             variant="outlined"
             defaultValue={0}
@@ -253,7 +269,7 @@ export const CDBuyCryptoForm = observer(({ handleFormSubmit }: IProps) => {
           height: '2.5rem',
         }}
       >
-        ADD
+        {content.transactionForm.addButton}
       </Button>
     </Box>
   );

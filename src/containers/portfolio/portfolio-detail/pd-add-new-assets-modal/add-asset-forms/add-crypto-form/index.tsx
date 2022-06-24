@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { Box, IconButton, Typography, useTheme } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { NewCryptoCurrencyAsset } from 'shared/types';
+import { ITransactionRequest, NewCryptoCurrencyAsset } from 'shared/types';
 import { portfolioDetailStore, rootStore } from 'shared/store';
-import { AssetTypeName, TransactionFormType } from 'shared/constants';
+import { AssetTypeName, TransactionFormType, UsingMoneySource } from 'shared/constants';
 import { BuyCryptoForm } from './buy-cryto-form';
+import { AddMoreValueForm } from './add-more-value-form';
 
 interface IProps {
   openPreviousForm: Function;
@@ -29,22 +30,45 @@ export const AddNewCryptoForm = observer(
       fetchAssetPrice();
     }, []);
 
-    const handleComeback = () => {
-      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.transaction, assetType: AssetTypeName.cryptoCurrency });
-      openPreviousForm();
-    };
+    useEffect(() => {
+      const isExisted = isExistedCryptoCoinCode();
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, addMoreValue: isExisted });
+    }, []);
 
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
     const assetName = selectedAsset?.cryptoInfo?.name.toUpperCase() || '';
     const currentPrice = portfolioDetailStore.searchedCryptoDetail?.usd;
 
-    const handleFormSubmit = async (data: NewCryptoCurrencyAsset) => {
+    const addMoreValue = async (data: ITransactionRequest) => {
+      const res = await portfolioDetailStore.createNewTransaction(data);
+      if (res.isError) {
+        if (data.isUsingFundAsSource || portfolioDetailStore?.selectedAsset?.moneySource === UsingMoneySource.usingCash) {
+          setErrorMessage(res.data.data);
+        }
+        else {
+          rootStore.raiseError('Error');
+          handleClose();
+        }
+      } else {
+        rootStore.raiseNotification(res.data.en, 'success');
+        if (data.isUsingFundAsSource) {
+          portfolioDetailStore.setUpdateInvestFund(true);
+        } else if (portfolioDetailStore?.selectedAsset?.moneySource === 'cash') {
+          portfolioDetailStore.setUpdateCashDetail(true);
+        }
+        portfolioDetailStore.setUpdateReport(true);
+        portfolioDetailStore.fetchCryptoCurrency();
+        handleClose();
+      }
+    }
+
+    const addNewCrypto = async (data: NewCryptoCurrencyAsset) => {
       const res = await portfolioDetailStore.addNewCryptoCurrency(data);
       if (res.isError) {
         if (data.isUsingInvestFund || data.isUsingCash) {
-          setErrorMessage(res.data);
+          setErrorMessage(res.data.data);
         } else {
-          rootStore.raiseError(res?.data.en);
+          rootStore.raiseError('Error');
           handleClose();
         }
       } else {
@@ -58,6 +82,28 @@ export const AddNewCryptoForm = observer(
         handleClose();
       }
     };
+
+    const handleComeback = () => {
+      portfolioDetailStore.setAddedAssetInfo({ ...selectedAsset, formType: TransactionFormType.transaction, assetType: AssetTypeName.cryptoCurrency });
+      openPreviousForm();
+    };
+
+    const isExistedCryptoCoinCode = () => {
+      const cryptoDetail = portfolioDetailStore.cryptoDetail;
+      const selectedCryptoCode = portfolioDetailStore?.selectedAsset?.cryptoCoinCode;
+      if (!cryptoDetail || !selectedCryptoCode) {
+        return false;
+      }
+      const isExisted = cryptoDetail.some((item) => {
+        if (selectedCryptoCode === item.cryptoCoinCode) {
+          return true;
+        }
+        return false;
+      })
+
+      return isExisted;
+    }
+
 
     return (
       <Box sx={{ height: 'inherit' }}>
@@ -107,11 +153,12 @@ export const AddNewCryptoForm = observer(
               height: '510px',
             },
           }}
-        >
+        >{isExistedCryptoCoinCode() ?
+          <AddMoreValueForm handleFormSubmit={addMoreValue} content={content} /> :
           <BuyCryptoForm
             content={content}
-            handleFormSubmit={handleFormSubmit}
-          />
+            handleFormSubmit={addNewCrypto}
+          />}
         </Box>
       </Box>
     );

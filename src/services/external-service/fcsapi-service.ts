@@ -4,6 +4,7 @@ export const fcsapiService = {
   getForexInfoByCode,
   getForexOHCL,
   getForexProfileDetail,
+  getCryptoProfile
 };
 
 const BASE_URL = "https://fcsapi.com/api-v3";
@@ -58,6 +59,25 @@ async function getForexOHCL(params: any) {
     return {
       isError: false,
       data: response.data.response,
+    };
+  } catch (error: any) {
+    return {
+      isError: true,
+      data: error.response,
+    };
+  }
+}
+
+async function getCryptoProfile(symbol: string) {
+  symbol = symbol.toUpperCase();
+  const url = `/crypto/profile?symbol=${symbol}&access_key=${ACCESS_KEY}`;
+  try {
+    const response = await axios.get(`${BASE_URL}${url}`, {
+      headers: { "Content-Type": "application/json" },
+    });
+    return {
+      isError: false,
+      data: response.data,
     };
   } catch (error: any) {
     return {

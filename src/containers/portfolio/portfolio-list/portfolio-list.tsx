@@ -54,12 +54,10 @@ const PortfolioList = observer(({ context }: IProps) => {
 
   const updateHandler = (data: any) => {
     // call update API
-    console.log('UPDATED: ', data);
   };
 
   const deleteHandler = (portfolioId: string) => {
     // call delete APi
-    console.log('DELETED ID: ', portfolioId);
   };
 
   return (

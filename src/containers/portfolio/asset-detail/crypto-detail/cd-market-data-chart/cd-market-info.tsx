@@ -4,12 +4,16 @@ import { getCurrencyByCode } from 'shared/helpers';
 import { cryptoDetailStore } from 'shared/store';
 import { roundAndAddDotAndCommaSeparator } from 'utils';
 
-const CDMarketInfo = observer(() => {
+interface IProps {
+  content: any
+}
+
+const CDMarketInfo = observer(({ content }: IProps) => {
   const { marketData, cryptoDetail } = cryptoDetailStore;
 
   return (
     <>
-      {marketData !== undefined ? (
+      {typeof marketData !== 'undefined' ? (
         <Card
           sx={{
             borderRadius: '12px',
@@ -60,16 +64,16 @@ const CDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">Change: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.dailyChange}: &nbsp;</Typography>
                   <Typography
                     variant="body1"
                     color={marketData?.dp > 0 ? 'success.main' : 'error.main'}
                   >
                     {marketData?.dp > 0 ? <>&uarr;</> : <>&darr;</>}
-                    {`${roundAndAddDotAndCommaSeparator(marketData?.dp,4)}%`}
+                    {`${roundAndAddDotAndCommaSeparator(marketData?.dp, 4)}%`}
                     &nbsp;@&nbsp;
                     {getCurrencyByCode('USD')?.symbol}
-                    {roundAndAddDotAndCommaSeparator(marketData?.d,4)}
+                    {roundAndAddDotAndCommaSeparator(marketData?.d, 4)}
                   </Typography>
                 </Grid>
                 <Grid
@@ -79,7 +83,7 @@ const CDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">High: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.high}: &nbsp;</Typography>
                   <Typography variant="body1" color={'success.main'}>
                     {getCurrencyByCode('USD')?.symbol}
                     {marketData?.h}
@@ -92,7 +96,7 @@ const CDMarketInfo = observer(() => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Typography variant="body1">Low: &nbsp;</Typography>
+                  <Typography variant="body1">{content.marketDataTab.low}: &nbsp;</Typography>
                   <Typography variant="body1" color={'success.main'}>
                     {getCurrencyByCode('USD')?.symbol}
                     {marketData?.l}

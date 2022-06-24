@@ -2,6 +2,8 @@ import { Grid } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { lazy, Suspense, useEffect } from 'react';
 import { portfolioDetailStore, rootStore } from 'shared/store';
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
 
 const PDInvestFundOverview = lazy(() => import('./pd-invest-fund-overview'));
 const PDTransactionHistory = lazy(() => import('./pd-transaction-history'));
@@ -22,6 +24,9 @@ const PDInvestFundTab = observer(() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [portfolioDetailStore.needUpdatedInvestFundData]);
+  const router = useRouter();
+  const { query, locale } = router;
+  const content = locale === 'vi' ? i18n['vi'].portfolioDetailPage : i18n['en'].portfolioDetailPage;
 
   const { investFundDetail, investFundTransactionHistory } =
     portfolioDetailStore;
@@ -50,6 +55,7 @@ const PDInvestFundTab = observer(() => {
           investFundTransactionHistory?.length > 0 ? (
           <Suspense fallback={<></>}>
             <PDTransactionHistory
+              content={content}
               transactionHistory={
                 portfolioDetailStore.investFundTransactionHistory
               }

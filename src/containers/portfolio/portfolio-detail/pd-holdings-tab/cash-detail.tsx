@@ -53,6 +53,7 @@ interface IProps {
     assetType: AssetType,
     assetId: string,
     portfolioId: string,
+    valueOfReferentialAssetBeforeCreatingTransaction :number
   ) => void;
 }
 
@@ -68,7 +69,7 @@ export const CashInvestments = observer(({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { collumnsName, settingDropDownMenu } = content;
-  const headings = [collumnsName.total, 'Description', ''];
+  const headings = [collumnsName.total, collumnsName.description, ''];
 
   const renderCurrencyName = (code: string) => {
     if (code) {
@@ -92,6 +93,9 @@ export const CashInvestments = observer(({
   };
 
   const renderDescription = (description: any) => {
+    if(!description){
+      return '';
+    }
     return description.toString().slice(0, 25) + '...';
   };
 
@@ -112,10 +116,8 @@ export const CashInvestments = observer(({
           boxShadow: 'none',
         }}
       >
-        <CardHeader title="Cash" sx={{ padding: '0px' }} />
-        <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-          <MoreHorizIcon />
-        </Button>
+        <CardHeader title={content.title} sx={{ padding: '0px' }} />
+
       </Card>
       {/* <Scrollbars autoHeight> */}
       <Box>
@@ -164,6 +166,7 @@ export const CashInvestments = observer(({
                     <SettingsMenuButton
                       assetType={AssetTypeName.cash}
                       assetId={record.id.toString()}
+                      valueOfReferentialAssetBeforeCreatingTransaction={record.amount}
                       portfolioId={
                         Array.isArray(portfolioId)
                           ? portfolioId[0]

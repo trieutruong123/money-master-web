@@ -22,8 +22,8 @@ import * as Yup from 'yup';
 
 interface IProps {
     handleFormSubmit: Function;
+    content: any,
 }
-
 type FormValues = {
     amount: number;
     currencyCode: string;
@@ -31,14 +31,21 @@ type FormValues = {
     tax: number;
 };
 
-const CSDWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
+const CSDWithdrawToOutside = observer(({ handleFormSubmit, content }: IProps) => {
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down('sm'));
     const validationSchema = Yup.object().shape({
-        amount: Yup.number(),
+        amount: Yup.number()
+            .required('Amount is required')
+            .typeError('Amount must be a number')
+            .positive('Amount must be greater than zero'),
         currencyCode: Yup.string().required().default('USD'),
-        tax: Yup.number(),
-        fee: Yup.number(),
+        tax: Yup.number()
+            .min(0,'Tax must be greater than zero')
+            .typeError('Tax must be a number'),
+        fee: Yup.number()
+            .typeError('Fee must be a number')
+            .min(0,'Fee must be greater than zero'),
     });
 
     const formOptions = { resolver: yupResolver(validationSchema) };
@@ -50,7 +57,8 @@ const CSDWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
     const onSubmit: SubmitHandler<FormValues> = (data: any) => {
         const res = handleFormSubmit({
             amount: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
-            amountInDestinationAssetUnit: 0,
+            valueOfReferentialAssetBeforeCreatingTransaction:customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
+            amountInDestinationAssetUnit: customAssetsDetailStore.customAssetDetail?.inputMoneyAmount,
             currencyCode: customAssetsDetailStore.customAssetDetail?.inputCurrency || 'USD',
             transactionType: TransactionRequestType.withdrawToOutside,
             destinationAssetId: null,
@@ -81,7 +89,7 @@ const CSDWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
                 },
             }}
         >
-            <Typography color='primary'>* All money from asset will be withdrawn</Typography>
+            <Typography color='primary'>*  {content.transactionForm.allMoneyFromAssetWillBeWithdrawn}</Typography>
 
             <TextField
                 type="number"
@@ -92,7 +100,7 @@ const CSDWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
                 }}
                 sx={{ mt: 1, display: 'block' }}
                 id="outlined-cash-amount"
-                label={`${'Amount'}*`}
+                label={`${content.transactionForm.amount}*`}
                 variant="outlined"
                 value={customAssetsDetailStore.customAssetDetail?.inputMoneyAmount}
                 error={typeof errors.amount?.message !== 'undefined'}
@@ -101,12 +109,12 @@ const CSDWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
             <Box mt='10px'></Box>
 
             <FormControl fullWidth>
-                <InputLabel id="currency-list">{'Currency Code'}</InputLabel>
+                <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
                 <Select
                     variant="outlined"
                     labelId="currency-list"
                     id="cash-currency-list-select"
-                    label={`${'Currency Code'}*`}
+                    label={`${content.transactionForm.currency}*`}
                     value={customAssetsDetailStore.customAssetDetail?.inputCurrency.toUpperCase()}
                 >
                     {currencyList.map((item, index) => {
@@ -129,7 +137,7 @@ const CSDWithdrawToOutside = observer(({ handleFormSubmit }: IProps) => {
                     height: '2.5rem',
                 }}
             >
-                WITHDRAW
+                {content.transactionForm.withdrawButton}
             </Button>
         </Box>
     );

@@ -20,7 +20,7 @@ import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import { observer } from "mobx-react-lite";
-import { AssetTypeName } from "shared/constants";
+import { AssetTypeName, TransactionRequestType } from "shared/constants";
 
 type FormValues = {
   amount: number;
@@ -29,12 +29,16 @@ type FormValues = {
 
 interface IProps {
   handleFormSubmit: Function;
+  content: any
 }
 
-export const REMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
+export const REMoveToFundForm = observer(({ handleFormSubmit, content }: IProps) => {
   const theme = useTheme();
   const validationSchema = Yup.object().shape({
-    amount: Yup.number(),
+    amount: Yup.number()
+      .required('Amount is required')
+      .typeError('Amount must be a number')
+      .positive('Amount must be greater than zero'),
     currencyCode: Yup.string().required().default('USD'),
   });
 
@@ -46,11 +50,19 @@ export const REMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
 
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     const res = handleFormSubmit({
-      referentialAssetId: realEstateDetailStore.assetDetail?.id,
-      referentialAssetType: AssetTypeName.realEstate,
+      amount: realEstateDetailStore.assetDetail?.currentPrice,
+      valueOfReferentialAssetBeforeCreatingTransaction:realEstateDetailStore.assetDetail?.currentPrice,
+      amountInDestinationAssetUnit: realEstateDetailStore.assetDetail?.currentPrice,
       currencyCode: realEstateDetailStore.assetDetail?.inputCurrency.toUpperCase() || 'USD',
-      amount: realEstateDetailStore.assetDetail?.inputMoneyAmount,
-      isTransferingAll: true,
+      transactionType: TransactionRequestType.moveToFund,
+      referentialAssetType: AssetTypeName.realEstate,
+      referentialAssetId: realEstateDetailStore.assetDetail?.id,
+      destinationAssetId: null,
+      destinationAssetType: 'fund',
+      isTransferringAll: true,
+      isUsingFundAsSource: false,
+      fee: 0,
+      tax: 0,
     });
   };
 
@@ -72,7 +84,7 @@ export const REMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
         },
       }}
     >
-      <Typography color='primary'>* All money from asset will be transferred</Typography>
+      <Typography color='primary'>*  {content.transactionForm.allMoneyFromAssetWillBeTransferred}</Typography>
       <TextField
         type="number"
         fullWidth
@@ -82,7 +94,7 @@ export const REMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
           readOnly: true,
         }}
         id="outlined-amount"
-        label={'Amount*'}
+        label={`${content.transactionForm.amount}*`}
         value={realEstateDetailStore.assetDetail?.inputMoneyAmount}
         variant="outlined"
         error={typeof errors.amount?.message !== 'undefined'}
@@ -91,12 +103,12 @@ export const REMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
       <Box mt='10px'></Box>
 
       <FormControl fullWidth>
-        <InputLabel id="currency-list">{'Currency Code*'}</InputLabel>
+        <InputLabel id="currency-list">{content.transactionForm.currency}*</InputLabel>
         <Select
           variant="outlined"
           labelId="currency-list"
           id="stock-currency-list-select"
-          label={`*${'Currency Code'}`}
+          label={`${content.transactionForm.currency}*`}
           value={realEstateDetailStore.assetDetail?.inputCurrency || 'USD'}
           {...register('currencyCode')}
         >
@@ -120,7 +132,7 @@ export const REMoveToFundForm = observer(({ handleFormSubmit }: IProps) => {
           height: "2.5rem",
         }}
       >
-        TRANSFER TO FUND
+        {content.transactionForm.moveToFund}
       </Button>
     </Box>
   );

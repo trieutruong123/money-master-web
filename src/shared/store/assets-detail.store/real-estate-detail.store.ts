@@ -1,27 +1,40 @@
-import { rootStore } from "shared/store";
-import { getCurrencyByCode, httpError } from "shared/helpers";
-import { action, makeAutoObservable, observable, runInAction } from "mobx";
-import { httpService } from "services";
-import { CashItem, RealEstateItem, TransactionItem } from "shared/models";
-import { content } from "i18n";
-import { AssetTypeName, TransactionTypeName } from "shared/constants";
+import { rootStore } from 'shared/store';
+import { getCurrencyByCode, httpError } from 'shared/helpers';
+import { action, makeAutoObservable, observable, runInAction } from 'mobx';
+import { httpService } from 'services';
+import { CashItem, RealEstateItem, TransactionItem } from 'shared/models';
+import { content } from 'i18n';
+import {
+  AssetTypeName,
+  TransactionHistoryContants,
+  TransactionTypeName,
+} from 'shared/constants';
 import {
   CurrencyItem,
+  ITransactionListRequest,
   ITransactionRequest,
   Portfolio,
   TransferToInvestFundType,
-} from "shared/types";
+} from 'shared/types';
+import dayjs from 'dayjs';
 
 class RealEstateDetailStore {
   portfolioId: number = 0;
-  currencyCode: string = "usd";
+  currencyCode: string = 'usd';
   portfolioInfo: Portfolio | undefined = undefined;
 
-  realEstateName: string | undefined = "";
+  realEstateName: string | undefined = '';
   assetId: number = 0;
   assetDetail: RealEstateItem | undefined = undefined;
 
-  transactionHistory: Array<TransactionItem> | undefined = [];
+  transactionHistory: Array<TransactionItem> | undefined = undefined;
+  transactionSelection: {
+    type: 'all' | 'in' | 'out';
+    startDate: Date | null;
+    endDate: Date | null;
+  } = { type: 'all', startDate: null, endDate: null };
+  currentPage: number = 1;
+
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
   needUpdateOverviewData: boolean = true;
@@ -41,15 +54,20 @@ class RealEstateDetailStore {
       currencyList: observable,
       needUpdateOverviewData: observable,
       isOpenAddNewTransactionModal: observable,
+      transactionSelection: observable,
+      currentPage: observable,
 
       setPortfolioId: action,
       setOpenAddNewTransactionModal: action,
       setCurrency: action,
       setAssetId: action,
       setUpdateOverviewData: action,
+      setTransactionHistory: action,
+      setSelectedTransaction: action,
+      setCurrentPage: action,
 
       fetchRealEstateDetail: action,
-      fetchRealEstateTransactionHistory: action,
+      fetchTransactionHistoryData: action,
       fetchPortfolioInfo: action,
       fetchCash: action,
 
@@ -58,6 +76,21 @@ class RealEstateDetailStore {
       createNewTransaction: action,
       transferAssetToInvestFund: action,
     });
+  }
+
+  setSelectedTransaction(key: string, value: any) {
+    this.transactionSelection = {
+      ...this.transactionSelection,
+      [key]: value,
+    };
+  }
+
+  setCurrentPage(pageNumber: number) {
+    this.currentPage = pageNumber;
+  }
+
+  setTransactionHistory(history: TransactionItem[]) {
+    this.transactionHistory = history;
   }
 
   setPortfolioId(portfolioId: string) {
@@ -85,7 +118,6 @@ class RealEstateDetailStore {
       this.fetchPortfolioInfo(),
       this.fetchCash(),
       this.fetchRealEstateDetail(),
-      this.fetchRealEstateTransactionHistory(),
     ]);
   }
 
@@ -98,10 +130,10 @@ class RealEstateDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.find(
-        (item: Portfolio) => item.id === this.portfolioId
+        (item: Portfolio) => item.id === this.portfolioId,
       );
       runInAction(() => {
-        this.currencyCode = this.portfolioInfo?.initialCurrency || "usd";
+        this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
         this.portfolioInfo = currentPortfolio;
       });
     } else {
@@ -109,6 +141,7 @@ class RealEstateDetailStore {
         this.portfolioInfo = undefined;
       });
     }
+    return res;
   }
 
   async createNewTransaction(params: ITransactionRequest) {
@@ -116,29 +149,33 @@ class RealEstateDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
+      rootStore.raiseNotification(
+        content[rootStore.locale].success.default,
+        'success',
+      );
       return res;
     } else {
-      rootStore.raiseError(content[rootStore.locale].error.badRequest);
+      rootStore.raiseError(content[rootStore.locale].error.default);
       return res;
     }
   }
 
   async transferAssetToInvestFund(params: TransferToInvestFundType) {
     rootStore.startLoading();
-    const url = `/portfolio/${this.portfolioId}/fund`;
+    const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
-        content[rootStore.locale].success.transfer,
-        "success"
+        content[rootStore.locale].success.default,
+        'success',
       );
       return res;
     } else {
@@ -153,18 +190,19 @@ class RealEstateDetailStore {
     if (!res.isError) {
       runInAction(() => {
         this.assetDetail = res.data.find(
-          (item: any) => item.id == this.assetId
+          (item: any) => item.id == this.assetId,
         );
         this.realEstateName = res.data.find(
-          (item: any) => item.id == this.assetId
+          (item: any) => item.id == this.assetId,
         ).name;
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
+        content[rootStore.locale].error.failedToLoadInitialData,
       );
       this.assetDetail = undefined;
     }
+    return res;
   }
 
   async fetchCash() {
@@ -177,36 +215,46 @@ class RealEstateDetailStore {
       runInAction(() => {
         this.cashDetail = res.data;
         this.currencyList = res.data.map((item: CashItem) =>
-          getCurrencyByCode(item.currencyCode)
+          getCurrencyByCode(item.currencyCode),
         );
       });
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
       runInAction(() => {
         this.cashDetail = undefined;
         this.currencyList = undefined;
       });
     }
+    return res;
   }
 
-  async fetchRealEstateTransactionHistory() {
+  async fetchTransactionHistoryData({
+    itemsPerPage,
+    nextPage,
+    startDate,
+    endDate,
+    type,
+  }: ITransactionListRequest) {
     if (!this.portfolioId || !this.assetId) {
       return;
     }
+    let params: any = {
+      PageSize: itemsPerPage,
+      PageNumber: nextPage,
+      Type: type,
+    };
+    if (endDate) params.EndDate = endDate;
+    if (startDate) params.StartDate = startDate;
+
     const url = `/portfolio/${this.portfolioId}/realEstate/${this.assetId}/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.get(url);
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
     if (!res.isError) {
-      runInAction(() => {
-        this.transactionHistory = res.data;
-      });
+      return res.data;
     } else {
-      rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
-      );
+      return [];
     }
-    return res;
   }
 
   async updateAssetDetail(params: any) {
@@ -224,8 +272,41 @@ class RealEstateDetailStore {
     rootStore.stopLoading();
     if (!res.isError) {
       this.assetDetail = res.data;
-      return { isError: false, data: httpError.handleSuccessMessage("update") };
+      return { isError: false, data: httpError.handleSuccessMessage('update') };
     } else return { isError: true, data: httpError.handleErrorCode(res) };
+  }
+
+  async resetTransaction() {
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: 'all',
+      startDate: null,
+      endDate: null,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
+    this.setSelectedTransaction('type', 'all');
+    this.setSelectedTransaction('startDate', null);
+    this.setSelectedTransaction('endDate', null);
+  }
+
+  async refreshTransactionHistory() {
+    const startDate = this.transactionSelection.startDate
+      ? dayjs(this.transactionSelection.startDate).startOf('day').format()
+      : null;
+    const endDate = this.transactionSelection.endDate
+      ? dayjs(this.transactionSelection.endDate).endOf('day').format()
+      : null;
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: this.transactionSelection.type,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
   }
 
   resetInitialState() {
@@ -239,6 +320,13 @@ class RealEstateDetailStore {
 
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
+
+      this.currentPage = 1;
+      this.transactionSelection = {
+        startDate: null,
+        endDate: null,
+        type: 'all',
+      };
     });
   }
 }

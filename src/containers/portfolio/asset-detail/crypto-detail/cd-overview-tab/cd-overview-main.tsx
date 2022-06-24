@@ -1,7 +1,9 @@
 import { Grid } from '@mui/material';
 import { observer } from 'mobx-react-lite';
 import { lazy, Suspense, useEffect } from 'react';
-import { cryptoDetailStore, rootStore } from 'shared/store';
+import { cashDetailStore, cryptoDetailStore, rootStore } from 'shared/store';
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
 
 const CDIntroSection = lazy(() => import('./cd-intro-section'));
 const CDTransactionHistory = lazy(() => import('./cd-transaction-history'));
@@ -9,10 +11,19 @@ const CDTransactionHistory = lazy(() => import('./cd-transaction-history'));
 const CDOverviewTab = observer(() => {
   const { portfolioId, cryptoId } = cryptoDetailStore;
 
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].cryptoDetailPage : i18n['en'].cryptoDetailPage;
+
+  useEffect(()=>{
+    cryptoDetailStore.resetTransaction();
+  },[])
+
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       rootStore.startLoading();
       await cryptoDetailStore.fetchOverviewTabData();
+      await cryptoDetailStore.refreshTransactionHistory();
       rootStore.stopLoading();
     };
     if (portfolioId && cryptoId && cryptoDetailStore.needUpdateOverviewData) {
@@ -25,11 +36,15 @@ const CDOverviewTab = observer(() => {
   return (
     <>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
-        <CDIntroSection assetDetail={cryptoDetailStore.cryptoDetail} />
+        <Suspense fallback={<></>}>
+
+          <CDIntroSection content={content} assetDetail={cryptoDetailStore.cryptoDetail} />
+        </Suspense>
       </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <Suspense fallback={<></>}>
           <CDTransactionHistory
+            content={content}
             transactionHistoryData={cryptoDetailStore.transactionHistory}
           />
         </Suspense>

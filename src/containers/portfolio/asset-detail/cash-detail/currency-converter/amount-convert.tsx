@@ -6,6 +6,8 @@ import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { cashDetailStore } from "shared/store";
+import { content as i18n } from 'i18n';
+import { useRouter } from 'next/router';
 
 interface IProps {
   sourceAmount: number;
@@ -17,6 +19,10 @@ interface IProps {
 }
 
 function AmountConvert(props: IProps) {
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].cashDetailPage : i18n['en'].cashDetailPage
+
   const [currencyList, setCurrencyList] = React.useState<any>({});
   React.useEffect(() => {
     getSupportedCurrencyList().forEach((currency) => {
@@ -65,7 +71,7 @@ function AmountConvert(props: IProps) {
               onChange={handleValueChange}
               value={props.sourceAmount}
               name="sourceValue"
-              label="Amount"
+              label={content.marketDataTab.amount}
               id="outlined-basic"
               sx={{ marginRight: '1rem', borderRadius: "2%" }}
               type={"number"}
@@ -96,7 +102,7 @@ function AmountConvert(props: IProps) {
               value={props.targetAmount}
               onChange={handleValueChange}
               name="targetValue"
-              label="Amount"
+              label={content.marketDataTab.amount}
               id="outlined-basic"
               sx={{ marginRight: '1rem', borderRadius: "2%" }}
               type="number"
@@ -127,7 +133,7 @@ function AmountConvert(props: IProps) {
           justifyContent="center"
         >
           <Typography variant="body1">
-            Exchange rate: &nbsp;
+            {content.marketDataTab.exchangeRate}: &nbsp;
           </Typography>
           <Typography variant="body1" color={'success.main'}>
             {cashDetailStore.forexMarketData?.response.at(0)?.c || '--'}
@@ -141,7 +147,7 @@ function AmountConvert(props: IProps) {
           justifyContent="center"
         >
           <Typography variant="body1">
-            Daily change: &nbsp;
+            {content.marketDataTab.dailyChange}: &nbsp;
           </Typography>
           <Typography variant="body1" color={cashDetailStore.forexMarketData?.response.at(0)?.ch > 0 ? 'success.main' : 'error.main'}>
             {cashDetailStore.forexMarketData?.response.at(0)?.ch || '--'} @
@@ -156,7 +162,7 @@ function AmountConvert(props: IProps) {
           justifyContent="center"
         >
           <Typography variant="body1">
-            Open: &nbsp;
+            {content.marketDataTab.open}: &nbsp;
           </Typography>
           <Typography variant="body1" color={'success.main'}>
             {cashDetailStore.forexMarketData?.response.at(0)?.o || '--'}
@@ -170,7 +176,7 @@ function AmountConvert(props: IProps) {
           justifyContent="center"
         >
           <Typography variant="body1">
-            Close: &nbsp;
+            {content.marketDataTab.close}: &nbsp;
           </Typography>
           <Typography variant="body1" color={'success.main'}>
             {cashDetailStore.forexMarketData?.response.at(0)?.c || '--'}
@@ -184,7 +190,7 @@ function AmountConvert(props: IProps) {
           justifyContent="center"
         >
           <Typography variant="body1">
-            High: &nbsp;
+            {content.marketDataTab.high}: &nbsp;
           </Typography>
           <Typography variant="body1" color={'success.main'}>
             {cashDetailStore.forexMarketData?.response.at(0)?.h || '--'}
@@ -198,7 +204,7 @@ function AmountConvert(props: IProps) {
           justifyContent="center"
         >
           <Typography variant="body1">
-            Low: &nbsp;
+            {content.marketDataTab.low}: &nbsp;
           </Typography>
           <Typography variant="body1" color={'success.main'}>
             {cashDetailStore.forexMarketData?.response.at(0)?.l || '--'}

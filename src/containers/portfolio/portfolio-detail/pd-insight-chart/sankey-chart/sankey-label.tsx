@@ -14,7 +14,7 @@ export const SankeyLabel = ({
   ...textProps
 }: SankeyLabelProps): JSX.Element => {
   const name=text.split('@@')[1];
-  const category=text.split('@@')[0];
+  const category=text.split('@@')[0].split('_').slice(0,-1).join('');
  
   return (
       <text {...textProps}>

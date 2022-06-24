@@ -105,12 +105,9 @@ export const LoginForm = observer(({ content }: IProps) => {
   };
 
   const googleSignIn = async () => {
-    const res: any = await userService.googleAuthentication();
+    const res: any = await authStore.SignInWithGoogle();
   };
 
-  const facebookSignIn = async () => {
-    const res: any = await userService.facebookAuthentication();
-  };
 
   return (
     <Grid container spacing={1} alignItems="center" justifyContent="center">
@@ -166,7 +163,7 @@ export const LoginForm = observer(({ content }: IProps) => {
                 variant="outlined"
               >
                 <InputLabel htmlFor="outlined-adornment-password">
-                  Password
+                  {content.password}
                 </InputLabel>
                 <OutlinedInput
                   fullWidth
@@ -192,7 +189,7 @@ export const LoginForm = observer(({ content }: IProps) => {
                   {errors.password?.message}
                 </FormHelperText>
               </FormControl>
-              <Link href="/reset-password" locale={locale}>
+              <Link href="/reset" locale={locale}>
                 <a style={{ marginLeft: '1rem' }} color={colorScheme.theme}>
                   {content.forgotPassword}
                 </a>
@@ -227,14 +224,14 @@ export const LoginForm = observer(({ content }: IProps) => {
             >
               {content.googleSignIn}
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               sx={{ bg: colorScheme.facebook, my: 1 }}
               onClick={facebookSignIn}
               startIcon={<FacebookIcon />}
             >
               {content.facebookSignIn}{' '}
-            </Button>
+            </Button> */}
             <p style={{ marginLeft: '1rem' }}>
               {content.noAccount}{' '}
               <Link href="/sign-up" locale={locale}>

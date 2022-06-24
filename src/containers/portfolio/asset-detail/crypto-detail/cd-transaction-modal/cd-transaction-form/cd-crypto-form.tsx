@@ -7,28 +7,35 @@ import { ITransactionRequest, TransferToInvestFundType } from 'shared/types';
 import CDMoveToFundForm from './cd-transfer-to-fund-form';
 import { cryptoDetailStore } from 'shared/store';
 import CDWithdrawToOutsideForm from './cd-withdraw-to-outside-form';
+import { useRouter } from 'next/router';
+import { content as i18n } from 'i18n';
 
 interface IProps { }
 
 export const CDCryptoForm = observer(({ }: IProps) => {
-  const theme = useTheme();
   const [focusedButtonKey, setFocusedButtonKey] = useState(0);
   const [selectedForm, setSelectedForm] = useState<any>(null);
   const [assetPrice, setAssetPrice] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const theme = useTheme();
+
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].cryptoDetailPage : i18n['en'].cryptoDetailPage;
 
   useEffect(() => {
     const fetchAssetPrice = async () => { };
     fetchAssetPrice();
     setSelectedForm(
       <CDBuyCryptoForm
+        content={content}
         key={focusedButtonKey}
         handleFormSubmit={buyMoreCrypto}
       />,
     );
   }, []);
 
-  const buttonLabels = ['Buy', 'Sell', 'Transfer', 'Withdraw'];
+  const buttonLabels = [content.transactionForm.buy, content.transactionForm.sell, content.transactionForm.transfer, content.transactionForm.withdraw];
 
   const handleSelectionChanged = (key: number) => {
     setFocusedButtonKey(key);
@@ -61,10 +68,10 @@ export const CDCryptoForm = observer(({ }: IProps) => {
 
   const sellCrypto = async (payload: ITransactionRequest) => {
     if (
+      payload.amountInDestinationAssetUnit &&
       cryptoDetailStore.cryptoDetail &&
       cryptoDetailStore.marketData?.c &&
-      payload.amountInDestinationAssetUnit >
-      cryptoDetailStore.cryptoDetail?.currentAmountHolding * cryptoDetailStore.marketData.c
+      payload.amountInDestinationAssetUnit > cryptoDetailStore.cryptoDetail?.currentAmountHolding * cryptoDetailStore.marketData.c
     ) {
       setErrorMessage('Amount is greater than your own shares');
       return;
@@ -79,7 +86,7 @@ export const CDCryptoForm = observer(({ }: IProps) => {
   };
 
   const withdrawToOutside = async (payload: ITransactionRequest) => {
-    if (
+    if (payload.amountInDestinationAssetUnit &&
       cryptoDetailStore.cryptoDetail &&
       cryptoDetailStore.marketData?.c &&
       payload.amountInDestinationAssetUnit >
@@ -98,10 +105,10 @@ export const CDCryptoForm = observer(({ }: IProps) => {
   }
 
   const formArray = [
-    <CDBuyCryptoForm key={focusedButtonKey} handleFormSubmit={buyMoreCrypto} />,
-    <CDSellCryptoForm key={focusedButtonKey} handleFormSubmit={sellCrypto} />,
-    <CDMoveToFundForm key={focusedButtonKey} handleFormSubmit={moveToFund} />,
-    <CDWithdrawToOutsideForm key={focusedButtonKey} handleFormSubmit={withdrawToOutside} />
+    <CDBuyCryptoForm content={content} key={focusedButtonKey} handleFormSubmit={buyMoreCrypto} />,
+    <CDSellCryptoForm content={content} key={focusedButtonKey} handleFormSubmit={sellCrypto} />,
+    <CDMoveToFundForm content={content} key={focusedButtonKey} handleFormSubmit={moveToFund} />,
+    <CDWithdrawToOutsideForm content={content} key={focusedButtonKey} handleFormSubmit={withdrawToOutside} />
   ];
 
   const handleClose = () => {
@@ -112,7 +119,7 @@ export const CDCryptoForm = observer(({ }: IProps) => {
     <Box sx={{ height: 'inherit' }}>
       <Box sx={{ mt: '1rem' }}>
         <Typography align="center" id="modal-modal-title" variant="h4">
-          Transaction
+          {content.transactionForm.transaction}
         </Typography>
       </Box>
       <Box sx={{ ml: '3rem', mt: '1rem' }}>

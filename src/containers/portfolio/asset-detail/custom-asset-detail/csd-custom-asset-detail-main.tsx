@@ -15,6 +15,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { customAssetsDetailStore, rootStore } from 'shared/store';
 import { BreadcrumbsLink, HypnosisLoading } from 'shared/components';
 import CSDTransactionModal from "./csd-transaction-modal/csd-transaction-modal-main";
+import { content as i18n } from 'i18n';
+
 
 const CSDTransactionHistory = lazy(() => import('./csd-transaction-history/csd-transaction-history-main'));
 const CSDIntroSection = lazy(() => import("./csd-intro-section/csd-intro-section-main"));
@@ -26,8 +28,9 @@ const CSDCustomAssetDetail = observer(({ }: IProps) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const router = useRouter();
+    const { locale, query } = router;
+    const content = locale === 'vi' ? i18n['vi'].realEstateDetailPage : i18n['en'].realEstateDetailPage;
 
-    const { query } = router;
     const portfolioId = Array.isArray(query['portfolioId'])
         ? query['portfolioId'][0]
         : query['portfolioId'] || '';
@@ -37,6 +40,7 @@ const CSDCustomAssetDetail = observer(({ }: IProps) => {
 
     useEffect(() => {
         customAssetsDetailStore.resetInitialState();
+        customAssetsDetailStore.resetTransaction();
     }, []);
 
 
@@ -51,6 +55,7 @@ const CSDCustomAssetDetail = observer(({ }: IProps) => {
         const fetchData = async () => {
             rootStore.startLoading();
             await customAssetsDetailStore.fetchOverviewTabData();
+            await customAssetsDetailStore.refreshTransactionHistory();
             rootStore.stopLoading();
         };
         if (portfolioId && assetId && customAssetsDetailStore.needUpdateOverviewData) {
@@ -88,7 +93,7 @@ const CSDCustomAssetDetail = observer(({ }: IProps) => {
                                 `/portfolio/${customAssetsDetailStore.portfolioId}/custom/${customAssetsDetailStore.customAssetId}`,
                             ]}
                             displayNameArr={[
-                                'Portfolio',
+                                content.breadCurmbs.portfolio,
                                 customAssetsDetailStore.portfolioInfo?.name ||
                                 customAssetsDetailStore.portfolioId.toString(),
                                 customAssetsDetailStore.customAssetDetail?.name ||
@@ -124,7 +129,7 @@ const CSDCustomAssetDetail = observer(({ }: IProps) => {
                 <Box>
                     <CSDTransactionModal />
                 </Box>
-                <Tooltip title="Add new transaction">
+                <Tooltip title={content.addNewTransaction}>
                     <IconButton
                         onClick={() => {
                             customAssetsDetailStore.setOpenAddNewTransactionModal(
