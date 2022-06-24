@@ -16,11 +16,11 @@ function PortfolioCard(props: any) {
   const handleOpenDeleteModal = () => setOpenDeleteModal(true);
   const handleCloseDeleteModal = () => setOpenDeleteModal(false);
   const updateHandler = (data: any) => {
-    props.onUpdate(data);
+    props.onUpdate({...data,portfolioId:props.portfolioId});
     setOpenUpdateModal(false);
   };
   const deleteHandler = () => {
-    props.onDelete(portfolio.id);
+    props.onDelete(props.portfolioId);
     setOpenDeleteModal(false);
   };
 
@@ -30,7 +30,7 @@ function PortfolioCard(props: any) {
       <div className={classes.infoPannel}>
         <h2 className={classes.name}>{portfolio.name}</h2>
         <div className={classes.balance}>
-          <h3>{`${portfolio.initialCash} ${portfolio.initialCurrency}`}</h3>
+          <h3>{`${portfolio.initialCurrency}`}</h3>
         </div>
       </div>
       <div className={classes.buttonPanel}>

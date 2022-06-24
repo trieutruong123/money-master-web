@@ -4,6 +4,8 @@ import { httpService } from "./http-service";
 export const portfolioService = {
   getPortfolioList,
   addNewPortfolio,
+  updatePortfolio,
+  deletePortfolio,
 };
 
 async function getPortfolioList() {
@@ -22,6 +24,26 @@ async function getPortfolioList() {
 async function addNewPortfolio(data: any) {
   const url = "/portfolio";
   const res: any = await httpService.post(url, data);
+
+  if (!res.isError) {
+    return res.data;
+  }
+  return res;
+}
+
+async function updatePortfolio(data: any) {
+  const url = "/portfolio/"+data.portfolioId;
+  const res: any = await httpService.put(url, data);
+
+  if (!res.isError) {
+    return res.data;
+  }
+  return res;
+}
+
+async function deletePortfolio(portfolioId: string) {
+  const url = "/portfolio/"+portfolioId;
+  const res: any = await httpService.delete(url);
 
   if (!res.isError) {
     return res.data;
