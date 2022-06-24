@@ -1,4 +1,7 @@
-import { BankSavingItem } from './../../models/portfolio-asset.model';
+import {
+  BankSavingItem,
+  ProfitLossItem,
+} from './../../models/portfolio-asset.model';
 import { rootStore } from 'shared/store';
 import { getCurrencyByCode, httpError } from 'shared/helpers';
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
@@ -35,7 +38,7 @@ class BankSavingsDetailStore {
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
   currentPage: number = 1;
-
+  profitLossList: Array<ProfitLossItem> = [];
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
   needUpdateOverviewData: boolean = true;
@@ -57,6 +60,7 @@ class BankSavingsDetailStore {
       isOpenAddNewTransactionModal: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
 
       setOpenAddNewTransactionModal: action,
       setPortfolioId: action,
@@ -71,7 +75,7 @@ class BankSavingsDetailStore {
       fetchCash: action,
       fetchBankSavingsDetail: action,
       fetchTransactionHistoryData: action,
-
+      fetchBankSavingProfitLoss: action,
       resetInitialState: action,
 
       createNewTransaction: action,
@@ -147,6 +151,27 @@ class BankSavingsDetailStore {
       rootStore.raiseError(content[rootStore.locale].error.default);
       return res;
     }
+  }
+
+  async fetchBankSavingProfitLoss(value: 'day' | 'month' | 'year') {
+    if (!this.portfolioId || !this.assetId) {
+      return;
+    }
+    const params = { Period: value };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/bankSaving/${this.assetId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
+    }
+    return res;
   }
 
   async createNewTransaction(params: ITransactionRequest) {

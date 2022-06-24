@@ -123,3 +123,10 @@ export class CustomAssetItemByCategory {
   categoryName: string = '';
   assets: Array<CustomAssetItem> = [];
 }
+
+export class ProfitLossItem {
+  amount: number = 0;
+  unit: string = '';
+  startTime: string = '';
+  endTime: string = '';
+}

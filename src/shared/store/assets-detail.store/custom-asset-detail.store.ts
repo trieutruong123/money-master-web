@@ -14,6 +14,7 @@ import {
   CashItem,
   CustomAssetItem,
   CustomAssetItemByCategory,
+  ProfitLossItem,
   TransactionItem,
 } from 'shared/models';
 import {
@@ -41,6 +42,7 @@ class CustomAssetDetailStore {
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
   currentPage: number = 1;
+  profitLossList: Array<ProfitLossItem> = [];
 
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
@@ -62,6 +64,7 @@ class CustomAssetDetailStore {
       isOpenAddNewTransactionModal: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
 
       setPortfolioId: action,
       setCustomAssetId: action,
@@ -77,6 +80,7 @@ class CustomAssetDetailStore {
       fetchCash: action,
       fetchPortfolioInfo: action,
       fetchTransactionHistoryData: action,
+      fetchCustomAssetProfitLoss: action,
     });
   }
 
@@ -143,6 +147,27 @@ class CustomAssetDetailStore {
         this.portfolioInfo = undefined;
       });
     }
+  }
+
+  async fetchCustomAssetProfitLoss(value: 'day' | 'month' | 'year') {
+    if (!this.portfolioId || !this.customAssetId) {
+      return;
+    }
+    const params = { Period: value };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/custom/${this.customAssetId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
+    }
+    return res;
   }
 
   async fetchCustomAssetDetail() {

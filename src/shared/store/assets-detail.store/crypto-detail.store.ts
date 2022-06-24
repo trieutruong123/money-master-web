@@ -8,7 +8,12 @@ import {
 } from 'mobx';
 import { content } from 'i18n';
 import { rootStore } from 'shared/store';
-import { CashItem, CryptoItem, TransactionItem } from 'shared/models';
+import {
+  CashItem,
+  CryptoItem,
+  ProfitLossItem,
+  TransactionItem,
+} from 'shared/models';
 import { portfolioData } from '../portfolio/portfolio-data';
 import {
   CurrencyItem,
@@ -52,7 +57,7 @@ class CryptoDetailStore {
     startDate: Date | null;
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
-
+  profitLossList: Array<ProfitLossItem> = [];
   timeInterval: string = '1';
   OHLC_data: Array<any> = [];
   marketData: ICryptoMarketData | undefined = undefined;
@@ -80,6 +85,7 @@ class CryptoDetailStore {
       cryptoProfile: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
 
       setCryptoId: action,
       setCurrency: action,
@@ -96,7 +102,7 @@ class CryptoDetailStore {
       fetchCryptoProfile: action,
       fetchOHLC: action,
       fetchTransactionHistoryData: action,
-
+      fetchCryptoProfitLoss: action,
       fetchPortfolioInfo: action,
       fetchCryptoInfoByCode: action,
 
@@ -324,6 +330,27 @@ class CryptoDetailStore {
         this.marketData = undefined;
       });
     }
+  }
+
+  async fetchCryptoProfitLoss(value: 'day' | 'month' | 'year') {
+    if (!this.portfolioId || !this.cryptoId) {
+      return;
+    }
+    const params = { Period: value };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/crypto/${this.cryptoId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
+    }
+    return res;
   }
 
   async fetchOHLC() {

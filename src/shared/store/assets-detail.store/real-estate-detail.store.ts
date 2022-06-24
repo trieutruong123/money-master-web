@@ -2,7 +2,12 @@ import { rootStore } from 'shared/store';
 import { getCurrencyByCode, httpError } from 'shared/helpers';
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
 import { httpService } from 'services';
-import { CashItem, RealEstateItem, TransactionItem } from 'shared/models';
+import {
+  CashItem,
+  ProfitLossItem,
+  RealEstateItem,
+  TransactionItem,
+} from 'shared/models';
 import { content } from 'i18n';
 import {
   AssetTypeName,
@@ -34,6 +39,7 @@ class RealEstateDetailStore {
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
   currentPage: number = 1;
+  profitLossList: Array<ProfitLossItem> = [];
 
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
@@ -56,6 +62,7 @@ class RealEstateDetailStore {
       isOpenAddNewTransactionModal: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
 
       setPortfolioId: action,
       setOpenAddNewTransactionModal: action,
@@ -70,6 +77,7 @@ class RealEstateDetailStore {
       fetchTransactionHistoryData: action,
       fetchPortfolioInfo: action,
       fetchCash: action,
+      fetchRealEstateProfitLoss: action,
 
       resetInitialState: action,
 
@@ -201,6 +209,27 @@ class RealEstateDetailStore {
         content[rootStore.locale].error.failedToLoadInitialData,
       );
       this.assetDetail = undefined;
+    }
+    return res;
+  }
+
+  async fetchRealEstateProfitLoss(value: 'day' | 'month' | 'year') {
+    if (!this.portfolioId || !this.assetId) {
+      return;
+    }
+    const params = { Period: value };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/realEstate/${this.assetId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
     }
     return res;
   }

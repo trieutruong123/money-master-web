@@ -1,20 +1,23 @@
 import dayjs from 'dayjs';
+import { observer } from 'mobx-react-lite';
 import dynamic from 'next/dynamic';
 import React from 'react';
+import { ProfitLossItem } from 'shared/models';
 import { precisionRound } from 'utils/number';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 
 interface IProps {
-  data: Array<any>;
-  timeInterval: string;
+  data: Array<ProfitLossItem>;
 }
 
- const AreaChart = ({ timeInterval, data }: IProps) => {
-  const areaData = data.map((item: Array<number>) => {
-    return [item[0], item[1]];
+ const RELineChart = observer(({ data }: IProps) => {
+  const areaData = data.map((item: ProfitLossItem) => {
+    return [Date.parse(item.endTime), item.amount];
   });
+
+  console.log(areaData);
   const areaSeries = [{ name: 'Price', data: data }];
   const areaOptions: any = {
     chart: {
@@ -71,13 +74,7 @@ interface IProps {
       tickAmount: 6,
       labels: {
         formatter: function (val: any) {
-          if (timeInterval === '15' || timeInterval === '30')
-            return dayjs.unix(val).format('MMM DD HH:mm');
-          else if (timeInterval === '60')
-            return dayjs.unix(val).format('MMM DD HH:00');
-          else if (timeInterval === 'D')
             return dayjs.unix(val).format('MMM DD YY');
-          else return dayjs.unix(val).format('MMM DD YYYY');
         },
       },
     },
@@ -117,6 +114,6 @@ interface IProps {
       />
     </React.Fragment>
   );
-};
+});
 
-export default AreaChart;
+export default RELineChart;

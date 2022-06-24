@@ -10,7 +10,7 @@ import {
 import { fcsapiService, httpService } from 'services';
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
 import { portfolioData } from 'shared/store/portfolio/portfolio-data';
-import { CashItem } from 'shared/models';
+import { CashItem, ProfitLossItem } from 'shared/models';
 import { rootStore } from 'shared/store';
 import { content } from 'i18n';
 import { AssetTypeName, TransactionTypeName } from 'shared/constants';
@@ -54,7 +54,7 @@ class CashDetailStore {
   forexDetail: any = undefined;
   timeInterval: number = 1;
   timeFrame: string = '1w';
-
+  profitLossList: Array<ProfitLossItem> = [];
   selectedTab: string = PACashBreadcrumbTabs.overview;
   isOpenAddNewTransactionModal: boolean = false;
   needUpdateOverviewData: boolean = false;
@@ -83,11 +83,13 @@ class CashDetailStore {
       selectedTab: observable,
       isOpenAddNewTransactionModal: observable,
       needUpdateOverviewData: observable,
+      profitLossList: observable,
 
       fetchOHLC_Data: action,
       fetchForexInfoByCode: action,
       fetchTransactionHistoryData: action,
       fetchForexDetail: action,
+      fetchCashProfitLoss: action,
 
       setOpenAddNewTransactionModal: action,
       setCashId: action,
@@ -347,6 +349,27 @@ class CashDetailStore {
       );
     } else {
       rootStore.raiseError(content[rootStore.locale].error.default);
+    }
+    return res;
+  }
+
+  async fetchCashProfitLoss(value: 'day' | 'month' | 'year') {
+    if (!this.portfolioId || !this.cashId) {
+      return;
+    }
+    const params = { Period: value };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
     }
     return res;
   }

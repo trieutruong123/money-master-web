@@ -40,8 +40,9 @@ const SDStockDetail = observer(({ }: IProps) => {
 
   useEffect(() => {
     stockDetailStore.resetInitialState();
+    
   }, []);
-
+  
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
     stockDetailStore.setStockId(assetId);

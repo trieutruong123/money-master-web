@@ -1,27 +1,43 @@
-import { Box, Container, Grid, IconButton, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { observer } from "mobx-react-lite";
-import { lazy, Suspense, useEffect } from "react";
-import { realEstateDetailStore, rootStore } from "shared/store";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { BreadcrumbsLink } from "shared/components";
-import { useRouter } from "next/router";
-import { AddNewTransactionModal } from "./re-transaction-modal/re-transaction-modal";
+import {
+  Box,
+  Container,
+  Grid,
+  IconButton,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material';
+import { observer } from 'mobx-react-lite';
+import { lazy, Suspense, useEffect } from 'react';
+import { realEstateDetailStore, rootStore } from 'shared/store';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { BreadcrumbsLink } from 'shared/components';
+import { useRouter } from 'next/router';
+import { AddNewTransactionModal } from './re-transaction-modal/re-transaction-modal';
 import { content as i18n } from 'i18n';
 
+const REIntroSection = lazy(
+  () => import('./re-intro-section/re-intro-section-main'),
+);
+const RETransactionHistory = lazy(
+  () => import('./re-transaction-history/re-transaction-history-main'),
+);
+const REProfitLossChart = lazy(()=> import ('./re-profit-loss-chart/re-profit-loss-chart'),
+)
 
-const REIntroSection = lazy(() => import("./re-intro-section/re-intro-section-main"));
-const RETransactionHistory = lazy(() => import('./re-transaction-history/re-transaction-history-main'));
+interface IProps {}
 
-interface IProps {
-}
-
-const RealEstateDetail = observer(({ }: IProps) => {
+const RealEstateDetail = observer(({}: IProps) => {
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const { locale, query } = router;
-  const content = locale === 'vi' ? i18n['vi'].realEstateDetailPage : i18n['en'].realEstateDetailPage;
+  const content =
+    locale === 'vi'
+      ? i18n['vi'].realEstateDetailPage
+      : i18n['en'].realEstateDetailPage;
 
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
@@ -33,7 +49,6 @@ const RealEstateDetail = observer(({ }: IProps) => {
   useEffect(() => {
     realEstateDetailStore.resetInitialState();
     realEstateDetailStore.resetTransaction();
-
   }, []);
 
   useEffect(() => {
@@ -50,7 +65,11 @@ const RealEstateDetail = observer(({ }: IProps) => {
       await realEstateDetailStore.refreshTransactionHistory();
       rootStore.stopLoading();
     };
-    if (portfolioId && assetId && realEstateDetailStore.needUpdateOverviewData) {
+    if (
+      portfolioId &&
+      assetId &&
+      realEstateDetailStore.needUpdateOverviewData
+    ) {
       fetchData();
       realEstateDetailStore.setUpdateOverviewData(false);
     }
@@ -59,18 +78,18 @@ const RealEstateDetail = observer(({ }: IProps) => {
   return (
     <Box
       sx={{
-        display: "flex",
-        height: "100%",
-        overflow: "hidden",
-        width: "100%",
+        display: 'flex',
+        height: '100%',
+        overflow: 'hidden',
+        width: '100%',
       }}
     >
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          flex: "1 1 auto",
-          overflow: "hidden",
+          display: 'flex',
+          justifyContent: 'center',
+          flex: '1 1 auto',
+          overflow: 'hidden',
         }}
       >
         <Box sx={{ overflow: 'auto', width: '100%' }}>
@@ -84,9 +103,9 @@ const RealEstateDetail = observer(({ }: IProps) => {
               displayNameArr={[
                 'Portfolio',
                 realEstateDetailStore.portfolioInfo?.name ||
-                realEstateDetailStore.portfolioId.toString(),
+                  realEstateDetailStore.portfolioId.toString(),
                 realEstateDetailStore.assetDetail?.name ||
-                realEstateDetailStore.assetId.toString(),
+                  realEstateDetailStore.assetId.toString(),
               ]}
             />
             <Typography sx={{ mb: 3 }} variant="h4">
@@ -107,7 +126,16 @@ const RealEstateDetail = observer(({ }: IProps) => {
                 </Grid>
                 <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
                   <Suspense fallback={<></>}>
-                    <RETransactionHistory transactionHistoryData={realEstateDetailStore.transactionHistory} />
+                    <REProfitLossChart />
+                  </Suspense>
+                </Grid>
+                <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
+                  <Suspense fallback={<></>}>
+                    <RETransactionHistory
+                      transactionHistoryData={
+                        realEstateDetailStore.transactionHistory
+                      }
+                    />
                   </Suspense>
                 </Grid>
               </Grid>
@@ -122,13 +150,13 @@ const RealEstateDetail = observer(({ }: IProps) => {
         <IconButton
           onClick={() => {
             realEstateDetailStore.setOpenAddNewTransactionModal(
-              !realEstateDetailStore.isOpenAddNewTransactionModal
+              !realEstateDetailStore.isOpenAddNewTransactionModal,
             );
           }}
           color="success"
-          sx={{ position: "absolute", right: "6vw", bottom: "6vh" }}
+          sx={{ position: 'absolute', right: '6vw', bottom: '6vh' }}
         >
-          <AddCircleIcon sx={{ width: "4rem", height: "4rem" }} />
+          <AddCircleIcon sx={{ width: '4rem', height: '4rem' }} />
         </IconButton>
       </Tooltip>
     </Box>

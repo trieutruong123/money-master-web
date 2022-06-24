@@ -207,7 +207,7 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
-              height: '3rem',
+              height: '5rem',
               boxShadow: 'none',
             }}
           >

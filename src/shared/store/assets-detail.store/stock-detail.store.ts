@@ -7,7 +7,12 @@ import {
 import { content } from 'i18n';
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
 import { finhubService, httpService } from 'services';
-import { CashItem, StockItem, TransactionItem } from 'shared/models';
+import {
+  CashItem,
+  ProfitLossItem,
+  StockItem,
+  TransactionItem,
+} from 'shared/models';
 import { rootStore } from 'shared/store';
 import {
   ITransactionListRequest,
@@ -47,6 +52,8 @@ class StockDetailStore {
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
 
+  profitLossList: Array<ProfitLossItem> = [];
+
   timeInterval: string = 'W';
   OHLC_data: Array<any> = [];
   marketData: IStockMarketData | undefined = undefined;
@@ -74,6 +81,7 @@ class StockDetailStore {
       marketData: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
 
       setOpenAddNewTransactionModal: action,
       setStockId: action,
@@ -93,6 +101,7 @@ class StockDetailStore {
       fetchTransactionHistoryData: action,
       fetchPortfolioInfo: action,
       fetchStockInfoByCode: action,
+      fetchStockProfitLoss: action,
 
       createNewTransaction: action,
     });
@@ -191,6 +200,27 @@ class StockDetailStore {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,
       );
+    }
+    return res;
+  }
+
+  async fetchStockProfitLoss(value: 'day' | 'month' | 'year') {
+    if (!this.portfolioId || !this.stockId) {
+      return;
+    }
+    const params = { Period: value };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/stock/${this.stockId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
     }
     return res;
   }
