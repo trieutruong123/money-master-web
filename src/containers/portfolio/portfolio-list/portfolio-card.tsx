@@ -16,7 +16,8 @@ function PortfolioCard(props: any) {
   const handleOpenDeleteModal = () => setOpenDeleteModal(true);
   const handleCloseDeleteModal = () => setOpenDeleteModal(false);
   const updateHandler = (data: any) => {
-    props.onUpdate({...data,portfolioId:props.portfolioId});
+    console.log(data)
+    props.onUpdate({newName:data.name,newCurrency:data.initialCurrency,portfolioId:props.portfolioId});
     setOpenUpdateModal(false);
   };
   const deleteHandler = () => {
