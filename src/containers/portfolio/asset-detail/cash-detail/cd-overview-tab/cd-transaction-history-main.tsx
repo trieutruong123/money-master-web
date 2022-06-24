@@ -15,14 +15,15 @@ import {
   InputLabel, 
   Select,
   MenuItem,
-  SelectChangeEvent
+  TextField,
+  SelectChangeEvent,
+  IconButton,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
 import { AssetTypeConstants, AssetTypeName, TransactionHistoryContants, TransactionTypeName } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
 import { CashTransactionList, TransactionItem } from 'shared/models';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { colorScheme } from 'utils';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
 import { cashDetailStore } from 'shared/store';
@@ -30,6 +31,11 @@ import { observer } from 'mobx-react-lite';
 import { useRouter } from 'next/router';
 import { Pagination } from 'shared/components';
 import { useEffect, useState } from 'react';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import {GrPowerReset } from 'react-icons/gr';
+import { v4 as uuid } from 'uuid';
+
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -63,24 +69,9 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
   const { locale } = router;
   const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
 
-  const transactionType = [{
-      label:'All',
-      tyle: TransactionHistoryContants.all,
-    },
-    {
-      label:'Go in',
-      type: TransactionHistoryContants.in
-    },
-    {
-      label:'Go out',
-      type:TransactionHistoryContants.out
-    }   
-  ]
 
   const resetTransaction = async()=>{
-    const data = await cashDetailStore.fetchTransactionHistoryData({itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, nextPage:1, type:'all'});
-    cashDetailStore.setTransactionHistory(data);
-    cashDetailStore.setCurrentPage(1);
+    await cashDetailStore.resetTransaction();
     resetPageNumbers();
   }
 
@@ -95,7 +86,8 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
     }
     const currentPage = cashDetailStore.currentPage;
     const total = cashDetailStore.transactionHistory.length;
-    const count = Math.round(total / TransactionHistoryContants.itemsPerPage) + 1;
+    const plus = total % TransactionHistoryContants.itemsPerPage? 1:0;
+    const count = Math.floor(total / TransactionHistoryContants.itemsPerPage) + plus ;
     let arrPagination:Array<number> = [];
 
     if (count < 4 || currentPage <= 2) {
@@ -107,36 +99,71 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
     else if (count >= 4 && currentPage < count) {
       arrPagination =   Array.from({ length: count}, (_, i) => i + 1).slice(currentPage-2, currentPage+1);
     }
-    console.log(arrPagination);
     setPageNumbers(arrPagination);
   }
 
   const handlePageChange = async (pageNumber: number) => {
     const transactionHistory = cashDetailStore.transactionHistory&&cashDetailStore.transactionHistory.slice() || [];
     const total = transactionHistory.length;
-    const count = Math.round(total / 10) + 1;
-
+    const plus = total % TransactionHistoryContants.itemsPerPage? 1:0
+    const count = Math.floor(total / TransactionHistoryContants.itemsPerPage) + plus;
+    if(pageNumber ===cashDetailStore.currentPage){
+      return;
+    }
     if (pageNumber < count && pageNumber > 0) {
       cashDetailStore.setCurrentPage(pageNumber);
       resetPageNumbers()
     }
 
     if(pageNumber == count ){
-      const data = await cashDetailStore.fetchTransactionHistoryData({ itemsPerPage: 10, nextPage: pageNumber + 1, type: cashDetailStore.selectedType, });
+      const data = await cashDetailStore.fetchTransactionHistoryData({ 
+                                                                  itemsPerPage: TransactionHistoryContants.itemsPerPage, 
+                                                                  nextPage: pageNumber + 1, 
+                                                                  ...cashDetailStore.transactionSelection
+                                                                  });
       if (data && data.length > 0) {
         transactionHistory.push(...data);
         cashDetailStore.setTransactionHistory(transactionHistory);
       }
+      cashDetailStore.setCurrentPage(pageNumber);
     }
   }
 
-  const handleDateChange = async()=>{
+  const handleStartDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
+    cashDetailStore.setSelectedTransaction('startDate',value);
+    const startDate = dayjs(new Date(cashDetailStore.transactionSelection.startDate||Date.now())).startOf('day').toDate();
+    const endDate = dayjs(new Date(cashDetailStore.transactionSelection.endDate||Date.now())).endOf('day').toDate();
+    const data = await cashDetailStore.fetchTransactionHistoryData({
+                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
+                                                                  nextPage:1,
+                                                                  type:cashDetailStore.transactionSelection.type,
+                                                                  startDate: startDate,
+                                                                  endDate: endDate});
+    cashDetailStore.setTransactionHistory(data);
+    cashDetailStore.setCurrentPage(1);
+  }
 
+  const handleEndDateChange = async(value: any, keyboardInputValue?: string | undefined)=>{
+    cashDetailStore.setSelectedTransaction("endDate",value);
+    const startDate = dayjs(new Date(cashDetailStore.transactionSelection.startDate||Date.now())).startOf('day').toDate();
+    const endDate = dayjs(new Date(cashDetailStore.transactionSelection.endDate||Date.now())).endOf('day').toDate();
+    const data = await cashDetailStore.fetchTransactionHistoryData({
+                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
+                                                                  nextPage:1,
+                                                                  type:cashDetailStore.transactionSelection.type,
+                                                                  startDate: startDate,
+                                                                  endDate: endDate});
+    cashDetailStore.setTransactionHistory(data);
+    cashDetailStore.setCurrentPage(1);
   }
   
   const handleSelectedTypeChange = async (event: SelectChangeEvent) => {
-    cashDetailStore.setSelectedTransactionType(event.target.value as any);
-    const data = await cashDetailStore.fetchTransactionHistoryData({itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, nextPage:1, type:event.target.value as any});
+    cashDetailStore.setSelectedTransaction('type',event.target.value as any);
+    const data = await cashDetailStore.fetchTransactionHistoryData({
+                                                                  itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, 
+                                                                  nextPage:1,
+                                                                  ...cashDetailStore.transactionSelection
+                                                                  });
     cashDetailStore.setTransactionHistory(data);
     cashDetailStore.setCurrentPage(1);
   }
@@ -258,31 +285,74 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
           <Card
             sx={{
               display: 'flex',
-              justifyContent: 'space-between',
-              height: '3rem',
+              justifyContent: 'center',
+              alignItems:'center',
+              height: '5rem',
               boxShadow: 'none',
             }}
           >
-            <CardHeader title="" sx={{ padding: '0px' }} />
-            {/* <FormControl sx={{ minWidth: 80, px: '.2rem', pb: '.2rem' }}>
+            <CardHeader title="" sx={{padding: '0px', marginRight:'auto' }} />
+            <FormControl sx={{ minWidth: '6rem', height:'4rem', px: '.2rem', mt:'10px'}}>
                 <InputLabel id="type-select-label">Type</InputLabel>
                 <Select
                   labelId="type-select-label"
                   id="type-select"
-                  value={cashDetailStore.selectedType}
+                  value={cashDetailStore.transactionSelection.type||'all'}
                   label={'Type'}
                   onChange={handleSelectedTypeChange}
                 >
-                  {transactionType.map((item, index) => (
-                    <MenuItem key={index.toString()} value={item.type}>
-                      {item.label}
+                    <MenuItem key={uuid()} value={TransactionHistoryContants.all}>
+                      All
                     </MenuItem>
-                  ))}1
+                    <MenuItem key={uuid()} value={TransactionHistoryContants.in}>
+                      In
+                    </MenuItem>
+                    <MenuItem key={uuid()} value={TransactionHistoryContants.out}>
+                      Out
+                    </MenuItem>
                 </Select>
-              </FormControl> */}
-            <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-              <MoreHorizIcon />
-            </Button>
+            </FormControl>
+            <Box
+                sx={{
+                  mt:'10px',
+                  height:'4rem'
+                }}
+              >
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label={'Start date'}
+                    inputFormat="dd/MM/yyyy"
+                    value = {cashDetailStore.transactionSelection.startDate}
+                    onAccept={()=>true}
+                    onChange={handleStartDateChange}
+                    renderInput={(params) => (
+                      <TextField {...params} sx={{ width: '10rem' }} />
+                    )}
+                  />
+                </LocalizationProvider>
+            </Box>
+            <Box
+              sx={{
+                mt:'10px',
+                height:'4rem',
+                ml:'5px',
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label={'End date'}
+                  inputFormat="dd/MM/yyyy"
+                  value = {cashDetailStore.transactionSelection.endDate}
+                  onChange={handleEndDateChange}
+                  renderInput={(params) => (
+                    <TextField {...params} sx={{ width: '10rem' }} />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
+            <IconButton onClick = {resetTransaction} sx={{ padding: '0px', color: '#CBCBCD',marginLeft:'auto', width:'3rem', height:'3rem' }}>
+              <GrPowerReset />
+            </IconButton>
           </Card>
           <Box>
             <Table>
@@ -296,7 +366,7 @@ const CDTransactionHistory = observer(({ transactionHistoryData, content }: IPro
                 </TableRow>
               </TableHead>
               <TableBody>
-                {transactionHistoryData.slice((cashDetailStore.currentPage-1)*10,cashDetailStore.currentPage*10).map((record, i) => {
+                {transactionHistoryData.slice((cashDetailStore.currentPage-1)*TransactionHistoryContants.itemsPerPage,cashDetailStore.currentPage*TransactionHistoryContants.itemsPerPage).map((record, i) => {
                   return (
                     <TableRow
                       key={i}

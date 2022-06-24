@@ -10,3 +10,16 @@ export const convertMilisecondsToString = (miliseconds: number): string => {
   if (hours < 1) return minutesInString + ':' + secondsInString;
   else return hoursInString + ':' + minutesInString + ':' + secondsInString;
 };
+
+export const convertUTCToLocalTimeZone = (date: string | Date | null) => {
+  if (!date) {
+    return new Date();
+  } else if (typeof date === 'string') {
+    var offset = new Date().getTimezoneOffset();
+
+    return new Date();
+  } else if (typeof date === 'object') {
+    var offset = new Date().getTimezoneOffset();
+    return new Date();
+  }
+};

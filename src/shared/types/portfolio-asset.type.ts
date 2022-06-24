@@ -40,7 +40,7 @@ export interface ITransactionRequest {
 export interface ITransactionListRequest {
   itemsPerPage: number;
   nextPage: number;
-  startDate?: Date;
-  endDate?: Date;
-  type?: 'all' | 'in' | 'out';
+  startDate: Date | null;
+  endDate: Date | null;
+  type: 'all' | 'in' | 'out';
 }

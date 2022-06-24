@@ -32,7 +32,8 @@ export const AddNewCashForm = observer(
 
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
 
-    const handleFormSubmit = (data: NewCashAsset) => {
+    const handleFormSubmit = async (data: NewCashAsset) => {
+      console.log('handleFormSubmit');
       if (data.isUsingCash) {
         const cashId = data.usingCashId;
         const cashDetail = portfolioDetailStore.cashDetail?.find(item => item.id === cashId);
@@ -41,11 +42,12 @@ export const AddNewCashForm = observer(
           return;
         }
       }
+      console.log('xuong day roi');
       if (isExistedCash(data)) {
-        addMoreValue(data);
+        await addMoreValue(data);
       }
       else {
-        addNewCash(data);
+        await addNewCash(data);
       }
     };
 
@@ -58,6 +60,7 @@ export const AddNewCashForm = observer(
       if (!cashItem) {
         return;
       }
+      console.log('vo day ne');
       const moneySource = portfolioDetailStore.selectedAsset?.moneySource
       const payload = {
         amount: data.amount,
@@ -73,6 +76,7 @@ export const AddNewCashForm = observer(
         fee: data.fee,
         tax: data.tax,
       };
+      console.log('mua ori ne')
       const res = await portfolioDetailStore.createNewTransaction(payload);
       if (res.isError) {
         if (data.isUsingCash || data.isUsingInvestFund) {
@@ -95,6 +99,7 @@ export const AddNewCashForm = observer(
     }
 
     const addNewCash = async (data: NewCashAsset) => {
+      console.log('add new cash');
       const res = await portfolioDetailStore.addNewCash(data);
       if (res.isError) {
         if (data.isUsingInvestFund || data.isUsingCash) {

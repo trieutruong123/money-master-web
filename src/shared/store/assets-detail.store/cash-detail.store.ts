@@ -3,7 +3,10 @@ import {
   ITransactionRequest,
 } from './../../types/portfolio-asset.type';
 import { TransactionItem } from './../../models/transaction.model';
-import { PACashBreadcrumbTabs } from './../../constants/portfolio-asset';
+import {
+  PACashBreadcrumbTabs,
+  TransactionHistoryContants,
+} from './../../constants/portfolio-asset';
 import { fcsapiService, httpService } from 'services';
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
 import { portfolioData } from 'shared/store/portfolio/portfolio-data';
@@ -38,7 +41,11 @@ class CashDetailStore {
   sourceCurrencyCode: string = '';
 
   transactionHistory: Array<TransactionItem> | undefined = undefined;
-  selectedType: 'all'|'in'|'out' = 'all';
+  transactionSelection: {
+    type: 'all' | 'in' | 'out';
+    startDate: Date | null;
+    endDate: Date | null;
+  } = { type: 'all', startDate: null, endDate: null };
 
   OHLC_data: Array<any> = [];
   forexMarketData: any = undefined;
@@ -51,8 +58,6 @@ class CashDetailStore {
   needUpdateOverviewData: boolean = false;
 
   currentPage: number = 1;
-  
-
 
   constructor() {
     makeAutoObservable(this, {
@@ -72,7 +77,7 @@ class CashDetailStore {
       forexMarketData: observable,
       timeInterval: observable,
       timeFrame: observable,
-
+      transactionSelection: observable,
       selectedTab: observable,
       isOpenAddNewTransactionModal: observable,
       needUpdateOverviewData: observable,
@@ -91,8 +96,9 @@ class CashDetailStore {
       setSelectedTab: action,
       setUpdateOverviewData: action,
       setTransactionHistory: action,
-      setSelectedTransactionType:action,
-      
+      setSelectedTransaction: action,
+      setCurrentPage: action,
+
       resetInitialState: action,
 
       makeTransaction: action,
@@ -132,8 +138,11 @@ class CashDetailStore {
     this.destCurrencyCode = dest;
   }
 
-  setSelectedTransactionType(type:'all'|'in'|'out'){
-    this.selectedType = type;
+  setSelectedTransaction(key: string, value: any) {
+    this.transactionSelection = {
+      ...this.transactionSelection,
+      [key]: value,
+    };
   }
 
   setSelectedTab(tab: string) {
@@ -211,17 +220,20 @@ class CashDetailStore {
     if (!this.portfolioId || !this.cashId) {
       return;
     }
-    const params = {
-                      PageSize:itemsPerPage,
-                      PageNumber:nextPage,
-                      Type:type,
-                    };
-    if(startDate&& endDate){
-      params.StartDate=startDate;
+    let params: any = {
+      PageSize: itemsPerPage,
+      PageNumber: nextPage,
+      Type: type,
+    };
+    if (startDate && endDate) {
+      params.StartDate = startDate;
       params.EndDate = endDate;
     }
     const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.get(url,params);
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
     if (!res.isError) {
       return res.data;
     } else {
@@ -338,10 +350,19 @@ class CashDetailStore {
     return res;
   }
 
-  async resetTransaction(){
-    const data = await cashDetailStore.fetchTransactionHistoryData({itemsPerPage:3 * TransactionHistoryContants.itemsPerPage, nextPage:1, type:'all'});
-    cashDetailStore.setTransactionHistory(data);
-    cashDetailStore.setCurrentPage(1);
+  async resetTransaction() {
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: 'all',
+      startDate: null,
+      endDate: null,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
+    this.setSelectedTransaction('type', 'all');
+    this.setSelectedTransaction('startDate', null);
+    this.setSelectedTransaction('endDate', null);
   }
 
   resetInitialState() {
@@ -363,6 +384,11 @@ class CashDetailStore {
     this.selectedTab = PACashBreadcrumbTabs.overview;
 
     this.currentPage = 1;
+    this.transactionSelection = {
+      startDate: null,
+      endDate: null,
+      type: 'all',
+    };
   }
 }
 

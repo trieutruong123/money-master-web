@@ -18,6 +18,7 @@ const SDOverviewTab = observer(() => {
     const fetchData = async () => {
       rootStore.startLoading();
       await stockDetailStore.fetchOverviewTabData();
+      await stockDetailStore.resetTransaction();
       rootStore.stopLoading();
     };
     if (stockDetailStore.needUpdateOverviewData) {

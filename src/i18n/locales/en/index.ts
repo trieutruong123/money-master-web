@@ -429,7 +429,7 @@ export const en = {
     overview: 'Overview',
     marketData: 'Market data',
     breadCurmbs: {
-      portfolio: 'Danh mục',
+      portfolio: 'Portfolio',
     },
     transactionForm: {
       title: 'Transaction',
@@ -706,7 +706,7 @@ export const en = {
     overview: 'Overview',
     marketData: 'Market data',
     breadCurmbs: {
-      portfolio: 'Danh mục',
+      portfolio: 'Portfolio',
     },
     transactionForm: {
       title: 'Transaction',

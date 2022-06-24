@@ -20,6 +20,7 @@ const CDOverviewTab = observer(() => {
     async function fetchData() {
       rootStore.startLoading();
       await cryptoDetailStore.fetchOverviewTabData();
+      await cryptoDetailStore.resetTransaction();
       rootStore.stopLoading();
     };
     if (portfolioId && cryptoId && cryptoDetailStore.needUpdateOverviewData) {

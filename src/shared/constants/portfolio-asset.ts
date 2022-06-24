@@ -28,9 +28,9 @@ export const PAEstateBreadcrumbTabs = {
   settings: 'Settings',
 };
 
-export const TransactionHistoryContants  = {
+export const TransactionHistoryContants = {
   itemsPerPage: 10,
-  all:'all',
-  in:'in',
-  out:'out',
-}
+  all: 'all',
+  in: 'in',
+  out: 'out',
+};

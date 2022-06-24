@@ -1,23 +1,27 @@
-import { coinGeckoService, fcsapiService, httpService } from "services";
+import { coinGeckoService, fcsapiService, httpService } from 'services';
 import {
   action,
   computed,
   makeAutoObservable,
   observable,
   runInAction,
-} from "mobx";
-import { content } from "i18n";
-import { rootStore } from "shared/store";
-import { CashItem, CryptoItem, TransactionItem } from "shared/models";
-import { portfolioData } from "../portfolio/portfolio-data";
+} from 'mobx';
+import { content } from 'i18n';
+import { rootStore } from 'shared/store';
+import { CashItem, CryptoItem, TransactionItem } from 'shared/models';
+import { portfolioData } from '../portfolio/portfolio-data';
 import {
   CurrencyItem,
+  ITransactionListRequest,
   ITransactionRequest,
   Portfolio,
   TransferToInvestFundType,
-} from "shared/types";
-import { PACryptoBreadcrumbTabs } from "shared/constants";
-import { getCurrencyByCode } from "shared/helpers";
+} from 'shared/types';
+import {
+  PACryptoBreadcrumbTabs,
+  TransactionHistoryContants,
+} from 'shared/constants';
+import { getCurrencyByCode } from 'shared/helpers';
 
 interface ICryptoMarketData {
   c: number;
@@ -29,24 +33,32 @@ interface ICryptoMarketData {
 
 class CryptoDetailStore {
   portfolioId: number = 0;
-  currencyCode: string = "usd";
+  currencyCode: string = 'usd';
   portfolioInfo: Portfolio | undefined = undefined;
 
   cryptoId: number = 0;
-  cryptoProfile:any;
+  cryptoProfile: any;
   cryptoDetail: CryptoItem | undefined = undefined;
-  transactionHistory: Array<TransactionItem> | undefined = [];
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
 
   needUpdateOverviewData: boolean = true;
 
-  timeInterval: string = "1";
+  transactionHistory: Array<TransactionItem> | undefined = undefined;
+  transactionSelection: {
+    type: 'all' | 'in' | 'out';
+    startDate: Date | null;
+    endDate: Date | null;
+  } = { type: 'all', startDate: null, endDate: null };
+
+  timeInterval: string = '1';
   OHLC_data: Array<any> = [];
   marketData: ICryptoMarketData | undefined = undefined;
 
   selectedTab: string = PACryptoBreadcrumbTabs.overview;
   isOpenAddNewTransactionModal: boolean = false;
+
+  currentPage: number = 1;
 
   constructor() {
     makeAutoObservable(this, {
@@ -64,6 +76,7 @@ class CryptoDetailStore {
       isOpenAddNewTransactionModal: observable,
       needUpdateOverviewData: observable,
       cryptoProfile: observable,
+      transactionSelection: observable,
 
       setCryptoId: action,
       setCurrency: action,
@@ -72,11 +85,15 @@ class CryptoDetailStore {
       setPortfolioId: action,
       setSelectedTab: action,
       setUpdateOverviewData: action,
+      setSelectedTransaction: action,
+      setCurrentPage: action,
+      setTransactionHistory: action,
 
       fetchCryptoDetail: action,
       fetchCryptoProfile: action,
       fetchOHLC: action,
-      fetchCryptoTransactionHistory: action,
+      fetchTransactionHistoryData: action,
+
       fetchPortfolioInfo: action,
       fetchCryptoInfoByCode: action,
 
@@ -84,6 +101,17 @@ class CryptoDetailStore {
 
       createNewTransaction: action,
     });
+  }
+
+  setCurrentPage(pageNumber: number) {
+    this.currentPage = pageNumber;
+  }
+
+  setSelectedTransaction(key: string, value: any) {
+    this.transactionSelection = {
+      ...this.transactionSelection,
+      [key]: value,
+    };
   }
 
   setCryptoId(cryptoId: string) {
@@ -114,10 +142,13 @@ class CryptoDetailStore {
     this.selectedTab = tab;
   }
 
+  setTransactionHistory(history: TransactionItem[]) {
+    this.transactionHistory = history;
+  }
+
   async fetchOverviewTabData() {
     Promise.all([
       this.fetchCryptoDetail(),
-      this.fetchCryptoTransactionHistory(),
       this.fetchPortfolioInfo(),
       this.fetchCash(),
     ]);
@@ -133,10 +164,10 @@ class CryptoDetailStore {
 
     if (!res.isError) {
       const currentPortfolio = res.data.find(
-        (item: Portfolio) => item.id === this.portfolioId
+        (item: Portfolio) => item.id === this.portfolioId,
       );
       runInAction(() => {
-        this.currencyCode = this.portfolioInfo?.initialCurrency || "usd";
+        this.currencyCode = this.portfolioInfo?.initialCurrency || 'usd';
         this.portfolioInfo = currentPortfolio;
       });
     } else {
@@ -156,7 +187,7 @@ class CryptoDetailStore {
       runInAction(() => {
         this.cashDetail = res.data;
         this.currencyList = res.data.map((item: CashItem) =>
-          getCurrencyByCode(item.currencyCode)
+          getCurrencyByCode(item.currencyCode),
         );
       });
     } else {
@@ -176,30 +207,46 @@ class CryptoDetailStore {
     if (!res.isError) {
       runInAction(() => {
         this.cryptoDetail = res.data.find(
-          (item: CryptoItem) => item.id === this.cryptoId
+          (item: CryptoItem) => item.id === this.cryptoId,
         );
       });
     } else {
       rootStore.raiseError(
-        content[rootStore.locale].error.failedToLoadInitialData
+        content[rootStore.locale].error.failedToLoadInitialData,
       );
     }
     return res;
   }
 
-  async fetchCryptoTransactionHistory() {
+  async fetchTransactionHistoryData({
+    itemsPerPage,
+    nextPage,
+    startDate,
+    endDate,
+    type,
+  }: ITransactionListRequest) {
     if (!this.portfolioId || !this.cryptoId) {
       return;
     }
-    const url = `/portfolio/${this.portfolioId}/crypto/${this.cryptoId}/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.get(url);
-    if (!res.isError) {
-      runInAction(() => {
-        this.transactionHistory = res.data;
-      });
-    } else {
+    let params: any = {
+      PageSize: itemsPerPage,
+      PageNumber: nextPage,
+      Type: type,
+    };
+    if (startDate && endDate) {
+      params.StartDate = startDate;
+      params.EndDate = endDate;
     }
-    return res;
+    const url = `/portfolio/${this.portfolioId}/crypto/${this.cryptoId}/transactions`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    if (!res.isError) {
+      return res.data;
+    } else {
+      return [];
+    }
   }
 
   async createNewTransaction(params: ITransactionRequest) {
@@ -207,13 +254,13 @@ class CryptoDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.default,
-        "success"
+        'success',
       );
       return res;
     } else {
@@ -227,13 +274,13 @@ class CryptoDetailStore {
     const url = `/portfolio/${this.portfolioId}/transactions`;
     const res: { isError: boolean; data: any } = await httpService.post(
       url,
-      params
+      params,
     );
     rootStore.stopLoading();
     if (!res.isError) {
       rootStore.raiseNotification(
         content[rootStore.locale].success.transfer,
-        "success"
+        'success',
       );
       return res;
     } else {
@@ -314,21 +361,36 @@ class CryptoDetailStore {
     });
   }
 
+  async resetTransaction() {
+    const data = await this.fetchTransactionHistoryData({
+      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
+      nextPage: 1,
+      type: 'all',
+      startDate: null,
+      endDate: null,
+    });
+    this.setTransactionHistory(data);
+    this.setCurrentPage(1);
+    this.setSelectedTransaction('type', 'all');
+    this.setSelectedTransaction('startDate', null);
+    this.setSelectedTransaction('endDate', null);
+  }
+
   async fetchCryptoProfile() {
-    if (
-      !this.cryptoDetail?.cryptoCoinCode) {
-        return;
+    if (!this.cryptoDetail?.cryptoCoinCode) {
+      return;
     }
-    const res: any = await fcsapiService.getCryptoProfile(this.cryptoDetail?.cryptoCoinCode);
+    const res: any = await fcsapiService.getCryptoProfile(
+      this.cryptoDetail?.cryptoCoinCode,
+    );
     if (!res.isError) {
       runInAction(() => {
         this.cryptoProfile = res.data.response[0];
       });
-    }
-    else {
+    } else {
       runInAction(() => {
         this.cryptoProfile = undefined;
-      })
+      });
     }
     return res;
   }

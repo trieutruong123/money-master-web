@@ -101,7 +101,7 @@ const PDReportTab = observer(({ }: IProps) => {
       >
         {portfolioDetailStore.sankeyFlowData && portfolioDetailStore.sankeyFlowData.length > 0 ?
           <Suspense fallback={<></>}>
-            <PDSankeyChart content={content.sankeyChart} sankeyFlowData={portfolioDetailStore.sankeyFlowData} />
+            <PDSankeyChart content={content.sankeyChart} />
           </Suspense>
           : <></>
         }

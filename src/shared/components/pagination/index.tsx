@@ -10,25 +10,22 @@
   handleCurrentPage: Function;
  }
 
- const Pagination:React.FunctionComponent<IProps> = (props:IProps)=>{
-    const [pageNumbers,setPageNumbers]  = useState<Array<number>>([]);
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const{handleCurrentPage} = props;
-
-    useEffect(()=>{
-        setPageNumbers(props.pageNumbers);
-        setCurrentPage(props.currentPage);
-    },[])
-
+ const Pagination:React.FunctionComponent<IProps> = ({pageNumbers, currentPage,handleCurrentPage}:IProps)=>{
     const onPageSelectionChanged = (pageNumber:number)=>{
-        setCurrentPage (pageNumber);
         handleCurrentPage(pageNumber);
     }
 
+    const onNextPageClick = ()=>{
+      handleCurrentPage(currentPage+1);
+    }
+
+    const onPreviousPageClick = ()=>{
+      handleCurrentPage(currentPage-1);
+    }
     return (
     <nav className={`${styled.sweetPagination} ${styled.contentCenter}`}>
       <button className = {styled.arrowButton}>
-        <ArrowLeftIcon fontSize = 'large'  className = {styled.arrowIcon}/>
+        <ArrowLeftIcon onClick = {onPreviousPageClick} fontSize = 'large'  className = {styled.arrowIcon}/>
       </button>
       <ul className={styled.paginationUL}>
         {pageNumbers.map((number,index) => (
@@ -47,7 +44,7 @@
         ))}
       </ul>
       <button className = {styled.arrowButton}>
-        <ArrowRightIcon fontSize = 'large' className = {styled.arrowIcon}/>
+        <ArrowRightIcon onClick = {onNextPageClick} fontSize = 'large' className = {styled.arrowIcon}/>
       </button>
   </nav>)
 
