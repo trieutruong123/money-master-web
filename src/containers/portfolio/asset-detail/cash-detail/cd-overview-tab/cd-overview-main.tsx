@@ -4,7 +4,6 @@ import { lazy, Suspense, useEffect } from 'react';
 import { rootStore, cashDetailStore } from 'shared/store';
 import { content as i18n } from 'i18n';
 import { useRouter } from 'next/router';
-import CSDProfitLossChart from '../../custom-asset-detail/csd-profit-loss-chart/csd-profit-loss-chart';
 
 const CDIntroSection = lazy(() => import('./cd-intro-section'));
 const CDTransactionHistory = lazy(
@@ -19,15 +18,14 @@ const CDOverviewMain = observer(() => {
   const { locale, query } = router;
   const content =
     locale === 'vi' ? i18n['vi'].cashDetailPage : i18n['en'].cashDetailPage;
-  useEffect(() => {
-    cashDetailStore.resetTransaction();
-  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
-      await cashDetailStore.fetchOverviewData();
-      await cashDetailStore.refreshTransactionHistory();
+      Promise.all([
+        await cashDetailStore.fetchOverviewData(),
+        await cashDetailStore.refreshTransactionHistory(),
+      ]);
       rootStore.stopLoading();
     };
     if (cashDetailStore.needUpdateOverviewData) {
@@ -49,7 +47,7 @@ const CDOverviewMain = observer(() => {
       </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <Suspense fallback={<></>}>
-          <CSDProfitLossChart />
+          <CDProfitLossChart />
         </Suspense>
       </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">

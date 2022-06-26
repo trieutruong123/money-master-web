@@ -16,14 +16,6 @@ const CDOverviewTab = observer(() => {
   const { locale, query } = router;
   const content = locale === 'vi' ? i18n['vi'].cryptoDetailPage : i18n['en'].cryptoDetailPage;
 
-  useEffect(()=>{
-    const fetchData = async () => {
-      await cryptoDetailStore.resetTransaction();
-      await cryptoDetailStore.fetchCryptoProfitLoss('day');
-    };
-    fetchData();
-  },[])
-
   useEffect(() => {
     async function fetchData() {
       rootStore.startLoading();

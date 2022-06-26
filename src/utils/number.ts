@@ -1,6 +1,10 @@
-type SeparatorType = '.'|',';
+type SeparatorType = '.' | ',';
 
-export const precisionRound = (number: number, precision: number, dot:SeparatorType|undefined = ',') => {
+export const precisionRound = (
+  number: number,
+  precision: number,
+  dot: SeparatorType | undefined = ',',
+) => {
   if (precision < 0) {
     let factor = Math.pow(10, precision);
     return (Math.round(number * factor) / factor)
@@ -23,5 +27,7 @@ export const roundAndAddDotAndCommaSeparator = (
   number: number,
   precision: number,
 ) => {
-  return addDotAndCommaSeparator(precisionRound(number, precision,'.'));
+  if (Math.abs(number) < 0.001) return '0';
+
+  return addDotAndCommaSeparator(precisionRound(number, precision, '.'));
 };

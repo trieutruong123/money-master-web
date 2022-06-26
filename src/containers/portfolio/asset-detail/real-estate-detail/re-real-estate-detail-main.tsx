@@ -48,7 +48,6 @@ const RealEstateDetail = observer(({}: IProps) => {
 
   useEffect(() => {
     realEstateDetailStore.resetInitialState();
-    realEstateDetailStore.resetTransaction();
   }, []);
 
   useEffect(() => {
@@ -74,6 +73,14 @@ const RealEstateDetail = observer(({}: IProps) => {
       realEstateDetailStore.setUpdateOverviewData(false);
     }
   }, [portfolioId, assetId, realEstateDetailStore.needUpdateOverviewData]);
+
+  useEffect(()=>{
+    const fetchData = async()=>{
+      await realEstateDetailStore.fetchRealEstateProfitLoss();
+    };
+    fetchData();
+  },[router.query.portfolioId, router.query.assetId]);
+
 
   return (
     <Box

@@ -39,8 +39,19 @@ class CashDetailStore {
   cashDetail: CashItem | undefined = undefined;
   cashList: CashItem[] | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = undefined;
+
   destCurrencyCode: string = '';
   sourceCurrencyCode: string = '';
+
+  OHLC_data: Array<any> = [];
+  forexMarketData: any = undefined;
+  forexDetail: any = undefined;
+  timeInterval: number = 1;
+  timeFrame: string = '1w';
+
+  selectedTab: string = PACashBreadcrumbTabs.overview;
+  isOpenAddNewTransactionModal: boolean = false;
+  needUpdateOverviewData: boolean = false;
 
   transactionHistory: Array<TransactionItem> | undefined = undefined;
   transactionSelection: {
@@ -48,18 +59,13 @@ class CashDetailStore {
     startDate: Date | null;
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
-
-  OHLC_data: Array<any> = [];
-  forexMarketData: any = undefined;
-  forexDetail: any = undefined;
-  timeInterval: number = 1;
-  timeFrame: string = '1w';
-  profitLossList: Array<ProfitLossItem> = [];
-  selectedTab: string = PACashBreadcrumbTabs.overview;
-  isOpenAddNewTransactionModal: boolean = false;
-  needUpdateOverviewData: boolean = false;
-
   currentPage: number = 1;
+
+  profitLossSelection: {
+    period: 'day' | 'month' | 'year';
+    type: 'bar' | 'line';
+  } = { period: 'day', type: 'bar' };
+  profitLossList: Array<ProfitLossItem> = [];
 
   constructor() {
     makeAutoObservable(this, {
@@ -84,6 +90,7 @@ class CashDetailStore {
       isOpenAddNewTransactionModal: observable,
       needUpdateOverviewData: observable,
       profitLossList: observable,
+      profitLossSelection: observable,
 
       fetchOHLC_Data: action,
       fetchForexInfoByCode: action,
@@ -102,6 +109,7 @@ class CashDetailStore {
       setTransactionHistory: action,
       setSelectedTransaction: action,
       setCurrentPage: action,
+      setProfitLossSelection: action,
 
       resetInitialState: action,
 
@@ -112,6 +120,10 @@ class CashDetailStore {
 
   setCurrentPage(pageNumber: number) {
     this.currentPage = pageNumber;
+  }
+
+  setProfitLossSelection(key: string, value: any) {
+    this.profitLossSelection = { ...this.profitLossSelection, [key]: value };
   }
 
   setOpenAddNewTransactionModal(isOpen: boolean) {
@@ -353,11 +365,11 @@ class CashDetailStore {
     return res;
   }
 
-  async fetchCashProfitLoss(value: 'day' | 'month' | 'year') {
+  async fetchCashProfitLoss() {
     if (!this.portfolioId || !this.cashId) {
       return;
     }
-    const params = { Period: value };
+    const params = { Period: this.profitLossSelection.period };
     rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/profitLoss`;
     const res: { isError: boolean; data: any } = await httpService.get(
@@ -374,15 +386,7 @@ class CashDetailStore {
     return res;
   }
 
-  async resetTransaction() {
-    const data = await this.fetchTransactionHistoryData({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: 'all',
-      startDate: null,
-      endDate: null,
-    });
-    this.setTransactionHistory(data);
+  resetTransactionSelection() {
     this.setCurrentPage(1);
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
@@ -424,6 +428,11 @@ class CashDetailStore {
 
     this.needUpdateOverviewData = true;
     this.selectedTab = PACashBreadcrumbTabs.overview;
+
+    this.profitLossSelection = {
+      period: 'day',
+      type: 'bar',
+    };
 
     this.currentPage = 1;
     this.transactionSelection = {

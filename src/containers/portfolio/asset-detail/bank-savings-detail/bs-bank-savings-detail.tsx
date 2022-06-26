@@ -51,8 +51,6 @@ const BankSavingsDetail = observer(({}: IProps) => {
   useEffect(() => {
     const fetchData = async () => {
       await bankSavingsDetailStore.resetInitialState();
-      await bankSavingsDetailStore.resetTransaction();
-      await bankSavingsDetailStore.fetchBankSavingProfitLoss('day');
     };
     fetchData();
   }, []);
@@ -67,8 +65,11 @@ const BankSavingsDetail = observer(({}: IProps) => {
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
-      Promise.all([bankSavingsDetailStore.fetchOverviewData()]);
-      await bankSavingsDetailStore.refreshTransactionHistory();
+      Promise.all([
+        bankSavingsDetailStore.fetchOverviewData(),
+        await bankSavingsDetailStore.refreshTransactionHistory(),
+      ]);
+
       rootStore.stopLoading();
     };
     if (
@@ -80,6 +81,13 @@ const BankSavingsDetail = observer(({}: IProps) => {
       bankSavingsDetailStore.setUpdateOverviewData(false);
     }
   }, [portfolioId, assetId, bankSavingsDetailStore.needUpdateOverviewData]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await bankSavingsDetailStore.fetchBankSavingProfitLoss();
+    };
+    fetchData();
+  }, [router.query.portfolioId, router.query.assetId]);
 
   return (
     <Box

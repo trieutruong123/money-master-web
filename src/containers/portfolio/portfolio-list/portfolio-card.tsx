@@ -1,4 +1,4 @@
-import classes from "./portfolio-card.module.css";
+import classes from "./style/portfolio-card.module.css";
 import Button from "@mui/material/Button";
 import { Link } from "shared/components";
 import * as React from "react";

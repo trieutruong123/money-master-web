@@ -22,14 +22,15 @@ import SDMarketDataTab from './sd-market-data-chart/sd-market-data-tab';
 import { SDCreateTransactionModal } from './sd-transaction-modal/sd-create-transaction-modal';
 import { content as i18n } from 'i18n';
 
-interface IProps { }
+interface IProps {}
 
-const SDStockDetail = observer(({ }: IProps) => {
+const SDStockDetail = observer(({}: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const { locale, query } = router;
-  const content = locale === 'vi' ? i18n['vi'].stockDetailPage : i18n['en'].stockDetailPage;
+  const content =
+    locale === 'vi' ? i18n['vi'].stockDetailPage : i18n['en'].stockDetailPage;
 
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
@@ -40,9 +41,8 @@ const SDStockDetail = observer(({ }: IProps) => {
 
   useEffect(() => {
     stockDetailStore.resetInitialState();
-    
   }, []);
-  
+
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
     stockDetailStore.setStockId(assetId);
@@ -52,12 +52,22 @@ const SDStockDetail = observer(({ }: IProps) => {
 
   useEffect(() => {
     async function fetchData() {
-      if (stockDetailStore.stockDetail && stockDetailStore.marketData === undefined) {
+      if (
+        stockDetailStore.stockDetail &&
+        stockDetailStore.marketData === undefined
+      ) {
         await stockDetailStore.fetchStockInfoByCode();
       }
     }
     fetchData();
-  }, [stockDetailStore.marketData, stockDetailStore.stockDetail])
+  }, [stockDetailStore.marketData, stockDetailStore.stockDetail]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await stockDetailStore.fetchStockProfitLoss();
+    };
+    fetchData();
+  }, [router.query.portfolioId, router.query.assetId]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     stockDetailStore.setSelectedTab(newValue);
@@ -91,9 +101,9 @@ const SDStockDetail = observer(({ }: IProps) => {
               displayNameArr={[
                 content.breadCurmbs.portfolio,
                 stockDetailStore.portfolioInfo?.name ||
-                stockDetailStore.portfolioId.toString(),
+                  stockDetailStore.portfolioId.toString(),
                 stockDetailStore.stockDetail?.stockCode ||
-                stockDetailStore.stockId.toString(),
+                  stockDetailStore.stockId.toString(),
               ]}
             />
             <Typography sx={{ mb: 3 }} variant="h4">
@@ -133,13 +143,13 @@ const SDStockDetail = observer(({ }: IProps) => {
                 flexDirection="column"
               >
                 {stockDetailStore.selectedTab ===
-                  PAStockBreadcrumbTabs.overview ? (
+                PAStockBreadcrumbTabs.overview ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <SDOverviewTab />
                   </Suspense>
                 ) : null}
                 {stockDetailStore.selectedTab ===
-                  PAStockBreadcrumbTabs.marketData ? (
+                PAStockBreadcrumbTabs.marketData ? (
                   <Suspense fallback={<HypnosisLoading />}>
                     <SDMarketDataTab />
                   </Suspense>

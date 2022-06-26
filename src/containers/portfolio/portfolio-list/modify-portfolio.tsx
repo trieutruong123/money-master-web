@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import classes from './modify-portfolio.module.css';
+import classes from './style/modify-portfolio.module.css';
 import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers/currency-info';
 import React from 'react';
 

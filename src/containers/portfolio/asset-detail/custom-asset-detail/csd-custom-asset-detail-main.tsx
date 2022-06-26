@@ -48,7 +48,6 @@ const CSDCustomAssetDetail = observer(({}: IProps) => {
 
   useEffect(() => {
     customAssetsDetailStore.resetInitialState();
-    customAssetsDetailStore.resetTransaction();
   }, []);
 
   useEffect(() => {
@@ -60,8 +59,10 @@ const CSDCustomAssetDetail = observer(({}: IProps) => {
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
-      await customAssetsDetailStore.fetchOverviewTabData();
-      await customAssetsDetailStore.refreshTransactionHistory();
+      Promise.all([
+        await customAssetsDetailStore.fetchOverviewTabData(),
+        await customAssetsDetailStore.refreshTransactionHistory(),
+      ]);
       rootStore.stopLoading();
     };
     if (
@@ -74,6 +75,13 @@ const CSDCustomAssetDetail = observer(({}: IProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [portfolioId, assetId, customAssetsDetailStore.needUpdateOverviewData]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await customAssetsDetailStore.fetchCustomAssetProfitLoss();
+    };
+    fetchData();
+  }, [router.query.portfolioId, router.query.assetId]);
 
   return (
     <Box

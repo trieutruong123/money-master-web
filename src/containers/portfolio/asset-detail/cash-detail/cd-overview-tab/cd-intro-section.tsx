@@ -74,7 +74,7 @@ const CDIntroSection = observer(({ assetDetail, content }: IProps) => {
                 justifyContent="center"
               >
                 <Typography variant="body1">{content.introSection.currency}: &nbsp;</Typography>
-                {getCurrencyByCode(assetDetail?.currencyCode || '')?.name}
+                {getCurrencyByCode(assetDetail?.currencyCode || '')?.name || '--'}
               </Grid>
             </Stack>
           </CardContent>

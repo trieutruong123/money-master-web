@@ -11,7 +11,8 @@ import CryptoProfile from './crypto-profile';
 const CDMarketDataTab = observer(() => {
   const router = useRouter();
   const { locale, query } = router;
-  const content = locale === 'vi' ? i18n['vi'].cryptoDetailPage : i18n['en'].cryptoDetailPage
+  const content =
+    locale === 'vi' ? i18n['vi'].cryptoDetailPage : i18n['en'].cryptoDetailPage;
 
   useEffect(() => {
     const { portfolioId, cryptoId } = cryptoDetailStore;
@@ -25,8 +26,8 @@ const CDMarketDataTab = observer(() => {
       portfolioId &&
       cryptoId &&
       (cryptoDetailStore.OHLC_data.length === 0 ||
-        cryptoDetailStore.marketData == undefined||
-        cryptoDetailStore.cryptoProfile==undefined)
+        cryptoDetailStore.marketData == undefined ||
+        cryptoDetailStore.cryptoProfile == undefined)
     ) {
       fetchData();
     }
@@ -37,9 +38,9 @@ const CDMarketDataTab = observer(() => {
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <CDMarketInfo content={content} />
       </Grid>
-      <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
-                <CryptoProfile />
-            </Grid>
+      {/* <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
+        <CryptoProfile />
+      </Grid> */}
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <Suspense fallback={<></>}>
           <CDMarketChart content={content} />

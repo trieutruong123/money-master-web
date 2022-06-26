@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import classes from './crypto-profile.module.css';
+import classes from './style/crypto-profile.module.css';
 import ArticleIcon from '@mui/icons-material/Article';
 import LanguageIcon from '@mui/icons-material/Language';
 import NumbersIcon from '@mui/icons-material/Numbers';

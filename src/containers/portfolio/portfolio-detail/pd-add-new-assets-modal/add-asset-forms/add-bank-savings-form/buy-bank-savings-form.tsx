@@ -21,6 +21,7 @@ import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
 import { portfolioDetailStore } from 'shared/store';
 import { UsingMoneySource } from 'shared/constants';
 import { observer } from 'mobx-react-lite';
+import dayjs from 'dayjs';
 
 type FormValues = {
   name: string;
@@ -86,7 +87,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
       name: data.name,
       bankCode: data.bankCode,
       inputCurrency: data.inputCurrency,
-      inputDay: date,
+      inputDay: dayjs(date).format(),
       inputMoneyAmount: data.inputMoneyAmount,
       isGoingReinState: true,
       interestRate: data.interestRate/100,

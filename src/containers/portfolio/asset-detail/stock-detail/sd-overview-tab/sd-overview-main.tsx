@@ -17,14 +17,6 @@ const SDOverviewTab = observer(() => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await stockDetailStore.resetTransaction();
-      await stockDetailStore.fetchStockProfitLoss('day');
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
       rootStore.startLoading();
       await stockDetailStore.fetchOverviewTabData();
       await stockDetailStore.refreshTransactionHistory();

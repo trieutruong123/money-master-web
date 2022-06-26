@@ -51,8 +51,7 @@ class StockDetailStore {
     startDate: Date | null;
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
-
-  profitLossList: Array<ProfitLossItem> = [];
+  currentPage: number = 1;
 
   timeInterval: string = 'W';
   OHLC_data: Array<any> = [];
@@ -61,7 +60,11 @@ class StockDetailStore {
   selectedTab: string = PAStockBreadcrumbTabs.overview;
   isOpenAddNewTransactionModal: boolean = false;
 
-  currentPage: number = 1;
+  profitLossList: Array<ProfitLossItem> = [];
+  profitLossSelection: {
+    period: 'day' | 'month' | 'year';
+    type: 'bar' | 'line';
+  } = { period: 'day', type: 'bar' };
 
   constructor() {
     makeAutoObservable(this, {
@@ -93,6 +96,7 @@ class StockDetailStore {
       setSelectedTransaction: action,
       setTransactionHistory: action,
       setCurrentPage: action,
+      setProfitLossSelection: action,
 
       resetInitialState: action,
 
@@ -105,6 +109,10 @@ class StockDetailStore {
 
       createNewTransaction: action,
     });
+  }
+
+  setProfitLossSelection(key: string, value: any) {
+    this.profitLossSelection = { ...this.profitLossSelection, [key]: value };
   }
 
   setUpdateOverviewData(isUpdate: boolean) {
@@ -204,11 +212,11 @@ class StockDetailStore {
     return res;
   }
 
-  async fetchStockProfitLoss(value: 'day' | 'month' | 'year') {
+  async fetchStockProfitLoss() {
     if (!this.portfolioId || !this.stockId) {
       return;
     }
-    const params = { Period: value };
+    const params = { Period: this.profitLossSelection.period };
     rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/stock/${this.stockId}/profitLoss`;
     const res: { isError: boolean; data: any } = await httpService.get(
@@ -374,15 +382,7 @@ class StockDetailStore {
     return res;
   }
 
-  async resetTransaction() {
-    const data = await this.fetchTransactionHistoryData({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: 'all',
-      startDate: null,
-      endDate: null,
-    });
-    this.setTransactionHistory(data);
+  resetTransactionSelection() {
     this.setCurrentPage(1);
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
@@ -422,6 +422,11 @@ class StockDetailStore {
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
       this.selectedTab = PAStockBreadcrumbTabs.overview;
+
+      this.profitLossSelection = {
+        period: 'day',
+        type: 'bar',
+      };
 
       this.currentPage = 1;
       this.transactionSelection = {

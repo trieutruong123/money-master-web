@@ -1,4 +1,4 @@
-import classes from "./exchange-rate-info.module.css";
+import classes from "./style/exchange-rate-info.module.css";
 import { observer } from "mobx-react-lite";
 import { useCallback } from "react";
 import { cashDetailStore } from "shared/store";

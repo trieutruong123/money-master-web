@@ -73,7 +73,7 @@ const SDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
   const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
 
   const resetTransaction = async()=>{
-    await stockDetailStore.resetTransaction();
+    await stockDetailStore.resetTransactionSelection();
     resetPageNumbers();
   }
 
@@ -289,7 +289,14 @@ const SDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {transactionHistoryData.map((record, i) => {
+                {transactionHistoryData
+                .slice(
+                  (stockDetailStore.currentPage - 1) *
+                    TransactionHistoryContants.itemsPerPage,
+                    stockDetailStore.currentPage *
+                    TransactionHistoryContants.itemsPerPage,
+                )
+                .map((record, i) => {
                   return (
                     <TableRow
                       key={i}

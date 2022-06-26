@@ -20,6 +20,7 @@ import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
 import { portfolioDetailStore } from 'shared/store';
 import { UsingMoneySource } from 'shared/constants';
 import { observer } from 'mobx-react-lite';
+import dayjs from 'dayjs';
 
 type FormValues = {
   purchasePrice: number;
@@ -78,7 +79,7 @@ export const BuyRealEstateForm = observer(({ handleFormSubmit, content }: IProps
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit({
-      inputDay: date,
+      inputDay: dayjs(date).format(),
       inputMoneyAmount: data.purchasePrice,
       inputCurrency: data.currency,
       buyPrice: data.purchasePrice,

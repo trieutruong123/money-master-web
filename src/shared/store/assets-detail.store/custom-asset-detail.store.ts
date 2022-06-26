@@ -42,7 +42,12 @@ class CustomAssetDetailStore {
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
   currentPage: number = 1;
+
   profitLossList: Array<ProfitLossItem> = [];
+  profitLossSelection: {
+    period: 'day' | 'month' | 'year';
+    type: 'bar' | 'line';
+  } = { period: 'day', type: 'bar' };
 
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
@@ -65,6 +70,7 @@ class CustomAssetDetailStore {
       transactionSelection: observable,
       currentPage: observable,
       profitLossList: observable,
+      profitLossSelection: observable,
 
       setPortfolioId: action,
       setCustomAssetId: action,
@@ -74,6 +80,7 @@ class CustomAssetDetailStore {
       setTransactionHistory: action,
       setSelectedTransaction: action,
       setCurrentPage: action,
+      setProfitLossSelection: action,
 
       resetInitialState: action,
 
@@ -89,6 +96,10 @@ class CustomAssetDetailStore {
       ...this.transactionSelection,
       [key]: value,
     };
+  }
+
+  setProfitLossSelection(key: string, value: any) {
+    this.profitLossSelection = { ...this.profitLossSelection, [key]: value };
   }
 
   setCurrentPage(pageNumber: number) {
@@ -149,11 +160,11 @@ class CustomAssetDetailStore {
     }
   }
 
-  async fetchCustomAssetProfitLoss(value: 'day' | 'month' | 'year') {
+  async fetchCustomAssetProfitLoss() {
     if (!this.portfolioId || !this.customAssetId) {
       return;
     }
-    const params = { Period: value };
+    const params = { Period: this.profitLossSelection.period };
     rootStore.startLoading();
     const url = `/portfolio/${this.portfolioId}/custom/${this.customAssetId}/profitLoss`;
     const res: { isError: boolean; data: any } = await httpService.get(
@@ -287,15 +298,7 @@ class CustomAssetDetailStore {
     }
   }
 
-  async resetTransaction() {
-    const data = await this.fetchTransactionHistoryData({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: 'all',
-      startDate: null,
-      endDate: null,
-    });
-    this.setTransactionHistory(data);
+  resetTransactionSelection() {
     this.setCurrentPage(1);
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
@@ -333,6 +336,11 @@ class CustomAssetDetailStore {
 
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
+
+      this.profitLossSelection = {
+        period: 'day',
+        type: 'bar',
+      };
 
       this.currentPage = 1;
       this.transactionSelection = {
