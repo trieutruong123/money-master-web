@@ -8,7 +8,12 @@ import {
 } from 'mobx';
 import { content } from 'i18n';
 import { rootStore } from 'shared/store';
-import { CashItem, CryptoItem, TransactionItem } from 'shared/models';
+import {
+  CashItem,
+  CryptoItem,
+  ProfitLossItem,
+  TransactionItem,
+} from 'shared/models';
 import { portfolioData } from '../portfolio/portfolio-data';
 import {
   CurrencyItem,
@@ -44,14 +49,13 @@ class CryptoDetailStore {
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
 
-  needUpdateOverviewData: boolean = true;
-
   transactionHistory: Array<TransactionItem> | undefined = undefined;
   transactionSelection: {
     type: 'all' | 'in' | 'out';
     startDate: Date | null;
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
+  currentPage: number = 1;
 
   timeInterval: string = '1';
   OHLC_data: Array<any> = [];
@@ -59,8 +63,13 @@ class CryptoDetailStore {
 
   selectedTab: string = PACryptoBreadcrumbTabs.overview;
   isOpenAddNewTransactionModal: boolean = false;
+  needUpdateOverviewData: boolean = true;
 
-  currentPage: number = 1;
+  profitLossList: Array<ProfitLossItem> = [];
+  profitLossSelection: {
+    period: 'day' | 'month' | 'year';
+    type: 'bar' | 'line';
+  } = { period: 'day', type: 'bar' };
 
   constructor() {
     makeAutoObservable(this, {
@@ -80,6 +89,8 @@ class CryptoDetailStore {
       cryptoProfile: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
+      profitLossSelection: observable,
 
       setCryptoId: action,
       setCurrency: action,
@@ -91,14 +102,15 @@ class CryptoDetailStore {
       setSelectedTransaction: action,
       setCurrentPage: action,
       setTransactionHistory: action,
+      setProfitLossSelection: action,
 
       fetchCryptoDetail: action,
       fetchCryptoProfile: action,
       fetchOHLC: action,
       fetchTransactionHistoryData: action,
-
       fetchPortfolioInfo: action,
       fetchCryptoInfoByCode: action,
+      fetchCryptoProfitLoss: action,
 
       resetInitialState: action,
 
@@ -115,6 +127,10 @@ class CryptoDetailStore {
       ...this.transactionSelection,
       [key]: value,
     };
+  }
+
+  setProfitLossSelection(key: string, value: any) {
+    this.profitLossSelection = { ...this.profitLossSelection, [key]: value };
   }
 
   setCryptoId(cryptoId: string) {
@@ -326,6 +342,27 @@ class CryptoDetailStore {
     }
   }
 
+  async fetchCryptoProfitLoss() {
+    if (!this.portfolioId || !this.cryptoId) {
+      return;
+    }
+    const params = { Period: this.profitLossSelection.period };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/crypto/${this.cryptoId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
+    }
+    return res;
+  }
+
   async fetchOHLC() {
     if (!this.cryptoDetail?.cryptoCoinCode) {
       return;
@@ -343,45 +380,6 @@ class CryptoDetailStore {
     } else {
       return res;
     }
-  }
-
-  resetInitialState() {
-    runInAction(() => {
-      this.portfolioInfo = undefined;
-      this.cashDetail = undefined;
-      this.currencyList = undefined;
-
-      this.cryptoDetail = undefined;
-      this.transactionHistory = undefined;
-
-      this.OHLC_data = [];
-      this.marketData = undefined;
-
-      this.isOpenAddNewTransactionModal = false;
-      this.needUpdateOverviewData = true;
-      this.selectedTab = PACryptoBreadcrumbTabs.overview;
-      this.currentPage = 1;
-      this.transactionSelection = {
-        startDate: null,
-        endDate: null,
-        type: 'all',
-      };
-    });
-  }
-
-  async resetTransaction() {
-    const data = await this.fetchTransactionHistoryData({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: 'all',
-      startDate: null,
-      endDate: null,
-    });
-    this.setTransactionHistory(data);
-    this.setCurrentPage(1);
-    this.setSelectedTransaction('type', 'all');
-    this.setSelectedTransaction('startDate', null);
-    this.setSelectedTransaction('endDate', null);
   }
 
   async refreshTransactionHistory() {
@@ -419,6 +417,43 @@ class CryptoDetailStore {
       });
     }
     return res;
+  }
+
+  resetTransactionSelection() {
+    this.setCurrentPage(1);
+    this.setSelectedTransaction('type', 'all');
+    this.setSelectedTransaction('startDate', null);
+    this.setSelectedTransaction('endDate', null);
+  }
+
+  resetInitialState() {
+    runInAction(() => {
+      this.portfolioInfo = undefined;
+      this.cashDetail = undefined;
+      this.currencyList = undefined;
+
+      this.cryptoDetail = undefined;
+      this.transactionHistory = undefined;
+
+      this.OHLC_data = [];
+      this.marketData = undefined;
+
+      this.isOpenAddNewTransactionModal = false;
+      this.needUpdateOverviewData = true;
+      this.selectedTab = PACryptoBreadcrumbTabs.overview;
+
+      this.profitLossSelection = {
+        period: 'day',
+        type: 'bar',
+      };
+
+      this.currentPage = 1;
+      this.transactionSelection = {
+        startDate: null,
+        endDate: null,
+        type: 'all',
+      };
+    });
   }
 }
 

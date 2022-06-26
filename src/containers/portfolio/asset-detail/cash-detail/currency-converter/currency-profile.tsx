@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import classes from './currency-profile.module.css';
+import classes from './style/currency-profile.module.css';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -38,7 +38,7 @@ const CurrencyProfile = observer(({ }: IProps) => {
       <Card
         sx={{
           borderRadius: '12px',
-          padding: isMobile ? '5px' : '5px 20px 20px 20px',
+          padding: isMobile ? '5px' : '20px',
 
           boxShadow: '0 0 8px rgba(0,0,0,0.11)',
         }}

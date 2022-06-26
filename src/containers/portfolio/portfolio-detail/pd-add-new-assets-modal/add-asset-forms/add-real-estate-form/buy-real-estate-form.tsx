@@ -20,6 +20,7 @@ import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
 import { portfolioDetailStore } from 'shared/store';
 import { UsingMoneySource } from 'shared/constants';
 import { observer } from 'mobx-react-lite';
+import dayjs from 'dayjs';
 
 type FormValues = {
   purchasePrice: number;
@@ -57,7 +58,6 @@ export const BuyRealEstateForm = observer(({ handleFormSubmit, content }: IProps
       .required('Current price is required')
       .typeError('Current price must be a number')
       .positive('Price must be greater than zero'),
-    cashId: Yup.number(),
     tax: Yup.number()
     .typeError('Tax must be a number')
       .min(0,'Tax must be greater than zero'),
@@ -79,7 +79,7 @@ export const BuyRealEstateForm = observer(({ handleFormSubmit, content }: IProps
   };
   const onSubmit: SubmitHandler<FormValues> = (data: any) => {
     handleFormSubmit({
-      inputDay: date,
+      inputDay: dayjs(date).format(),
       inputMoneyAmount: data.purchasePrice,
       inputCurrency: data.currency,
       buyPrice: data.purchasePrice,

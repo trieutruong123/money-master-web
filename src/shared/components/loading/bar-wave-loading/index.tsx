@@ -1,4 +1,4 @@
-import styled from 'style/index.module.css';
+import styled from './style/index.module.css';
 
 interface BarWaveProps {
   className?: string;
@@ -28,7 +28,7 @@ const BarWaveLoading: React.FC<BarWaveProps & React.HTMLProps<HTMLDivElement>> =
           ['--color' as any]: color,
           ['--duration' as any]: duration,
         }}
-        className={`cssfxBarWave ${className}`}
+        className={[styled.cssfxBarWave,className].join(' ')}
       >
         <span></span>
         <span></span>

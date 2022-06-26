@@ -46,6 +46,7 @@ const CDCashDetail = observer(({ }: IProps) => {
     cashDetailStore.resetInitialState();
   }, []);
 
+
   useEffect(() => {
     if (typeof assetId === 'undefined') router.push('/404');
 
@@ -57,6 +58,14 @@ const CDCashDetail = observer(({ }: IProps) => {
   const {
     isOpenAddNewTransactionModal,
   } = cashDetailStore;
+
+  useEffect(()=>{
+    const fetchData = async()=>{
+      await cashDetailStore.fetchCashProfitLoss();
+    }
+    fetchData();
+  },[router.query.portfolioId, router.query.assetId]);
+
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     cashDetailStore.setSelectedTab(newValue);

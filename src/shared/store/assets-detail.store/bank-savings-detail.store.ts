@@ -1,4 +1,7 @@
-import { BankSavingItem } from './../../models/portfolio-asset.model';
+import {
+  BankSavingItem,
+  ProfitLossItem,
+} from './../../models/portfolio-asset.model';
 import { rootStore } from 'shared/store';
 import { getCurrencyByCode, httpError } from 'shared/helpers';
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
@@ -38,8 +41,15 @@ class BankSavingsDetailStore {
 
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
+
   needUpdateOverviewData: boolean = true;
   isOpenAddNewTransactionModal: boolean = false;
+
+  profitLossSelection: {
+    period: 'day' | 'month' | 'year';
+    type: 'bar' | 'line';
+  } = { period: 'day', type: 'bar' };
+  profitLossList: Array<ProfitLossItem> = [];
 
   constructor() {
     makeAutoObservable(this, {
@@ -57,6 +67,8 @@ class BankSavingsDetailStore {
       isOpenAddNewTransactionModal: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
+      profitLossSelection: observable,
 
       setOpenAddNewTransactionModal: action,
       setPortfolioId: action,
@@ -66,11 +78,13 @@ class BankSavingsDetailStore {
       setTransactionHistory: action,
       setSelectedTransaction: action,
       setCurrentPage: action,
+      setProfitLossSelection: action,
 
       fetchPortfolioInfo: action,
       fetchCash: action,
       fetchBankSavingsDetail: action,
       fetchTransactionHistoryData: action,
+      fetchBankSavingProfitLoss: action,
 
       resetInitialState: action,
 
@@ -100,6 +114,10 @@ class BankSavingsDetailStore {
 
   setAssetId(assetId: string) {
     this.assetId = Number.parseFloat(assetId);
+  }
+
+  setProfitLossSelection(key: string, value: any) {
+    this.profitLossSelection = { ...this.profitLossSelection, [key]: value };
   }
 
   setOpenAddNewTransactionModal(isOpen: boolean) {
@@ -147,6 +165,27 @@ class BankSavingsDetailStore {
       rootStore.raiseError(content[rootStore.locale].error.default);
       return res;
     }
+  }
+
+  async fetchBankSavingProfitLoss() {
+    if (!this.portfolioId || !this.assetId) {
+      return;
+    }
+    const params = { Period: this.profitLossSelection.period };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/bankSaving/${this.assetId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
+    }
+    return res;
   }
 
   async createNewTransaction(params: ITransactionRequest) {
@@ -304,15 +343,7 @@ class BankSavingsDetailStore {
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
-  async resetTransaction() {
-    const data = await this.fetchTransactionHistoryData({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: 'all',
-      startDate: null,
-      endDate: null,
-    });
-    this.setTransactionHistory(data);
+  resetTransactionSelection() {
     this.setCurrentPage(1);
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
@@ -348,6 +379,11 @@ class BankSavingsDetailStore {
 
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
+
+      this.profitLossSelection = {
+        period: 'day',
+        type: 'bar',
+      };
 
       this.currentPage = 1;
       this.transactionSelection = {

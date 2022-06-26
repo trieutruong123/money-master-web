@@ -1,7 +1,7 @@
 import { Grid, MenuItem, Stack, TextField, Typography } from "@mui/material";
 
 import React from "react";
-import classes from "./amount-convert.module.css";
+import classes from "./style/amount-convert.module.css";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import { getSupportedCurrencyList } from "shared/helpers/currency-info";
 import Select, { SelectChangeEvent } from "@mui/material/Select";

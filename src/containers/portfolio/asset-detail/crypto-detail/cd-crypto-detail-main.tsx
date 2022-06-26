@@ -42,7 +42,6 @@ const CDCryptoDetail = observer(({ }: IProps) => {
     cryptoDetailStore.resetInitialState();
   }, []);
 
-
   useEffect(() => {
     async function fetchData() {
       if (cryptoDetailStore.cryptoDetail && cryptoDetailStore.marketData === undefined) {
@@ -59,6 +58,14 @@ const CDCryptoDetail = observer(({ }: IProps) => {
     cryptoDetailStore.setPortfolioId(portfolioId);
   }, [router, cryptoDetailStore, portfolioId, assetId]);
 
+  useEffect(()=>{
+    const fetchData = async()=>{
+      await cryptoDetailStore.fetchCryptoProfitLoss();
+    };
+    fetchData();
+  },[router.query.portfolioId, router.query.assetId]);
+
+  
   const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
     cryptoDetailStore.setSelectedTab(newValue);
   };

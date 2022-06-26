@@ -7,7 +7,7 @@ import {
 import { content } from "i18n";
 import { cashDetailStore } from "shared/store";
 import AmountConvert from "./amount-convert";
-import classes from "./index.module.css";
+import classes from "./style/index.module.css";
 
 interface TabPanelProps {
   children?: React.ReactNode;

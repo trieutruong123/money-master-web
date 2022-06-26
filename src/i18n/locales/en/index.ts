@@ -491,7 +491,7 @@ export const en = {
     overview: 'Overview',
     marketData: 'Market data',
     breadCurmbs: {
-      portfolio: 'Danh mục',
+      portfolio: 'Portfolio',
     },
     transactionForm: {
       title: 'Transaction',
@@ -565,7 +565,7 @@ export const en = {
     title: 'Bank savings',
     addNewTransaction: 'Add new transaction',
     breadCurmbs: {
-      portfolio: 'Danh mục',
+      portfolio: 'Portfolio',
     },
     transactionForm: {
       title: 'Transaction',
@@ -611,7 +611,7 @@ export const en = {
     title: 'Real estate',
     addNewTransaction: 'Add new transaction',
     breadCurmbs: {
-      portfolio: 'Danh mục',
+      portfolio: 'Portfolio',
     },
     transactionForm: {
       title: 'Transaction',

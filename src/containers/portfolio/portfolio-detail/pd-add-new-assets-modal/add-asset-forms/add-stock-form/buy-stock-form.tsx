@@ -19,7 +19,8 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
 import { observer } from 'mobx-react-lite';
 import { portfolioDetailStore } from 'shared/store';
-import { AssetTypeName, TransactionRequestType, UsingMoneySource } from 'shared/constants';
+import { UsingMoneySource } from 'shared/constants';
+import dayjs from 'dayjs';
 
 type FormValues = {
   name: string;
@@ -59,7 +60,6 @@ export const BuyStockForm = observer(({
       .positive('Shares must be greater than zero'),
     currencyCode: Yup.string().required().default('USD'),
     description: Yup.string(),
-    cashId: Yup.number(),
     tax: Yup.number()
     .typeError('Tax must be a number')
       .min(0,'Tax must be greater than zero'),
@@ -81,7 +81,7 @@ export const BuyStockForm = observer(({
 
     handleFormSubmit({
       name: data.name,
-      inputDay: date,
+      inputDay: dayjs(date).format(),
       description: data.description,
       currentAmountHolding: data.currentAmountHolding,
       stockCode: portfolioDetailStore?.selectedAsset?.stockCode || '',

@@ -10,7 +10,7 @@ import {
 import { fcsapiService, httpService } from 'services';
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
 import { portfolioData } from 'shared/store/portfolio/portfolio-data';
-import { CashItem } from 'shared/models';
+import { CashItem, ProfitLossItem } from 'shared/models';
 import { rootStore } from 'shared/store';
 import { content } from 'i18n';
 import { AssetTypeName, TransactionTypeName } from 'shared/constants';
@@ -39,15 +39,9 @@ class CashDetailStore {
   cashDetail: CashItem | undefined = undefined;
   cashList: CashItem[] | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = undefined;
+
   destCurrencyCode: string = '';
   sourceCurrencyCode: string = '';
-
-  transactionHistory: Array<TransactionItem> | undefined = undefined;
-  transactionSelection: {
-    type: 'all' | 'in' | 'out';
-    startDate: Date | null;
-    endDate: Date | null;
-  } = { type: 'all', startDate: null, endDate: null };
 
   OHLC_data: Array<any> = [];
   forexMarketData: any = undefined;
@@ -59,7 +53,19 @@ class CashDetailStore {
   isOpenAddNewTransactionModal: boolean = false;
   needUpdateOverviewData: boolean = false;
 
+  transactionHistory: Array<TransactionItem> | undefined = undefined;
+  transactionSelection: {
+    type: 'all' | 'in' | 'out';
+    startDate: Date | null;
+    endDate: Date | null;
+  } = { type: 'all', startDate: null, endDate: null };
   currentPage: number = 1;
+
+  profitLossSelection: {
+    period: 'day' | 'month' | 'year';
+    type: 'bar' | 'line';
+  } = { period: 'day', type: 'bar' };
+  profitLossList: Array<ProfitLossItem> = [];
 
   constructor() {
     makeAutoObservable(this, {
@@ -83,11 +89,14 @@ class CashDetailStore {
       selectedTab: observable,
       isOpenAddNewTransactionModal: observable,
       needUpdateOverviewData: observable,
+      profitLossList: observable,
+      profitLossSelection: observable,
 
       fetchOHLC_Data: action,
       fetchForexInfoByCode: action,
       fetchTransactionHistoryData: action,
       fetchForexDetail: action,
+      fetchCashProfitLoss: action,
 
       setOpenAddNewTransactionModal: action,
       setCashId: action,
@@ -100,6 +109,7 @@ class CashDetailStore {
       setTransactionHistory: action,
       setSelectedTransaction: action,
       setCurrentPage: action,
+      setProfitLossSelection: action,
 
       resetInitialState: action,
 
@@ -110,6 +120,10 @@ class CashDetailStore {
 
   setCurrentPage(pageNumber: number) {
     this.currentPage = pageNumber;
+  }
+
+  setProfitLossSelection(key: string, value: any) {
+    this.profitLossSelection = { ...this.profitLossSelection, [key]: value };
   }
 
   setOpenAddNewTransactionModal(isOpen: boolean) {
@@ -351,15 +365,28 @@ class CashDetailStore {
     return res;
   }
 
-  async resetTransaction() {
-    const data = await this.fetchTransactionHistoryData({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: 'all',
-      startDate: null,
-      endDate: null,
-    });
-    this.setTransactionHistory(data);
+  async fetchCashProfitLoss() {
+    if (!this.portfolioId || !this.cashId) {
+      return;
+    }
+    const params = { Period: this.profitLossSelection.period };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/cash/${this.cashId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
+    }
+    return res;
+  }
+
+  resetTransactionSelection() {
     this.setCurrentPage(1);
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
@@ -401,6 +428,11 @@ class CashDetailStore {
 
     this.needUpdateOverviewData = true;
     this.selectedTab = PACashBreadcrumbTabs.overview;
+
+    this.profitLossSelection = {
+      period: 'day',
+      type: 'bar',
+    };
 
     this.currentPage = 1;
     this.transactionSelection = {

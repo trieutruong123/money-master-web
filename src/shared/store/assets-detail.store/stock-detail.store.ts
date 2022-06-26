@@ -7,7 +7,12 @@ import {
 import { content } from 'i18n';
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
 import { finhubService, httpService } from 'services';
-import { CashItem, StockItem, TransactionItem } from 'shared/models';
+import {
+  CashItem,
+  ProfitLossItem,
+  StockItem,
+  TransactionItem,
+} from 'shared/models';
 import { rootStore } from 'shared/store';
 import {
   ITransactionListRequest,
@@ -46,6 +51,7 @@ class StockDetailStore {
     startDate: Date | null;
     endDate: Date | null;
   } = { type: 'all', startDate: null, endDate: null };
+  currentPage: number = 1;
 
   timeInterval: string = 'W';
   OHLC_data: Array<any> = [];
@@ -54,7 +60,11 @@ class StockDetailStore {
   selectedTab: string = PAStockBreadcrumbTabs.overview;
   isOpenAddNewTransactionModal: boolean = false;
 
-  currentPage: number = 1;
+  profitLossList: Array<ProfitLossItem> = [];
+  profitLossSelection: {
+    period: 'day' | 'month' | 'year';
+    type: 'bar' | 'line';
+  } = { period: 'day', type: 'bar' };
 
   constructor() {
     makeAutoObservable(this, {
@@ -74,6 +84,7 @@ class StockDetailStore {
       marketData: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
 
       setOpenAddNewTransactionModal: action,
       setStockId: action,
@@ -85,6 +96,7 @@ class StockDetailStore {
       setSelectedTransaction: action,
       setTransactionHistory: action,
       setCurrentPage: action,
+      setProfitLossSelection: action,
 
       resetInitialState: action,
 
@@ -93,9 +105,14 @@ class StockDetailStore {
       fetchTransactionHistoryData: action,
       fetchPortfolioInfo: action,
       fetchStockInfoByCode: action,
+      fetchStockProfitLoss: action,
 
       createNewTransaction: action,
     });
+  }
+
+  setProfitLossSelection(key: string, value: any) {
+    this.profitLossSelection = { ...this.profitLossSelection, [key]: value };
   }
 
   setUpdateOverviewData(isUpdate: boolean) {
@@ -191,6 +208,27 @@ class StockDetailStore {
       rootStore.raiseError(
         content[rootStore.locale].error.failedToLoadInitialData,
       );
+    }
+    return res;
+  }
+
+  async fetchStockProfitLoss() {
+    if (!this.portfolioId || !this.stockId) {
+      return;
+    }
+    const params = { Period: this.profitLossSelection.period };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/stock/${this.stockId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
     }
     return res;
   }
@@ -344,15 +382,7 @@ class StockDetailStore {
     return res;
   }
 
-  async resetTransaction() {
-    const data = await this.fetchTransactionHistoryData({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: 'all',
-      startDate: null,
-      endDate: null,
-    });
-    this.setTransactionHistory(data);
+  resetTransactionSelection() {
     this.setCurrentPage(1);
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
@@ -392,6 +422,11 @@ class StockDetailStore {
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
       this.selectedTab = PAStockBreadcrumbTabs.overview;
+
+      this.profitLossSelection = {
+        period: 'day',
+        type: 'bar',
+      };
 
       this.currentPage = 1;
       this.transactionSelection = {

@@ -13,6 +13,8 @@ import CustomNoRowsOverlay from './custom-no-rows-overlay';
 import TabPanel from './tab-panel';
 import { ImagePicker } from './image-picker';
 import Pagination from './pagination';
+import LineChart from './line-chart';
+import ColumnChart from './column-chart';
 
 export {
   Link,
@@ -28,4 +30,6 @@ export {
   TabPanel,
   ImagePicker,
   Pagination,
+  LineChart,
+  ColumnChart,
 };

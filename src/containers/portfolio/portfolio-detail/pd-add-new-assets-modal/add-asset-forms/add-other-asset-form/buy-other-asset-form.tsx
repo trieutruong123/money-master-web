@@ -22,6 +22,7 @@ import { PersonalInterestCustomAssetItem } from 'shared/models';
 import { portfolioDetailStore } from 'shared/store';
 import { UsingMoneySource } from 'shared/constants';
 import { observer } from 'mobx-react-lite';
+import dayjs from 'dayjs';
 
 type FormValues = {
   name: string;
@@ -93,7 +94,7 @@ export const BuyOtherAssetForm = observer(({
     handleFormSubmit(data.customInterestAssetInfoId, {
       name: data.name,
       inputCurrency: data.inputCurrency,
-      inputDay: date,
+      inputDay: dayjs(date).format(),
       inputMoneyAmount: data.inputMoneyAmount,
       interestRate: data.interestRate,
       termRange: data.termRange,

@@ -30,7 +30,7 @@ const FadingBallsLoading: React.FC<
           ['--color' as any]: color,
           ['--duration' as any]: duration,
         }}
-        className={`cssfxFadingBalls ${className}`}
+        className={[styled.cssfxFadingBalls,className].join(' ')}
       >
         <div></div>
         <div></div>

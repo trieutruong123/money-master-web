@@ -21,6 +21,7 @@ import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers';
 import { portfolioDetailStore } from 'shared/store';
 import { UsingMoneySource } from 'shared/constants';
 import { observer } from 'mobx-react-lite';
+import dayjs from 'dayjs';
 
 type FormValues = {
   name: string;
@@ -62,7 +63,6 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
       .positive('Term range must be greater than zero'),
     inputCurrency: Yup.string().required().default('USD'),
     bankCode: Yup.string().required('Bank code is required'),
-    cashId: Yup.number(),
     tax: Yup.number()
       .typeError('Tax must be a number')
       .min(0,'Tax must be greater than zero'),
@@ -87,7 +87,7 @@ export const BuyBankSavingsForm = observer(({ handleFormSubmit, content }: IProp
       name: data.name,
       bankCode: data.bankCode,
       inputCurrency: data.inputCurrency,
-      inputDay: date,
+      inputDay: dayjs(date).format(),
       inputMoneyAmount: data.inputMoneyAmount,
       isGoingReinState: true,
       interestRate: data.interestRate/100,

@@ -2,7 +2,12 @@ import { rootStore } from 'shared/store';
 import { getCurrencyByCode, httpError } from 'shared/helpers';
 import { action, makeAutoObservable, observable, runInAction } from 'mobx';
 import { httpService } from 'services';
-import { CashItem, RealEstateItem, TransactionItem } from 'shared/models';
+import {
+  CashItem,
+  ProfitLossItem,
+  RealEstateItem,
+  TransactionItem,
+} from 'shared/models';
 import { content } from 'i18n';
 import {
   AssetTypeName,
@@ -37,8 +42,15 @@ class RealEstateDetailStore {
 
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
+
   needUpdateOverviewData: boolean = true;
   isOpenAddNewTransactionModal: boolean = false;
+
+  profitLossSelection: {
+    period: 'day' | 'month' | 'year';
+    type: 'bar' | 'line';
+  } = { period: 'day', type: 'bar' };
+  profitLossList: Array<ProfitLossItem> = [];
 
   constructor() {
     makeAutoObservable(this, {
@@ -56,6 +68,8 @@ class RealEstateDetailStore {
       isOpenAddNewTransactionModal: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
+      profitLossSelection: observable,
 
       setPortfolioId: action,
       setOpenAddNewTransactionModal: action,
@@ -65,11 +79,13 @@ class RealEstateDetailStore {
       setTransactionHistory: action,
       setSelectedTransaction: action,
       setCurrentPage: action,
+      setProfitLossSelection: action,
 
       fetchRealEstateDetail: action,
       fetchTransactionHistoryData: action,
       fetchPortfolioInfo: action,
       fetchCash: action,
+      fetchRealEstateProfitLoss: action,
 
       resetInitialState: action,
 
@@ -83,6 +99,10 @@ class RealEstateDetailStore {
       ...this.transactionSelection,
       [key]: value,
     };
+  }
+
+  setProfitLossSelection(key: string, value: any) {
+    this.profitLossSelection = { ...this.profitLossSelection, [key]: value };
   }
 
   setCurrentPage(pageNumber: number) {
@@ -205,6 +225,27 @@ class RealEstateDetailStore {
     return res;
   }
 
+  async fetchRealEstateProfitLoss() {
+    if (!this.portfolioId || !this.assetId) {
+      return;
+    }
+    const params = { Period: this.profitLossSelection.period };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/realEstate/${this.assetId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
+    }
+    return res;
+  }
+
   async fetchCash() {
     if (!this.portfolioId || !this.assetId) {
       return;
@@ -276,15 +317,7 @@ class RealEstateDetailStore {
     } else return { isError: true, data: httpError.handleErrorCode(res) };
   }
 
-  async resetTransaction() {
-    const data = await this.fetchTransactionHistoryData({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: 'all',
-      startDate: null,
-      endDate: null,
-    });
-    this.setTransactionHistory(data);
+  resetTransactionSelection() {
     this.setCurrentPage(1);
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
@@ -320,6 +353,11 @@ class RealEstateDetailStore {
 
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
+
+      this.profitLossSelection = {
+        period: 'day',
+        type: 'bar',
+      };
 
       this.currentPage = 1;
       this.transactionSelection = {

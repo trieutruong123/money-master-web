@@ -7,31 +7,39 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from "@mui/material";
-import { observer } from "mobx-react-lite";
-import { lazy, Suspense, useEffect } from "react";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import { bankSavingsDetailStore, rootStore } from "shared/store";
-import { BreadcrumbsLink } from "shared/components";
-import React from "react";
-import { useRouter } from "next/router";
-import { AddNewTransactionModal } from "./bs-transaction-modal/bs-transaction-modal-main.tsx";
+} from '@mui/material';
+import { observer } from 'mobx-react-lite';
+import { lazy, Suspense, useEffect } from 'react';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { bankSavingsDetailStore, rootStore } from 'shared/store';
+import { BreadcrumbsLink } from 'shared/components';
+import React from 'react';
+import { useRouter } from 'next/router';
+import { AddNewTransactionModal } from './bs-transaction-modal/bs-transaction-modal-main.tsx';
 import { content as i18n } from 'i18n';
 
+const BSTransactionHistory = lazy(
+  () => import('./bs-transaction-history/bs-transaction-history-main'),
+);
+const BSIntroSection = lazy(
+  () => import('./bs-intro-section/bs-intro-section-main'),
+);
+const BSProfitLossChart = lazy(
+  () => import('./bs-profit-loss-chart/bs-profit-loss-chart'),
+);
 
-const BSTransactionHistory = lazy(() => import('./bs-transaction-history/bs-transaction-history-main'));
-const BSIntroSection = lazy(() => import('./bs-intro-section/bs-intro-section-main'));
+interface IProps {}
 
-interface IProps {
-}
-
-const BankSavingsDetail = observer(({ }: IProps) => {
+const BankSavingsDetail = observer(({}: IProps) => {
   const theme = useTheme();
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const { locale, query } = router;
-  const content = locale === 'vi' ? i18n['vi'].bankSavingDetailPage : i18n['en'].bankSavingDetailPage;
+  const content =
+    locale === 'vi'
+      ? i18n['vi'].bankSavingDetailPage
+      : i18n['en'].bankSavingDetailPage;
 
   const portfolioId = Array.isArray(query['portfolioId'])
     ? query['portfolioId'][0]
@@ -41,8 +49,10 @@ const BankSavingsDetail = observer(({ }: IProps) => {
     : query['assetId'] || '';
 
   useEffect(() => {
-    bankSavingsDetailStore.resetInitialState();
-    bankSavingsDetailStore.resetTransaction();
+    const fetchData = async () => {
+      await bankSavingsDetailStore.resetInitialState();
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -55,32 +65,45 @@ const BankSavingsDetail = observer(({ }: IProps) => {
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
-      Promise.all([bankSavingsDetailStore.fetchOverviewData()]);
-      await bankSavingsDetailStore.refreshTransactionHistory();
+      Promise.all([
+        bankSavingsDetailStore.fetchOverviewData(),
+        await bankSavingsDetailStore.refreshTransactionHistory(),
+      ]);
+
       rootStore.stopLoading();
     };
-    if (portfolioId && assetId && bankSavingsDetailStore.needUpdateOverviewData) {
+    if (
+      portfolioId &&
+      assetId &&
+      bankSavingsDetailStore.needUpdateOverviewData
+    ) {
       fetchData();
       bankSavingsDetailStore.setUpdateOverviewData(false);
     }
   }, [portfolioId, assetId, bankSavingsDetailStore.needUpdateOverviewData]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await bankSavingsDetailStore.fetchBankSavingProfitLoss();
+    };
+    fetchData();
+  }, [router.query.portfolioId, router.query.assetId]);
 
   return (
     <Box
       sx={{
-        display: "flex",
-        height: "100%",
-        overflow: "hidden",
-        width: "100%",
+        display: 'flex',
+        height: '100%',
+        overflow: 'hidden',
+        width: '100%',
       }}
     >
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          flex: "1 1 auto",
-          overflow: "hidden",
+          display: 'flex',
+          justifyContent: 'center',
+          flex: '1 1 auto',
+          overflow: 'hidden',
         }}
       >
         <Box sx={{ overflow: 'auto', width: '100%' }}>
@@ -94,9 +117,9 @@ const BankSavingsDetail = observer(({ }: IProps) => {
               displayNameArr={[
                 'Portfolio',
                 bankSavingsDetailStore.portfolioInfo?.name ||
-                bankSavingsDetailStore.portfolioId.toString(),
+                  bankSavingsDetailStore.portfolioId.toString(),
                 bankSavingsDetailStore.assetDetail?.name ||
-                bankSavingsDetailStore.assetId.toString(),
+                  bankSavingsDetailStore.assetId.toString(),
               ]}
             />
             <Typography sx={{ mb: 3 }} variant="h4">
@@ -117,7 +140,16 @@ const BankSavingsDetail = observer(({ }: IProps) => {
                 </Grid>
                 <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
                   <Suspense fallback={<></>}>
-                    <BSTransactionHistory transactionHistoryData={bankSavingsDetailStore.transactionHistory} />
+                    <BSProfitLossChart />
+                  </Suspense>
+                </Grid>
+                <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
+                  <Suspense fallback={<></>}>
+                    <BSTransactionHistory
+                      transactionHistoryData={
+                        bankSavingsDetailStore.transactionHistory
+                      }
+                    />
                   </Suspense>
                 </Grid>
               </Grid>
@@ -132,18 +164,17 @@ const BankSavingsDetail = observer(({ }: IProps) => {
         <IconButton
           onClick={() => {
             bankSavingsDetailStore.setOpenAddNewTransactionModal(
-              !bankSavingsDetailStore.isOpenAddNewTransactionModal
+              !bankSavingsDetailStore.isOpenAddNewTransactionModal,
             );
           }}
           color="success"
-          sx={{ position: "absolute", right: "6vw", bottom: "6vh" }}
+          sx={{ position: 'absolute', right: '6vw', bottom: '6vh' }}
         >
-          <AddCircleIcon sx={{ width: "4rem", height: "4rem" }} />
+          <AddCircleIcon sx={{ width: '4rem', height: '4rem' }} />
         </IconButton>
       </Tooltip>
     </Box>
   );
-}
-);
+});
 
 export default BankSavingsDetail;

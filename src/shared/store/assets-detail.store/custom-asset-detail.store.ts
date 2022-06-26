@@ -14,6 +14,7 @@ import {
   CashItem,
   CustomAssetItem,
   CustomAssetItemByCategory,
+  ProfitLossItem,
   TransactionItem,
 } from 'shared/models';
 import {
@@ -42,6 +43,12 @@ class CustomAssetDetailStore {
   } = { type: 'all', startDate: null, endDate: null };
   currentPage: number = 1;
 
+  profitLossList: Array<ProfitLossItem> = [];
+  profitLossSelection: {
+    period: 'day' | 'month' | 'year';
+    type: 'bar' | 'line';
+  } = { period: 'day', type: 'bar' };
+
   cashDetail: Array<CashItem> | undefined = [];
   currencyList: Array<CurrencyItem> | undefined = [];
   needUpdateOverviewData: boolean = true;
@@ -62,6 +69,8 @@ class CustomAssetDetailStore {
       isOpenAddNewTransactionModal: observable,
       transactionSelection: observable,
       currentPage: observable,
+      profitLossList: observable,
+      profitLossSelection: observable,
 
       setPortfolioId: action,
       setCustomAssetId: action,
@@ -71,12 +80,14 @@ class CustomAssetDetailStore {
       setTransactionHistory: action,
       setSelectedTransaction: action,
       setCurrentPage: action,
+      setProfitLossSelection: action,
 
       resetInitialState: action,
 
       fetchCash: action,
       fetchPortfolioInfo: action,
       fetchTransactionHistoryData: action,
+      fetchCustomAssetProfitLoss: action,
     });
   }
 
@@ -85,6 +96,10 @@ class CustomAssetDetailStore {
       ...this.transactionSelection,
       [key]: value,
     };
+  }
+
+  setProfitLossSelection(key: string, value: any) {
+    this.profitLossSelection = { ...this.profitLossSelection, [key]: value };
   }
 
   setCurrentPage(pageNumber: number) {
@@ -143,6 +158,27 @@ class CustomAssetDetailStore {
         this.portfolioInfo = undefined;
       });
     }
+  }
+
+  async fetchCustomAssetProfitLoss() {
+    if (!this.portfolioId || !this.customAssetId) {
+      return;
+    }
+    const params = { Period: this.profitLossSelection.period };
+    rootStore.startLoading();
+    const url = `/portfolio/${this.portfolioId}/custom/${this.customAssetId}/profitLoss`;
+    const res: { isError: boolean; data: any } = await httpService.get(
+      url,
+      params,
+    );
+    rootStore.stopLoading();
+    if (!res.isError) {
+      runInAction(() => {
+        this.profitLossList = res.data;
+      });
+    } else {
+    }
+    return res;
   }
 
   async fetchCustomAssetDetail() {
@@ -262,15 +298,7 @@ class CustomAssetDetailStore {
     }
   }
 
-  async resetTransaction() {
-    const data = await this.fetchTransactionHistoryData({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: 'all',
-      startDate: null,
-      endDate: null,
-    });
-    this.setTransactionHistory(data);
+  resetTransactionSelection() {
     this.setCurrentPage(1);
     this.setSelectedTransaction('type', 'all');
     this.setSelectedTransaction('startDate', null);
@@ -308,6 +336,11 @@ class CustomAssetDetailStore {
 
       this.isOpenAddNewTransactionModal = false;
       this.needUpdateOverviewData = true;
+
+      this.profitLossSelection = {
+        period: 'day',
+        type: 'bar',
+      };
 
       this.currentPage = 1;
       this.transactionSelection = {
