@@ -61,6 +61,7 @@ export const BuyCryptoForm = observer(({
     tax: Yup.number()
           .typeError('Tax must be a number')
           .min(0,'Tax must be greater than zero'),
+    cashId: Yup.number(),
     fee: Yup.number()
       .typeError('Fee must be a number')
       .min(0,'Fee must be greater than zero'),

@@ -48,7 +48,7 @@ export const BuyCashForm = observer(({ handleFormSubmit, content }: IProps) => {
       .typeError('Amount must be a number')
       .positive('Amount must be greater than zero'),
     description: Yup.string(),
-    // cashId: Yup.number().required(),
+    cashId: Yup.number(),
     tax: Yup.number()
     .typeError('Tax must be a number')
       .min(0,'Tax must be greater than zero'),

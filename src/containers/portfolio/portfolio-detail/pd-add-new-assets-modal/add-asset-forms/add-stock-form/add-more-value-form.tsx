@@ -53,6 +53,7 @@ export const AddMoreValueForm = observer(({
             .typeError('Shares must be a number')
             .positive('Shares must be greater than zero'),
         currencyCode: Yup.string().required().default('USD'),
+        cashId: Yup.number(),
         tax: Yup.number()
             .typeError('Tax must be a number')
             .min(0,'Tax must be greater than zero'),
