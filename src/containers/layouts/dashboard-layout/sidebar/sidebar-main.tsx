@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
 import {
   Drawer,
   useMediaQuery,
@@ -9,7 +8,13 @@ import { userService } from 'services';
 import SidebarItemList from './sidebar-item-list';
 import { rootStore } from 'shared/store';
 
-export const DashboardSidebar = (props: any) => {
+interface IProps  {
+  onClose: Function,
+  open: boolean,
+};
+
+
+export const DashboardSidebar = (props: IProps) => {
   const { open, onClose } = props;
   const router = useRouter();
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up('lg'), {
@@ -80,7 +85,3 @@ export const DashboardSidebar = (props: any) => {
   );
 };
 
-DashboardSidebar.propTypes = {
-  onClose: PropTypes.func,
-  open: PropTypes.bool,
-};

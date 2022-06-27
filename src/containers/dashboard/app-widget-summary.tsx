@@ -1,9 +1,6 @@
 // @mui
-import PropTypes from 'prop-types';
 import { alpha, styled, Theme } from '@mui/material/styles';
 import { Box, Card, Typography } from '@mui/material';
-// utils
-// components
 import { replace } from 'lodash';
 import numeral from 'numeral';
 import Iconify from './iconify';
