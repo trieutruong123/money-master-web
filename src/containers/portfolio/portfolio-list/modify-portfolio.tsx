@@ -25,7 +25,7 @@ const ModifyPortfolio = (
       name: portfolioName,
       initialCurrency: initialCurrency.toUpperCase()||'USD',
       initialCash: 0,
-      initalCashName: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
+      initialCashName: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
       initialCashDescription: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
     });
   }
