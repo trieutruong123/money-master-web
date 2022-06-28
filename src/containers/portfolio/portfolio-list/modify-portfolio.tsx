@@ -12,8 +12,10 @@ const ModifyPortfolio = (
   const [initialCurrency, setCurrency] = useState<string>("");
   const [currencyList, setCurrencyList] = React.useState<any>({});
   React.useEffect(() => {
-    setPortfolioName(props.portfolio.name)
-    setCurrency(props.portfolio.initialCurrency)
+    if (props.portfolio) {
+      setPortfolioName(props.portfolio.name)
+      setCurrency(props.portfolio.initialCurrency)
+    }
     getSupportedCurrencyList().forEach(currency => {
       setCurrencyList((prevState: any) => ({ ...prevState, [currency.code]: currency.name })
       )
