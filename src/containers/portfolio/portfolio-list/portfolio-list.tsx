@@ -57,6 +57,7 @@ const PortfolioList = observer(({ context }: IProps) => {
   };
 
   const deleteHandler = async(portfolioId: string) => {
+    console.log(portfolioId)
     await portfolioStore.deletePortfolio(portfolioId);
   };
 
