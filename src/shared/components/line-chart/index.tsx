@@ -27,7 +27,8 @@ const LineChart = ({
 }: IProps) => {
   const yDatas = data.map((item: ProfitLossItem) => item.amount);
   const xDatas = data.map((item: ProfitLossItem) => Date.parse(item.endTime));
-
+  console.log(xDatas);
+  console.log(yDatas);
   const lineSeries = [{ name: title, data: yDatas }];
   const median =
     yDatas.reduce((prev, cur, idx) => cur + prev, 0) / xDatas.length;

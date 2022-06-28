@@ -36,13 +36,8 @@ import {
   TransferToInvestFundType,
   IAddedAsset,
   ITransactionRequest,
-  ITransactionListRequest,
 } from 'shared/types';
-import {
-  AssetTypeName,
-  PDBreadcrumbTabs,
-  TransactionHistoryContants,
-} from 'shared/constants';
+import { AssetTypeName, PDBreadcrumbTabs } from 'shared/constants';
 import { rootStore } from 'shared/store';
 import { httpError } from 'shared/helpers';
 import {
@@ -77,15 +72,9 @@ class PortfolioDetailStore {
 
   needUpdatedInvestFundData: boolean = false;
   needUpdatedCash: boolean = false;
-
   investFundDetail: InvestFundResponse | undefined = undefined;
-  investFundTransactionHistory: Array<InvestFundTransactionItem> = [];
-  investFundTransactionSelection: {
-    type: 'all' | 'in' | 'out';
-    startDate: Date | null;
-    endDate: Date | null;
-    currentPage: number;
-  } = { type: 'all', startDate: null, endDate: null, currentPage: 1 };
+  investFundTransactionHistory: Array<InvestFundTransactionItem> | undefined =
+    undefined;
 
   needUpdatedReportData: boolean = false;
   sankeyFlowData: Array<SankeyDataLink> | undefined = undefined;
@@ -131,9 +120,7 @@ class PortfolioDetailStore {
 
       needUpdatedInvestFundData: observable,
       needUpdatedCash: observable,
-
       investFundDetail: observable,
-      investFundTransactionSelection: observable,
       investFundTransactionHistory: observable,
 
       isOpenAddNewAssetModal: observable,
@@ -156,9 +143,6 @@ class PortfolioDetailStore {
       setUpdateReport: action,
       setAddedAssetInfo: action,
       setSankeySelection: action,
-      setInvestFundTransactionSelection: action,
-      setInvestFundTransactionHistory: action,
-
       resetInitialState: action,
 
       fetchRealEstate: action,
@@ -170,6 +154,7 @@ class PortfolioDetailStore {
       fetchCash: action,
       fetchPortfolioInfo: action,
       fetchInvestFundInfo: action,
+      fetchInvestFundTransactionHistory: action,
       fetchPieChartData: action,
 
       addNewBankSaving: action,
@@ -211,17 +196,6 @@ class PortfolioDetailStore {
 
   setSelectedCustomAssetId(id: number) {
     this.selectedCustomAssetId = id;
-  }
-
-  setInvestFundTransactionHistory(history: InvestFundTransactionItem[]) {
-    this.investFundTransactionHistory = history;
-  }
-
-  setInvestFundTransactionSelection(key: string, value: any) {
-    this.investFundTransactionSelection = {
-      ...this.investFundTransactionSelection,
-      [key]: value,
-    };
   }
 
   setOpenTransferToInvestFundModal(isOpen: boolean) {
@@ -803,8 +777,8 @@ class PortfolioDetailStore {
 
   async fetchInvestFundData() {
     Promise.all([
-      await this.fetchInvestFundInfo(),
-      await this.refreshInestFundTransactionHistory(),
+      this.fetchInvestFundInfo(),
+      this.fetchInvestFundTransactionHistory(),
     ]);
   }
 
@@ -823,30 +797,17 @@ class PortfolioDetailStore {
     }
   }
 
-  async fetchInvestFundTransactionHistory({
-    itemsPerPage,
-    nextPage,
-    startDate,
-    endDate,
-    type,
-  }: ITransactionListRequest) {
-    let params: any = {
-      PageSize: itemsPerPage,
-      PageNumber: nextPage,
-      Type: type,
-    };
-    if (endDate) params.EndDate = endDate;
-    if (startDate) params.StartDate = startDate;
-
+  async fetchInvestFundTransactionHistory() {
     const url = `/portfolio/${this.portfolioId}/investFund/transactions`;
-    const res: { isError: boolean; data: any } = await httpService.get(
-      url,
-      params,
-    );
+    const res = await httpService.get(url);
     if (!res.isError) {
-      return res.data;
+      runInAction(() => {
+        this.investFundTransactionHistory = res.data.reverse();
+      });
     } else {
-      return [];
+      runInAction(() => {
+        this.investFundTransactionHistory = undefined;
+      });
     }
   }
 
@@ -995,33 +956,6 @@ class PortfolioDetailStore {
     }
   }
 
-  async refreshInestFundTransactionHistory() {
-    const startDate = this.investFundTransactionSelection.startDate
-      ? dayjs(this.investFundTransactionSelection.startDate)
-          .startOf('day')
-          .format()
-      : null;
-    const endDate = this.investFundTransactionSelection.endDate
-      ? dayjs(this.investFundTransactionSelection.endDate).endOf('day').format()
-      : null;
-    const data = await this.fetchInvestFundTransactionHistory({
-      itemsPerPage: 3 * TransactionHistoryContants.itemsPerPage,
-      nextPage: 1,
-      type: this.investFundTransactionSelection.type,
-      startDate: startDate,
-      endDate: endDate,
-    });
-    this.setInvestFundTransactionHistory(data);
-    this.setInvestFundTransactionSelection('currentPage', 1);
-  }
-
-  resetInvestFundTransactionSelection() {
-    this.setInvestFundTransactionSelection('currentPage', 1);
-    this.setInvestFundTransactionSelection('type', 'all');
-    this.setInvestFundTransactionSelection('startDate', null);
-    this.setInvestFundTransactionSelection('endDate', null);
-  }
-
   resetInitialState() {
     runInAction(() => {
       this.stockDetail = undefined;
@@ -1037,13 +971,7 @@ class PortfolioDetailStore {
       this.isOpenTransferToInvestFundModal = false;
 
       this.investFundDetail = undefined;
-      this.investFundTransactionHistory = [];
-      this.investFundTransactionSelection = {
-        currentPage: 1,
-        type: 'all',
-        startDate: null,
-        endDate: null,
-      };
+      this.investFundTransactionHistory = undefined;
 
       this.pieChartData = undefined;
       this.sankeyFlowData = undefined;

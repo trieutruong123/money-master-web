@@ -30,6 +30,7 @@ const ColumnChart = ({
 
   const max = yDatas.reduce((prev, cur, idx) => Math.max(prev, cur), 0);
   const min = yDatas.reduce((prev, cur, idx) => Math.min(prev, cur), 0);
+  console.log(yDatas);
   const areaSeries = [{ name: xAxisLabel, data: yDatas }];
   const areaOptions: any = {
     series: [
@@ -70,6 +71,7 @@ const ColumnChart = ({
       },
       labels: {
         formatter: function (y: number) {
+          console.log(y);
           return `${roundAndAddDotAndCommaSeparator(y, 2)} ${
             getCurrencyByCode(currencyCode || 'USD')?.symbol || ''
           } `;
