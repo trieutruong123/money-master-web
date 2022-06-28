@@ -67,6 +67,7 @@ function PortfolioCard(props: any) {
       >
         <UpdatePortfolio
           content={pageContent.updatePortfolioModal}
+          portfolio={props.portfolio}
           onModifyPortfolio={updateHandler}
         />
       </Modal>
