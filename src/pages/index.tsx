@@ -1,18 +1,14 @@
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import { GetStaticProps, InferGetStaticPropsType } from 'next/types';
-import { HypnosisLoading } from 'shared/components';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { DefaultLayout } from 'containers/layouts';
-
-const LandingPage = lazy(
-  () => import('containers/landing-page/landing-page-main'),
-);
+import LandingPage from 'containers/landing-page/landing-page-main';
 
 const MainPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
-    <Suspense fallback={<HypnosisLoading />}>
+    <>
       <LandingPage />
-    </Suspense>
+    </>
   );
 };
 

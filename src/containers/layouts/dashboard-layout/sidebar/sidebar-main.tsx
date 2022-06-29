@@ -9,7 +9,7 @@ import SidebarItemList from './sidebar-item-list';
 import { rootStore } from 'shared/store';
 
 interface IProps  {
-  onClose: Function,
+  onClose: any,
   open: boolean,
 };
 
