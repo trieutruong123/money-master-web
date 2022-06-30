@@ -42,8 +42,6 @@ const ModifyPortfolio = (
     setCurrency(event.target.value);
   }
 
-  console.log(props)
-
   return (
     <div className={classes.body}>
       <h1 className={classes.title}>{pageContent.title}</h1>
