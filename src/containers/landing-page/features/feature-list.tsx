@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Box, Grid, Typography, useTheme, useMediaQuery } from "@mui/material";
-import { colorScheme } from "utils/color-scheme";
 import { Fade } from "react-awesome-reveal";
 import styled from './style/index.module.css';
 import { colorScheme } from "utils/color-scheme";
@@ -21,6 +20,7 @@ export default function FeatureBox({ features }: IProps) {
 
   return (
     <Box 
+      id = 'feature'
       className = {styled.FeatureListContainer}>
       {features.map((feature, key) => {
         return feature.id % 2 !== 0 && !isSm ? (
@@ -60,7 +60,7 @@ export default function FeatureBox({ features }: IProps) {
                 <Grid 
                   item xs ={12} sm = {8} md = {6} lg={5}
                   className = {styled.FeatureContentWrapper}>
-                    <Typography variant="h3" textAlign = 'left' fontSize="40px" mb='2rem' color = {colorScheme.theme}>
+                    <Typography variant="h3" textAlign = 'right' fontSize="40px" mb='2rem' color = {colorScheme.theme}>
                       {feature.title}
                     </Typography>
                     <Typography

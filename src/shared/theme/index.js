@@ -14,7 +14,6 @@ export const theme = createTheme({
     MuiButton: {
       defaultProps: {
         disableElevation: true,
-        
       },
       styleOverrides: {
         root: {
@@ -179,7 +178,7 @@ export const theme = createTheme({
       disabled: 'rgba(55, 65, 81, 0.26)',
     },
     background: {
-      default: '#FFFFFF',
+      default: '#F3F4F6',
       paper: '#FFFFFF',
     },
     divider: '#E6E8F0',

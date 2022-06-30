@@ -32,7 +32,7 @@ export default function LandingFeatures({ content }: IProps) {
   ];
 
   return (
-    <section id="service-section" className={`${styled.MiddleBlockSection} section`}>
+    <section id="service" className={`${styled.MiddleBlockSection} section`}>
       <Slide direction="up">
         <Grid
           container

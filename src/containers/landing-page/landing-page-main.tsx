@@ -17,7 +17,7 @@ const LandingPage = () => {
   component="main"
   sx={{
     flexGrow: 1,
-    py: 8,
+    pt: 8,
   }}
 >
   <LandingBrandIntro content={landingPage.body.intro} />
