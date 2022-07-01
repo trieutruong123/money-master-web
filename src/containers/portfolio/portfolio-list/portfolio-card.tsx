@@ -39,6 +39,7 @@ function PortfolioCard(props: any) {
     });
     setOpenUpdateModal(false);
   };
+  
   const deleteHandler = () => {
     props.onDelete(props.portfolioId);
     setOpenDeleteModal(false);
