@@ -1,7 +1,6 @@
-import { RecentlyAdded } from './recently-added';
-import { PlanProgress } from './plan-progress';
-import { TotalAssets } from './total-assets';
-import { TotalProfit } from './total-profit';
-import { YourWallet } from './your-wallet';
-import { InvestmentChannel } from './investment-channel';
-export {TotalAssets,TotalProfit, YourWallet, PlanProgress, RecentlyAdded, InvestmentChannel}
+import AppWidgetSummary from './app-widget-summary';
+import Iconify from './iconify';
+import NewsCard from './news-card';
+import TopStock from './top-stock';
+
+export { AppWidgetSummary, Iconify, NewsCard, TopStock };

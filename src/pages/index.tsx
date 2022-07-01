@@ -1,36 +1,18 @@
-import { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next';
-import { Box } from '@mui/material';
+import { lazy } from 'react';
+import { GetStaticProps, InferGetStaticPropsType } from 'next/types';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { content } from 'i18n';
-import { DefaultLayout } from 'containers';
-import {
-  LandingBrandIntro,
-  LandingFooter,
-  LandingFeatures,
-} from 'containers/landing-page';
+import { DefaultLayout } from 'containers/layouts';
+import LandingPage from 'containers/landing-page/landing-page-main';
 
-const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const { locale } = props.context;
-
-  const detail = locale === 'vi' ? content['vi'] : content['en'];
-  const { landingPage } = detail;
-
+const MainPage = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
-    <Box
-      component="main"
-      sx={{
-        flexGrow: 1,
-        py: 8,
-      }}
-    >
-      <LandingBrandIntro content={landingPage.body.intro} />
-      <LandingFeatures content={landingPage.body.service} />
-      <LandingFooter content={landingPage.footer} />
-    </Box>
+    <>
+      <LandingPage />
+    </>
   );
 };
 
-Home.getLayout = (page: ReactJSXElement) => (
+MainPage.getLayout = (page: ReactJSXElement) => (
   <DefaultLayout>{page}</DefaultLayout>
 );
 
@@ -42,4 +24,4 @@ export const getStaticProps: GetStaticProps = async (context) => {
   };
 };
 
-export default Home;
+export default MainPage;

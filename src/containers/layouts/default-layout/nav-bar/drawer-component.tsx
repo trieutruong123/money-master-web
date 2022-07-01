@@ -17,6 +17,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Link } from 'shared/components';
 import { MultipleLanguage } from 'shared/components';
+import { colorScheme } from 'utils';
 
 interface IProps {
   handleSelectionChange?: any;
@@ -29,7 +30,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: 'flex-end',
 }));
@@ -43,7 +43,6 @@ export default function DrawerComponent({
   const { locale } = useRouter();
   const router = useRouter();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const toggleDrawer =
     (anchor: string, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -60,36 +59,57 @@ export default function DrawerComponent({
   const scrollToTopOfPage = async () => {
     router.push('/', '/', { locale: locale, shallow: true });
     document
-        .getElementById('top-of-page')
-        ?.scrollIntoView({ behavior: 'smooth' });
+      .getElementById('top-of-page')
+      ?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const anchor = 'left';
   return (
-    <Box
-      role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
+    <Drawer
+      anchor={anchor}
+      open={openDrawer}
+      onClose={() => setOpenDrawer(false)}
+      onClick={toggleDrawer(anchor, true)}
     >
-      <Drawer
-        anchor={anchor}
-        open={openDrawer}
-        onClose={() => setOpenDrawer(false)}
-        onClick={toggleDrawer(anchor, true)}
+      <Box
+        role="presentation"
+        onClick={toggleDrawer(anchor, false)}
+        onKeyDown={toggleDrawer(anchor, false)}
         sx={{ width: 280 }}
       >
-        <DrawerHeader sx={{ mt: '4rem' }}>
-          <IconButton onClick={() => setOpenDrawer(false)}>
-            {theme.direction === 'ltr' ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
+        <DrawerHeader>
+          <Box
+            width="100%"
+            mt="6rem"
+            mb='1rem'
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            onClick={() => setOpenDrawer(false)}
+          >
+            <Box marginRight = 'auto' width= '2rem'/>
+            <h4
+              style={{
+                textAlign: 'left',
+                fontSize: '1.8rem',
+                fontWeight: 'bold',
+                color: colorScheme.theme,
+              }}
+            >
+              MENU
+            </h4>
+            <IconButton sx ={{marginLeft:'auto'}} onClick={() => setOpenDrawer(false)}>
+              {theme.direction === 'ltr' ? (
+                <ChevronLeftIcon />
+              ) : (
+                <ChevronRightIcon />
+              )}
+            </IconButton>
+          </Box>
         </DrawerHeader>
         <Divider />
         <List component="nav">
-          <ListItem
+          <ListItemButton
             sx={{
               py: 0,
               px: 1,
@@ -98,14 +118,16 @@ export default function DrawerComponent({
               alignItems: 'center',
             }}
           >
-            <ListItemButton>
-              <MultipleLanguage></MultipleLanguage>
-            </ListItemButton>
-          </ListItem>
+            <MultipleLanguage></MultipleLanguage>
+          </ListItemButton>
           <ListItem sx={{ py: 0, px: 1 }}>
             <ListItemButton onClick={scrollToTopOfPage}>
               <ListItemText>
-                <Typography sx={{ fontSize: '1.2rem' }} align="center">
+                <Typography
+                  sx={{ fontSize: '1.2rem' }}
+                  color={colorScheme.theme}
+                  align="center"
+                >
                   {content.home}
                 </Typography>
               </ListItemText>
@@ -119,7 +141,11 @@ export default function DrawerComponent({
             >
               <ListItemText>
                 <Link href="/#service" locale={locale}>
-                  <Typography sx={{ fontSize: '1.2rem' }} align="center">
+                  <Typography
+                    sx={{ fontSize: '1.2rem' }}
+                    color={colorScheme.theme}
+                    align="center"
+                  >
                     {content.service}
                   </Typography>
                 </Link>
@@ -129,13 +155,17 @@ export default function DrawerComponent({
           <ListItem sx={{ py: 0, px: 1 }}>
             <ListItemButton
               onClick={() => {
-                handleSelectionChange('about');
+                handleSelectionChange('feature');
               }}
             >
               <ListItemText>
-                <Link href="/#about" locale={locale}>
-                  <Typography sx={{ fontSize: '1.2rem' }} align="center">
-                    {content.about}
+                <Link href="/#feature" locale={locale}>
+                  <Typography
+                    sx={{ fontSize: '1.2rem' }}
+                    color={colorScheme.theme}
+                    align="center"
+                  >
+                    {content.feature}
                   </Typography>
                 </Link>
               </ListItemText>
@@ -144,20 +174,24 @@ export default function DrawerComponent({
           <ListItem sx={{ py: 0, px: 1 }}>
             <ListItemButton
               onClick={() => {
-                handleSelectionChange('docs');
+                handleSelectionChange('aboutUs');
               }}
             >
               <ListItemText>
-                <Link href="/docs" locale={locale}>
-                  <Typography sx={{ fontSize: '1.2rem' }} align="center">
-                    {content.docs}
+                <Link href="/#about-us" locale={locale}>
+                  <Typography
+                    sx={{ fontSize: '1.2rem' }}
+                    color={colorScheme.theme}
+                    align="center"
+                  >
+                    {content.aboutUs}
                   </Typography>
                 </Link>
               </ListItemText>
             </ListItemButton>
           </ListItem>
         </List>
-      </Drawer>
-    </Box>
+      </Box>
+    </Drawer>
   );
 }
