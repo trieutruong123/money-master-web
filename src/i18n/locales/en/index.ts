@@ -4,59 +4,66 @@ export const en = {
     sidebar: {
       home: 'HOME',
       service: 'SERVICES',
-      about: 'ABOUT US',
-      docs: 'DOCS',
+      feature: 'FEATURES',
+      aboutUs: 'ABOUT US',
     },
     navbar: {
       signIn: 'SIGN IN',
       register: 'REGISTER',
       home: 'HOME',
       service: 'SERVICES',
-      about: 'ABOUT US',
-      docs: 'DOCS',
+      feature: 'FEATURES',
+      aboutUs: 'ABOUT US',
     },
     body: {
       intro: {
         brand: 'MONEY MASTER',
-        title: 'Manage your investments and finances',
-        desc: 'Bring you the best tool to monitor investment channels, manage assets, and plan for own finances.',
+        desc: 'Bring you the best tool to manage your portfolio, track market data and conduct visual statistics.',
         findOutMore: 'Find out how',
       },
       service: {
         title: 'OUR SERVICES',
-        desc: 'Money Master provides service help you observe investment channels, monitor the market for specific assets, and plan for own finances.',
+        desc: 'Money Master provides multiple services suppport investors manage portfolio, investment channels, monitor market data and have a good overview about investment plan',
         feature: [
           {
-            title: 'Observe investment channels',
-            desc: 'Easiy manage personal investment channels, such as crypto currenies, stocks, and cash.',
+            title: 'Manage Portfolio',
+            desc: 'Easiy manage investment channels and all portfolios simultaneously',
           },
           {
-            title: 'Track market price',
-            desc: 'Quickly track the market value of many assets, update information.',
+            title: 'Track Market Data',
+            desc: 'Quickly track the market value, update information of a wide range of invesment assets',
           },
           {
-            title: 'Plan for own finances',
-            desc: 'Conviniently plan personal investment, progress to achieve goal, and visual insights.',
+            title: 'Visual Statistics',
+            desc: 'Have a good overview about the result of your investment plan by multiple visual charts',
           },
         ],
       },
     },
-    aboutUs: {},
 
     footer: {
-      service: {
-        title: 'Intro',
-        home: 'HOME',
-        service: 'SERVICES',
-        about: 'ABOUT US',
-        docs: 'DOCS',
+      content: {
+        title: 'CONTENT',
+        intro: 'Intro',
+        service: 'Service',
+        contactUs: 'ContactUs',
+      },
+      contact: {
+        title: 'CONTACT US',
+        tellUsEverything: 'Tell Us Everything',
+        question: 'Do you have any question? Fell free to reach out.',
+        letsChat: `Let's chat`,
+      },
+      language: {
+        title: 'LANGUAGE',
+        english: 'English',
+        vietnamese: 'Vietnamese',
       },
       ourAddress: {
         title: 'OUR ADDRESS',
-        address:
-          '235 Nguyen Van Cu Street, Ward 4, District 5, Ho Chi Minh City',
-        email: 'Email',
-        phone: 'Phone number',
+        street: '235 Nguyen Van Cu Street',
+        wardDistrict: 'Ward 4, District 5',
+        city: 'Ho Chi Minh City',
       },
     },
   },
@@ -346,7 +353,7 @@ export const en = {
         tax: 'Tax',
         addMore: 'ADD',
         addNew: 'ADD',
-        year: 'năm',
+        year: 'year',
       },
       otherCustomAssetTransaction: {
         title: 'Add new asset',

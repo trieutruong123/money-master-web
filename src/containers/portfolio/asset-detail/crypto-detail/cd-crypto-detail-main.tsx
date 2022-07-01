@@ -61,6 +61,7 @@ const CDCryptoDetail = observer(({ }: IProps) => {
   useEffect(()=>{
     const fetchData = async()=>{
       await cryptoDetailStore.fetchCryptoProfitLoss();
+      await cryptoDetailStore.fetchCryptoProfile();
     };
     fetchData();
   },[router.query.portfolioId, router.query.assetId]);

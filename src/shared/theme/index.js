@@ -14,7 +14,6 @@ export const theme = createTheme({
     MuiButton: {
       defaultProps: {
         disableElevation: true,
-        
       },
       styleOverrides: {
         root: {
@@ -123,7 +122,7 @@ export const theme = createTheme({
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: '#F3F4F6',
+          backgroundColor: '#fff',
           '.MuiTableCell-root': {
             color: '#374151',
           },
@@ -179,7 +178,7 @@ export const theme = createTheme({
       disabled: 'rgba(55, 65, 81, 0.26)',
     },
     background: {
-      default: '#F9FAFC',
+      default: '#F3F4F6',
       paper: '#FFFFFF',
     },
     divider: '#E6E8F0',

@@ -53,7 +53,7 @@ const DefaultLayout: React.FC<IProps> = observer(({ children }: IProps) => {
           {children}
         </Box>
       </DefaultLayoutRoot>
-      <DefaultNavbar content={landingPage.navbar} />
+      <DefaultNavbar content={landingPage} />
     </>
   );
 });

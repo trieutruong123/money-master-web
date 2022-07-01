@@ -12,14 +12,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { DashboardLayout } from "containers";
-import {
-  TotalAssets,
-  TotalProfit,
-  InvestmentChannel,
-  PlanProgress,
-  RecentlyAdded,
-  YourWallet,
-} from "containers/dashboard";
+
 import { BreadcrumbsLink } from "shared/components";
 import NewsCard from "containers/dashboard/news-card";
 import TopStock from "containers/dashboard/top-stock";

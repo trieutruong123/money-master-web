@@ -1,9 +1,14 @@
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
 import { Box, Button, ListItem } from '@mui/material';
 
-export const SidebarItem = (props: any) => {
+interface IProps{
+  href:string;
+  title:string;
+  icon:any;
+}
+
+export const SidebarItem = (props: IProps) => {
   const { href, icon, title, ...others } = props;
   const router = useRouter();
   const active = href ? router.pathname === href : false;
@@ -49,8 +54,4 @@ export const SidebarItem = (props: any) => {
   );
 };
 
-SidebarItem.propTypes = {
-  href: PropTypes.string,
-  icon: PropTypes.node,
-  title: PropTypes.string,
-};
+

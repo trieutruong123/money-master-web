@@ -1,17 +1,10 @@
 import {
   Box,
   Container,
-  Grid,
-  IconButton,
-  Tooltip,
-  useTheme,
-  useMediaQuery,
   Typography,
   Button,
 } from '@mui/material';
-import { useCallback, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
-
 import * as React from 'react';
 import { content } from 'i18n';
 import { observer } from 'mobx-react-lite';

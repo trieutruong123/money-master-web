@@ -18,7 +18,7 @@ import { Link } from 'shared/components';
 import { colorScheme } from 'utils/color-scheme';
 import DrawerComponent from './drawer-component';
 import styled from './style/header.module.css';
-import { MultipleLanguage } from 'shared/components'
+import { MultipleLanguage } from 'shared/components';
 import { rootStore } from 'shared/store';
 
 interface IProps {
@@ -31,15 +31,19 @@ export default function DefaultNavbar({ content }: IProps) {
   const { locale } = useRouter();
   const router = useRouter();
   const theme = useTheme();
+  const {sidebar, navbar} = content;
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const matchAuthPage: boolean = ['/sign-in', '/sign-up', '/','/reset'].includes(
-    router.pathname,
-  );
+  const matchAuthPage: boolean = [
+    '/sign-in',
+    '/sign-up',
+    '/',
+    '/reset',
+  ].includes(router.pathname);
 
   useEffect(() => {
     const lang = router.locale === 'vi' ? 'vi' : 'en';
     rootStore.setLocale(lang);
-  }, [router.locale])
+  }, [router.locale]);
 
   const matchSpecificPage: boolean = ['/', 'docs'].includes(router.pathname);
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
@@ -57,11 +61,14 @@ export default function DefaultNavbar({ content }: IProps) {
       ?.scrollIntoView({ behavior: 'smooth' });
   };
 
-
-
-
   return (
-    <Box sx={{ flexGrow: 1 }} className="section">
+    <Box sx={{ flexGrow: 1 }}>
+      <DrawerComponent
+        handleSelectionChange={handleSelectedSectionChange}
+        content={sidebar}
+        openDrawer={openDrawer}
+        setOpenDrawer={setOpenDrawer}
+      />
       <AppBar
         className={styled.navbar}
         sx={{
@@ -79,12 +86,6 @@ export default function DefaultNavbar({ content }: IProps) {
               >
                 <MenuIcon />
               </IconButton>
-              <DrawerComponent
-                handleSelectionChange={handleSelectedSectionChange}
-                content={content}
-                openDrawer={openDrawer}
-                setOpenDrawer={setOpenDrawer}
-              />
             </>
           ) : null}
           <Box
@@ -129,12 +130,12 @@ export default function DefaultNavbar({ content }: IProps) {
               >
                 <Tab
                   value="home"
-                  label={content.home}
+                  label={navbar.home}
                   onClick={scrollToTopOfPage}
                 ></Tab>
                 <Tab
                   value="service"
-                  label={content.service}
+                  label={navbar.service}
                   onClick={() => {
                     router.push('/#service', '/#service', {
                       locale: locale,
@@ -143,18 +144,18 @@ export default function DefaultNavbar({ content }: IProps) {
                 ></Tab>
                 <Tab
                   value="about"
-                  label={content.about}
+                  label={navbar.feature}
                   onClick={() => {
-                    router.push('/#about', '/#about', {
+                    router.push('/#feature', '/#feature', {
                       locale: locale,
                     });
                   }}
                 ></Tab>
                 <Tab
                   value="docs"
-                  label={content.docs}
+                  label={navbar.docs}
                   onClick={() => {
-                    router.push('/docs', '/docs', {
+                    router.push('/#about-us', '/#about-us', {
                       locale: locale,
                     });
                   }}
@@ -172,13 +173,13 @@ export default function DefaultNavbar({ content }: IProps) {
                 variant="contained"
                 sx={{ bg: colorScheme.theme, mr: 1, ml: 'auto' }}
               >
-                {router.pathname === '/sign-in'? (
+                {router.pathname === '/sign-in' ? (
                   <Link href="/sign-up" locale={locale}>
-                    {content.register}
+                    {navbar.register}
                   </Link>
                 ) : (
                   <Link href="/sign-in" locale={locale}>
-                    {content.signIn}
+                    {navbar.signIn}
                   </Link>
                 )}
               </Button>

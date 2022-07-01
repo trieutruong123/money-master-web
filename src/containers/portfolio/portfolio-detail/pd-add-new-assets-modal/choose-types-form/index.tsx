@@ -13,7 +13,6 @@ import {
   Button,
   Box,
 } from '@mui/material';
-import { Scrollbars } from 'react-custom-scrollbars';
 import { v4 as uuid } from 'uuid';
 import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';

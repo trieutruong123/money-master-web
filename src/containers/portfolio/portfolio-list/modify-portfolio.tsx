@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import classes from './style/modify-portfolio.module.css';
 import { getCurrencyByCode, getSupportedCurrencyList } from 'shared/helpers/currency-info';
 import React from 'react';
+import {portfolioDetailStore} from 'shared/store/portfolio/portfolio-detail.store'
 
 const ModifyPortfolio = (
   props: any,
@@ -11,7 +12,10 @@ const ModifyPortfolio = (
   const [initialCurrency, setCurrency] = useState<string>("");
   const [currencyList, setCurrencyList] = React.useState<any>({});
   React.useEffect(() => {
-    
+    if (props.portfolio) {
+      setPortfolioName(props.portfolio.name)
+      setCurrency(props.portfolio.initialCurrency)
+    }
     getSupportedCurrencyList().forEach(currency => {
       setCurrencyList((prevState: any) => ({ ...prevState, [currency.code]: currency.name })
       )
@@ -25,7 +29,7 @@ const ModifyPortfolio = (
       name: portfolioName,
       initialCurrency: initialCurrency.toUpperCase()||'USD',
       initialCash: 0,
-      initalCashName: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
+      initialCashName: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
       initialCashDescription: getCurrencyByCode(initialCurrency.toUpperCase()||'USD')?.name,
     });
   }
@@ -44,7 +48,7 @@ const ModifyPortfolio = (
       <form className={classes.form} onSubmit={submitHandler}>
         <div className={classes.control}>
           <label htmlFor="name">{pageContent.name}</label>
-          <input id="name" onChange={handlePortfolioNameChanged} required />
+          <input type='text' id="name" value={portfolioName} onChange={handlePortfolioNameChanged} required />
         </div>
         <div className={classes.control}>
           <label htmlFor="currency">{pageContent.currency}</label>
@@ -53,6 +57,7 @@ const ModifyPortfolio = (
               <option
                 key={index}
                 value={currency}
+                selected={props.portfolio&&currency==props.portfolio.initialCurrency}
               >{`${currencyList[currency]} (${currency})`}</option>
             ))}
           </select>

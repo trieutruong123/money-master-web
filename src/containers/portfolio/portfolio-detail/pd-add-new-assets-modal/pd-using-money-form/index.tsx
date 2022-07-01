@@ -9,7 +9,6 @@ import {
     IconButton,
     Box,
 } from '@mui/material';
-import { Scrollbars } from 'react-custom-scrollbars';
 import { v4 as uuid } from 'uuid';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TransactionFormType, UsingMoneyContants, UsingMoneySource } from 'shared/constants';
