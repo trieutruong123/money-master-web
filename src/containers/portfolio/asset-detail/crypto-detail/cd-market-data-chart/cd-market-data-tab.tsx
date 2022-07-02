@@ -19,7 +19,6 @@ const CDMarketDataTab = observer(() => {
     const fetchData = async () => {
       rootStore.startLoading();
       await cryptoDetailStore.fetchMarketData();
-      await cryptoDetailStore.fetchCryptoProfile();
       rootStore.stopLoading();
     };
     if (
@@ -38,9 +37,11 @@ const CDMarketDataTab = observer(() => {
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <CDMarketInfo content={content} />
       </Grid>
-      {/* <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
-        <CryptoProfile />
-      </Grid> */}
+      <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
+        <Suspense fallback={<></>}>
+          <CryptoProfile />
+        </Suspense>
+      </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <Suspense fallback={<></>}>
           <CDMarketChart content={content} />

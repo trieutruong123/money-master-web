@@ -1,7 +1,6 @@
 import { coinGeckoService, fcsapiService, httpService } from 'services';
 import {
   action,
-  computed,
   makeAutoObservable,
   observable,
   runInAction,
@@ -27,8 +26,8 @@ import {
   TransactionHistoryContants,
 } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
-import { convertUTCToLocalTimeZone2 } from 'utils/time';
 import dayjs from 'dayjs';
+import { sampleCryptoSearchData } from 'containers/portfolio/portfolio-detail/pd-add-new-assets-modal/searching-assets-form/sample-search-data';
 
 interface ICryptoMarketData {
   c: number;
@@ -404,8 +403,10 @@ class CryptoDetailStore {
     if (!this.cryptoDetail?.cryptoCoinCode) {
       return;
     }
+    var symbol=sampleCryptoSearchData.find(data=>data.id==this.cryptoDetail?.cryptoCoinCode)?.symbol;
+    if (!symbol) return;
     const res: any = await fcsapiService.getCryptoProfile(
-      this.cryptoDetail?.cryptoCoinCode,
+      symbol
     );
     if (!res.isError) {
       runInAction(() => {
@@ -416,7 +417,6 @@ class CryptoDetailStore {
         this.cryptoProfile = undefined;
       });
     }
-    return res;
   }
 
   resetTransactionSelection() {

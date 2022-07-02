@@ -1,41 +1,39 @@
 export const vi = {
   landingPage: {
     sidebar: {
-      home: 'Trang chủ',
-      service: 'Tính năng',
-      about: 'Về chúng tôi',
-      docs: 'Tài liệu',
+      home: 'TRANG CHỦ',
+      service: 'DỊCH VỤ',
+      feature: 'TÍNH NĂNG',
+      aboutUs: 'VỀ CHÚNG TÔI',
     },
     navbar: {
-      signIn: 'Đăng nhập',
-      register: 'Đăng ký',
-      home: 'Trang chủ',
-      service: 'Tính năng',
-      about: 'Về chúng tôi',
-      docs: 'Tài liệu',
+      signIn: 'ĐĂNG NHẬP',
+      register: 'ĐĂNG KÝ',
+      home: 'TRANG CHỦ',
+      service: 'DỊCH VỤ',
+      feature: 'TÍNH NĂNG',
+      aboutUs: 'VỀ CHÚNG TÔI',
     },
     body: {
       intro: {
         brand: 'MONEY MASTER',
-        title: 'Công cụ quản lý đầu tư và tài chính cá nhân.',
-        desc: 'Mang đến công cụ hữu ích giúp theo dõi các khoản đầu tư, quản lý tài sản cá nhân, và xây dựng mục tiêu tài chính.',
-        findOutMore: 'Tìm hiểu thêm',
+        desc: 'Mang đến công cụ hữu ích giúp  nhà đầu tư  quản lý danh mục tài sản và các kênh đâu tư, theo dõi thông tin thị trường và có góc nhìn tổng quan về kế hoạch đầu tư',
       },
       service: {
-        title: 'Tính năng',
-        desc: 'Money Master cung cấp nhiều dịch vụ giúp quản lý các khoản đầu tư, theo sát thông tin thị trường, và lên kế hoạch tài chính cá nhân.',
+        title: 'Dịch vụ',
+        desc: 'Money Master cung cấp nhiều dịch vụ giúp quản lý danh mục và các khoản đầu tư cá nhân, theo sát thông tin thị trường, và có góc nhìn thấu suốt về kế hoạch đầu tư',
         feature: [
           {
-            title: 'Quản lý kênh đầu tư',
-            desc: 'Dễ dàng theo dõi các khoản đầu tư cá nhân, với đa dạng loại tài sản như tiền kỹ thuật số, chứng khoán, và tiền tệ.',
+            title: 'Quản lý danh mục đầu tư',
+            desc: 'Dễ dàng theo dõi các khoản đầu tư cá nhân, với nhiều loại tài sản và nhiều danh mục đầu tư cùng lúc',
           },
           {
             title: 'Theo dõi thị trường ',
             desc: 'Nhanh chóng cập nhật thông tin thị trường, theo sát biến động thị trường với đa dạng các loại tài sản.',
           },
           {
-            title: 'Xây dựng mục tiêu tài chính',
-            desc: 'Thuận tiện quản lý, lên kế hoạch tài chính, lộ trình đạt mục tiêu, thống kê trực quan trên nhiều biểu đồ.',
+            title: 'Thống kê trực quan',
+            desc: 'Xây dựng góc nhìn tổng quan về kết quả kế hoạch đầu tư bằng các biểu đồ thống kê trực quan',
           },
         ],
       },
@@ -43,19 +41,28 @@ export const vi = {
     aboutUs: {},
 
     footer: {
-      service: {
-        title: 'Giới thiệu',
-        home: 'Trang chủ',
-        service: 'Tính năng',
-        about: 'Về chúng tôi',
-        docs: 'Tài liệu',
+      content: {
+        title: 'NỘI DUNG',
+        intro: 'Giới thiệu',
+        service: 'Dịch vụ',
+        contactUs: 'Kết nối',
+      },
+      contact: {
+        title: 'TƯƠNG TÁC',
+        tellUsEverything: 'Kể câu chuyện của bạn',
+        question: 'Nếu bạn có câu hỏi. Đừng ngần ngại tương tác với chúng tôi',
+        letsChat: 'Nhắn tin',
+      },
+      language: {
+        title: 'NGÔN NGỮ',
+        english: 'Tiếng anh',
+        vietnamese: 'Tiếng viết',
       },
       ourAddress: {
-        title: 'Địa chỉ liên hệ',
-        address:
-          '235, Đường Nguyễn Văn Cừ, Phường 4, Quận 5, Thành phố Hồ Chí Minh',
-        email: 'Email',
-        phone: 'Số điện thoại',
+        title: 'Địa chỉ',
+        street: '235, đường Nguyễn Văn Cừ',
+        wardDistrict: 'Phường 4, Quận 5',
+        city: 'Thành phố Hồ Chí Minh',
       },
     },
   },

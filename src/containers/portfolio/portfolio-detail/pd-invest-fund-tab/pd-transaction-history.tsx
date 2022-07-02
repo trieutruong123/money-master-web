@@ -11,34 +11,16 @@ import {
   TableRow,
   useTheme,
   useMediaQuery,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
-  SelectChangeEvent,
-  IconButton,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import {
-  capitalizeFirstLetter,
-  colorScheme,
-  roundAndAddDotAndCommaSeparator,
-} from 'utils';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { capitalizeFirstLetter, colorScheme, roundAndAddDotAndCommaSeparator } from 'utils';
 import { getCurrencyByCode } from 'shared/helpers';
 import dayjs from 'dayjs';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
-import {
-  InvestFundTransactionItem,
-  InvestFundTransactionList,
-} from 'shared/models';
+import { InvestFundTransactionItem, InvestFundTransactionList } from 'shared/models';
 import { AssetType } from 'shared/types';
-import {
-  AssetTypeConstants,
-  AssetTypeName,
-  TransactionHistoryContants,
-  TransactionRequestType,
-} from 'shared/constants';
+import { AssetTypeConstants, AssetTypeName, TransactionRequestType } from 'shared/constants';
 import { BsCashCoin } from 'react-icons/bs';
 import { RiPsychotherapyFill } from 'react-icons/ri';
 import MapsHomeWorkIcon from '@mui/icons-material/MapsHomeWork';
@@ -46,14 +28,6 @@ import ShowChartIcon from '@mui/icons-material/ShowChart';
 import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { useRouter } from 'next/router';
-import { Pagination } from 'shared/components';
-import { useEffect, useState } from 'react';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { GrPowerReset } from 'react-icons/gr';
-import { v4 as uuid } from 'uuid';
-import { portfolioDetailStore } from 'shared/store';
-import { observer } from 'mobx-react-lite';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -75,23 +49,24 @@ const TableBodyCell = styled(TableCell)`
 
 interface IProps {
   transactionHistory: InvestFundTransactionList | undefined;
-  content: any;
+  content: any
 }
 
-const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) => {
-  const [pageNumbers, setPageNumbers] = useState<Array<number>>([]);
+const PDTransactionHistory = ({ transactionHistory, content }: IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const router = useRouter();
   const { locale } = router;
   const language = locale === 'vi' ? 'vi' : locale === 'en' ? 'en' : 'en';
+  //const { collumnsName, settingDropDownMenu } = content;
   const headings = [
+    // "Today's Change",
+    // "Today's Gain/Loss"
     content.investFundTab.amount,
     content.investFundTab.transactionType,
     content.investFundTab.assetType,
     '',
   ];
-
   const resetTransaction = async () => {
     portfolioDetailStore.resetInvestFundTransactionSelection();
     await portfolioDetailStore.refreshInestFundTransactionHistory();
@@ -239,7 +214,7 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
     }
   };
 
-  return <>
+  return transactionHistory?.length ? (
     <Grid item lg={12} md={12} xl={12} xs={12}>
       <Card
         sx={{
@@ -252,8 +227,7 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
           sx={{
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            height: '5rem',
+            height: '3rem',
             boxShadow: 'none',
           }}
         >
@@ -462,17 +436,12 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
                 })}
             </TableBody>
           </Table>
-          <Pagination
-            pageNumbers={pageNumbers}
-            currentPage={
-              portfolioDetailStore.investFundTransactionSelection.currentPage
-            }
-            handleCurrentPage={handlePageChange}
-          />
         </Box>
       </Card>
     </Grid>
-  </>;
-});
+  ) : (
+    <></>
+  );
+};
 
 export default PDTransactionHistory;
