@@ -331,7 +331,7 @@ const CDTransactionHistory = observer(
               }}
             >
               <CardHeader
-                title="Transaction history"
+                title={content.transactionHistory.title}
                 sx={{ padding: '0px', marginRight: 'auto' }}
               />
               <FormControl
@@ -342,22 +342,22 @@ const CDTransactionHistory = observer(
                   mt: '10px',
                 }}
               >
-                <InputLabel id="type-select-label">Type</InputLabel>
+                <InputLabel id="type-select-label">{content.transactionHistory.type}</InputLabel>
                 <Select
                   labelId="type-select-label"
                   id="type-select"
                   value={cashDetailStore.transactionSelection.type || 'all'}
-                  label={'Type'}
+                  label={content.transactionHistory.type}
                   onChange={handleSelectedTypeChange}
                 >
                   <MenuItem key={uuid()} value={TransactionHistoryContants.all}>
-                    All
+                    {content.transactionHistory.all}
                   </MenuItem>
                   <MenuItem key={uuid()} value={TransactionHistoryContants.in}>
-                    In
+                    {content.transactionHistory.in}
                   </MenuItem>
                   <MenuItem key={uuid()} value={TransactionHistoryContants.out}>
-                    Out
+                    {content.transactionHistory.out}
                   </MenuItem>
                 </Select>
               </FormControl>
@@ -369,7 +369,7 @@ const CDTransactionHistory = observer(
               >
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
-                    label={'Start date'}
+                    label={content.transactionHistory.startDate}
                     inputFormat="dd/MM/yyyy"
                     value={cashDetailStore.transactionSelection.startDate}
                     onAccept={() => true}
@@ -389,7 +389,7 @@ const CDTransactionHistory = observer(
               >
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
-                    label={'End date'}
+                    label={content.transactionHistory.endDate}
                     inputFormat="dd/MM/yyyy"
                     value={cashDetailStore.transactionSelection.endDate}
                     onChange={handleEndDateChange}
