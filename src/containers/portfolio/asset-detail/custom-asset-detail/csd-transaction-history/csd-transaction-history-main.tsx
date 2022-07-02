@@ -12,6 +12,13 @@ import {
   styled,
   TableCell,
   SelectChangeEvent,
+  Menu,
+  MenuItem,
+  FormControl, 
+  InputLabel, 
+  TextField,
+  Select,
+  IconButton
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { roundAndAddDotAndCommaSeparator } from 'utils/number';
@@ -32,6 +39,10 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { customAssetsDetailStore } from 'shared/store';
 import { Pagination } from 'shared/components';
+import { GrPowerReset } from 'react-icons/gr';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { v4 as uuid } from 'uuid';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -245,10 +256,79 @@ const CSDTransactionHistory = ({ transactionHistoryData }: IProps) => {
               boxShadow: 'none',
             }}
           >
-            <CardHeader title="" sx={{ padding: '0px' }} />
-            <Button sx={{ padding: '0px', color: '#CBCBCD' }}>
-              <MoreHorizIcon />
-            </Button>
+            <CardHeader title={content.transactionHistory.title} sx={{ padding: '0px', marginRight: 'auto' }} />
+            <FormControl
+              sx={{ minWidth: '6rem', height: '4rem', px: '.2rem', mt: '10px' }}
+            >
+              <InputLabel id="type-select-label">{content.transactionHistory.type}</InputLabel>
+              <Select
+                labelId="type-select-label"
+                id="type-select"
+                value={customAssetsDetailStore.transactionSelection.type || 'all'}
+                label={content.transactionHistory.type}
+                onChange={handleSelectedTypeChange}
+              >
+                <MenuItem key={uuid()} value={TransactionHistoryContants.all}>
+                  {content.transactionHistory.all}
+                </MenuItem>
+                <MenuItem key={uuid()} value={TransactionHistoryContants.in}>
+                  {content.transactionHistory.in}
+                </MenuItem>
+                <MenuItem key={uuid()} value={TransactionHistoryContants.out}>
+                  {content.transactionHistory.out}
+                </MenuItem>
+              </Select>
+            </FormControl>
+            <Box
+              sx={{
+                mt: '10px',
+                height: '4rem',
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label={content.transactionHistory.startDate}
+                  inputFormat="dd/MM/yyyy"
+                  value={customAssetsDetailStore.transactionSelection.startDate}
+                  onAccept={() => true}
+                  onChange={handleStartDateChange}
+                  renderInput={(params) => (
+                    <TextField {...params} sx={{ width: '10rem' }} />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
+            <Box
+              sx={{
+                mt: '10px',
+                height: '4rem',
+                ml: '5px',
+              }}
+            >
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label={content.transactionHistory.endDate}
+                  inputFormat="dd/MM/yyyy"
+                  value={customAssetsDetailStore.transactionSelection.endDate}
+                  onChange={handleEndDateChange}
+                  renderInput={(params) => (
+                    <TextField {...params} sx={{ width: '10rem' }} />
+                  )}
+                />
+              </LocalizationProvider>
+            </Box>
+            <IconButton
+              onClick={resetTransaction}
+              sx={{
+                padding: '0px',
+                color: '#CBCBCD',
+                marginLeft: 'auto',
+                width: '3rem',
+                height: '3rem',
+              }}
+            >
+              <GrPowerReset />
+            </IconButton>
           </Card>
           <Box>
             <Table>

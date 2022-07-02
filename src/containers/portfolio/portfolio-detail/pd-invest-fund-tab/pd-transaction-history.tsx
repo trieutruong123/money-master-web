@@ -160,14 +160,14 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
       const startDate = portfolioDetailStore.investFundTransactionSelection
         .startDate
         ? dayjs(portfolioDetailStore.investFundTransactionSelection.startDate)
-            .startOf('day')
-            .format()
+          .startOf('day')
+          .format()
         : null;
       const endDate = portfolioDetailStore.investFundTransactionSelection
         .endDate
         ? dayjs(portfolioDetailStore.investFundTransactionSelection.endDate)
-            .endOf('day')
-            .format()
+          .endOf('day')
+          .format()
         : null;
       const data = await portfolioDetailStore.fetchInvestFundTransactionHistory(
         {
@@ -259,7 +259,7 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
         >
           <CardHeader
             title={content.investFundTab.title}
-            sx={{ padding: '0px', marginRight:'auto' }}
+            sx={{ padding: '0px', marginRight: 'auto' }}
           />
           <FormControl
             sx={{
@@ -269,7 +269,7 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
               mt: '10px',
             }}
           >
-            <InputLabel id="type-select-label">Type</InputLabel>
+            <InputLabel id="type-select-label">{content.investFundTab.type}</InputLabel>
             <Select
               labelId="type-select-label"
               id="type-select"
@@ -277,17 +277,17 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
                 portfolioDetailStore.investFundTransactionSelection.type ||
                 'all'
               }
-              label={'Type'}
+              label={content.investFundTab.type}
               onChange={handleSelectedTypeChange}
             >
               <MenuItem key={uuid()} value={TransactionHistoryContants.all}>
-                All
+                {content.investFundTab.all}
               </MenuItem>
               <MenuItem key={uuid()} value={TransactionHistoryContants.in}>
-                In
+                {content.investFundTab.int}
               </MenuItem>
               <MenuItem key={uuid()} value={TransactionHistoryContants.out}>
-                Out
+                {content.investFundTab.out}
               </MenuItem>
             </Select>
           </FormControl>
@@ -299,7 +299,7 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
           >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label={'Start date'}
+                label={content.investFundTab.startDate}
                 inputFormat="dd/MM/yyyy"
                 value={
                   portfolioDetailStore.investFundTransactionSelection.startDate
@@ -321,7 +321,7 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
           >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label={'End date'}
+                label={content.investFundTab.endDate}
                 inputFormat="dd/MM/yyyy"
                 value={
                   portfolioDetailStore.investFundTransactionSelection.endDate
@@ -368,7 +368,7 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
                   (portfolioDetailStore.investFundTransactionSelection
                     .currentPage -
                     1) *
-                    TransactionHistoryContants.itemsPerPage,
+                  TransactionHistoryContants.itemsPerPage,
                   portfolioDetailStore.investFundTransactionSelection
                     .currentPage * TransactionHistoryContants.itemsPerPage,
                 )
@@ -388,15 +388,15 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
                           sx={{ fontWeight: 700, textTransform: 'uppercase' }}
                         >
                           {record.singleAssetTransactionType ===
-                          TransactionRequestType.moveToFund
+                            TransactionRequestType.moveToFund
                             ? AssetTypeConstants[language][
-                                record.destinationAssetType ||
-                                  AssetTypeName.custom
-                              ]
+                            record.destinationAssetType ||
+                            AssetTypeName.custom
+                            ]
                             : AssetTypeConstants[language][
-                                record.referentialAssetType ||
-                                  AssetTypeName.custom
-                              ]}
+                            record.referentialAssetType ||
+                            AssetTypeName.custom
+                            ]}
                         </Box>
                         <Box
                           sx={{ color: '#4c4c4c', textTransform: 'uppercase' }}
@@ -407,7 +407,7 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
 
                       <TableBodyCellSymbol align="center">
                         {record.singleAssetTransactionType ===
-                        TransactionRequestType.moveToFund ? (
+                          TransactionRequestType.moveToFund ? (
                           <ImArrowLeft
                             fontSize="25"
                             color={colorScheme.red400}
@@ -427,17 +427,17 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
                       </TableBodyCellSymbol>
                       <TableBodyCellSymbol align="left">
                         {record.singleAssetTransactionType ===
-                        TransactionRequestType.moveToFund ? (
+                          TransactionRequestType.moveToFund ? (
                           <>
                             {renderAssetTypeIcon(
                               record.referentialAssetType ||
-                                AssetTypeName.custom,
+                              AssetTypeName.custom,
                             )}
                             &nbsp;&nbsp;
                             {capitalizeFirstLetter(
                               AssetTypeConstants[language][
-                                record.referentialAssetType ||
-                                  AssetTypeName.custom
+                              record.referentialAssetType ||
+                              AssetTypeName.custom
                               ],
                             )}
                           </>
@@ -445,13 +445,13 @@ const PDTransactionHistory = observer(({ transactionHistory, content }: IProps) 
                           <>
                             {renderAssetTypeIcon(
                               record.destinationAssetType ||
-                                AssetTypeName.custom,
+                              AssetTypeName.custom,
                             )}
                             &nbsp;&nbsp;
                             {capitalizeFirstLetter(
                               AssetTypeConstants[language][
-                                record.destinationAssetType ||
-                                  AssetTypeName.custom
+                              record.destinationAssetType ||
+                              AssetTypeName.custom
                               ],
                             )}
                           </>

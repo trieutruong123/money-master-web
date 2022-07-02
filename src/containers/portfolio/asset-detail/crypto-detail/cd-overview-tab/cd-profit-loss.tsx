@@ -19,11 +19,17 @@ import { cryptoDetailStore, } from 'shared/store';
 import { v4 as uuid } from 'uuid';
 import { BsFillBarChartFill } from 'react-icons/bs';
 import { AiOutlineLineChart } from 'react-icons/ai';
+import { useRouter } from 'next/router';
+import {content as i18n} from 'i18n';
 
 const LineChart = lazy(() => import('shared/components/line-chart/index'));
 const ColumnChart = lazy(() => import('shared/components/column-chart/index'));
 
 const CDProfitLossChart = observer(() => {
+  const router = useRouter();
+  const { locale, query } = router;
+  const content = locale === 'vi' ? i18n['vi'].cryptoDetailPage : i18n['en'].cryptoDetailPage;
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const handleSelectedTypeChange = async (event: SelectChangeEvent) => {
@@ -50,28 +56,28 @@ const CDProfitLossChart = observer(() => {
           }}
         >
           <CardHeader
-            title="Profit/Loss"
+            title={content.profitLoss.title}
             sx={{ padding: '0px', marginRight: 'auto' }}
           />
           <FormControl
             sx={{ minWidth: '6rem', height: '4rem', px: '.2rem', mt: '10px' }}
           >
-            <InputLabel id="type-select-label">Type</InputLabel>
+            <InputLabel id="type-select-label">{content.profitLoss.interval}</InputLabel>
             <Select
               labelId="type-select-label"
               id="type-select"
               value={cryptoDetailStore.profitLossSelection.period}
-              label={'Type'}
+              label={content.profitLoss.interval}
               onChange={handleSelectedTypeChange}
             >
               <MenuItem key={uuid()} value={'day'}>
-                Day
+                {content.profitLoss.day}
               </MenuItem>
               <MenuItem key={uuid()} value={'month'}>
-                Month
+                {content.profitLoss.month}
               </MenuItem>
               <MenuItem key={uuid()} value={'year'}>
-                Year
+                {content.profitLoss.year}
               </MenuItem>
             </Select>
           </FormControl>
@@ -93,7 +99,7 @@ const CDProfitLossChart = observer(() => {
               variant="outlined"
               startIcon={<BsFillBarChartFill />}
             >
-              {'Line'}
+              {content.profitLoss.bar}
             </Button>
             <Button
               sx={{
@@ -111,7 +117,7 @@ const CDProfitLossChart = observer(() => {
               variant="outlined"
               startIcon={<AiOutlineLineChart />}
             >
-              {'Bar'}
+              {content.profitLoss.line}
             </Button>
           </Stack>
           <Box ml="auto" />
@@ -131,9 +137,9 @@ const CDProfitLossChart = observer(() => {
                   currencyCode={
                     cryptoDetailStore.portfolioInfo?.initialCurrency || 'USD'
                   }
-                  xAxisLabel="Date"
-                  yAxisLabel="Total"
-                  title="Total"
+                  xAxisLabel={content.profitLoss.date}
+                  yAxisLabel={content.profitLoss.total}
+                  title={content.profitLoss.total}
                 />
               </Box>
               <Box
@@ -148,9 +154,9 @@ const CDProfitLossChart = observer(() => {
                   currencyCode={
                     cryptoDetailStore.portfolioInfo?.initialCurrency || 'USD'
                   }
-                  xAxisLabel="Date"
-                  yAxisLabel="Total"
-                  title="Total"
+                  xAxisLabel={content.profitLoss.date}
+                  yAxisLabel={content.profitLoss.total}
+                  title={content.profitLoss.total}
                 />
               </Box>
             </>

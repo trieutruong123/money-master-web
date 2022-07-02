@@ -24,7 +24,11 @@ import { AiOutlineLineChart } from 'react-icons/ai';
 const LineChart = lazy(() => import('shared/components/line-chart/index'));
 const ColumnChart = lazy(() => import('shared/components/column-chart/index'));
 
-const SDProfitLossChart = observer(() => {
+interface IProps{
+  content:any
+}
+
+const SDProfitLossChart = observer(({content}:IProps) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const handleSelectedTypeChange = async (event: SelectChangeEvent) => {
@@ -52,29 +56,29 @@ const SDProfitLossChart = observer(() => {
               boxShadow: 'none',
             }}
           >
-                      <CardHeader
-            title="Profit/Loss"
+          <CardHeader
+            title={content.profitLoss.title}
             sx={{ padding: '0px', marginRight: 'auto' }}
           />
             <FormControl
               sx={{ minWidth: '6rem', height: '4rem', px: '.2rem', mt: '10px' }}
             >
-              <InputLabel id="type-select-label">Type</InputLabel>
+              <InputLabel id="type-select-label">{content.profitLoss.interval}</InputLabel>
               <Select
                 labelId="type-select-label"
                 id="type-select"
                 value={stockDetailStore.profitLossSelection.period}
-                label={'Type'}
+                label={content.profitLoss.interval}
                 onChange={handleSelectedTypeChange}
               >
                 <MenuItem key={uuid()} value={'day'}>
-                  Day
+                  {content.profitLoss.day}
                 </MenuItem>
                 <MenuItem key={uuid()} value={'month'}>
-                  Month
+                  {content.profitLoss.month}
                 </MenuItem>
                 <MenuItem key={uuid()} value={'year'}>
-                  Year
+                  {content.profitLoss.year}
                 </MenuItem>
               </Select>
             </FormControl>
@@ -95,7 +99,7 @@ const SDProfitLossChart = observer(() => {
               variant="outlined"
               startIcon={<BsFillBarChartFill />}
             >
-              {'Line'}
+              {content.profitLoss.bar}
             </Button>
             <Button
               sx={{
@@ -113,7 +117,7 @@ const SDProfitLossChart = observer(() => {
               variant="outlined"
               startIcon={<AiOutlineLineChart />}
             >
-              {'Bar'}
+              {content.profitLoss.line}
             </Button>
           </Stack>
           <Box ml="auto" />
@@ -133,9 +137,9 @@ const SDProfitLossChart = observer(() => {
                   currencyCode={
                     stockDetailStore.portfolioInfo?.initialCurrency || 'USD'
                   }
-                  xAxisLabel="Date"
-                  yAxisLabel="Total"
-                  title="Total"
+                  xAxisLabel={content.profitLoss.date}
+                  yAxisLabel={content.profitLoss.total}
+                  title={content.profitLoss.total}
                 />
               </Box>
               <Box
@@ -150,9 +154,9 @@ const SDProfitLossChart = observer(() => {
                   currencyCode={
                     stockDetailStore.portfolioInfo?.initialCurrency || 'USD'
                   }
-                  xAxisLabel="Date"
-                  yAxisLabel="Total"
-                  title="Total"
+                  xAxisLabel={content.profitLoss.date}
+                  yAxisLabel={content.profitLoss.total}
+                  title={content.profitLoss.total}
                 />
               </Box>
             </>
