@@ -81,7 +81,7 @@ const PDSankeyChart = observer(({ content }: IProps) => {
         >
           <CardHeader
             title={`${content.title}`}
-            sx={{ height: '3rem', padding: '0px' , marginRight:"auto"}}
+            sx={{ height: '3rem', padding: '0px', marginRight: "auto" }}
           />
           <Box
             sx={{
@@ -91,7 +91,7 @@ const PDSankeyChart = observer(({ content }: IProps) => {
           >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label={'Start date'}
+                label={content.startDate}
                 inputFormat="dd/MM/yyyy"
                 value={portfolioDetailStore.sankeySelection.startDate}
                 onAccept={() => true}
@@ -111,7 +111,7 @@ const PDSankeyChart = observer(({ content }: IProps) => {
           >
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
-                label={'End date'}
+                label={content.endDate}
                 inputFormat="dd/MM/yyyy"
                 value={portfolioDetailStore.sankeySelection.endDate}
                 onChange={handleEndDateChange}
@@ -137,7 +137,7 @@ const PDSankeyChart = observer(({ content }: IProps) => {
 
         <CardContent sx={{ padding: 0, width: '100%', height: 'auto' }}>
           {portfolioDetailStore.sankeyFlowData &&
-          portfolioDetailStore.sankeyFlowData.length > 0 ? (
+            portfolioDetailStore.sankeyFlowData.length > 0 ? (
             <Sankey sankeyFlowData={portfolioDetailStore.sankeyFlowData} />
           ) : (
             <></>

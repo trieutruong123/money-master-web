@@ -41,7 +41,6 @@ import { GrPowerReset } from 'react-icons/gr';
 import { v4 as uuid } from 'uuid';
 import { cryptoDetailStore } from 'shared/store';
 import { useEffect, useState } from 'react';
-import { convertUTCToLocalTimeZone2 } from 'utils/time';
 
 const TableHeaderCell = styled(TableCell)`
   padding: 10px;
@@ -248,26 +247,26 @@ const CDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
               boxShadow: 'none',
             }}
           >
-            <CardHeader title="" sx={{ padding: '0px', marginRight: 'auto' }} />
+            <CardHeader title={content.transactionHistory.title} sx={{ padding: '0px', marginRight: 'auto' }} />
             <FormControl
               sx={{ minWidth: '6rem', height: '4rem', px: '.2rem', mt: '10px' }}
             >
-              <InputLabel id="type-select-label">Type</InputLabel>
+              <InputLabel id="type-select-label">{content.transactionHistory.title}</InputLabel>
               <Select
                 labelId="type-select-label"
                 id="type-select"
                 value={cryptoDetailStore.transactionSelection.type || 'all'}
-                label={'Type'}
+                label={content.transactionHistory.title}
                 onChange={handleSelectedTypeChange}
               >
                 <MenuItem key={uuid()} value={TransactionHistoryContants.all}>
-                  All
+                  {content.transactionHistory.all}
                 </MenuItem>
                 <MenuItem key={uuid()} value={TransactionHistoryContants.in}>
-                  In
+                  {content.transactionHistory.in}
                 </MenuItem>
                 <MenuItem key={uuid()} value={TransactionHistoryContants.out}>
-                  Out
+                  {content.transactionHistory.out}
                 </MenuItem>
               </Select>
             </FormControl>
@@ -279,7 +278,7 @@ const CDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
             >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label={'Start date'}
+                  label={content.transactionHistory.startDate}
                   inputFormat="dd/MM/yyyy"
                   value={cryptoDetailStore.transactionSelection.startDate}
                   onAccept={() => true}
@@ -299,7 +298,7 @@ const CDTransactionHistory = ({ transactionHistoryData, content }: IProps) => {
             >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label={'End date'}
+                  label={content.transactionHistory.endDate}
                   inputFormat="dd/MM/yyyy"
                   value={cryptoDetailStore.transactionSelection.endDate}
                   onChange={handleEndDateChange}
