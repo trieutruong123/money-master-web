@@ -1,5 +1,5 @@
-import { SankeyNodeConstants, SankeyNodeType } from "shared/constants";
-import { SankeyDataItem } from "shared/models";
+import { SankeyNodeConstants, SankeyNodeType } from 'shared/constants';
+import { SankeyDataItem } from 'shared/models';
 
 export function getSankeyNodeType(type: string) {
   switch (type) {
@@ -20,36 +20,41 @@ export function getSankeyNodeType(type: string) {
     case SankeyNodeType.outsideOut:
       return SankeyNodeConstants.outsideOut;
     default:
-      return "";
+      return '';
   }
 }
 
-function foundSiblingSankeyPair(single: SankeyDataItem, pairs: SankeyDataItem[]) {
+function foundSiblingSankeyPair(
+  single: SankeyDataItem,
+  pairs: SankeyDataItem[],
+) {
   const foundSankeyPair = pairs.find((item: SankeyDataItem) => {
-    if (single.targetId === item.sourceId &&
+    if (
+      single.targetId === item.sourceId &&
       single.targetName === item.sourceName &&
       single.targetType === item.sourceType &&
       single.sourceId === item.targetId &&
       single.sourceName === item.targetName &&
-      single.sourceType === item.targetType)
-    {
+      single.sourceType === item.targetType
+    ) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
-  })
+  });
   return foundSankeyPair;
 }
 
-export function standardlizeSankeyResponse(pairs: Array<SankeyDataItem> | undefined) {
+export function standardlizeSankeyResponse(
+  pairs: Array<SankeyDataItem> | undefined,
+) {
   // if sankey array is undefined or empty array, so return [];
   if (!pairs || !pairs.length) {
     return [];
   }
   const newPairs: Array<SankeyDataItem> = [];
   const checked: Array<boolean> = Array(pairs.length).fill(false);
-  
+
   pairs.map((item: SankeyDataItem, index: number) => {
     //if this pair is found and included in previous calculation, so return;
     if (checked[index]) {
@@ -59,19 +64,24 @@ export function standardlizeSankeyResponse(pairs: Array<SankeyDataItem> | undefi
     const found = foundSiblingSankeyPair(item, pairs);
     //if this is only-chlid pair, push into newPairs;
     if (!found) {
-      newPairs.push(item);
-    }
-    else {
+      if (item.amount) {
+        newPairs.push(item);
+      }
+    } else {
       //if this pair is one of the twins
       const finalAmount = found.amount - item.amount;
-      const pair = finalAmount > 0 ? { ...found, amount: finalAmount }:{...item, amount:-finalAmount};
-      newPairs.push(pair);
+      const pair =
+        finalAmount > 0
+          ? { ...found, amount: finalAmount }
+          : { ...item, amount: -finalAmount };
+      if (finalAmount) {
+        newPairs.push(pair);
+      }
 
       const foundIndex = pairs.indexOf(found);
       checked[foundIndex] = true;
     }
     checked[index] = true;
   });
-
   return newPairs;
 }

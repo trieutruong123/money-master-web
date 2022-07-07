@@ -145,7 +145,7 @@ export const SankeyChart = observer(({
 
   useEffect(() => {
     formatData(sankeyFlowData).then(setData);
-  }, []);
+  }, [sankeyFlowData]);
 
   const sankeyGen = useMemo(
     () =>
