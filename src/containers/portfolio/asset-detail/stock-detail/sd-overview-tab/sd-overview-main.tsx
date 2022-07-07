@@ -41,7 +41,7 @@ const SDOverviewTab = observer(() => {
       </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         <Suspense fallback={<></>}>
-          <SDProfitLossChart />
+          <SDProfitLossChart content = {content}/>
         </Suspense>
       </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">

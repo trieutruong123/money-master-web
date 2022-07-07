@@ -133,8 +133,8 @@ class PortfolioDetailStore {
       needUpdatedCash: observable,
 
       investFundDetail: observable,
-      investFundTransactionSelection: observable,
       investFundTransactionHistory: observable,
+      investFundTransactionSelection: observable,
 
       isOpenAddNewAssetModal: observable,
       searchedStockDetail: observable,
@@ -158,7 +158,6 @@ class PortfolioDetailStore {
       setSankeySelection: action,
       setInvestFundTransactionSelection: action,
       setInvestFundTransactionHistory: action,
-
       resetInitialState: action,
 
       fetchRealEstate: action,
@@ -170,6 +169,7 @@ class PortfolioDetailStore {
       fetchCash: action,
       fetchPortfolioInfo: action,
       fetchInvestFundInfo: action,
+      fetchInvestFundTransactionHistory: action,
       fetchPieChartData: action,
 
       addNewBankSaving: action,
@@ -213,17 +213,6 @@ class PortfolioDetailStore {
     this.selectedCustomAssetId = id;
   }
 
-  setInvestFundTransactionHistory(history: InvestFundTransactionItem[]) {
-    this.investFundTransactionHistory = history;
-  }
-
-  setInvestFundTransactionSelection(key: string, value: any) {
-    this.investFundTransactionSelection = {
-      ...this.investFundTransactionSelection,
-      [key]: value,
-    };
-  }
-
   setOpenTransferToInvestFundModal(isOpen: boolean) {
     this.isOpenTransferToInvestFundModal = isOpen;
   }
@@ -259,6 +248,17 @@ class PortfolioDetailStore {
       assetType: assetType,
       assetId: Number.parseInt(assetId),
       portfolioId: Number.parseInt(portfolioId),
+    };
+  }
+
+  setInvestFundTransactionHistory(history: InvestFundTransactionItem[]) {
+    this.investFundTransactionHistory = history;
+  }
+
+  setInvestFundTransactionSelection(key: string, value: any) {
+    this.investFundTransactionSelection = {
+      ...this.investFundTransactionSelection,
+      [key]: value,
     };
   }
 
@@ -837,7 +837,6 @@ class PortfolioDetailStore {
     };
     if (endDate) params.EndDate = endDate;
     if (startDate) params.StartDate = startDate;
-
     const url = `/portfolio/${this.portfolioId}/investFund/transactions`;
     const res: { isError: boolean; data: any } = await httpService.get(
       url,

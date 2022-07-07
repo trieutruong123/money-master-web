@@ -29,7 +29,6 @@ import {
 } from 'shared/constants';
 import { getCurrencyByCode } from 'shared/helpers';
 import { RealEstateTransactionList, StockTransactionList } from 'shared/models';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TransactionType } from 'shared/types';
 import { colorScheme } from 'utils';
 import { ImArrowLeft, ImArrowRight } from 'react-icons/im';
@@ -253,26 +252,26 @@ const RETransactionHistory = ({ transactionHistoryData }: IProps) => {
               boxShadow: 'none',
             }}
           >
-            <CardHeader title="" sx={{ padding: '0px', marginRight: 'auto' }} />
+            <CardHeader title={content.transactionHistory.title} sx={{ padding: '0px', marginRight: 'auto' }} />
             <FormControl
               sx={{ minWidth: '6rem', height: '4rem', px: '.2rem', mt: '10px' }}
             >
-              <InputLabel id="type-select-label">Type</InputLabel>
+              <InputLabel id="type-select-label">{content.transactionHistory.type}</InputLabel>
               <Select
                 labelId="type-select-label"
                 id="type-select"
                 value={realEstateDetailStore.transactionSelection.type || 'all'}
-                label={'Type'}
+                label={content.transactionHistory.type}
                 onChange={handleSelectedTypeChange}
               >
                 <MenuItem key={uuid()} value={TransactionHistoryContants.all}>
-                  All
+                  {content.transactionHistory.all}
                 </MenuItem>
                 <MenuItem key={uuid()} value={TransactionHistoryContants.in}>
-                  In
+                  {content.transactionHistory.in}
                 </MenuItem>
                 <MenuItem key={uuid()} value={TransactionHistoryContants.out}>
-                  Out
+                  {content.transactionHistory.out}
                 </MenuItem>
               </Select>
             </FormControl>
@@ -284,7 +283,7 @@ const RETransactionHistory = ({ transactionHistoryData }: IProps) => {
             >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label={'Start date'}
+                  label={content.transactionHistory.startDate}
                   inputFormat="dd/MM/yyyy"
                   value={realEstateDetailStore.transactionSelection.startDate}
                   onAccept={() => true}
@@ -304,7 +303,7 @@ const RETransactionHistory = ({ transactionHistoryData }: IProps) => {
             >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label={'End date'}
+                  label={content.transactionHistory.endDate}
                   inputFormat="dd/MM/yyyy"
                   value={realEstateDetailStore.transactionSelection.endDate}
                   onChange={handleEndDateChange}

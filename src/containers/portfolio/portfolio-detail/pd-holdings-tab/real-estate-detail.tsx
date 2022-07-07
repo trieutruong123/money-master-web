@@ -14,9 +14,7 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/router';
 import dayjs from 'dayjs';
-import { Scrollbars } from 'react-custom-scrollbars';
 import { styled } from '@mui/material/styles';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { roundAndAddDotAndCommaSeparator } from 'utils';
 import { getCurrencyByCode } from 'shared/helpers';
 import { RealEstateItem } from 'shared/models';

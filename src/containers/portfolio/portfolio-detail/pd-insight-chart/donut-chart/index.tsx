@@ -12,8 +12,7 @@ import dynamic from 'next/dynamic';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
-import { PieChartItem, PortfolioAllocation } from 'shared/models';
-import { precisionRound } from 'utils';
+import { PieChartItem } from 'shared/models';
 
 interface IProps {
   pieChartData: Array<PieChartItem>;

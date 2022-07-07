@@ -1,10 +1,26 @@
-import classes from "./style/portfolio-card.module.css";
-import Button from "@mui/material/Button";
-import { Link } from "shared/components";
-import * as React from "react";
-import Modal from "@mui/material/Modal";
-import UpdatePortfolio from "./modify-portfolio";
-import DeletePortfolio from "./delete-portfolio";
+import classes from './style/portfolio-card.module.css';
+import Button from '@mui/material/Button';
+import { Link } from 'shared/components';
+import * as React from 'react';
+import Modal from '@mui/material/Modal';
+import UpdatePortfolio from './modify-portfolio';
+import DeletePortfolio from './delete-portfolio';
+import { styled } from '@mui/material/styles';
+import { Box } from '@mui/material';
+
+const StyledModal = styled(Box)(({ theme }: any) => ({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 'auto',
+  minWidth: '520px',
+  height: '650px',
+  maxHeight: '100vh',
+
+  borderRadius: '12px',
+  overflow: 'hidden',
+}));
 
 function PortfolioCard(props: any) {
   const pageContent = props.content;
@@ -16,9 +32,14 @@ function PortfolioCard(props: any) {
   const handleOpenDeleteModal = () => setOpenDeleteModal(true);
   const handleCloseDeleteModal = () => setOpenDeleteModal(false);
   const updateHandler = (data: any) => {
-    props.onUpdate({newName:data.name,newCurrency:data.initialCurrency,portfolioId:props.portfolioId});
+    props.onUpdate({
+      newName: data.name,
+      newCurrency: data.initialCurrency,
+      portfolioId: props.portfolioId,
+    });
     setOpenUpdateModal(false);
   };
+  
   const deleteHandler = () => {
     props.onDelete(props.portfolioId);
     setOpenDeleteModal(false);
@@ -34,7 +55,7 @@ function PortfolioCard(props: any) {
         </div>
       </div>
       <div className={classes.buttonPanel}>
-        <Link href={"/portfolio/" + portfolio.id}>
+        <Link href={'/portfolio/' + portfolio.id}>
           <Button variant="contained" color="info">
             {pageContent.portfolioCard.detail}
           </Button>
@@ -56,8 +77,6 @@ function PortfolioCard(props: any) {
           {pageContent.portfolioCard.delete}
         </Button>
       </div>
-
-      {/* update modal */}
       <Modal
         open={openUpdateModal}
         onClose={handleCloseUpdateModal}
@@ -65,11 +84,12 @@ function PortfolioCard(props: any) {
         aria-describedby="modal-modal-description"
         sx={{ mt: 10 }}
       >
-        <UpdatePortfolio
-          content={pageContent.updatePortfolioModal}
-          portfolio={props.portfolio}
-          onModifyPortfolio={updateHandler}
-        />
+        <StyledModal>
+          <UpdatePortfolio
+            content={pageContent.updatePortfolioModal}
+            onModifyPortfolio={updateHandler}
+          />
+        </StyledModal>
       </Modal>
 
       {/* delete modal */}

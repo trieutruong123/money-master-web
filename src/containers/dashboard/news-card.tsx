@@ -1,26 +1,13 @@
-import PropTypes from 'prop-types';
-// material
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Link, Card, Grid, Typography, CardContent } from '@mui/material';
+import {  Link, Card, Grid, Typography, CardContent } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import { deepOrange, deepPurple } from '@mui/material/colors';
-// utils
-//
 import dayjs from 'dayjs';
 
-// ----------------------------------------------------------------------
 
 const CardMediaStyle = styled('div')({
   position: 'relative',
   paddingTop: 'calc(100% * 3 / 4)',
-});
-
-const TitleStyle = styled(Link)({
-  height: 44,
-  overflow: 'hidden',
-  WebkitLineClamp: 2,
-  display: '-webkit-box',
-  WebkitBoxOrient: 'vertical',
 });
 
 const AvatarStyle = styled(Avatar)(({ theme }) => ({
@@ -111,22 +98,6 @@ export default function NewsCard({ news, index }:IProps) {
               height: 40,
             }),
           }}/>
-          
-          {/* <AvatarStyle
-            alt={source}
-            src={source.avatarimage}
-            sx={{
-              ...((latestPostLarge || latestPost) && {
-                zIndex: 9,
-                top: 24,
-                left: 24,
-                width: 40,
-                height: 40,
-              }),
-            }}
-          /> */}
-
-
           <img 
             style = {{
                 top: 0,

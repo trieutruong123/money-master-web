@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
-import { Scrollbars } from 'react-custom-scrollbars';
 import { styled } from '@mui/material/styles';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getCurrencyByCode } from 'shared/helpers';

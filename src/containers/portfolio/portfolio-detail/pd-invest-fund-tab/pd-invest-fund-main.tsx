@@ -11,11 +11,13 @@ const PDTransactionHistory = lazy(() => import('./pd-transaction-history'));
 const PDInvestFundTab = observer(() => {
   const router = useRouter();
   const { query, locale } = router;
-  const content = locale === 'vi' ? i18n['vi'].portfolioDetailPage : i18n['en'].portfolioDetailPage;
+  const content =
+    locale === 'vi'
+      ? i18n['vi'].portfolioDetailPage
+      : i18n['en'].portfolioDetailPage;
 
   const { investFundDetail, investFundTransactionHistory } =
     portfolioDetailStore;
-
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
@@ -31,7 +33,7 @@ const PDInvestFundTab = observer(() => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [portfolioDetailStore.needUpdatedInvestFundData]);
-  
+
   return (
     <Grid
       container
@@ -53,7 +55,7 @@ const PDInvestFundTab = observer(() => {
       </Grid>
       <Grid item lg={12} md={12} xl={12} xs={12} mt="1rem">
         {typeof investFundTransactionHistory !== 'undefined' &&
-          investFundTransactionHistory?.length > 0 ? (
+        investFundTransactionHistory?.length > 0 ? (
           <Suspense fallback={<></>}>
             <PDTransactionHistory
               content={content}

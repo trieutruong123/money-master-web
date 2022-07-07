@@ -251,28 +251,28 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
               boxShadow: 'none',
             }}
           >
-            <CardHeader title="" sx={{ padding: '0px', marginRight: 'auto' }} />
+            <CardHeader title={content.transactionHistory.title} sx={{ padding: '0px', marginRight: 'auto' }} />
             <FormControl
               sx={{ minWidth: '6rem', height: '4rem', px: '.2rem', mt: '10px' }}
             >
-              <InputLabel id="type-select-label">Type</InputLabel>
+              <InputLabel id="type-select-label">{content.transactionHistory.type}</InputLabel>
               <Select
                 labelId="type-select-label"
                 id="type-select"
                 value={
                   bankSavingsDetailStore.transactionSelection.type || 'all'
                 }
-                label={'Type'}
+                label={content.transactionHistory.type}
                 onChange={handleSelectedTypeChange}
               >
                 <MenuItem key={uuid()} value={TransactionHistoryContants.all}>
-                  All
+                  {content.transactionHistory.all}
                 </MenuItem>
                 <MenuItem key={uuid()} value={TransactionHistoryContants.in}>
-                  In
+                  {content.transactionHistory.in}
                 </MenuItem>
                 <MenuItem key={uuid()} value={TransactionHistoryContants.out}>
-                  Out
+                  {content.transactionHistory.out}
                 </MenuItem>
               </Select>
             </FormControl>
@@ -284,7 +284,7 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
             >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label={'Start date'}
+                  label={content.transactionHistory.startDate}
                   inputFormat="dd/MM/yyyy"
                   value={bankSavingsDetailStore.transactionSelection.startDate}
                   onAccept={() => true}
@@ -304,7 +304,7 @@ const BSTransactionHistory = ({ transactionHistoryData }: IProps) => {
             >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  label={'End date'}
+                  label={content.transactionHistory.endDate}
                   inputFormat="dd/MM/yyyy"
                   value={bankSavingsDetailStore.transactionSelection.endDate}
                   onChange={handleEndDateChange}
