@@ -748,11 +748,11 @@ class PortfolioDetailStore {
     const url = `/portfolio/${this.portfolioId}/sankey`;
     const params: any = {};
     if (this.sankeySelection.startDate)
-      params.StartDate = dayjs(this.sankeySelection.startDate)
+      params.StartTime = dayjs(this.sankeySelection.startDate)
         .startOf('date')
         .format();
     if (this.sankeySelection.endDate)
-      params.EndDate = dayjs(this.sankeySelection.endDate)
+      params.EndTime = dayjs(this.sankeySelection.endDate)
         .endOf('date')
         .format();
     const res: { isError: boolean; data: any } = await httpService.get(
