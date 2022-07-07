@@ -17,7 +17,6 @@ const PDReportTab = observer(({ }: IProps) => {
   const router = useRouter();
   const { locale } = router;
   const content = locale === 'vi' ? i18n['vi'].portfolioDetailPage : i18n['en'].portfolioDetailPage;
-
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
@@ -99,12 +98,12 @@ const PDReportTab = observer(({ }: IProps) => {
           height: 'auto',
         }}
       >
-        {portfolioDetailStore.sankeyFlowData && portfolioDetailStore.sankeyFlowData.length > 0 ?
-          <Suspense fallback={<></>}>
+        {/* {portfolioDetailStore.sankeyFlowData && portfolioDetailStore.sankeyFlowData.length > 0 ? */}
+          {/* <Suspense fallback={<></>}> */}
             <PDSankeyChart content={content.sankeyChart} />
-          </Suspense>
-          : <></>
-        }
+          {/* </Suspense> */}
+          {/* : <></>
+        } */}
       </Grid>
     </Grid >
   );

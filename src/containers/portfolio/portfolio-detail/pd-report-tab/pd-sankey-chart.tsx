@@ -3,11 +3,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  FormControl,
-  InputLabel,
   IconButton,
-  Select,
-  MenuItem,
   TextField,
   useTheme,
   useMediaQuery,
@@ -21,6 +17,8 @@ import { v4 as uuid } from 'uuid';
 import { portfolioDetailStore } from 'shared/store';
 import dayjs from 'dayjs';
 import { observer } from 'mobx-react-lite';
+import { BiFileBlank } from 'react-icons/bi';
+import { colorScheme } from 'utils';
 
 interface IProps {
   content: any;
@@ -58,7 +56,6 @@ const PDSankeyChart = observer(({ content }: IProps) => {
     portfolioDetailStore.setSankeySelection('endDate', null);
     const data = await portfolioDetailStore.fetchSankeyFlowData();
   };
-
   return (
     <Box width="100%">
       <Card
@@ -81,7 +78,7 @@ const PDSankeyChart = observer(({ content }: IProps) => {
         >
           <CardHeader
             title={`${content.title}`}
-            sx={{ height: '3rem', padding: '0px', marginRight: "auto" }}
+            sx={{ height: '3rem', padding: '0px', marginRight: 'auto' }}
           />
           <Box
             sx={{
@@ -135,12 +132,22 @@ const PDSankeyChart = observer(({ content }: IProps) => {
           </IconButton>
         </Card>
 
-        <CardContent sx={{ padding: 0, width: '100%', height: 'auto' }}>
+        <CardContent sx={{ padding: 0, width: '100%', height: '600px' }}>
           {portfolioDetailStore.sankeyFlowData &&
-            portfolioDetailStore.sankeyFlowData.length > 0 ? (
+          portfolioDetailStore.sankeyFlowData.length > 0 ? (
             <Sankey sankeyFlowData={portfolioDetailStore.sankeyFlowData} />
           ) : (
-            <></>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              width="100%"
+              height="100%"
+              flexDirection="column"
+            >
+              <BiFileBlank size="125" color={colorScheme.theme}></BiFileBlank>
+              <h2 style={{ color: colorScheme.theme }}>No Data</h2>
+            </Box>
           )}
         </CardContent>
       </Card>

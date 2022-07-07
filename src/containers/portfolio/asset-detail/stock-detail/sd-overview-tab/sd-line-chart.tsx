@@ -16,7 +16,6 @@ interface IProps {
     return [Date.parse(item.endTime), item.amount];
   });
 
-  console.log(areaData);
   const areaSeries = [{ name: 'Price', data: data }];
   const areaOptions: any = {
     chart: {

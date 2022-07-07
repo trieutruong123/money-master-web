@@ -31,7 +31,6 @@ export const AddNewBankSavingsForm = observer(
     const portfolioName = portfolioDetailStore.portfolioInfo?.name || '';
 
     const handleFormSubmit = async (data: NewBanksSavingAsset) => {
-      console.log(data);
       const res = await portfolioDetailStore.addNewBankSaving(data);
       if (res.isError) {
         if (data.isUsingInvestFund || data.isUsingCash) {
