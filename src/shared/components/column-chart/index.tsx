@@ -27,7 +27,7 @@ const ColumnChart = ({
 }: IProps) => {
   const xDatas = data.map((item: ProfitLossItem) => Date.parse(item.endTime));
   const yDatas = data.map((item: ProfitLossItem) => item.amount);
-
+  console.log(xDatas);
   const max = yDatas.reduce((prev, cur, idx) => Math.max(prev, cur), 0);
   const min = yDatas.reduce((prev, cur, idx) => Math.min(prev, cur), 0);
   const areaSeries = [{ name: xAxisLabel, data: yDatas }];
@@ -85,7 +85,7 @@ const ColumnChart = ({
       labels: {
         rotate: -90,
         formatter: function (val: any) {
-          return dayjs.unix(val).format('MMM DD');
+          return dayjs(new Date(val)).format('MMM DD');
         },
       },
     },

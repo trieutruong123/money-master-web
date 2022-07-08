@@ -5,18 +5,21 @@ import { portfolioDetailStore, rootStore } from 'shared/store';
 import { lazy, Suspense, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { content as i18n } from 'i18n';
+import PDTotalValue from './pd-total-value';
 
 const PDDonutchart = lazy(() => import('./pd-donut-chart'));
 const PDHorizontalBarChart = lazy(() => import('./pd-horizontal-bar-chart'));
 const PDSankeyChart = lazy(() => import('./pd-sankey-chart'));
 
-interface IProps {
-}
+interface IProps {}
 
-const PDReportTab = observer(({ }: IProps) => {
+const PDReportTab = observer(({}: IProps) => {
   const router = useRouter();
   const { locale } = router;
-  const content = locale === 'vi' ? i18n['vi'].portfolioDetailPage : i18n['en'].portfolioDetailPage;
+  const content =
+    locale === 'vi'
+      ? i18n['vi'].portfolioDetailPage
+      : i18n['en'].portfolioDetailPage;
   useEffect(() => {
     const fetchData = async () => {
       rootStore.startLoading();
@@ -46,10 +49,6 @@ const PDReportTab = observer(({ }: IProps) => {
     >
       <Grid
         item
-        lg={6}
-        md={6}
-        xl={6}
-        sm={6}
         xs={12}
         sx={{
           display: 'flex',
@@ -58,12 +57,7 @@ const PDReportTab = observer(({ }: IProps) => {
           mt: '1rem',
         }}
       >
-        {typeof portfolioDetailStore.pieChartData !== 'undefined' ?
-          <Suspense fallback={<></>}>
-            <PDHorizontalBarChart content={content} pieChartData={portfolioDetailStore.pieChartData} />
-          </Suspense>
-          : <></>
-        }
+        <PDTotalValue />
       </Grid>
       <Grid
         item
@@ -77,15 +71,43 @@ const PDReportTab = observer(({ }: IProps) => {
           justifyContent: 'center',
           alignItems: 'center',
           mt: '1rem',
-
         }}
       >
-        {typeof portfolioDetailStore.pieChartData !== 'undefined' ?
+        {typeof portfolioDetailStore.pieChartData !== 'undefined' ? (
           <Suspense fallback={<></>}>
-            <PDDonutchart content={content} pieChartData={portfolioDetailStore.pieChartData} />
+            <PDHorizontalBarChart
+              content={content}
+              pieChartData={portfolioDetailStore.pieChartData}
+            />
           </Suspense>
-          : <></>
-        }
+        ) : (
+          <></>
+        )}
+      </Grid>
+      <Grid
+        item
+        lg={6}
+        md={6}
+        xl={6}
+        sm={6}
+        xs={12}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          mt: '1rem',
+        }}
+      >
+        {typeof portfolioDetailStore.pieChartData !== 'undefined' ? (
+          <Suspense fallback={<></>}>
+            <PDDonutchart
+              content={content}
+              pieChartData={portfolioDetailStore.pieChartData}
+            />
+          </Suspense>
+        ) : (
+          <></>
+        )}
       </Grid>
       <Grid
         item
@@ -100,12 +122,12 @@ const PDReportTab = observer(({ }: IProps) => {
       >
         {/* {portfolioDetailStore.sankeyFlowData && portfolioDetailStore.sankeyFlowData.length > 0 ? */}
           {/* <Suspense fallback={<></>}> */}
-            <PDSankeyChart content={content.sankeyChart} />
+          <PDSankeyChart content={content.sankeyChart} />
           {/* </Suspense> */}
           {/* : <></>
         } */}
       </Grid>
-    </Grid >
+    </Grid>
   );
 });
 

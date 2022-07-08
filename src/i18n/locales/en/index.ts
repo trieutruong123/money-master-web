@@ -318,8 +318,8 @@ export const en = {
       },
       settingDropDownMenu: {
         buttonTooltip: 'Asset settings',
-        transferToInvestFund: 'Chuyển vào quỹ đầu tư',
-        delete: 'Xóa tài sản',
+        transferToInvestFund: 'Transfer to invest fund',
+        delete: 'Delete',
       },
     },
     addNewAssets: {
@@ -449,7 +449,7 @@ export const en = {
     transactionForm: {
       title: 'Transaction',
       transaction: 'Transaction',
-      buy: 'Mua',
+      buy: 'Buy',
       sell: 'Sell',
       withdraw: 'Withdraw',
       transfer: 'Transfer',
