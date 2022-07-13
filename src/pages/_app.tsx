@@ -18,7 +18,7 @@ export type NextApplicationPage<P = any, IP = P> = NextPage<P, IP> & {
   requireAuth?: boolean;
   getLayout?: (page: ReactElement) => ReactNode;
 };
-
+ 
 const clientSideEmotionCache = createEmotionCache();
 
 export default function MyApp(props: AppProps) {
